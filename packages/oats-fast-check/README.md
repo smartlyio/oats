@@ -8,8 +8,7 @@ Generator for typescript clients and servers from openapi3 specs
 // yarn ts-node examples/server.ts
 import * as api from "../tmp/server.generated";
 import * as types from "../tmp/server.types.generated";
-import * as server from "../src/server";
-import * as runtime from "../src/runtime";
+import { runtime, server } from "../index";
 import * as Koa from "koa";
 import * as koaBody from "koa-body";
 
@@ -63,19 +62,19 @@ export function createApp() {
 ```js
 // yarn ts-node examples/client.ts
 import * as api from "../tmp/client.generated";
-import { json, axiosAdapter } from "../src/client";
+import { client } from "../index";
 import * as app from "./server";
 
 // 'api.client' is the abstract implementation of the client which is then
 // mapped to axios requests using 'axiosAdapter'
-const client = api.client(axiosAdapter);
+const apiClient = api.client(client.axiosAdapter);
 async function runClient() {
   try {
-    const posted = await client.item.post({
-      body: json({ id: "id", name: "name" })
+    const posted = await apiClient.item.post({
+      body: client.json({ id: "id", name: "name" })
     });
     if (posted.status === 201) {
-      const got = await client.item(posted.value.value.id).get({});
+      const got = await apiClient.item(posted.value.value.id).get({});
       if (got.status === 200 && got.value.value.id === "id") {
         process.exit(0);
       }
@@ -94,25 +93,25 @@ app.createApp().listen(port, runClient);
 
 ```
 // yarn ts-node examples/driver.ts
-import * as driver from '../src/driver';
+import { driver } from "../index";
 
 // generate server
 driver.generate({
-  generatedValueClassFile: './tmp/server.types.generated.ts',
-  generatedServerFile: './tmp/server.generated.ts',
-  runtimeFilePath: './src/runtime.ts',
-  header: '/* tslint:disable variable-name only-arrow-functions*/',
-  openapiFilePath: './test/example.yaml'
+  generatedValueClassFile: "./tmp/server.types.generated.ts",
+  generatedServerFile: "./tmp/server.generated.ts",
+  runtimeFilePath: "./src/runtime.ts",
+  header: "/* tslint:disable variable-name only-arrow-functions*/",
+  openapiFilePath: "./test/example.yaml"
 });
 
 // generate client
 driver.generate({
-  generatedValueClassFile: './tmp/client.types.generated.ts',
-  runtimeFilePath: './src/runtime.ts',
-  generatedClientFile: './tmp/client.generated.ts',
-  header: '/* tslint:disable variable-name only-arrow-functions*/',
-  openapiFilePath: './test/example.yaml',
-    //Omit error responses  from the client response types
+  generatedValueClassFile: "./tmp/client.types.generated.ts",
+  runtimeFilePath: "./src/runtime.ts",
+  generatedClientFile: "./tmp/client.generated.ts",
+  header: "/* tslint:disable variable-name only-arrow-functions*/",
+  openapiFilePath: "./test/example.yaml",
+  // Omit error responses  from the client response types
   emitStatusCode: (code: number) => [200, 201].indexOf(code) >= 0
 });
 
