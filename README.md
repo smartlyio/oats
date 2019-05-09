@@ -13,8 +13,11 @@ import * as runtime from "../src/runtime";
 import * as Koa from "koa";
 import * as koaBody from "koa-body";
 
+// setup a db :)
 const values: { [key: string]: types.Item } = {};
-const routes = server.koaBindRoutes<api.Endpoints>(api.router, {
+
+// 'api.Endpoints' is the generated type of the server
+const spec: api.Endpoints = {
   "/item": {
     post: async ctx => {
       values[ctx.body.value.id] = types.Item.make({
@@ -33,10 +36,17 @@ const routes = server.koaBindRoutes<api.Endpoints>(api.router, {
       return runtime.json(400, { message: "not found" });
     }
   }
-});
+};
 
+// 'server.koaBindRoutes'  binds the endpoint implemantion in'spec' to
+// koa-router routes using a koa adapter
+const routes = server.koaBindRoutes<api.Endpoints>(api.router, spec);
+
+// finally we can create a Koa app from the routes
 export function createApp() {
   const app = new Koa();
+  // we need a bodyparser to make body contain json and deal with multipart
+  // requests
   app.use(
     koaBody({
       multipart: true
@@ -56,6 +66,8 @@ import * as api from "../tmp/client.generated";
 import { json, axiosAdapter } from "../src/client";
 import * as app from "./server";
 
+// 'api.client' is the abstract implementation of the client which is then
+// mapped to axios requests using 'axiosAdapter'
 const client = api.client(axiosAdapter);
 async function runClient() {
   try {
@@ -72,6 +84,7 @@ async function runClient() {
   process.exit(1);
 }
 
+// spin up the server
 const port = 12000;
 app.createApp().listen(port, runClient);
 
