@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "target": "es2017",
+    "lib": ["es6", "es2017", "DOM", "esnext.asynciterable"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "removeComments": false,
+    "noImplicitReturns": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noUnusedLocals": true,
+    "alwaysStrict": true,
+    "noFallthroughCasesInSwitch": true,
+    "typeRoots": ["./src/types", "./node_modules/@types"],
+    "baseUrl": "./src/types",
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "dist"
+  },
+  "exclude": []
+}
