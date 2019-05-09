@@ -1,0 +1,74 @@
+{
+  "name": "@smartlyio/oats",
+  "version": "1.0.0",
+  "description": "Openapi3 based generator for typescript aware servers and clients",
+  "private": false,
+  "author": "Smartly.io",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "test": "yarn jest test/",
+    "render": "yarn ts-node render.ts",
+    "build": "rm -rf ./dist/* && yarn test && yarn render && tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/smartlyio/oats.git"
+  },
+  "dependencies": {
+    "@smartlyio/safe-navigation": "^3.0.0",
+    "@types/form-data": "^2.2.1",
+    "@types/js-yaml": "^3.12.1",
+    "@types/koa": "^2.0.48",
+    "@types/koa-router": "^7.0.40",
+    "axios": "^0.18.0",
+    "form-data": "^2.3.3",
+    "js-yaml": "^3.13.1",
+    "koa": "^2.7.0",
+    "koa-body": "^4.1.0",
+    "koa-router": "^7.4.0",
+    "lodash": "^4.17.4",
+    "openapi3-ts": "^1.2.0",
+    "prettier": "^1.17.0"
+  },
+  "keywords": [
+    "openapi3",
+    "rest",
+    "generator",
+    "typescript",
+    "server",
+    "client"
+  ],
+  "devDependencies": {
+    "@types/jest": "^24.0.11",
+    "@types/lodash": "^4.14.77",
+    "@types/node": "^11.11.3",
+    "jest": "^24.5.0",
+    "jsverify": "^0.8.4",
+    "ts-jest": "^24.0.0",
+    "ts-node-dev": "^1.0.0-pre.24",
+    "tslint": "^5.7.0",
+    "tslint-config-prettier": "^1.5.0",
+    "tslint-plugin-prettier": "^1.3.0",
+    "typescript": "^3.3.3333"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "globals": {
+      "ts-jest": {
+        "skipBabel": true
+      }
+    },
+    "testRegex": "test/.*\\.spec.(jsx?|tsx?)$",
+    "transform": {
+      "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json"
+    ]
+  }
+}
