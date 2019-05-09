@@ -99,7 +99,7 @@ import { driver } from "../index";
 driver.generate({
   generatedValueClassFile: "./tmp/server.types.generated.ts",
   generatedServerFile: "./tmp/server.generated.ts",
-  runtimeFilePath: "./src/runtime.ts",
+  runtimeFilePath: "./index.ts",
   header: "/* tslint:disable variable-name only-arrow-functions*/",
   openapiFilePath: "./test/example.yaml"
 });
@@ -107,7 +107,7 @@ driver.generate({
 // generate client
 driver.generate({
   generatedValueClassFile: "./tmp/client.types.generated.ts",
-  runtimeFilePath: "./src/runtime.ts",
+  runtimeFilePath: "./index.ts",
   generatedClientFile: "./tmp/client.generated.ts",
   header: "/* tslint:disable variable-name only-arrow-functions*/",
   openapiFilePath: "./test/example.yaml",
