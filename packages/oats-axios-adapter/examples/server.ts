@@ -1,8 +1,7 @@
 // yarn ts-node examples/server.ts
 import * as api from "../tmp/server.generated";
 import * as types from "../tmp/server.types.generated";
-import * as server from "../src/server";
-import * as runtime from "../src/runtime";
+import { runtime, server } from "../index";
 import * as Koa from "koa";
 import * as koaBody from "koa-body";
 
