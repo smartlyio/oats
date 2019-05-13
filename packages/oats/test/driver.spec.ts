@@ -22,7 +22,7 @@ describe('type generation', () => {
     const generatedServerFile = './tmp/' + randomString() + '.ts';
     config = {
       header: '/* tslint:disable variable-name only-arrow-functions*/',
-      runtimeFilePath: './src/runtime.ts',
+      runtimeFilePath: './index.ts',
       openapiFilePath: './test/example.yaml',
       generatedServerFile,
       generatedValueClassFile
