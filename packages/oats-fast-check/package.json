@@ -43,6 +43,14 @@
     "client"
   ],
   "devDependencies": {
+    "@types/form-data": "^2.2.1",
+    "@types/koa": "^2.0.39",
+    "@types/koa-router": "^7.0.23",
+    "axios": "^0.18.0",
+    "form-data": "^2.3.2",
+    "koa": "^2.3.0",
+    "koa-body": "^4.0.4",
+    "koa-router": "^7.2.1",
     "@types/jest": "^24.0.11",
     "@types/lodash": "^4.14.77",
     "@types/node": "^11.11.3",
