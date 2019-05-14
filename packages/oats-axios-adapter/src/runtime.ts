@@ -2,6 +2,7 @@ import * as oas from 'openapi3-ts';
 import * as assert from 'assert';
 import * as server from './server';
 import * as client from './client';
+import * as _ from 'lodash';
 
 export type schema = oas.OpenAPIObject;
 export { server };
@@ -279,7 +280,7 @@ export function makeNumber(value?: number): Maker<number, number> {
 }
 
 function checkAny(value: any) {
-  return Make.ok(value);
+  return Make.ok(_.cloneDeep(value));
 }
 
 export function makeAny() {
@@ -347,10 +348,16 @@ export function makeOneOf(...options: any[]) {
       errors.push(error('no options given for oneof'));
     }
     let success;
+    let preferredSuccess;
     for (const option of options) {
       const mapped = option(value);
       if (mapped.isSuccess()) {
-        if (success) {
+        if (value instanceof ValueClass && mapped.success() === value) {
+          if (preferredSuccess) {
+            return error('multiple options match');
+          }
+          preferredSuccess = mapped;
+        } else if (success) {
           return error('multiple options match');
         } else {
           success = mapped;
@@ -359,8 +366,8 @@ export function makeOneOf(...options: any[]) {
         errors = [...errors, ...mapped.errors];
       }
     }
-    if (success) {
-      return success;
+    if (preferredSuccess || success) {
+      return preferredSuccess || success;
     }
     return Make.error(errors).errorPath('(oneOf)');
   };
