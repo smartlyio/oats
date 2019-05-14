@@ -9,8 +9,9 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "yarn jest test/",
-    "render": "yarn ts-node render.ts",
-    "build": "rm -rf ./dist/* && yarn test && yarn render && tsc"
+    "render": "yarn ts-node examples/driver.ts && yarn ts-node render.ts",
+    "build": "rm -rf ./dist/* && rm ./tmp/*.ts && yarn test && yarn render && yarn tsc",
+    "publish": "yarn build && npm publish"
   },
   "repository": {
     "type": "git",
