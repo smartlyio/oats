@@ -117,6 +117,18 @@ describe('makeOneOf', () => {
     expect(fun({ a: 1 }).success()).toEqual({ a: 1 });
   });
 
+  it('prefers matching ValueClass', () => {
+    const fun = oar.makeOneOf(oar.makeAny(), TestClass.make);
+    const test = TestClass.make({ a: ['a'], b: 'b' }).success();
+    expect(fun(test).success()).toEqual(test);
+  });
+
+  it('fails if multiple values classes match', () => {
+    const fun = oar.makeOneOf(oar.makeAny(), TestClass.make, TestClass.make);
+    const test = TestClass.make({ a: ['a'], b: 'b' }).success();
+    expect(fun(test).isSuccess()).toBeFalsy();
+  });
+
   it('fails on multiple matches', () => {
     const fun = oar.makeOneOf(
       oar.makeObject({ a: oar.makeString() }),
@@ -137,12 +149,16 @@ describe('makeAllOf', () => {
 });
 
 describe('makeAny', () => {
-  it('allows anything', () => {
+  jsc.property('allows anything', jsc.json, async item => {
     const fun = oar.makeAny();
-    const item = { a: 1 };
     expect(fun(item).success()).toEqual(item);
+    if (item && typeof item === 'object') {
+      expect(fun(item).success() !== item).toBeTruthy();
+    }
+    return true;
   });
 });
+
 describe('makeArray', () => {
   it('keeps the order', () => {
     const fun = oar.makeArray(oar.makeString());
