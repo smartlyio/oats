@@ -33,8 +33,7 @@
     "@types/js-yaml": "^3.12.1",
     "js-yaml": "^3.13.1",
     "lodash": "^4.17.4",
-    "openapi3-ts": "^1.2.0",
-    "prettier": "^1.17.0"
+    "openapi3-ts": "^1.2.0"
   },
   "keywords": [
     "openapi3",
@@ -58,6 +57,7 @@
     "koa": "^2.3.0",
     "koa-body": "^4.0.4",
     "koa-router": "^7.2.1",
+    "prettier": "^1.18.2",
     "ts-jest": "^24.0.0",
     "ts-node-dev": "^1.0.0-pre.24",
     "tslint": "^5.7.0",
