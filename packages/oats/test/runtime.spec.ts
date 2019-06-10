@@ -176,6 +176,11 @@ describe('makeObject', () => {
     const fun = oar.makeObject({ a: oar.makeNumber() }, oar.makeString());
     expect(fun({ a: 1 }).success()).toEqual({ a: 1 });
   });
+
+  it('allows undefined props', () => {
+    const fun = oar.makeObject({ a: oar.makeOptional(oar.makeNumber()) });
+    expect(fun({ a: undefined }).success()).toEqual({});
+  });
 });
 
 describe('ValueClass', () => {
