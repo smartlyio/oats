@@ -4,6 +4,15 @@
     "tslint-config-prettier",
     "tslint-plugin-prettier"
   ],
+  "linterOptions": {
+    "exclude": [
+      "tmp/*",
+      "dist/*",
+      "examples/*",
+      "node_modules/*",
+      "render.ts"
+    ]
+  },
   "rules": {
     "interface-name": false,
     "object-literal-sort-keys": false,
