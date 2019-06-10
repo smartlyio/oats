@@ -4,14 +4,14 @@ import * as driver from '../src/driver';
 import * as path from 'path';
 
 function randomString() {
-    return (
-        Math.random()
-            .toString(36)
-            .substring(2, 15) +
-        Math.random()
-            .toString(36)
-            .substring(2, 15)
-    );
+  return (
+    Math.random()
+      .toString(36)
+      .substring(2, 15) +
+    Math.random()
+      .toString(36)
+      .substring(2, 15)
+  );
 }
 describe('type generation', () => {
   let config: driver.Driver;

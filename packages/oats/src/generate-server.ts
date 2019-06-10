@@ -1,10 +1,10 @@
-import * as oas from "openapi3-ts";
-import * as ts from "typescript";
-import * as assert from "assert";
-import * as oautil from "./util";
-import * as server from "./server";
-import * as client from "./client";
-import safe from "@smartlyio/safe-navigation";
+import * as oas from 'openapi3-ts';
+import * as ts from 'typescript';
+import * as assert from 'assert';
+import * as oautil from './util';
+import * as server from './server';
+import * as client from './client';
+import safe from '@smartlyio/safe-navigation';
 
 function generateRuntimeImport(runtimeModule: string) {
   return ts.createNodeArray([
@@ -14,10 +14,7 @@ function generateRuntimeImport(runtimeModule: string) {
       ts.createImportClause(
         undefined,
         ts.createNamedImports([
-          ts.createImportSpecifier(
-            ts.createIdentifier("runtime"),
-            ts.createIdentifier("oar")
-          )
+          ts.createImportSpecifier(ts.createIdentifier('runtime'), ts.createIdentifier('oar'))
         ])
       ),
       ts.createStringLiteral(runtimeModule)
@@ -30,21 +27,18 @@ function generateImport(as: string, module: string) {
     ts.createImportDeclaration(
       undefined,
       undefined,
-      ts.createImportClause(
-        undefined,
-        ts.createNamespaceImport(ts.createIdentifier(as))
-      ),
+      ts.createImportClause(undefined, ts.createNamespaceImport(ts.createIdentifier(as))),
       ts.createStringLiteral(module)
     )
   ]);
 }
 
 function fromRuntime(name: string) {
-  return ts.createQualifiedName(ts.createIdentifier("oar"), name);
+  return ts.createQualifiedName(ts.createIdentifier('oar'), name);
 }
 
 function fromTypes(name: string) {
-  return ts.createQualifiedName(ts.createIdentifier("types"), name);
+  return ts.createQualifiedName(ts.createIdentifier('types'), name);
 }
 
 const readonly = [ts.createModifier(ts.SyntaxKind.ReadonlyKeyword)];
@@ -55,44 +49,36 @@ function generateMethod<S extends oas.OperationObject, K extends keyof S>(
   schema: S,
   opts: Options
 ) {
-  assert(!schema.security, "security not supported");
+  assert(!schema.security, 'security not supported');
   const params = ts.createTypeReferenceNode(
     fromTypes(
-      (opts.shapesAsRequests ? "ShapeOf" : "") +
-        oautil.typenamify(
-          oautil.endpointTypeName(schema, path, method, "parameters")
-        )
+      (opts.shapesAsRequests ? 'ShapeOf' : '') +
+        oautil.typenamify(oautil.endpointTypeName(schema, path, method, 'parameters'))
     ),
     []
   );
   const query = ts.createTypeReferenceNode(
     fromTypes(
-      (opts.shapesAsRequests ? "ShapeOf" : "") +
-        oautil.typenamify(
-          oautil.endpointTypeName(schema, path, method, "query")
-        )
+      (opts.shapesAsRequests ? 'ShapeOf' : '') +
+        oautil.typenamify(oautil.endpointTypeName(schema, path, method, 'query'))
     ),
     []
   );
   const body = ts.createTypeReferenceNode(
     fromTypes(
-      (opts.shapesAsRequests ? "ShapeOf" : "") +
-        oautil.typenamify(
-          oautil.endpointTypeName(schema, path, method, "requestBody")
-        )
+      (opts.shapesAsRequests ? 'ShapeOf' : '') +
+        oautil.typenamify(oautil.endpointTypeName(schema, path, method, 'requestBody'))
     ),
     []
   );
   const response = ts.createTypeReferenceNode(
     fromTypes(
-      (opts.shapesAsResponses ? "ShapeOf" : "") +
-        oautil.typenamify(
-          oautil.endpointTypeName(schema, path, method, "response")
-        )
+      (opts.shapesAsResponses ? 'ShapeOf' : '') +
+        oautil.typenamify(oautil.endpointTypeName(schema, path, method, 'response'))
     ),
     []
   );
-  return ts.createTypeReferenceNode(fromRuntime("server.Endpoint"), [
+  return ts.createTypeReferenceNode(fromRuntime('server.Endpoint'), [
     params,
     query,
     body,
@@ -100,17 +86,13 @@ function generateMethod<S extends oas.OperationObject, K extends keyof S>(
   ]);
 }
 
-function generateEndpoint(
-  path: string,
-  schema: oas.PathItemObject,
-  opts: Options
-) {
-  assert(!schema.$ref, "$ref in path not supported");
-  assert(!schema.parameters, "parameters in path not supported");
+function generateEndpoint(path: string, schema: oas.PathItemObject, opts: Options) {
+  assert(!schema.$ref, '$ref in path not supported');
+  assert(!schema.parameters, 'parameters in path not supported');
   return ts.createTypeLiteralNode(
     server.supportedMethods.reduce(
       (memo, method) =>
-        oautil.errorTag("in method " + method.toUpperCase(), () => {
+        oautil.errorTag('in method ' + method.toUpperCase(), () => {
           const methodHandler = schema[method];
           if (!methodHandler) {
             return memo;
@@ -135,35 +117,29 @@ function generateClientMethod(
   method: string,
   op: oas.OperationObject
 ): ts.TypeNode {
-  assert(!op.security, "security not supported");
+  assert(!op.security, 'security not supported');
   const query = ts.createTypeReferenceNode(
     fromTypes(
-      (opts.shapesAsRequests ? "ShapeOf" : "") +
-        oautil.typenamify(oautil.endpointTypeName(op, path, method, "query"))
+      (opts.shapesAsRequests ? 'ShapeOf' : '') +
+        oautil.typenamify(oautil.endpointTypeName(op, path, method, 'query'))
     ),
     []
   );
   const body = ts.createTypeReferenceNode(
     fromTypes(
-      (opts.shapesAsRequests ? "ShapeOf" : "") +
-        oautil.typenamify(
-          oautil.endpointTypeName(op, path, method, "requestBody")
-        )
+      (opts.shapesAsRequests ? 'ShapeOf' : '') +
+        oautil.typenamify(oautil.endpointTypeName(op, path, method, 'requestBody'))
     ),
     []
   );
   const response = ts.createTypeReferenceNode(
     fromTypes(
-      (opts.shapesAsResponses ? "ShapeOf" : "") +
-        oautil.typenamify(oautil.endpointTypeName(op, path, method, "response"))
+      (opts.shapesAsResponses ? 'ShapeOf' : '') +
+        oautil.typenamify(oautil.endpointTypeName(op, path, method, 'response'))
     ),
     []
   );
-  return ts.createTypeReferenceNode(fromRuntime("client.ClientEndpoint"), [
-    query,
-    body,
-    response
-  ]);
+  return ts.createTypeReferenceNode(fromRuntime('client.ClientEndpoint'), [query, body, response]);
 }
 
 function generateClientTree(
@@ -191,14 +167,10 @@ function generateClientTree(
   }
   Object.keys(tree.methods).forEach(method => {
     const type: ts.TypeNode = tree.methods[method];
-    members.push(
-      ts.createPropertySignature(readonly, method, undefined, type, undefined)
-    );
+    members.push(ts.createPropertySignature(readonly, method, undefined, type, undefined));
   });
   Object.keys(tree.parts).forEach(part => {
-    const pathPart = /[^a-zA-Z_0-9]/.test(part)
-      ? ts.createStringLiteral(part)
-      : part;
+    const pathPart = /[^a-zA-Z_0-9]/.test(part) ? ts.createStringLiteral(part) : part;
     members.push(
       ts.createPropertySignature(
         readonly,
@@ -212,36 +184,30 @@ function generateClientTree(
   return members;
 }
 
-function generateClientSpecType(
-  opts: Options,
-  tree: client.OpTree<ts.TypeNode>
-) {
+function generateClientSpecType(opts: Options, tree: client.OpTree<ts.TypeNode>) {
   return ts.createTypeLiteralNode(generateClientTree(opts, tree));
 }
 
 function generateClientSpec(opts: Options) {
-  const tree: client.OpTree<ts.TypeNode> = Object.keys(opts.oas.paths).reduce(
-    (memo, path) => {
-      const endpoint = opts.oas.paths[path];
-      return server.supportedMethods.reduce((memo, method) => {
-        if (endpoint[method]) {
-          return client.addPath(
-            memo,
-            path,
-            method,
-            generateClientMethod(opts, path, method, endpoint[method])
-          );
-        }
-        return memo;
-      }, memo);
-    },
-    client.emptyTree<ts.TypeNode>()
-  );
+  const tree: client.OpTree<ts.TypeNode> = Object.keys(opts.oas.paths).reduce((memo, path) => {
+    const endpoint = opts.oas.paths[path];
+    return server.supportedMethods.reduce((memo, method) => {
+      if (endpoint[method]) {
+        return client.addPath(
+          memo,
+          path,
+          method,
+          generateClientMethod(opts, path, method, endpoint[method])
+        );
+      }
+      return memo;
+    }, memo);
+  }, client.emptyTree<ts.TypeNode>());
   return ts.createNodeArray([
     ts.createInterfaceDeclaration(
       undefined,
       [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
-      "ClientSpec",
+      'ClientSpec',
       undefined,
       undefined,
       generateClientTree(opts, tree)
@@ -252,7 +218,7 @@ function generateClientSpec(opts: Options) {
 function generateEndpointsType(opts: Options) {
   const members = Object.keys(opts.oas.paths).map(path => {
     const endpoint: oas.PathItemObject = opts.oas.paths[path];
-    return oautil.errorTag("in endpoint " + path, () => {
+    return oautil.errorTag('in endpoint ' + path, () => {
       const type = generateEndpoint(path, endpoint, opts);
       return ts.createPropertySignature(
         readonly,
@@ -267,7 +233,7 @@ function generateEndpointsType(opts: Options) {
     ts.createInterfaceDeclaration(
       undefined,
       [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
-      "Endpoints",
+      'Endpoints',
       undefined,
       undefined,
       members
@@ -275,10 +241,7 @@ function generateEndpointsType(opts: Options) {
   ]);
 }
 function makeMaker(type: string): ts.Expression {
-  return ts.createPropertyAccess(
-    ts.createIdentifier("types"),
-    "make" + oautil.typenamify(type)
-  );
+  return ts.createPropertyAccess(ts.createIdentifier('types'), 'make' + oautil.typenamify(type));
 }
 
 function generateMaker(
@@ -292,30 +255,22 @@ function generateMaker(
   if (object.servers) {
     servers = object.servers.map(server => server.url);
   }
-  const params = makeMaker(
-    oautil.endpointTypeName(object, path, method, "parameters")
-  );
-  const query = makeMaker(
-    oautil.endpointTypeName(object, path, method, "query")
-  );
-  const body = makeMaker(
-    oautil.endpointTypeName(object, path, method, "requestBody")
-  );
-  const response = makeMaker(
-    oautil.endpointTypeName(object, path, method, "response")
-  );
+  const params = makeMaker(oautil.endpointTypeName(object, path, method, 'parameters'));
+  const query = makeMaker(oautil.endpointTypeName(object, path, method, 'query'));
+  const body = makeMaker(oautil.endpointTypeName(object, path, method, 'requestBody'));
+  const response = makeMaker(oautil.endpointTypeName(object, path, method, 'response'));
   return ts.createObjectLiteral(
     [
-      ts.createPropertyAssignment("path", ts.createStringLiteral(path)),
-      ts.createPropertyAssignment("method", ts.createStringLiteral(method)),
+      ts.createPropertyAssignment('path', ts.createStringLiteral(path)),
+      ts.createPropertyAssignment('method', ts.createStringLiteral(method)),
       ts.createPropertyAssignment(
-        "servers",
+        'servers',
         ts.createArrayLiteral(servers.map(ts.createStringLiteral))
       ),
-      ts.createPropertyAssignment("query", query),
-      ts.createPropertyAssignment("body", body),
-      ts.createPropertyAssignment("params", params),
-      ts.createPropertyAssignment("response", response)
+      ts.createPropertyAssignment('query', query),
+      ts.createPropertyAssignment('body', body),
+      ts.createPropertyAssignment('params', params),
+      ts.createPropertyAssignment('response', response)
     ],
     true
   );
@@ -341,13 +296,10 @@ function generateHandler(schema: oas.OpenAPIObject, opts: Options) {
     ts.createVariableDeclarationList(
       [
         ts.createVariableDeclaration(
-          "endpointHandlers",
+          'endpointHandlers',
           ts.createArrayTypeNode(
             ts.createTypeReferenceNode(
-              ts.createQualifiedName(
-                ts.createIdentifier("oar"),
-                "server.Handler"
-              ),
+              ts.createQualifiedName(ts.createIdentifier('oar'), 'server.Handler'),
               []
             )
           ),
@@ -369,21 +321,15 @@ export function generateRouter() {
     ts.createVariableDeclarationList(
       [
         ts.createVariableDeclaration(
-          "router",
+          'router',
           ts.createTypeReferenceNode(
-            ts.createQualifiedName(
-              ts.createIdentifier("oar"),
-              "server.HandlerFactory"
-            ),
-            [ts.createTypeReferenceNode("Endpoints", [])]
+            ts.createQualifiedName(ts.createIdentifier('oar'), 'server.HandlerFactory'),
+            [ts.createTypeReferenceNode('Endpoints', [])]
           ),
           ts.createCall(
-            ts.createPropertyAccess(
-              ts.createIdentifier("oar"),
-              "server.createHandlerFactory"
-            ),
+            ts.createPropertyAccess(ts.createIdentifier('oar'), 'server.createHandlerFactory'),
             undefined,
-            [ts.createIdentifier("endpointHandlers")]
+            [ts.createIdentifier('endpointHandlers')]
           )
         )
       ],
@@ -398,21 +344,15 @@ export function generateClient() {
     ts.createVariableDeclarationList(
       [
         ts.createVariableDeclaration(
-          "client",
+          'client',
           ts.createTypeReferenceNode(
-            ts.createQualifiedName(
-              ts.createIdentifier("oar"),
-              "client.ClientFactory"
-            ),
-            [ts.createTypeReferenceNode("ClientSpec", [])]
+            ts.createQualifiedName(ts.createIdentifier('oar'), 'client.ClientFactory'),
+            [ts.createTypeReferenceNode('ClientSpec', [])]
           ),
           ts.createCall(
-            ts.createPropertyAccess(
-              ts.createIdentifier("oar"),
-              "client.createClientFactory"
-            ),
+            ts.createPropertyAccess(ts.createIdentifier('oar'), 'client.createClientFactory'),
             undefined,
-            [ts.createIdentifier("endpointHandlers")]
+            [ts.createIdentifier('endpointHandlers')]
           )
         )
       ],
@@ -434,7 +374,7 @@ export function run(opts: Options) {
   const typemodule = opts.typePath;
 
   const runtime = generateRuntimeImport(runtimeModule);
-  const types = generateImport("types", typemodule);
+  const types = generateImport('types', typemodule);
   const endpoints = generateEndpointsType(opts);
   const clientSpec = generateClientSpec(opts);
   const handler = generateHandler(opts.oas, opts);
@@ -442,8 +382,8 @@ export function run(opts: Options) {
   const client = generateClient();
 
   const sourceFile: ts.SourceFile = ts.createSourceFile(
-    "test.ts",
-    "",
+    'test.ts',
+    '',
     ts.ScriptTarget.ES2015,
     true,
     ts.ScriptKind.TS
