@@ -397,7 +397,7 @@ export function makeObject<
     for (const index of Object.keys(props)) {
       let maker: any = props[index];
       if (maker.optional) {
-        if (!(index in value)) {
+        if (!(index in value) || value[index] === undefined) {
           continue;
         }
         maker = maker.optional;
