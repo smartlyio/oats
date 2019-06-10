@@ -166,7 +166,7 @@ function createTree(handlers: Handler[]): CheckingTree {
 
 function koaAdapter(router: Router): ServerAdapter {
   return (path: string, op: string, method: Methods, handler: SafeEndpoint) => {
-    const koaPath = path.replace(/{([^}]+)}/g, (m, param) => ":" + param);
+    const koaPath = path.replace(/{([^}]+)}/g, (m, param) => ':' + param);
     (router as any)[method](koaPath, async (ctx: Koa.Context) => {
       const files = (ctx as any).request.files;
       let fileFields = {};

@@ -17,7 +17,11 @@ type WritableObject<T> = { -readonly [P in keyof T]: Writable<T[P]> };
 type Fun = (...a: any[]) => any;
 export type Writable<T> = T extends ReadonlyArray<infer R>
   ? WritableArray<R>
-  : T extends Fun ? T : T extends object ? WritableObject<T> : T;
+  : T extends Fun
+  ? T
+  : T extends object
+  ? WritableObject<T>
+  : T;
 
 function asPlainObject(value: any): any {
   if (Array.isArray(value)) {
