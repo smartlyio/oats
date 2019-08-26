@@ -95,7 +95,7 @@ export const axiosAdapter: ClientAdapter = async (
   const params = axiosToJson(arg.query);
   const data = toAxiosData(arg.body);
   const url = server + arg.path;
-  const headers = arg.headers;
+  const headers = { ...arg.headers, ...(data instanceof FormData ? data.getHeaders() : {}) };
   const response = await axios.request({
     method: arg.method,
     headers,
@@ -243,9 +243,9 @@ function makeMethod(adapter: ClientAdapter, handler: server.Handler, pathParams:
       servers: handler.servers,
       method: handler.method,
       params,
-      headers: ((ctx || {}) as { headers?: any }).headers,
-      query: ((ctx || {}) as { query?: any }).query,
-      body: ((ctx || {}) as { body?: any }).body
+      headers: safe(ctx ).headers.$,
+      query: safe(ctx).query.$,
+      body: safe(ctx).body.$
     });
 }
 

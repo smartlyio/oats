@@ -99,7 +99,7 @@ function throwResponseValidationError(tag: string, originalValue: any, e: oar.Ma
   return null as any;
 }
 
-function lowercaseObject(o?: {} | undefined | null) {
+function lowercaseObject(o: {} | undefined | null): {} | null | undefined {
   if (o == null) {
     return o;
   }
@@ -117,7 +117,7 @@ function voidify(value: {} | undefined | null) {
   return null;
 }
 
-function cleanHeaders<H>(maker: oar.Maker<any, H>, headers: {} | null | undefined) {
+function cleanHeaders<H>(maker: oar.Maker<any, H>, headers: {}) {
   const normalized = voidify(lowercaseObject(headers));
   const acceptsNull = maker(null);
   if (acceptsNull.isSuccess()) {
