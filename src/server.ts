@@ -119,16 +119,13 @@ function voidify(value: {} | undefined | null) {
 
 function cleanHeaders<H>(maker: oar.Maker<any, H>, headers: {} | null | undefined) {
   const normalized = voidify(lowercaseObject(headers));
-  const made = maker(normalized, {
-    unknownField: 'drop'
-  });
-  if (made.isSuccess()) {
-    return made.success();
+  const acceptsNull = maker(null);
+  if (acceptsNull.isSuccess()) {
+    return acceptsNull.success();
   }
-  const maybeEmpty = oar
-    .makeObject({})(normalized, { unknownField: 'drop' })
-    .success(throwRequestValidationError.bind(null, 'headers'));
-  return maker(voidify(maybeEmpty)).success(throwRequestValidationError.bind(null, 'headers'));
+  return maker(normalized, {
+    unknownField: 'drop'
+  }).success(throwRequestValidationError.bind(null, 'headers'));
 }
 
 export function safe<
