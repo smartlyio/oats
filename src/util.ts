@@ -37,7 +37,7 @@ export function errorTag<T>(tag: string, fn: () => T): T {
   }
 }
 
-type QueryTags = 'query' | 'parameters' | 'requestBody' | 'response' | 'response';
+type QueryTags = 'query' | 'parameters' | 'requestBody' | 'response' | 'response' | 'headers';
 export function endpointTypeName(
   op: oas.OperationObject,
   path: string,

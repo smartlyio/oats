@@ -50,6 +50,13 @@ function generateMethod<S extends oas.OperationObject, K extends keyof S>(
   opts: Options
 ) {
   assert(!schema.security, 'security not supported');
+  const headers = ts.createTypeReferenceNode(
+    fromTypes(
+      (opts.shapesAsRequests ? 'ShapeOf' : '') +
+        oautil.typenamify(oautil.endpointTypeName(schema, path, method, 'headers'))
+    ),
+    []
+  );
   const params = ts.createTypeReferenceNode(
     fromTypes(
       (opts.shapesAsRequests ? 'ShapeOf' : '') +
@@ -79,6 +86,7 @@ function generateMethod<S extends oas.OperationObject, K extends keyof S>(
     []
   );
   return ts.createTypeReferenceNode(fromRuntime('server.Endpoint'), [
+    headers,
     params,
     query,
     body,
@@ -118,6 +126,13 @@ function generateClientMethod(
   op: oas.OperationObject
 ): ts.TypeNode {
   assert(!op.security, 'security not supported');
+  const headers = ts.createTypeReferenceNode(
+    fromTypes(
+      (opts.shapesAsRequests ? 'ShapeOf' : '') +
+        oautil.typenamify(oautil.endpointTypeName(op, path, method, 'headers'))
+    ),
+    []
+  );
   const query = ts.createTypeReferenceNode(
     fromTypes(
       (opts.shapesAsRequests ? 'ShapeOf' : '') +
@@ -139,7 +154,12 @@ function generateClientMethod(
     ),
     []
   );
-  return ts.createTypeReferenceNode(fromRuntime('client.ClientEndpoint'), [query, body, response]);
+  return ts.createTypeReferenceNode(fromRuntime('client.ClientEndpoint'), [
+    headers,
+    query,
+    body,
+    response
+  ]);
 }
 
 function generateClientTree(
@@ -255,6 +275,7 @@ function generateMaker(
   if (object.servers) {
     servers = object.servers.map(server => server.url);
   }
+  const headers = makeMaker(oautil.endpointTypeName(object, path, method, 'headers'));
   const params = makeMaker(oautil.endpointTypeName(object, path, method, 'parameters'));
   const query = makeMaker(oautil.endpointTypeName(object, path, method, 'query'));
   const body = makeMaker(oautil.endpointTypeName(object, path, method, 'requestBody'));
@@ -267,6 +288,7 @@ function generateMaker(
         'servers',
         ts.createArrayLiteral(servers.map(ts.createStringLiteral))
       ),
+      ts.createPropertyAssignment('headers', headers),
       ts.createPropertyAssignment('query', query),
       ts.createPropertyAssignment('body', body),
       ts.createPropertyAssignment('params', params),

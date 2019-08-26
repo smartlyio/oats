@@ -20,11 +20,17 @@ export interface RequestBody<A> {
 export interface Params {
   [param: string]: unknown;
 }
+
+export interface Headers {
+  [key: string]: unknown;
+}
+
 export interface Query {
   [key: string]: unknown;
 }
 
 export interface EndpointArg<
+  H extends Headers | void,
   P extends Params | void,
   Q extends Query | void,
   Body extends RequestBody<any> | void
@@ -33,18 +39,21 @@ export interface EndpointArg<
   method: Methods;
   servers: string[];
   op?: string;
+  headers: H;
   params: P;
   query: Q;
   body: Body;
 }
 export type Endpoint<
+  H extends Headers | void,
   P extends Params | void,
   Q extends Query | void,
   Body extends RequestBody<any> | void,
   R extends Response<number, any, any>
-> = (ctx: EndpointArg<P, Q, Body>) => Promise<R>;
+> = (ctx: EndpointArg<H, P, Q, Body>) => Promise<R>;
 
 export type SafeEndpoint = Endpoint<
+  Headers | undefined,
   Params | undefined,
   Query | undefined,
   RequestBody<any> | undefined,
@@ -90,31 +99,59 @@ function throwResponseValidationError(tag: string, originalValue: any, e: oar.Ma
   return null as any;
 }
 
-function voidify(value: {} | undefined) {
-  if (value == null || Object.keys(value).length > 0) {
+function lowercaseObject(o?: {} | undefined | null) {
+  if (o == null) {
+    return o;
+  }
+  const result: any = {};
+  for (const key of Object.keys(o)) {
+    result[key.toLowerCase()] = (o as any)[key];
+  }
+  return result;
+}
+
+function voidify(value: {} | undefined | null) {
+  if (value && Object.keys(value).length > 0) {
     return value;
   }
   return null;
 }
 
+function cleanHeaders<H>(maker: oar.Maker<any, H>, headers: {} | null | undefined) {
+  const normalized = voidify(lowercaseObject(headers));
+  const made = maker(normalized, {
+    unknownField: 'drop'
+  });
+  if (made.isSuccess()) {
+    return made.success();
+  }
+  const maybeEmpty = oar
+    .makeObject({})(normalized, { unknownField: 'drop' })
+    .success(throwRequestValidationError.bind(null, 'headers'));
+  return maker(voidify(maybeEmpty)).success(throwRequestValidationError.bind(null, 'headers'));
+}
+
 export function safe<
+  H extends Headers,
   P extends Params,
   Q extends Query,
   Body extends RequestBody<any>,
   R extends Response<any, any, any>
 >(
+  headers: oar.Maker<any, H>,
   params: oar.Maker<any, P>,
   query: oar.Maker<any, Q>,
   body: oar.Maker<any, Body>,
   response: oar.Maker<any, R>,
-  endpoint: Endpoint<P, Q, Body, R>
-): Endpoint<Params, Query, RequestBody<any>, Response<number, any, any>> {
+  endpoint: Endpoint<H, P, Q, Body, R>
+): Endpoint<Headers, Params, Query, RequestBody<any>, Response<number, any, any>> {
   return async ctx => {
     const result = await endpoint({
       path: ctx.path,
       method: ctx.method,
       servers: ctx.servers,
       op: ctx.op,
+      headers: cleanHeaders(headers, ctx.headers),
       params: params(voidify(ctx.params)).success(throwRequestValidationError.bind(this, 'params')),
       query: query(voidify(ctx.query)).success(throwRequestValidationError.bind(this, 'query')),
       body: body(voidify(ctx.body)).success(throwRequestValidationError.bind(this, 'body'))
@@ -133,7 +170,7 @@ type AnyMaker = oar.Maker<any, any>;
 interface CheckingTree {
   [path: string]: {
     [method: string]: {
-      safeHandler: (e: Endpoint<any, any, any, any>) => SafeEndpoint;
+      safeHandler: (e: Endpoint<any, any, any, any, any>) => SafeEndpoint;
       op: string;
     };
   };
@@ -144,6 +181,7 @@ export interface Handler {
   path: string;
   servers: string[];
   method: Methods;
+  headers: AnyMaker;
   query: AnyMaker;
   body: AnyMaker;
   params: AnyMaker;
@@ -156,8 +194,8 @@ function createTree(handlers: Handler[]): CheckingTree {
       memo[element.path] = {};
     }
     memo[element.path][element.method] = {
-      safeHandler: (e: Endpoint<any, any, any, any>) =>
-        safe(element.params, element.query, element.body, element.response, e),
+      safeHandler: (e: Endpoint<any, any, any, any, any>) =>
+        safe(element.headers, element.params, element.query, element.body, element.response, e),
       op: element.op
     };
     return memo;
@@ -184,6 +222,7 @@ function koaAdapter(router: Router): ServerAdapter {
         method: assertMethod(ctx.method.toLowerCase()),
         servers: [],
         op,
+        headers: ctx.request.headers,
         params: ctx.params,
         query: ctx.query,
         body

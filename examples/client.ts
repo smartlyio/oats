@@ -8,16 +8,21 @@ import * as app from "./server";
 const apiClient = api.client(client.axiosAdapter);
 async function runClient() {
   try {
-    const posted = await apiClient.item.post({
-      body: client.json({ id: "id", name: "name" })
+      const posted = await apiClient.item.post({
+          headers: {
+              authorization: 'Bearer ^-^'
+          },
+          body: client.json({ id: "id", name: "name" })
     });
     if (posted.status === 201) {
-      const got = await apiClient.item(posted.value.value.id).get({});
+      const got = await apiClient.item(posted.value.value.id).get();
       if (got.status === 200 && got.value.value.id === "id") {
         process.exit(0);
       }
     }
-  } catch (e) {}
+  } catch (e) {
+      console.log('Got error', e);
+  }
   process.exit(1);
 }
 

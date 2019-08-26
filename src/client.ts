@@ -5,23 +5,26 @@ import axios from 'axios';
 import * as runtime from './runtime';
 import * as FormData from 'form-data';
 
-type QueryProp<Q, R> = Q extends void ? R : { query: Q } & R;
-type BodyProp<B> = B extends void ? {} : { body: B };
+type HeaderProp<H, Next> = H extends void ? Next : { headers: H } & Next;
+type QueryProp<Q, Next> = Q extends void ? Next : { query: Q } & Next;
+type BodyProp<B> = B extends void ? void : { body: B };
 
 export type ClientArg<
+  H extends server.Headers | void,
   Q extends server.Query | void,
   B extends server.RequestBody<any> | void
-> = QueryProp<Q, BodyProp<B>>;
+> = HeaderProp<H, QueryProp<Q, BodyProp<B>>>;
 
 export type ClientEndpoint<
+  H extends server.Headers | void,
   Q extends server.Query | void,
   B extends server.RequestBody<any> | void,
   R extends server.Response<number, any, any>
-> = (ctx: ClientArg<Q, B>) => Promise<R>;
+> = ClientArg<H, Q, B> extends void ? () => Promise<R> : (ctx: ClientArg<H, Q, B>) => Promise<R>;
 
-type PathParam = (param: string) => ClientSpec | ClientEndpoint<any, any, any>;
+type PathParam = (param: string) => ClientSpec | ClientEndpoint<any, any, any, any>;
 export interface ClientSpec {
-  readonly [part: string]: ClientSpec | PathParam | ClientEndpoint<any, any, any>;
+  readonly [part: string]: ClientSpec | PathParam | ClientEndpoint<any, any, any, any>;
 }
 
 export type ClientAdapter = server.SafeEndpoint;
@@ -83,7 +86,7 @@ function axiosToJson(data: any) {
 }
 
 export const axiosAdapter: ClientAdapter = async (
-  arg: server.EndpointArg<any, any, any>
+  arg: server.EndpointArg<any, any, any, any>
 ): Promise<any> => {
   if (arg.servers.length !== 1) {
     return assert.fail('cannot decide which server to use from ' + arg.servers.join(', '));
@@ -92,8 +95,10 @@ export const axiosAdapter: ClientAdapter = async (
   const params = axiosToJson(arg.query);
   const data = toAxiosData(arg.body);
   const url = server + arg.path;
+  const headers = arg.headers;
   const response = await axios.request({
     method: arg.method,
+    headers,
     url,
     params,
     data,
@@ -223,17 +228,24 @@ function fillInPathParams(params: { [key: string]: string }, path: string) {
 
 function makeMethod(adapter: ClientAdapter, handler: server.Handler, pathParams: string[]) {
   const params = paramObject(pathParams, handler.path);
-  const call = server.safe(handler.params, handler.query, handler.body, handler.response, ctx =>
-    adapter({ ...ctx, path: fillInPathParams(params, handler.path), servers: handler.servers })
+  const call = server.safe(
+    handler.headers,
+    handler.params,
+    handler.query,
+    handler.body,
+    handler.response,
+    ctx =>
+      adapter({ ...ctx, path: fillInPathParams(params, handler.path), servers: handler.servers })
   );
-  return (ctx: ClientArg<any, any>) =>
+  return (ctx: ClientArg<any, any, any>) =>
     call({
       path: handler.path,
       servers: handler.servers,
       method: handler.method,
       params,
-      query: (ctx as { query?: any }).query,
-      body: (ctx as { body?: any }).body
+      headers: ((ctx || {}) as { headers?: any }).headers,
+      query: ((ctx || {}) as { query?: any }).query,
+      body: ((ctx || {}) as { body?: any }).body
     });
 }
 
