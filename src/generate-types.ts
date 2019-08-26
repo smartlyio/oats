@@ -149,6 +149,7 @@ function generateParameterType(
   }
   const jointSchema: oas.SchemaObject = {
     type: 'object',
+    additionalProperties: false,
     required: pathParams.map(param => param.name),
     properties: pathParams.reduce((memo: any, param) => {
       memo[normalize(param.name)] = param.schema;
