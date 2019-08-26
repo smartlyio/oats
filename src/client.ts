@@ -7,7 +7,7 @@ import * as FormData from 'form-data';
 
 type HeaderProp<H, Next> = H extends void ? Next : { headers: H } & Next;
 type QueryProp<Q, Next> = Q extends void ? Next : { query: Q } & Next;
-type BodyProp<B> = B extends void ? void : { body: B };
+type BodyProp<B> = B extends void ? {} : { body: B };
 
 export type ClientArg<
   H extends server.Headers | void,
@@ -20,7 +20,7 @@ export type ClientEndpoint<
   Q extends server.Query | void,
   B extends server.RequestBody<any> | void,
   R extends server.Response<number, any, any>
-> = ClientArg<H, Q, B> extends void ? () => Promise<R> : (ctx: ClientArg<H, Q, B>) => Promise<R>;
+> = {} extends ClientArg<H, Q, B> ? () => Promise<R> : (ctx: ClientArg<H, Q, B>) => Promise<R>;
 
 type PathParam = (param: string) => ClientSpec | ClientEndpoint<any, any, any, any>;
 export interface ClientSpec {
