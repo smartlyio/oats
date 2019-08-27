@@ -167,6 +167,11 @@ describe('makeArray', () => {
 });
 
 describe('makeObject', () => {
+  it ('drops unknown properties if told to', () => {
+    const fun = oar.makeObject({ a: oar.makeNumber() });
+    expect(fun({ a: 1, missing: 'a' }, { unknownField: 'drop'}).success()).toEqual({ a: 1 });
+  });
+
   it('allows additional props', () => {
     const fun = oar.makeObject({}, oar.makeString());
     expect(fun({ a: 'xxx' }).success()).toEqual({ a: 'xxx' });
