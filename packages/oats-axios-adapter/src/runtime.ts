@@ -3,6 +3,7 @@ import * as assert from 'assert';
 import * as server from './server';
 import * as client from './client';
 import * as _ from 'lodash';
+import safe from '@smartlyio/safe-navigation';
 
 export type schema = oas.OpenAPIObject;
 export { server };
@@ -181,6 +182,7 @@ export class MakeError extends Error {
     );
   }
 }
+
 export interface ValidationError {
   path: Path;
   error: string;
@@ -248,7 +250,11 @@ export class Make<V> {
     return assert.fail('neither failed or succesfull make');
   }
 }
-export type Maker<Shape, V> = (value: Shape) => Make<V>;
+
+export interface MakeOptions {
+  unknownField?: 'drop' | 'fail';
+}
+export type Maker<Shape, V> = (value: Shape, opts?: MakeOptions) => Make<V>;
 
 function error<T>(error: string): Make<T> {
   return Make.error<T>([{ path: [], error }]);
@@ -328,14 +334,14 @@ export function makeBoolean() {
 }
 
 export function makeArray(maker: any) {
-  return (value: any) => {
+  return (value: any, opts?: MakeOptions) => {
     if (!Array.isArray(value)) {
       return error('expected an array');
     }
     const result = [];
     for (let index = 0; index < value.length; index++) {
       const item = value[index];
-      const mapped: Make<any> = maker(item);
+      const mapped: Make<any> = maker(item, opts);
       if (mapped.isError()) {
         return mapped.errorPath('[' + index + ']');
       }
@@ -346,7 +352,7 @@ export function makeArray(maker: any) {
 }
 
 export function makeOneOf(...options: any[]) {
-  return (value: any) => {
+  return (value: any, opts?: MakeOptions) => {
     let errors = [];
     if (options.length === 0) {
       errors.push(error('no options given for oneof'));
@@ -354,11 +360,11 @@ export function makeOneOf(...options: any[]) {
     let success;
     let preferredSuccess;
     for (const option of options) {
-      const mapped = option(value);
+      const mapped = option(value, opts);
       if (mapped.isSuccess()) {
         if (value instanceof ValueClass && mapped.success() === value) {
           if (preferredSuccess) {
-            return error('multiple options match');
+            return error('multiple preferred options match');
           }
           preferredSuccess = mapped;
         } else if (success) {
@@ -378,9 +384,9 @@ export function makeOneOf(...options: any[]) {
 }
 
 export function makeAllOf(...all: any[]) {
-  return (value: any) => {
+  return (value: any, opts?: MakeOptions) => {
     for (const make of all) {
-      const result: Make<any> = make(value);
+      const result: Make<any> = make(value, opts);
       if (result.isError()) {
         return result.errorPath('(allOf)');
       }
@@ -393,7 +399,7 @@ export function makeAllOf(...all: any[]) {
 export function makeObject<
   P extends { [key: string]: Maker<any, any> | { optional: Maker<any, any> } }
 >(props: P, additionalProp?: any) {
-  return (value: any) => {
+  return (value: any, opts?: MakeOptions) => {
     if (typeof value !== 'object' || value == null) {
       return error('expected an object');
     }
@@ -417,6 +423,9 @@ export function makeObject<
         continue;
       }
       if (!additionalProp) {
+        if (safe(opts).unknownField.$ === 'drop') {
+          continue;
+        }
         return error('unexpected property').errorPath(index);
       }
       const propResult: Make<any> = additionalProp(value[index]);
@@ -470,32 +479,32 @@ export function makeBinary() {
 }
 
 export function makeNullable(maker: any) {
-  return (value: any) => {
+  return (value: any, opts?: MakeOptions) => {
     if (value == null) {
       return Make.ok(value);
     }
-    return maker(value);
+    return maker(value, opts);
   };
 }
 
 export function createMaker<Shape, Type>(fun: () => any) {
   let cached: Maker<Shape, Type>;
-  return (value: Shape) => {
+  return (value: Shape, opts?: MakeOptions) => {
     if (!cached) {
       cached = fun();
     }
-    return cached(value);
+    return cached(value, opts);
   };
 }
 export function createMakerWith<Shape, Type>(
-  constructor: new (v: Shape) => Type
+  constructor: new (v: Shape, opts?: MakeOptions) => Type
 ): Maker<Shape, Type> {
-  return (value: Shape) => {
+  return (value: Shape, opts?: MakeOptions) => {
     if (value instanceof constructor) {
       return Make.ok(value);
     }
     try {
-      return Make.ok(new constructor(value));
+      return Make.ok(new constructor(value, opts));
     } catch (e) {
       if (e instanceof MakeError) {
         return Make.error(e.errors);
