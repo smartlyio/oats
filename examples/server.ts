@@ -23,6 +23,10 @@ const spec: api.Endpoints = {
     }
   },
   "/item/{id}": {
+    delete: async ctx => {
+      delete values[ctx.params.id];
+      return runtime.text(204, '');
+    },
     get: async ctx => {
       const item = values[ctx.params.id];
       if (item) {

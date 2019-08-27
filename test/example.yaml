@@ -35,6 +35,16 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
   /item/{id}:
+    delete:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContent'
     get:
       parameters:
         - name: id
@@ -56,6 +66,13 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 components:
+  responses:
+    NoContent:
+      description: success but no content
+      content:
+        text/plain:
+          schema:
+            type: string
   schemas:
     Item:
       type: object

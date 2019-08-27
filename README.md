@@ -30,6 +30,10 @@ const spec: api.Endpoints = {
     }
   },
   "/item/{id}": {
+    delete: async ctx => {
+      delete values[ctx.params.id];
+      return runtime.text(204, '');
+    },
     get: async ctx => {
       const item = values[ctx.params.id];
       if (item) {
@@ -67,33 +71,43 @@ export function createApp() {
 import * as api from "../tmp/client.generated";
 import { client } from "../index";
 import * as app from "./server";
+import * as assert from "assert";
 
 // 'api.client' is the abstract implementation of the client which is then
 // mapped to axios requests using 'axiosAdapter'
 const apiClient = api.client(client.axiosAdapter);
 async function runClient() {
-  try {
-      const posted = await apiClient.item.post({
-          headers: {
-              authorization: 'Bearer ^-^'
-          },
-          body: client.json({ id: "id", name: "name" })
+    const posted = await apiClient.item.post({
+        headers: {
+            authorization: 'Bearer ^-^'
+        },
+        body: client.json({ id: "id", name: "name" })
     });
-    if (posted.status === 201) {
-      const got = await apiClient.item(posted.value.value.id).get();
-      if (got.status === 200 && got.value.value.id === "id") {
-        process.exit(0);
-      }
+    if (posted.status !== 201) {
+        return assert.fail('wrong response');
     }
-  } catch (e) {
-      console.log('Got error', e);
-  }
-  process.exit(1);
+    const stored = await apiClient.item(posted.value.value.id).get();
+    if (stored.status !== 200) {
+        return assert.fail('wrong response');
+    }
+    assert(stored.value.value.id === 'id');
+
+    const  deleted = await apiClient.item(posted.value.value.id).delete();
+    assert(deleted.status === 204);
+    return;
 }
 
 // spin up the server
 const port = 12000;
-app.createApp().listen(port, runClient);
+app.createApp().listen(port, async () => {
+    try {
+        await runClient();
+        process.exit(0);
+    } catch(e) {
+        console.log(e);
+        process.exit(1);
+    }
+});
 
 ```
 
@@ -120,7 +134,7 @@ driver.generate({
   header: "/* tslint:disable variable-name only-arrow-functions*/",
   openapiFilePath: "./test/example.yaml",
   // Omit error responses  from the client response types
-  emitStatusCode: (code: number) => [200, 201].indexOf(code) >= 0
+  emitStatusCode: (code: number) => [200, 201, 204].indexOf(code) >= 0
 });
 
 ```

@@ -1,7 +1,7 @@
 import * as server from './server';
 import * as assert from 'assert';
 import safe from '@smartlyio/safe-navigation';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import * as runtime from './runtime';
 import * as FormData from 'form-data';
 
@@ -85,6 +85,21 @@ function axiosToJson(data: any) {
   return data;
 }
 
+function getContentType(response: AxiosResponse<any>) {
+  if (response.status === 204) {
+    return 'text/plain';
+  }
+  const type = response.headers['content-type'];
+  return type.split(';')[0].trim();
+}
+
+function getResponseData(response: AxiosResponse<any>) {
+  if (response.status === 204) {
+    return '';
+  }
+  return response.data;
+}
+
 export const axiosAdapter: ClientAdapter = async (
   arg: server.EndpointArg<any, any, any, any>
 ): Promise<any> => {
@@ -107,8 +122,8 @@ export const axiosAdapter: ClientAdapter = async (
   return {
     status: response.status,
     value: {
-      contentType: 'application/json',
-      value: response.data
+      contentType: getContentType(response),
+      value: getResponseData(response)
     }
   };
 };
@@ -243,7 +258,7 @@ function makeMethod(adapter: ClientAdapter, handler: server.Handler, pathParams:
       servers: handler.servers,
       method: handler.method,
       params,
-      headers: safe(ctx ).headers.$,
+      headers: safe(ctx).headers.$,
       query: safe(ctx).query.$,
       body: safe(ctx).body.$
     });
