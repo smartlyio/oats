@@ -130,30 +130,29 @@ function generateQueryType(
 }
 
 function generateParameterType(
+  type: 'path' | 'header',
   op: string,
   paramSchema: undefined | ReadonlyArray<oas.ParameterObject | oas.ReferenceObject>,
-  oasSchema: oas.OpenAPIObject
+  oasSchema: oas.OpenAPIObject,
+  normalize = (name: string) => name
 ) {
+  const empty = generateTopLevelType(op, { type: 'void' });
   if (!paramSchema) {
-    return generateTopLevelType(op, {
-      type: 'void'
-    });
+    return empty;
   }
   const schema = oautil.deref(paramSchema, oasSchema);
   const pathParams = schema
     .map(schema => oautil.deref(schema, oasSchema))
-    .filter(schema => schema.in === 'path');
+    .filter(schema => schema.in === type);
   if (pathParams.length === 0) {
-    return generateTopLevelType(op, {
-      type: 'void'
-    });
+    return empty;
   }
   const jointSchema: oas.SchemaObject = {
     type: 'object',
     additionalProperties: false,
     required: pathParams.map(param => param.name),
     properties: pathParams.reduce((memo: any, param) => {
-      memo[param.name] = param.schema;
+      memo[normalize(param.name)] = param.schema;
       return memo;
     }, {})
   };
@@ -305,9 +304,21 @@ function generateQueryTypes(opt: Options): ts.NodeArray<ts.Node> {
           )
         )
       );
+      oautil.errorTag(`in ${method.toUpperCase()} ${path} header`, () =>
+        response.push(
+          ...generateParameterType(
+            'header',
+            oautil.endpointTypeName(endpoint, path, method, 'headers'),
+            endpoint.parameters,
+            schema,
+            name => name.toLowerCase()
+          )
+        )
+      );
       oautil.errorTag(`in ${method.toUpperCase()} ${path} parameters`, () =>
         response.push(
           ...generateParameterType(
+            'path',
             oautil.endpointTypeName(endpoint, path, method, 'parameters'),
             endpoint.parameters,
             schema
@@ -446,6 +457,14 @@ function generateValueClass(key: string, schema: oas.SchemaObject) {
           'value',
           undefined,
           ts.createTypeReferenceNode('ShapeOf' + oautil.typenamify(key), [])
+        ),
+        ts.createParameter(
+          undefined,
+          undefined,
+          undefined,
+          'opts',
+          ts.createToken(ts.SyntaxKind.QuestionToken),
+          ts.createTypeReferenceNode(ts.createQualifiedName(klassifyLib, 'MakeOptions'), [])
         )
       ],
       undefined,
@@ -460,7 +479,8 @@ function generateValueClass(key: string, schema: oas.SchemaObject) {
               ts.createCall(
                 ts.createPropertyAccess(
                   ts.createCall(ts.createIdentifier('build' + oautil.typenamify(key)), undefined, [
-                    ts.createIdentifier('value')
+                    ts.createIdentifier('value'),
+                    ts.createIdentifier('opts')
                   ]),
                   ts.createIdentifier('success')
                 ),
@@ -487,6 +507,14 @@ function generateValueClass(key: string, schema: oas.SchemaObject) {
           'value',
           undefined,
           ts.createTypeReferenceNode('ShapeOf' + oautil.typenamify(key), [])
+        ),
+        ts.createParameter(
+          undefined,
+          undefined,
+          undefined,
+          'opts',
+          ts.createToken(ts.SyntaxKind.QuestionToken),
+          ts.createTypeReferenceNode(ts.createQualifiedName(klassifyLib, 'MakeOptions'), [])
         )
       ],
       ts.createTypeReferenceNode(fromLib(makeTypeTypeName), [
@@ -495,7 +523,8 @@ function generateValueClass(key: string, schema: oas.SchemaObject) {
       ts.createBlock([
         ts.createReturn(
           ts.createCall(ts.createIdentifier('make' + oautil.typenamify(key)), undefined, [
-            ts.createIdentifier('value')
+            ts.createIdentifier('value'),
+            ts.createIdentifier('opts')
           ])
         )
       ])
