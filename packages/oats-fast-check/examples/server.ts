@@ -12,6 +12,9 @@ const values: { [key: string]: types.Item } = {};
 const spec: api.Endpoints = {
   "/item": {
     post: async ctx => {
+      if (ctx.headers.authorization !== 'Bearer ^-^') {
+          return runtime.json(403, { message: 'Unauthorized'})
+      }
       values[ctx.body.value.id] = types.Item.make({
         id: ctx.body.value.id,
         name: ctx.body.value.name
@@ -20,6 +23,10 @@ const spec: api.Endpoints = {
     }
   },
   "/item/{id}": {
+    delete: async ctx => {
+      delete values[ctx.params.id];
+      return runtime.text(204, '');
+    },
     get: async ctx => {
       const item = values[ctx.params.id];
       if (item) {

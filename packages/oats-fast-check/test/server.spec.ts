@@ -3,7 +3,8 @@ import * as oar from '../src/runtime';
 
 describe('safe', () => {
   it('validates request and response', async () => {
-    const endpoint = server.safe<any, any, any, any>(
+    const endpoint = server.safe<any, any, any, any, any>(
+      oar.makeVoid(),
       oar.makeVoid(),
       oar.makeObject({ param: oar.makeNumber() }) as oar.Maker<any, any>,
       oar.makeVoid(),
@@ -24,6 +25,7 @@ describe('safe', () => {
       servers: ['https://example.com'],
       path: 'some/path',
       op: 'someOp',
+      headers: null as any,
       params: null as any,
       query: { param: 1 } as any,
       body: null as any
