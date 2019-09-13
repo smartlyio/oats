@@ -41,7 +41,7 @@ paths:
           in: path
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/ItemId'
       responses:
         '204':
           $ref: '#/components/responses/NoContent'
@@ -51,7 +51,7 @@ paths:
           in: path
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/ItemId'
       responses:
         '200':
           description: item found
@@ -74,6 +74,8 @@ components:
           schema:
             type: string
   schemas:
+    ItemId:
+      type: string
     Item:
       type: object
       required:
@@ -81,7 +83,7 @@ components:
         - name
       properties:
         id:
-          type: string
+          $ref: '#/components/schemas/ItemId'
         name:
           type: string
     Error:
