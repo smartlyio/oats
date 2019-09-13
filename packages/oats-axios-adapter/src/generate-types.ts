@@ -721,8 +721,12 @@ function generateObjectShape(key: string, schema: oas.SchemaObject) {
   );
 }
 
+function brandTypeName(key: string): string {
+  return 'BrandOf' + oautil.typenamify(key);
+}
+
 function generateBrand(key: string) {
-  return ts.createEnumDeclaration(undefined, undefined, 'BrandOf' + oautil.typenamify(key), []);
+  return ts.createEnumDeclaration(undefined, undefined, brandTypeName(key), []);
 }
 
 function generateTypeShape(key: string, schema: oas.SchemaObject) {
@@ -758,6 +762,20 @@ function generateTopLevelType(key: string, schema: oas.SchemaObject | oas.Refere
       generateTopLevelClassMaker(key, schema, oautil.typenamify(key))
     ];
   }
+  if (isScalar(schema)) {
+    return [
+      generateBrand(key),
+      ts.createTypeAliasDeclaration(
+        undefined,
+        [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
+        oautil.typenamify(key),
+        undefined,
+        typeWithBrand(key, generateType(schema))
+      ),
+      generateTypeShape(key, schema),
+      generateTopLevelMaker(key, schema)
+    ];
+  }
   return [
     ts.createTypeAliasDeclaration(
       undefined,
@@ -769,6 +787,17 @@ function generateTopLevelType(key: string, schema: oas.SchemaObject | oas.Refere
     generateTypeShape(key, schema),
     generateTopLevelMaker(key, schema)
   ];
+}
+
+function typeWithBrand(key: string, type: ts.TypeNode): ts.TypeNode {
+  return ts.createIntersectionTypeNode([
+    type,
+    ts.createTypeReferenceNode(brandTypeName(key), [])
+  ]);
+}
+
+function isScalar(schema: oas.SchemaObject): boolean {
+  return ['string', 'integer', 'number', 'boolean'].indexOf(schema.type || '') >= 0;
 }
 
 function generateComponentSchemas(oas: oas.OpenAPIObject): ts.Node[] {
