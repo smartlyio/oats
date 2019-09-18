@@ -418,7 +418,7 @@ function generateType(
 
 function generateStringType(format: string | undefined) {
   if (format === 'binary') {
-    return ts.createTypeReferenceNode(ts.createQualifiedName(klassifyLib, 'Binary'), []);
+    return ts.createTypeReferenceNode(ts.createQualifiedName(runtimeLibrary, 'Binary'), []);
   }
   return ts.createKeywordTypeNode(ts.SyntaxKind.StringKeyword);
 }
@@ -435,7 +435,7 @@ function generateValueClass(key: string, schema: oas.SchemaObject) {
       ts.createTypeReferenceNode(ts.createIdentifier('ShapeOf' + oautil.typenamify(key)), []),
       ts.createTypeReferenceNode(ts.createIdentifier('BrandOf' + oautil.typenamify(key)), [])
     ],
-    ts.createPropertyAccess(klassifyLib, 'ValueClass')
+    ts.createPropertyAccess(runtimeLibrary, 'ValueClass')
   );
   const shape = ts.createExpressionWithTypeArguments(
     [],
@@ -464,7 +464,7 @@ function generateValueClass(key: string, schema: oas.SchemaObject) {
           undefined,
           'opts',
           ts.createToken(ts.SyntaxKind.QuestionToken),
-          ts.createTypeReferenceNode(ts.createQualifiedName(klassifyLib, 'MakeOptions'), [])
+          ts.createTypeReferenceNode(ts.createQualifiedName(runtimeLibrary, 'MakeOptions'), [])
         )
       ],
       undefined,
@@ -514,7 +514,7 @@ function generateValueClass(key: string, schema: oas.SchemaObject) {
           undefined,
           'opts',
           ts.createToken(ts.SyntaxKind.QuestionToken),
-          ts.createTypeReferenceNode(ts.createQualifiedName(klassifyLib, 'MakeOptions'), [])
+          ts.createTypeReferenceNode(ts.createQualifiedName(runtimeLibrary, 'MakeOptions'), [])
         )
       ],
       ts.createTypeReferenceNode(fromLib(makeTypeTypeName), [
@@ -544,7 +544,7 @@ function generateValueClass(key: string, schema: oas.SchemaObject) {
 }
 
 function makeCall(fun: string, args: ReadonlyArray<ts.Expression>) {
-  return ts.createCall(ts.createPropertyAccess(klassifyLib, fun), undefined, args);
+  return ts.createCall(ts.createPropertyAccess(runtimeLibrary, fun), undefined, args);
 }
 
 function generateAdditionalPropertiesMaker(
@@ -790,7 +790,7 @@ function generateTopLevelType(key: string, schema: oas.SchemaObject | oas.Refere
 }
 
 function typeWithBrand(key: string, type: ts.TypeNode): ts.TypeNode {
-  return ts.createIntersectionTypeNode([
+  return ts.createTypeReferenceNode(ts.createQualifiedName(runtimeLibrary, 'Branded'), [
     type,
     ts.createTypeReferenceNode(brandTypeName(key), [])
   ]);
@@ -840,10 +840,10 @@ function generateComponents(oas: oas.OpenAPIObject): ts.NodeArray<ts.Node> {
 const makeTypeTypeName = 'Make';
 
 function fromLib(name: string) {
-  return ts.createQualifiedName(klassifyLib, name);
+  return ts.createQualifiedName(runtimeLibrary, name);
 }
 
-const klassifyLib = ts.createIdentifier('oar');
+const runtimeLibrary = ts.createIdentifier('oar');
 const readonly = [ts.createModifier(ts.SyntaxKind.ReadonlyKeyword)];
 
 function generateBuiltins(runtimeModule: string) {
@@ -854,7 +854,7 @@ function generateBuiltins(runtimeModule: string) {
       ts.createImportClause(
         undefined,
         ts.createNamedImports([
-          ts.createImportSpecifier(ts.createIdentifier('runtime'), klassifyLib)
+          ts.createImportSpecifier(ts.createIdentifier('runtime'), runtimeLibrary)
         ])
       ),
       ts.createStringLiteral(runtimeModule)
