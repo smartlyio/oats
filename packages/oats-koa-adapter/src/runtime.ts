@@ -9,6 +9,7 @@ export type schema = oas.OpenAPIObject;
 export { server };
 export { client };
 
+export type Branded<A, BrandTag> = A & Brand<BrandTag>;
 export class Brand<B> {
   // @ts-ignore
   private valueClassBrand: B; // branding, DO NOT ACCESS
@@ -37,7 +38,7 @@ function asPlainObject(value: any): any {
   return value;
 }
 
-export class ValueClass<Cls extends Shape, Shape, Brand> extends Brand<Brand> {}
+export class ValueClass<Cls extends Shape, Shape, BrandTag> extends Brand<BrandTag> {}
 
 export function toJSON<Cls extends ValueClass<any, Shape, any>, Shape>(
   value: Cls
