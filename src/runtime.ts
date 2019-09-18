@@ -9,7 +9,7 @@ export type schema = oas.OpenAPIObject;
 export { server };
 export { client };
 
-export type Branded<A, BrandTag> = A & BrandTag;
+export type Branded<A, BrandTag> = A & Brand<BrandTag>;
 export class Brand<B> {
   // @ts-ignore
   private valueClassBrand: B; // branding, DO NOT ACCESS
