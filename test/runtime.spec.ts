@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import * as assert from 'assert';
 
 interface ShapeOfTestClass {
-  a: ReadonlyArray<string>;
+  a: readonly string[];
   b: string;
 }
 class TestClass extends oar.ValueClass<TestClass, ShapeOfTestClass, 1> {
@@ -12,7 +12,7 @@ class TestClass extends oar.ValueClass<TestClass, ShapeOfTestClass, 1> {
     return makeTestClass(v);
   }
   public b: string;
-  public a: ReadonlyArray<string>;
+  public a: readonly string[];
   constructor(v: ShapeOfTestClass) {
     super();
     const value = oar

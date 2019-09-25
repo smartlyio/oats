@@ -11,7 +11,7 @@ function generateClassMembers(
   properties: oas.SchemaObject['properties'],
   required: oas.SchemaObject['required'],
   additional: oas.SchemaObject['additionalProperties']
-): ReadonlyArray<ts.ClassElement> {
+): readonly ts.ClassElement[] {
   const proptypes = _.map(properties, (value, key) =>
     ts.createProperty(
       undefined,
@@ -543,7 +543,7 @@ function generateValueClass(key: string, schema: oas.SchemaObject) {
   );
 }
 
-function makeCall(fun: string, args: ReadonlyArray<ts.Expression>) {
+function makeCall(fun: string, args: readonly ts.Expression[]) {
   return ts.createCall(ts.createPropertyAccess(runtimeLibrary, fun), undefined, args);
 }
 

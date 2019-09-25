@@ -58,7 +58,7 @@ export function set<Cls extends ValueClass<any, Shape, any>, Shape>(
 type ValueType =
   | ValueClass<any, any, any>
   | { [key: string]: any }
-  | ReadonlyArray<any>
+  | readonly any[]
   | string
   | boolean
   | number;
@@ -189,7 +189,7 @@ export interface ValidationError {
   error: string;
 }
 
-type Path = ReadonlyArray<string>;
+type Path = readonly string[];
 
 export function validationErrorPrinter(error: ValidationError) {
   return `${error.path.join('/')}: ${error.error}`;
