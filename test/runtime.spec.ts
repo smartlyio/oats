@@ -7,7 +7,7 @@ interface ShapeOfTestClass {
   a: readonly string[];
   b: string;
 }
-class TestClass extends oar.ValueClass<TestClass, ShapeOfTestClass, 1> {
+class TestClass extends oar.ValueClass<1> {
   static make(v: ShapeOfTestClass): oar.Make<TestClass> {
     return makeTestClass(v);
   }
