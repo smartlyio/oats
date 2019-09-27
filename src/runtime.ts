@@ -45,7 +45,7 @@ export class ValueClass<Shape, BrandTag> extends Brand<BrandTag> {
 export function toJSON<Shape>(value: ValueClass<Shape, any>): Writable<Shape> {
   // we cant use _.cloneDeep as that copies the instance allowing a surprising way to
   // create proof carrying objects that do not respect the class constraints
-  return asPlainObject(value as any); // how to say that 'this' is the extending class
+  return asPlainObject(value); // how to say that 'this' is the extending class
 }
 
 export function set<Cls extends ValueClass<Shape, any>, Shape>(
