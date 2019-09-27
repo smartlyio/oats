@@ -430,7 +430,11 @@ function generateValueClass(key: string, schema: oas.SchemaObject) {
     schema.additionalProperties
   );
   const brand = ts.createExpressionWithTypeArguments(
-    [ts.createTypeReferenceNode(ts.createIdentifier('BrandOf' + oautil.typenamify(key)), [])],
+    [
+      ts.createTypeReferenceNode(ts.createIdentifier(oautil.typenamify(key)), []),
+      ts.createTypeReferenceNode(ts.createIdentifier('ShapeOf' + oautil.typenamify(key)), []),
+      ts.createTypeReferenceNode(ts.createIdentifier('BrandOf' + oautil.typenamify(key)), [])
+    ],
     ts.createPropertyAccess(runtimeLibrary, 'ValueClass')
   );
   const shape = ts.createExpressionWithTypeArguments(
