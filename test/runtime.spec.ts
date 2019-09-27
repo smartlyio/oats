@@ -7,7 +7,7 @@ interface ShapeOfTestClass {
   a: readonly string[];
   b: string;
 }
-class TestClass extends oar.ValueClass<TestClass, ShapeOfTestClass, 1> {
+class TestClass extends oar.ValueClass<ShapeOfTestClass, 1> {
   static make(v: ShapeOfTestClass): oar.Make<TestClass> {
     return makeTestClass(v);
   }
@@ -192,7 +192,7 @@ describe('ValueClass', () => {
   describe('toJSON', () => {
     it('returns a plain javascript object', () => {
       const value = TestClass.make({ b: 'a', a: ['a'] }).success();
-      const json = oar.toJSON<TestClass, ShapeOfTestClass>(value);
+      const json = oar.toJSON(value);
       expect(json instanceof TestClass).toBeFalsy();
       expect(json.a).toEqual(['a']);
       expect(json.b).toEqual('a');

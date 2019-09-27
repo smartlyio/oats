@@ -38,17 +38,17 @@ function asPlainObject(value: any): any {
   return value;
 }
 
-export class ValueClass<Cls extends Shape, Shape, BrandTag> extends Brand<BrandTag> {}
+export class ValueClass<Shape, BrandTag> extends Brand<BrandTag> {
+  private Shape: Shape;
+}
 
-export function toJSON<Cls extends ValueClass<any, Shape, any>, Shape>(
-  value: Cls
-): Writable<Shape> {
+export function toJSON<Shape>(value: ValueClass<Shape, any>): Writable<Shape> {
   // we cant use _.cloneDeep as that copies the instance allowing a surprising way to
   // create proof carrying objects that do not respect the class constraints
   return asPlainObject(value as any); // how to say that 'this' is the extending class
 }
 
-export function set<Cls extends ValueClass<any, Shape, any>, Shape>(
+export function set<Cls extends ValueClass<Shape, any>, Shape>(
   to: Cls,
   set: Partial<Shape>
 ): Make<Cls> {
@@ -56,7 +56,7 @@ export function set<Cls extends ValueClass<any, Shape, any>, Shape>(
 }
 
 type ValueType =
-  | ValueClass<any, any, any>
+  | ValueClass<any, any>
   | { [key: string]: any }
   | readonly any[]
   | string
