@@ -110,18 +110,6 @@ function selectRecord<T extends { [key: string]: unknown }>(original: T, newReco
   return newRecord;
 }
 
-async function waitArray<A>(arr: Array<A | Promise<A>>): Promise<A[]> {
-  const result = [];
-  for (const value of arr) {
-    if (isPromise(value)) {
-      result.push(await value);
-    } else {
-      result.push(value);
-    }
-  }
-  return result;
-}
-
 function pmapArray<A, T>(
   value: A[],
   predicate: (v: any) => v is T,
@@ -129,7 +117,7 @@ function pmapArray<A, T>(
 ): Promise<A[]> | A[] {
   const mapped = value.map(n => pmapInternal<A, T>(n, predicate, map));
   if (mapped.some(isPromise)) {
-    return waitArray(mapped).then(newValues => {
+    return Promise.all(mapped).then(newValues => {
       return selectArray(value, newValues);
     });
   }

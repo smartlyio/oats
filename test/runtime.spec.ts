@@ -35,6 +35,7 @@ describe('Make', () => {
   });
 });
 
+
 describe('pmap', () => {
   jsc.property('leaves object unchanged when no matches', jsc.json, async dict => {
     const clone = _.cloneDeep(dict);
@@ -106,6 +107,26 @@ describe('pmap', () => {
     expect(mapped).toEqual(arr.map(n => n.toUpperCase()));
     return true;
   });
+
+  describe('leaks', () => {
+    function fail() {
+      process.exit(1);
+    }
+    process.on('unhandledRejection', fail);
+    jsc.property('does not leak promises', jsc.json, async json => {
+      await oar
+        .pmap(
+          json,
+          (n: any): n is number => _.isNumber(n),
+          async (n: number) => {
+            assert(n < 5);
+            return n;
+          }
+        )
+        .catch(() => null);
+      return true;
+    });
+  });
 });
 
 describe('makeOneOf', () => {
@@ -167,9 +188,9 @@ describe('makeArray', () => {
 });
 
 describe('makeObject', () => {
-  it ('drops unknown properties if told to', () => {
+  it('drops unknown properties if told to', () => {
     const fun = oar.makeObject({ a: oar.makeNumber() });
-    expect(fun({ a: 1, missing: 'a' }, { unknownField: 'drop'}).success()).toEqual({ a: 1 });
+    expect(fun({ a: 1, missing: 'a' }, { unknownField: 'drop' }).success()).toEqual({ a: 1 });
   });
 
   it('allows additional props', () => {
