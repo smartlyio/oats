@@ -1,6 +1,6 @@
 // yarn ts-node examples/client.ts
 import * as api from "../tmp/client.generated";
-import { client } from "../index";
+import * as runtime from "../src/runtime";
 import * as app from "./server";
 import * as assert from "assert";
 import { axiosAdapter } from '../src/axios-adapter';
@@ -13,7 +13,7 @@ async function runClient() {
         headers: {
             authorization: 'Bearer ^-^'
         },
-        body: client.json({ id: "id", name: "name" })
+        body: runtime.client.json({ id: "id", name: "name" })
     });
     if (posted.status !== 201) {
         return assert.fail('wrong response');
