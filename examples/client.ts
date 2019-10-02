@@ -3,10 +3,11 @@ import * as api from "../tmp/client.generated";
 import { client } from "../index";
 import * as app from "./server";
 import * as assert from "assert";
+import { axiosAdapter } from '../src/axios-adapter';
 
 // 'api.client' is the abstract implementation of the client which is then
 // mapped to axios requests using 'axiosAdapter'
-const apiClient = api.client(client.axiosAdapter);
+const apiClient = api.client(axiosAdapter);
 async function runClient() {
     const posted = await apiClient.item.post({
         headers: {

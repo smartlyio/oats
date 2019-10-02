@@ -1,11 +1,9 @@
-import * as oas from 'openapi3-ts';
 import * as assert from 'assert';
 import * as server from './server';
 import * as client from './client';
 import * as _ from 'lodash';
 import safe from '@smartlyio/safe-navigation';
 
-export type schema = oas.OpenAPIObject;
 export { server };
 export { client };
 

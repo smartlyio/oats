@@ -1,9 +1,10 @@
 // yarn ts-node examples/server.ts
 import * as api from "../tmp/server.generated";
 import * as types from "../tmp/server.types.generated";
-import { runtime, server } from "../index";
+import { runtime } from "../index";
 import * as Koa from "koa";
 import * as koaBody from "koa-body";
+import { koaBindRoutes } from '../src/koa-adapter';
 
 // setup a db :)
 const values: { [key: string]: types.Item } = {};
@@ -39,7 +40,7 @@ const spec: api.Endpoints = {
 
 // 'server.koaBindRoutes'  binds the endpoint implemantion in'spec' to
 // koa-router routes using a koa adapter
-const routes = server.koaBindRoutes<api.Endpoints>(api.router, spec);
+const routes = koaBindRoutes<api.Endpoints>(api.router, spec);
 
 // finally we can create a Koa app from the routes
 export function createApp() {
