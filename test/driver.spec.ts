@@ -60,7 +60,7 @@ describe('type generation', () => {
     import * as runtime from '../src/runtime';
     const json = { id: 'id', name: 'item name' };
     const value = validator.Item.make(json).success();
-    assert(_.isEqual(runtime.toJSON(value), json));
+    assert(_.isEqual(runtime.valueClass.toJSON(value), json));
     assert(runtime.set(value, { name: "new name" }).success().name === 'new name', 'new value should have updated field');
     assert(value.name === "item name", 'original value should not have changed');
     `
