@@ -418,7 +418,7 @@ function generateType(
 
 function generateStringType(format: string | undefined) {
   if (format === 'binary') {
-    return ts.createTypeReferenceNode(ts.createQualifiedName(runtimeLibrary, 'Binary'), []);
+    return ts.createTypeReferenceNode(fromLib('make', 'Binary'), []);
   }
   return ts.createKeywordTypeNode(ts.SyntaxKind.StringKeyword);
 }
@@ -435,7 +435,7 @@ function generateValueClass(key: string, schema: oas.SchemaObject) {
       ts.createTypeReferenceNode(ts.createIdentifier('ShapeOf' + oautil.typenamify(key)), []),
       ts.createTypeReferenceNode(ts.createIdentifier('BrandOf' + oautil.typenamify(key)), [])
     ],
-    ts.createPropertyAccess(runtimeLibrary, 'ValueClass')
+    ts.createPropertyAccess(runtimeLibrary, 'valueClass.ValueClass')
   );
   const shape = ts.createExpressionWithTypeArguments(
     [],
@@ -464,7 +464,7 @@ function generateValueClass(key: string, schema: oas.SchemaObject) {
           undefined,
           'opts',
           ts.createToken(ts.SyntaxKind.QuestionToken),
-          ts.createTypeReferenceNode(ts.createQualifiedName(runtimeLibrary, 'MakeOptions'), [])
+          ts.createTypeReferenceNode(fromLib('make', 'MakeOptions'), [])
         )
       ],
       undefined,
@@ -514,10 +514,10 @@ function generateValueClass(key: string, schema: oas.SchemaObject) {
           undefined,
           'opts',
           ts.createToken(ts.SyntaxKind.QuestionToken),
-          ts.createTypeReferenceNode(ts.createQualifiedName(runtimeLibrary, 'MakeOptions'), [])
+          ts.createTypeReferenceNode(fromLib('make', 'MakeOptions'), [])
         )
       ],
-      ts.createTypeReferenceNode(fromLib(makeTypeTypeName), [
+      ts.createTypeReferenceNode(fromLib('make', makeTypeTypeName), [
         ts.createTypeReferenceNode(oautil.typenamify(key), [])
       ]),
       ts.createBlock([
@@ -544,7 +544,7 @@ function generateValueClass(key: string, schema: oas.SchemaObject) {
 }
 
 function makeCall(fun: string, args: ReadonlyArray<ts.Expression>) {
-  return ts.createCall(ts.createPropertyAccess(runtimeLibrary, fun), undefined, args);
+  return ts.createCall(ts.createPropertyAccess(runtimeLibrary, 'make.' + fun), undefined, args);
 }
 
 function generateAdditionalPropertiesMaker(
@@ -655,7 +655,7 @@ function generateTopLevelClassMaker(key: string, schema: oas.SchemaObject, const
       [
         ts.createVariableDeclaration(
           'make' + oautil.typenamify(key),
-          ts.createTypeReferenceNode(fromLib('Maker'), [
+          ts.createTypeReferenceNode(fromLib('make', 'Maker'), [
             ts.createTypeReferenceNode(shape, []),
             ts.createTypeReferenceNode(oautil.typenamify(key), [])
           ]),
@@ -682,7 +682,7 @@ function generateTopLevelMaker(
       [
         ts.createVariableDeclaration(
           name + oautil.typenamify(key),
-          ts.createTypeReferenceNode(fromLib('Maker'), [
+          ts.createTypeReferenceNode(fromLib('make', 'Maker'), [
             ts.createTypeReferenceNode(shape, []),
             ts.createTypeReferenceNode(resultType, [])
           ]),
@@ -790,7 +790,7 @@ function generateTopLevelType(key: string, schema: oas.SchemaObject | oas.Refere
 }
 
 function typeWithBrand(key: string, type: ts.TypeNode): ts.TypeNode {
-  return ts.createTypeReferenceNode(ts.createQualifiedName(runtimeLibrary, 'Branded'), [
+  return ts.createTypeReferenceNode(fromLib('valueClass', 'Branded'), [
     type,
     ts.createTypeReferenceNode(brandTypeName(key), [])
   ]);
@@ -839,8 +839,8 @@ function generateComponents(oas: oas.OpenAPIObject): ts.NodeArray<ts.Node> {
 
 const makeTypeTypeName = 'Make';
 
-function fromLib(name: string) {
-  return ts.createQualifiedName(runtimeLibrary, name);
+function fromLib(...names: string[]): ts.QualifiedName {
+  return ts.createQualifiedName(runtimeLibrary, names.join('.'));
 }
 
 const runtimeLibrary = ts.createIdentifier('oar');

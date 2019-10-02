@@ -8,9 +8,10 @@ Generator for typescript clients and servers from openapi3 specs
 // yarn ts-node examples/server.ts
 import * as api from "../tmp/server.generated";
 import * as types from "../tmp/server.types.generated";
-import { runtime, server } from "../index";
+import * as runtime from "../src/runtime";
 import * as Koa from "koa";
 import * as koaBody from "koa-body";
+import { koaBindRoutes } from '../src/koa-adapter';
 
 // setup a db :)
 const values: { [key: string]: types.Item } = {};
@@ -46,7 +47,7 @@ const spec: api.Endpoints = {
 
 // 'server.koaBindRoutes'  binds the endpoint implemantion in'spec' to
 // koa-router routes using a koa adapter
-const routes = server.koaBindRoutes<api.Endpoints>(api.router, spec);
+const routes = koaBindRoutes<api.Endpoints>(api.router, spec);
 
 // finally we can create a Koa app from the routes
 export function createApp() {
@@ -69,19 +70,20 @@ export function createApp() {
 ```js
 // yarn ts-node examples/client.ts
 import * as api from "../tmp/client.generated";
-import { client } from "../index";
+import * as runtime from "../src/runtime";
 import * as app from "./server";
 import * as assert from "assert";
+import { axiosAdapter } from '../src/axios-adapter';
 
 // 'api.client' is the abstract implementation of the client which is then
 // mapped to axios requests using 'axiosAdapter'
-const apiClient = api.client(client.axiosAdapter);
+const apiClient = api.client(axiosAdapter);
 async function runClient() {
     const posted = await apiClient.item.post({
         headers: {
             authorization: 'Bearer ^-^'
         },
-        body: client.json({ id: "id", name: "name" })
+        body: runtime.client.json({ id: "id", name: "name" })
     });
     if (posted.status !== 201) {
         return assert.fail('wrong response');
