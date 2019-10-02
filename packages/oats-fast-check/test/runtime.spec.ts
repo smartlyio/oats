@@ -2,6 +2,7 @@ import * as oar from '../src/runtime';
 import * as jsc from 'jsverify';
 import * as _ from 'lodash';
 import * as assert from 'assert';
+import { promisify } from 'util';
 
 interface ShapeOfTestClass {
   a: ReadonlyArray<string>;
@@ -106,6 +107,73 @@ describe('pmap', () => {
     expect(mapped).toEqual(arr.map(n => n.toUpperCase()));
     return true;
   });
+
+  describe('leaks', () => {
+    function fail() {
+      process.exit(1);
+    }
+
+    const predicateResults: { [key: string]: boolean } = {};
+    function matchesPredicate(value: any) {
+      const key = JSON.stringify(value);
+      if (!predicateResults[key]) {
+        predicateResults[key] = Math.random() > 0.7;
+      }
+      return predicateResults[key];
+    }
+    const promiseResults: { [key: string]: { value: Error | any; delay: number } } = {};
+    async function promiseResult(value: any) {
+      const key = JSON.stringify(value);
+      if (!promiseResults[key]) {
+        promiseResults[key] = {
+          value: Math.random() > 0.5 ? new Error('key: "' + key + '"') : value,
+          delay: Math.random() * 10
+        };
+      }
+      await promisify(setTimeout)(promiseResults[key].delay);
+      if (promiseResults[key].value instanceof Error) {
+        throw promiseResults[key].value;
+      }
+      return promiseResults[key].value;
+    }
+
+    process.on('unhandledRejection', fail);
+    jsc.property(
+      'does not trigger unhandledRejection for leaked promises',
+      jsc.json,
+      async json => {
+        await oar
+          .pmap(
+            json,
+            (n: any): n is any => matchesPredicate(n),
+            async (n: any) => {
+              return await promiseResult(n);
+            }
+          )
+          .catch(() => null);
+        return true;
+      }
+    );
+
+    jsc.property('waits for all promises when all succeed', jsc.json, async json => {
+      let promises = 0;
+      let done = 0;
+      await oar
+        .pmap(
+          json,
+          (n: any): n is any => matchesPredicate(n),
+          async (n: any) => {
+            promises++;
+            await promiseResult(n).catch(() => null);
+            done++;
+            return n;
+          }
+        )
+        .catch(() => null);
+      expect(done).toEqual(promises);
+      return true;
+    });
+  });
 });
 
 describe('makeOneOf', () => {
@@ -167,9 +235,19 @@ describe('makeArray', () => {
 });
 
 describe('makeObject', () => {
-  it ('drops unknown properties if told to', () => {
+  it('drops unknown properties if told to', () => {
     const fun = oar.makeObject({ a: oar.makeNumber() });
-    expect(fun({ a: 1, missing: 'a' }, { unknownField: 'drop'}).success()).toEqual({ a: 1 });
+    expect(fun({ a: 1, missing: 'a' }, { unknownField: 'drop' }).success()).toEqual({ a: 1 });
+  });
+
+  it('disallows extra fields', () => {
+    const fun = oar.makeObject({ a: oar.makeNumber() });
+    expect(fun({ a: 1, missing: 'a' }).isError()).toBeTruthy();
+  });
+
+  it('allows fields', () => {
+    const fun = oar.makeObject({ a: oar.makeNumber() });
+    expect(fun({ a: 1 }).isSuccess()).toBeTruthy();
   });
 
   it('allows additional props', () => {
