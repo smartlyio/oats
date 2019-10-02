@@ -1,4 +1,4 @@
-import { server } from './runtime';
+import * as server from './server';
 import * as assert from 'assert';
 import safe from '@smartlyio/safe-navigation';
 

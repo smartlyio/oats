@@ -15,7 +15,7 @@ function koaAdapter(router: Router): runtime.server.ServerAdapter {
       let fileFields = {};
       if (files) {
         fileFields = Object.keys(files).reduce((memo: any, name) => {
-          memo[name] = new runtime.File(files[name].path, files[name].size);
+          memo[name] = new runtime.make.File(files[name].path, files[name].size);
           return memo;
         }, {});
       }

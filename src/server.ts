@@ -1,6 +1,6 @@
-import * as runtime from './runtime';
 import * as assert from 'assert';
 import safeNavigation from '@smartlyio/safe-navigation';
+import { Make, Maker, ValidationError, validationErrorPrinter } from './make';
 
 export interface Response<Status extends number, ContentType, Value> {
   status: Status;
@@ -72,8 +72,8 @@ export interface Endpoints {
 }
 
 export class RequestValidationError extends Error {
-  constructor(public tag: string, public errors: runtime.ValidationError[]) {
-    super('invalid request ' + tag + ' ' + errors.map(runtime.validationErrorPrinter).join('\n'));
+  constructor(public tag: string, public errors: ValidationError[]) {
+    super('invalid request ' + tag + ' ' + errors.map(validationErrorPrinter).join('\n'));
   }
 }
 
@@ -81,18 +81,18 @@ export class ResponseValidationError extends Error {
   constructor(
     public tag: string,
     public originalResponse: any,
-    public errors: runtime.ValidationError[]
+    public errors: ValidationError[]
   ) {
-    super('invalid response ' + tag + ' ' + errors.map(runtime.validationErrorPrinter).join('\n'));
+    super('invalid response ' + tag + ' ' + errors.map(validationErrorPrinter).join('\n'));
   }
 }
 
-function throwRequestValidationError(tag: string, e: runtime.Make<any>) {
+function throwRequestValidationError(tag: string, e: Make<any>) {
   throw new RequestValidationError(tag, e.errors);
   return null as any;
 }
 
-function throwResponseValidationError(tag: string, originalValue: any, e: runtime.Make<any>) {
+function throwResponseValidationError(tag: string, originalValue: any, e: Make<any>) {
   throw new ResponseValidationError(tag, originalValue, e.errors);
   return null as any;
 }
@@ -115,7 +115,7 @@ function voidify(value: {} | undefined | null) {
   return null;
 }
 
-function cleanHeaders<H>(maker: runtime.Maker<any, H>, headers: {}) {
+function cleanHeaders<H>(maker: Maker<any, H>, headers: {}) {
   const normalized = voidify(lowercaseObject(headers));
   const acceptsNull = maker(null);
   if (acceptsNull.isSuccess()) {
@@ -133,11 +133,11 @@ export function safe<
   Body extends RequestBody<any>,
   R extends Response<any, any, any>
 >(
-  headers: runtime.Maker<any, H>,
-  params: runtime.Maker<any, P>,
-  query: runtime.Maker<any, Q>,
-  body: runtime.Maker<any, Body>,
-  response: runtime.Maker<any, R>,
+  headers: Maker<any, H>,
+  params: Maker<any, P>,
+  query: Maker<any, Q>,
+  body: Maker<any, Body>,
+  response: Maker<any, R>,
   endpoint: Endpoint<H, P, Q, Body, R>
 ): Endpoint<Headers, Params, Query, RequestBody<any>, Response<number, any, any>> {
   return async ctx => {
@@ -160,7 +160,7 @@ export function safe<
 export type Methods = keyof MethodHandlers;
 export const supportedMethods: Methods[] = ['get', 'post', 'put', 'patch', 'options', 'delete'];
 
-type AnyMaker = runtime.Maker<any, any>;
+type AnyMaker = Maker<any, any>;
 
 interface CheckingTree {
   [path: string]: {

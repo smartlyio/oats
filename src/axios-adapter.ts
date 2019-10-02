@@ -14,7 +14,7 @@ function toAxiosData(data: runtime.server.RequestBody<any> | undefined) {
     const form = new FormData();
     Object.keys(data.value).forEach(key => {
       const element = data.value[key];
-      if (element instanceof runtime.FormBinary) {
+      if (element instanceof runtime.make.FormBinary) {
         form.append(key, element.binary, element.options);
       } else {
         form.append(key, element);
@@ -26,8 +26,8 @@ function toAxiosData(data: runtime.server.RequestBody<any> | undefined) {
 }
 
 function axiosToJson(data: any) {
-  if (data instanceof runtime.ValueClass) {
-    return runtime.toJSON(data);
+  if (data instanceof runtime.valueClass.ValueClass) {
+    return runtime.valueClass.toJSON(data);
   }
   return data;
 }
