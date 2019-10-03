@@ -46,7 +46,7 @@
   "devDependencies": {
     "@types/form-data": "^2.2.1",
     "@types/jest": "^24.0.11",
-    "@types/koa": "^2.0.39",
+    "@types/koa": "2.0.50",
     "@types/koa-router": "^7.0.23",
     "@types/lodash": "^4.14.77",
     "@types/node": "^11.11.3",
