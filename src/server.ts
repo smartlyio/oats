@@ -15,17 +15,11 @@ export interface RequestBody<A> {
   value: A;
 }
 
-export interface Params {
-  [param: string]: unknown;
-}
+export type Params = object;
 
-export interface Headers {
-  [key: string]: unknown;
-}
+export type Headers = object;
 
-export interface Query {
-  [key: string]: unknown;
-}
+export type Query = object;
 
 export interface EndpointArg<
   H extends Headers | void,

@@ -18,7 +18,9 @@ function asPlainObject(value: any): any {
   return value;
 }
 
-export class ValueClass<Cls extends Shape, Shape, BrandTag> extends Brand<BrandTag> {}
+export class ValueClass<Shape, BrandTag> extends Brand<BrandTag> {
+  private Shape: Shape;
+}
 
 interface WritableArray<T> extends Array<Writable<T>> {}
 type Fun = (...a: any[]) => any;
@@ -32,7 +34,7 @@ export type Writable<T> = T extends ReadonlyArray<infer R>
   ? WritableObject<T>
   : T;
 
-export function toJSON<Cls extends ValueClass<any, Shape, any>, Shape>(
+export function toJSON<Cls extends ValueClass<Shape, any>, Shape>(
   value: Cls
 ): Writable<Shape> {
   // we cant use _.cloneDeep as that copies the instance allowing a surprising way to

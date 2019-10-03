@@ -31,7 +31,7 @@ export function text<Status extends number, Value>(
   };
 }
 
-export function set<Cls extends valueClass.ValueClass<any, Shape, any>, Shape>(
+export function set<Cls extends valueClass.ValueClass<Shape, any>, Shape>(
   to: Cls,
   set: Partial<Shape>
 ): make.Make<Cls> {
@@ -39,9 +39,9 @@ export function set<Cls extends valueClass.ValueClass<any, Shape, any>, Shape>(
 }
 
 type ValueType =
-  | valueClass.ValueClass<any, any, any>
+  | valueClass.ValueClass<any, any>
   | { [key: string]: any }
-  | ReadonlyArray<any>
+  | readonly any[]
   | string
   | boolean
   | number;

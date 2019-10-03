@@ -1,19 +1,19 @@
 // yarn ts-node examples/server.ts
-import * as api from "../tmp/server.generated";
-import * as types from "../tmp/server.types.generated";
-import { runtime, koaAdapter } from "../index";
-import * as Koa from "koa";
-import * as koaBody from "koa-body";
+import * as api from '../tmp/server.generated';
+import * as types from '../tmp/server.types.generated';
+import { runtime, koaAdapter } from '../index';
+import * as Koa from 'koa';
+import * as koaBody from 'koa-body';
 
 // setup a db :)
 const values: { [key: string]: types.Item } = {};
 
 // 'api.Endpoints' is the generated type of the server
 const spec: api.Endpoints = {
-  "/item": {
+  '/item': {
     post: async ctx => {
       if (ctx.headers.authorization !== 'Bearer ^-^') {
-          return runtime.json(403, { message: 'Unauthorized'})
+        return runtime.json(403, { message: 'Unauthorized' });
       }
       values[ctx.body.value.id] = types.Item.make({
         id: ctx.body.value.id,
@@ -22,7 +22,7 @@ const spec: api.Endpoints = {
       return runtime.json(201, values[ctx.body.value.id]);
     }
   },
-  "/item/{id}": {
+  '/item/{id}': {
     delete: async ctx => {
       delete values[ctx.params.id];
       return runtime.text(204, '');
@@ -32,7 +32,7 @@ const spec: api.Endpoints = {
       if (item) {
         return runtime.json(200, item);
       }
-      return runtime.json(400, { message: "not found" });
+      return runtime.json(400, { message: 'not found' });
     }
   }
 };
