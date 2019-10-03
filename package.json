@@ -19,7 +19,6 @@
     "url": "https://github.com/smartlyio/oats.git"
   },
   "peerDependencies": {
-    "@types/form-data": "^2.2.1",
     "@types/koa": "^2.0.39",
     "@types/koa-router": "^7.0.23",
     "axios": "^0.18.0",
@@ -44,7 +43,6 @@
     "client"
   ],
   "devDependencies": {
-    "@types/form-data": "^2.2.1",
     "@types/jest": "^24.0.18",
     "@types/koa": "^2.0.39",
     "@types/koa-router": "^7.0.23",
