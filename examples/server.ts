@@ -37,7 +37,7 @@ const spec: api.Endpoints = {
   }
 };
 
-// 'koaAdapet.bind'  binds the endpoint implemantion in'spec' to
+// 'koaAdapter.bind'  binds the endpoint implemantion in'spec' to
 // koa-router routes using a koa adapter
 const routes = koaAdapter.bind<api.Endpoints>(api.router, spec);
 
