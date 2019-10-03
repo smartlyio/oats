@@ -165,7 +165,7 @@ function generateClientMethod(
 function generateClientTree(
   opts: Options,
   tree: client.OpTree<ts.TypeNode>
-): ReadonlyArray<ts.TypeElement> {
+): readonly ts.TypeElement[] {
   const members = [];
   if (tree.param) {
     members.push(

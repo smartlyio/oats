@@ -9,8 +9,7 @@
       "tmp/*",
       "dist/*",
       "examples/*",
-      "node_modules/*",
-      "render.ts"
+      "node_modules/*"
     ]
   },
   "rules": {

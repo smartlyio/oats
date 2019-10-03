@@ -6,21 +6,21 @@ Generator for typescript clients and servers from openapi3 specs
 
 ```js
 // yarn ts-node examples/server.ts
-import * as api from "../tmp/server.generated";
-import * as types from "../tmp/server.types.generated";
-import { runtime, server } from "../index";
-import * as Koa from "koa";
-import * as koaBody from "koa-body";
+import * as api from '../tmp/server.generated';
+import * as types from '../tmp/server.types.generated';
+import { runtime, server } from '../index';
+import * as Koa from 'koa';
+import * as koaBody from 'koa-body';
 
 // setup a db :)
 const values: { [key: string]: types.Item } = {};
 
 // 'api.Endpoints' is the generated type of the server
 const spec: api.Endpoints = {
-  "/item": {
+  '/item': {
     post: async ctx => {
       if (ctx.headers.authorization !== 'Bearer ^-^') {
-          return runtime.json(403, { message: 'Unauthorized'})
+        return runtime.json(403, { message: 'Unauthorized' });
       }
       values[ctx.body.value.id] = types.Item.make({
         id: ctx.body.value.id,
@@ -29,7 +29,7 @@ const spec: api.Endpoints = {
       return runtime.json(201, values[ctx.body.value.id]);
     }
   },
-  "/item/{id}": {
+  '/item/{id}': {
     delete: async ctx => {
       delete values[ctx.params.id];
       return runtime.text(204, '');
@@ -39,7 +39,7 @@ const spec: api.Endpoints = {
       if (item) {
         return runtime.json(200, item);
       }
-      return runtime.json(400, { message: "not found" });
+      return runtime.json(400, { message: 'not found' });
     }
   }
 };
@@ -68,45 +68,45 @@ export function createApp() {
 
 ```js
 // yarn ts-node examples/client.ts
-import * as api from "../tmp/client.generated";
-import { client } from "../index";
-import * as app from "./server";
-import * as assert from "assert";
+import * as api from '../tmp/client.generated';
+import { client } from '../index';
+import * as app from './server';
+import * as assert from 'assert';
 
 // 'api.client' is the abstract implementation of the client which is then
 // mapped to axios requests using 'axiosAdapter'
 const apiClient = api.client(client.axiosAdapter);
 async function runClient() {
-    const posted = await apiClient.item.post({
-        headers: {
-            authorization: 'Bearer ^-^'
-        },
-        body: client.json({ id: "id", name: "name" })
-    });
-    if (posted.status !== 201) {
-        return assert.fail('wrong response');
-    }
-    const stored = await apiClient.item(posted.value.value.id).get();
-    if (stored.status !== 200) {
-        return assert.fail('wrong response');
-    }
-    assert(stored.value.value.id === 'id');
+  const posted = await apiClient.item.post({
+    headers: {
+      authorization: 'Bearer ^-^'
+    },
+    body: client.json({ id: 'id', name: 'name' })
+  });
+  if (posted.status !== 201) {
+    return assert.fail('wrong response');
+  }
+  const stored = await apiClient.item(posted.value.value.id).get();
+  if (stored.status !== 200) {
+    return assert.fail('wrong response');
+  }
+  assert(stored.value.value.id === 'id');
 
-    const  deleted = await apiClient.item(posted.value.value.id).delete();
-    assert(deleted.status === 204);
-    return;
+  const deleted = await apiClient.item(posted.value.value.id).delete();
+  assert(deleted.status === 204);
+  return;
 }
 
 // spin up the server
 const port = 12000;
 app.createApp().listen(port, async () => {
-    try {
-        await runClient();
-        process.exit(0);
-    } catch(e) {
-        console.log(e);
-        process.exit(1);
-    }
+  try {
+    await runClient();
+    process.exit(0);
+  } catch (e) {
+    console.log(e);
+    process.exit(1);
+  }
 });
 
 ```
@@ -115,24 +115,24 @@ app.createApp().listen(port, async () => {
 
 ```
 // yarn ts-node examples/driver.ts
-import { driver } from "../index";
+import { driver } from '../index';
 
 // generate server
 driver.generate({
-  generatedValueClassFile: "./tmp/server.types.generated.ts",
-  generatedServerFile: "./tmp/server.generated.ts",
-  runtimeFilePath: "./index.ts",
-  header: "/* tslint:disable variable-name only-arrow-functions*/",
-  openapiFilePath: "./test/example.yaml"
+  generatedValueClassFile: './tmp/server.types.generated.ts',
+  generatedServerFile: './tmp/server.generated.ts',
+  runtimeFilePath: './index.ts',
+  header: '/* tslint:disable variable-name only-arrow-functions*/',
+  openapiFilePath: './test/example.yaml'
 });
 
 // generate client
 driver.generate({
-  generatedValueClassFile: "./tmp/client.types.generated.ts",
-  runtimeFilePath: "./index.ts",
-  generatedClientFile: "./tmp/client.generated.ts",
-  header: "/* tslint:disable variable-name only-arrow-functions*/",
-  openapiFilePath: "./test/example.yaml",
+  generatedValueClassFile: './tmp/client.types.generated.ts',
+  runtimeFilePath: './index.ts',
+  generatedClientFile: './tmp/client.generated.ts',
+  header: '/* tslint:disable variable-name only-arrow-functions*/',
+  openapiFilePath: './test/example.yaml',
   // Omit error responses  from the client response types
   emitStatusCode: (code: number) => [200, 201, 204].indexOf(code) >= 0
 });
