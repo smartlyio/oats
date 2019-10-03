@@ -67,21 +67,15 @@
   },
   "jest": {
     "testEnvironment": "node",
-    "globals": {
-      "ts-jest": {
-        "skipBabel": true
-      }
-    },
     "testRegex": "test/.*\\.spec.(jsx?|tsx?)$",
-    "transform": {
-      "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
-    },
     "moduleFileExtensions": [
-      "ts",
-      "tsx",
       "js",
+      "json",
       "jsx",
-      "json"
-    ]
+      "ts",
+      "tsx"
+    ],
+    "preset": "ts-jest",
+    "testMatch": null
   }
 }
