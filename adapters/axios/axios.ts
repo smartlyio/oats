@@ -1,4 +1,4 @@
-import * as runtime from './runtime';
+import * as runtime from '@smartlyio/oats-runtime';
 import * as FormData from 'form-data';
 import * as assert from 'assert';
 import axios, { AxiosResponse } from 'axios';

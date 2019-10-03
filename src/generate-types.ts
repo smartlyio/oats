@@ -850,12 +850,7 @@ function generateBuiltins(runtimeModule: string) {
     ts.createImportDeclaration(
       undefined,
       undefined,
-      ts.createImportClause(
-        undefined,
-        ts.createNamedImports([
-          ts.createImportSpecifier(ts.createIdentifier('runtime'), runtimeLibrary)
-        ])
-      ),
+      ts.createImportClause(undefined, ts.createNamespaceImport(runtimeLibrary)),
       ts.createStringLiteral(runtimeModule)
     )
   ]);

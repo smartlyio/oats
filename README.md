@@ -8,7 +8,8 @@ Generator for typescript clients and servers from openapi3 specs
 // yarn ts-node examples/server.ts
 import * as api from '../tmp/server.generated';
 import * as types from '../tmp/server.types.generated';
-import { runtime, koaAdapter } from '../index';
+import * as runtime from '@smartlyio/oats-runtime';
+import * as koaAdapter from '@smartlyio/oats-koa-adapter';
 import * as Koa from 'koa';
 import * as koaBody from 'koa-body';
 
@@ -69,7 +70,8 @@ export function createApp() {
 ```js
 // yarn ts-node examples/client.ts
 import * as api from '../tmp/client.generated';
-import { axiosAdapter, runtime } from '../index';
+import * as axiosAdapter from '@smartlyio/oats-axios-adapter';
+import * as runtime from '@smartlyio/oats-runtime';
 import * as app from './server';
 import * as assert from 'assert';
 
@@ -120,7 +122,6 @@ import { driver } from '../index';
 driver.generate({
   generatedValueClassFile: './tmp/server.types.generated.ts',
   generatedServerFile: './tmp/server.generated.ts',
-  runtimeFilePath: './index.ts',
   header: '/* tslint:disable variable-name only-arrow-functions*/',
   openapiFilePath: './test/example.yaml'
 });
@@ -128,7 +129,6 @@ driver.generate({
 // generate client
 driver.generate({
   generatedValueClassFile: './tmp/client.types.generated.ts',
-  runtimeFilePath: './index.ts',
   generatedClientFile: './tmp/client.generated.ts',
   header: '/* tslint:disable variable-name only-arrow-functions*/',
   openapiFilePath: './test/example.yaml',

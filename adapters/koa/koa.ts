@@ -1,6 +1,6 @@
 import * as Router from 'koa-router';
 import * as Koa from 'koa';
-import * as runtime from './runtime';
+import * as runtime from '@smartlyio/oats-runtime';
 
 function adapter(router: Router): runtime.server.ServerAdapter {
   return (

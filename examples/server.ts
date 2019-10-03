@@ -1,7 +1,8 @@
 // yarn ts-node examples/server.ts
 import * as api from '../tmp/server.generated';
 import * as types from '../tmp/server.types.generated';
-import { runtime, koaAdapter } from '../index';
+import * as runtime from '@smartlyio/oats-runtime';
+import * as koaAdapter from '@smartlyio/oats-koa-adapter';
 import * as Koa from 'koa';
 import * as koaBody from 'koa-body';
 
