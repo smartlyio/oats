@@ -1,13 +1,12 @@
 // yarn ts-node examples/client.ts
 import * as api from "../tmp/client.generated";
-import * as runtime from "../src/runtime";
 import * as app from "./server";
 import * as assert from "assert";
-import { axiosAdapter } from '../src/axios-adapter';
+import { axiosAdapter, runtime } from '../index';
 
 // 'api.client' is the abstract implementation of the client which is then
 // mapped to axios requests using 'axiosAdapter'
-const apiClient = api.client(axiosAdapter);
+const apiClient = api.client(axiosAdapter.bind);
 async function runClient() {
     const posted = await apiClient.item.post({
         headers: {

@@ -3,7 +3,7 @@ import * as FormData from 'form-data';
 import * as assert from 'assert';
 import axios, { AxiosResponse } from 'axios';
 
-function toAxiosData(data: runtime.server.RequestBody<any> | undefined) {
+function toRequestData(data: runtime.server.RequestBody<any> | undefined) {
   if (data == null) {
     return data;
   }
@@ -32,7 +32,7 @@ function axiosToJson(data: any) {
   return data;
 }
 
-export const axiosAdapter: runtime.client.ClientAdapter = async (
+export const bind: runtime.client.ClientAdapter = async (
   arg: runtime.server.EndpointArg<any, any, any, any>
 ): Promise<any> => {
   if (arg.servers.length !== 1) {
@@ -40,7 +40,7 @@ export const axiosAdapter: runtime.client.ClientAdapter = async (
   }
   const server = arg.servers[0];
   const params = axiosToJson(arg.query);
-  const data = toAxiosData(arg.body);
+  const data = toRequestData(arg.body);
   const url = server + arg.path;
   const headers = { ...arg.headers, ...(data instanceof FormData ? data.getHeaders() : {}) };
   const response = await axios.request({

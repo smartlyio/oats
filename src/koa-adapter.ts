@@ -2,7 +2,7 @@ import * as Router from 'koa-router';
 import * as Koa from 'koa';
 import * as runtime from './runtime';
 
-function koaAdapter(router: Router): runtime.server.ServerAdapter {
+function adapter(router: Router): runtime.server.ServerAdapter {
   return (
     path: string,
     op: string,
@@ -38,12 +38,8 @@ function koaAdapter(router: Router): runtime.server.ServerAdapter {
   };
 }
 
-export function koaBindRoutes<Spec>(
-  handler: runtime.server.HandlerFactory<Spec>,
-  spec: Spec
-): Router {
+export function bind<Spec>(handler: runtime.server.HandlerFactory<Spec>, spec: Spec): Router {
   const router = new Router();
-  const adapter = koaAdapter(router);
-  handler(adapter)(spec);
+  handler(adapter(router))(spec);
   return router;
 }
