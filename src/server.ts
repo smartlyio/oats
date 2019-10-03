@@ -78,11 +78,7 @@ export class RequestValidationError extends Error {
 }
 
 export class ResponseValidationError extends Error {
-  constructor(
-    public tag: string,
-    public originalResponse: any,
-    public errors: ValidationError[]
-  ) {
+  constructor(public tag: string, public originalResponse: any, public errors: ValidationError[]) {
     super('invalid response ' + tag + ' ' + errors.map(validationErrorPrinter).join('\n'));
   }
 }
