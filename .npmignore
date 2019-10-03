@@ -4,3 +4,15 @@ node_modules/
 yarn-error.log
 yarn.lock
 .*
+dist/test/
+test/
+runtime/
+adapters/
+tmp/
+dist/tmp/
+examples/
+dist/examples/
+dist/runtime/
+dist/adapters/
+tsconfig.json
+tslint.json

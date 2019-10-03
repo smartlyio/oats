@@ -8,9 +8,7 @@
   "main": "dist/axios.js",
   "types": "dist/axios.d.ts",
   "scripts": {
-    "build": "rm -rf ./dist/* && rm -f ./tmp/*.ts && yarn lint && yarn tsc",
-    "lint": "tslint -c tslint.json --project package.json",
-    "fix": "tslint --fix -c tslint.json --project package.json",
+    "build": "rm -rf ./dist/* &&yarn tsc",
     "prepublish": "yarn build"
   },
   "repository": {
@@ -37,31 +35,6 @@
   "devDependencies": {
     "@types/node": "^11.11.3",
     "axios": "^0.19.0",
-    "prettier": "^1.18.2",
-    "ts-jest": "^24.0.0",
-    "ts-node-dev": "^1.0.0-pre.24",
-    "tslint": "^5.7.0",
-    "tslint-config-prettier": "^1.18.0",
-    "tslint-plugin-prettier": "^2.0.1",
     "typescript": "^3.6.3"
-  },
-  "jest": {
-    "testEnvironment": "node",
-    "globals": {
-      "ts-jest": {
-        "skipBabel": true
-      }
-    },
-    "testRegex": "test/.*\\.spec.(jsx?|tsx?)$",
-    "transform": {
-      "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
-    },
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "jsx",
-      "json"
-    ]
   }
 }
