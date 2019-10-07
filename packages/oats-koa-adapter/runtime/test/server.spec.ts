@@ -1,18 +1,19 @@
 import * as server from '../src/server';
 import * as oar from '../src/runtime';
+import { makeNumber, makeObject, Maker, makeString, makeVoid } from '../src/make';
 
 describe('safe', () => {
   it('validates request and response', async () => {
     const endpoint = server.safe<any, any, any, any, any>(
-      oar.makeVoid(),
-      oar.makeVoid(),
-      oar.makeObject({ param: oar.makeNumber() }) as oar.Maker<any, any>,
-      oar.makeVoid(),
-      oar.makeObject({
-        status: oar.makeNumber(200),
-        value: oar.makeObject({
-          contentType: oar.makeString(),
-          value: oar.makeString()
+      makeVoid(),
+      makeVoid(),
+      makeObject({ param: makeNumber() }) as Maker<any, any>,
+      makeVoid(),
+      makeObject({
+        status: makeNumber(200),
+        value: makeObject({
+          contentType: makeString(),
+          value: makeString()
         })
       }),
       async () => {

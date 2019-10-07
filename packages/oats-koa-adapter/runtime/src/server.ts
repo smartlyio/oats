@@ -1,8 +1,6 @@
-import * as Router from 'koa-router';
-import * as Koa from 'koa';
-import * as oar from './runtime';
 import * as assert from 'assert';
 import safeNavigation from '@smartlyio/safe-navigation';
+import { Make, Maker, ValidationError, validationErrorPrinter } from './make';
 
 export interface Response<Status extends number, ContentType, Value> {
   status: Status;
@@ -68,27 +66,23 @@ export interface Endpoints {
 }
 
 export class RequestValidationError extends Error {
-  constructor(public tag: string, public errors: oar.ValidationError[]) {
-    super('invalid request ' + tag + ' ' + errors.map(oar.validationErrorPrinter).join('\n'));
+  constructor(public tag: string, public errors: ValidationError[]) {
+    super('invalid request ' + tag + ' ' + errors.map(validationErrorPrinter).join('\n'));
   }
 }
 
 export class ResponseValidationError extends Error {
-  constructor(
-    public tag: string,
-    public originalResponse: any,
-    public errors: oar.ValidationError[]
-  ) {
-    super('invalid response ' + tag + ' ' + errors.map(oar.validationErrorPrinter).join('\n'));
+  constructor(public tag: string, public originalResponse: any, public errors: ValidationError[]) {
+    super('invalid response ' + tag + ' ' + errors.map(validationErrorPrinter).join('\n'));
   }
 }
 
-function throwRequestValidationError(tag: string, e: oar.Make<any>) {
+function throwRequestValidationError(tag: string, e: Make<any>) {
   throw new RequestValidationError(tag, e.errors);
   return null as any;
 }
 
-function throwResponseValidationError(tag: string, originalValue: any, e: oar.Make<any>) {
+function throwResponseValidationError(tag: string, originalValue: any, e: Make<any>) {
   throw new ResponseValidationError(tag, originalValue, e.errors);
   return null as any;
 }
@@ -111,7 +105,7 @@ function voidify(value: {} | undefined | null) {
   return null;
 }
 
-function cleanHeaders<H>(maker: oar.Maker<any, H>, headers: {}) {
+function cleanHeaders<H>(maker: Maker<any, H>, headers: {}) {
   const normalized = voidify(lowercaseObject(headers));
   const acceptsNull = maker(null);
   if (acceptsNull.isSuccess()) {
@@ -129,11 +123,11 @@ export function safe<
   Body extends RequestBody<any>,
   R extends Response<any, any, any>
 >(
-  headers: oar.Maker<any, H>,
-  params: oar.Maker<any, P>,
-  query: oar.Maker<any, Q>,
-  body: oar.Maker<any, Body>,
-  response: oar.Maker<any, R>,
+  headers: Maker<any, H>,
+  params: Maker<any, P>,
+  query: Maker<any, Q>,
+  body: Maker<any, Body>,
+  response: Maker<any, R>,
   endpoint: Endpoint<H, P, Q, Body, R>
 ): Endpoint<Headers, Params, Query, RequestBody<any>, Response<number, any, any>> {
   return async ctx => {
@@ -156,7 +150,7 @@ export function safe<
 export type Methods = keyof MethodHandlers;
 export const supportedMethods: Methods[] = ['get', 'post', 'put', 'patch', 'options', 'delete'];
 
-type AnyMaker = oar.Maker<any, any>;
+type AnyMaker = Maker<any, any>;
 
 interface CheckingTree {
   [path: string]: {
@@ -193,52 +187,19 @@ function createTree(handlers: Handler[]): CheckingTree {
   }, {});
 }
 
-function koaAdapter(router: Router): ServerAdapter {
-  return (path: string, op: string, method: Methods, handler: SafeEndpoint) => {
-    const koaPath = path.replace(/{([^}]+)}/g, (m, param) => ':' + param);
-    (router as any)[method](koaPath, async (ctx: Koa.Context) => {
-      const files = (ctx as any).request.files;
-      let fileFields = {};
-      if (files) {
-        fileFields = Object.keys(files).reduce((memo: any, name) => {
-          memo[name] = new oar.File(files[name].path, files[name].size);
-          return memo;
-        }, {});
-      }
-      const contentType = ctx.request.type;
-      const value = { ...(ctx.request as any).body, ...fileFields };
-      const body = Object.keys(value).length > 0 ? { value, contentType } : undefined;
-      const result = await handler({
-        path,
-        method: assertMethod(ctx.method.toLowerCase()),
-        servers: [],
-        op,
-        headers: ctx.request.headers,
-        params: ctx.params,
-        query: ctx.query,
-        body
-      });
-      ctx.status = result.status;
-      ctx.body = result.value.value;
-    });
-  };
-}
-
 export type HandlerFactory<Spec> = (adapter: ServerAdapter) => (spec: Spec) => void;
 
-export function koaBindRoutes<Spec>(handler: HandlerFactory<Spec>, spec: Spec): Router {
-  const router = new Router();
-  const adapter = koaAdapter(router);
-  handler(adapter)(spec);
-  return router;
-}
-
-function assertMethod(method: string): Methods {
+export function assertMethod(method: string): Methods {
   assert(supportedMethods.indexOf(method as any) >= 0, 'unsupported method name ' + method);
   return method as any;
 }
 
-type ServerAdapter = (path: string, op: string, method: Methods, handler: SafeEndpoint) => void;
+export type ServerAdapter = (
+  path: string,
+  op: string,
+  method: Methods,
+  handler: SafeEndpoint
+) => void;
 
 export function createHandlerFactory<Spec extends Endpoints>(
   handlers: Handler[]

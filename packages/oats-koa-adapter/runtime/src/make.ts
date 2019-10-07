@@ -1,168 +1,7 @@
-import * as oas from 'openapi3-ts';
 import * as assert from 'assert';
-import * as server from './server';
-import * as client from './client';
-import * as _ from 'lodash';
 import safe from '@smartlyio/safe-navigation';
-
-export type schema = oas.OpenAPIObject;
-export { server };
-export { client };
-
-export type Branded<A, BrandTag> = A & Brand<BrandTag>;
-export class Brand<B> {
-  // @ts-ignore
-  private valueClassBrand: B; // branding, DO NOT ACCESS
-}
-interface WritableArray<T> extends Array<Writable<T>> {}
-type WritableObject<T> = { -readonly [P in keyof T]: Writable<T[P]> };
-type Fun = (...a: any[]) => any;
-export type Writable<T> = T extends ReadonlyArray<infer R>
-  ? WritableArray<R>
-  : T extends Fun
-  ? T
-  : T extends object
-  ? WritableObject<T>
-  : T;
-
-function asPlainObject(value: any): any {
-  if (Array.isArray(value)) {
-    return value.map(asPlainObject) as any;
-  }
-  if (value && typeof value === 'object') {
-    return Object.keys(value).reduce((memo, key) => {
-      (memo as any)[key] = asPlainObject(value[key]);
-      return memo as any;
-    }, {});
-  }
-  return value;
-}
-
-export class ValueClass<Shape, BrandTag> extends Brand<BrandTag> {
-  private Shape: Shape;
-}
-
-export function toJSON<Shape>(value: ValueClass<Shape, any>): Writable<Shape> {
-  // we cant use _.cloneDeep as that copies the instance allowing a surprising way to
-  // create proof carrying objects that do not respect the class constraints
-  return asPlainObject(value); // how to say that 'this' is the extending class
-}
-
-export function set<Cls extends ValueClass<Shape, any>, Shape>(
-  to: Cls,
-  set: Partial<Shape>
-): Make<Cls> {
-  return (to as any).constructor.make({ ...to, ...set });
-}
-
-type ValueType =
-  | ValueClass<any, any>
-  | { [key: string]: any }
-  | readonly any[]
-  | string
-  | boolean
-  | number;
-export async function pmap<A extends ValueType, T extends ValueType>(
-  value: A,
-  predicate: (a: any) => a is T,
-  map: (p: T) => Promise<T>
-): Promise<A> {
-  return pmapInternal(value, predicate, map);
-}
-
-function isPromise(p: any): p is Promise<any> {
-  return p && typeof p.then === 'function';
-}
-
-function pmapInternal<A extends ValueType, T extends ValueType>(
-  value: A,
-  predicate: (a: any) => a is T,
-  map: (p: T) => Promise<T>
-): Promise<A> | A {
-  if (predicate(value)) {
-    value = map(value) as any;
-  }
-  if (isPromise(value)) {
-    return value.then(n => pmapComposite(n, predicate, map));
-  }
-  return pmapComposite(value, predicate, map);
-}
-
-function selectArray<T>(original: T[], newArray: T[]): T[] {
-  for (let i = 0; i < original.length; i++) {
-    if (original[i] !== newArray[i]) {
-      return newArray;
-    }
-  }
-  return original.length !== newArray.length ? newArray : original;
-}
-
-function selectRecord<T extends { [key: string]: unknown }>(original: T, newRecord: T) {
-  const changed = Object.keys(original).some(key => {
-    return original[key] !== newRecord[key];
-  });
-  if (!changed) {
-    return original;
-  }
-  if (original instanceof ValueClass) {
-    return set(original, newRecord).success();
-  }
-  return newRecord;
-}
-
-function pmapArray<A, T>(
-  value: A[],
-  predicate: (v: any) => v is T,
-  map: (v: T) => Promise<T>
-): Promise<A[]> | A[] {
-  const mapped = value.map(n => pmapInternal<A, T>(n, predicate, map));
-  if (mapped.some(isPromise)) {
-    return Promise.all(mapped).then(newValues => {
-      return selectArray(value, newValues);
-    });
-  }
-  return selectArray<A>(value, mapped as any);
-}
-
-function pmapObject<A, T>(
-  value: A,
-  predicate: (v: any) => v is T,
-  map: (v: T) => Promise<T>
-): Promise<A> | A {
-  const record: any = {};
-  const promises: Array<Promise<unknown>> = [];
-  Object.keys(value).forEach(key => {
-    const v = pmapInternal((value as any)[key], predicate, map);
-    if (isPromise(v)) {
-      promises.push(
-        v.then(result => {
-          record[key] = result;
-        })
-      );
-    } else {
-      record[key] = v;
-    }
-  });
-
-  if (promises.length) {
-    return Promise.all(promises).then(() => selectRecord(value, record));
-  }
-  return selectRecord(value, record);
-}
-
-function pmapComposite<A, T>(
-  value: A,
-  predicate: (v: any) => v is T,
-  map: (v: T) => Promise<T>
-): Promise<A> | A {
-  if (Array.isArray(value)) {
-    return pmapArray(value, predicate, map) as any;
-  }
-  if (value && typeof value === 'object') {
-    return pmapObject(value, predicate, map);
-  }
-  return value;
-}
+import * as _ from 'lodash';
+import { ValueClass } from './value-class';
 
 export class MakeError extends Error {
   constructor(public readonly errors: ValidationError[]) {
@@ -177,7 +16,7 @@ export interface ValidationError {
   error: string;
 }
 
-type Path = readonly string[];
+type Path = ReadonlyArray<string>;
 
 export function validationErrorPrinter(error: ValidationError) {
   return `${error.path.join('/')}: ${error.error}`;
@@ -187,9 +26,11 @@ export class Make<V> {
   static ok<V>(value: V) {
     return new Make(value, []);
   }
+
   static error<V>(errors: ValidationError[]): Make<V> {
     return new Make<V>(null, errors);
   }
+
   readonly errors: ValidationError[];
   private readonly value: V | null;
 
@@ -243,11 +84,13 @@ export class Make<V> {
 export interface MakeOptions {
   unknownField?: 'drop' | 'fail';
 }
+
 export type Maker<Shape, V> = (value: Shape, opts?: MakeOptions) => Make<V>;
 
 function error<T>(error: string): Make<T> {
   return Make.error<T>([{ path: [], error }]);
 }
+
 function checkString(value: any) {
   if (typeof value !== 'string') {
     return error('expected a string');
@@ -433,6 +276,7 @@ interface FormDataArguments {
 }
 
 export type Binary = File | Buffer | FormBinary;
+
 export class FormBinary {
   constructor(
     public readonly binary: Binary,
@@ -441,9 +285,11 @@ export class FormBinary {
 }
 
 enum FileBrand {}
+
 export class File {
   // @ts-ignore
   private brand: FileBrand;
+
   constructor(public readonly path: string, public readonly size: number) {}
 }
 
@@ -459,6 +305,7 @@ function checkBinary(value: any) {
   }
   return error('expected a binary value');
 }
+
 export function makeBinary() {
   // note: do *not* construct the instance here
   // only check that the instance is ok. The adapter needs to construct the instance itself.
@@ -485,6 +332,7 @@ export function createMaker<Shape, Type>(fun: () => any) {
     return cached(value, opts);
   };
 }
+
 export function createMakerWith<Shape, Type>(
   constructor: new (v: Shape, opts?: MakeOptions) => Type
 ): Maker<Shape, Type> {
@@ -499,32 +347,6 @@ export function createMakerWith<Shape, Type>(
         return Make.error(e.errors);
       }
       throw e;
-    }
-  };
-}
-
-export function json<Status extends number, Value>(
-  status: Status,
-  value: Value
-): server.Response<Status, 'application/json', Value> {
-  return {
-    status,
-    value: {
-      contentType: 'application/json',
-      value
-    }
-  };
-}
-
-export function text<Status extends number, Value>(
-  status: Status,
-  value: Value
-): server.Response<Status, 'text/plain', Value> {
-  return {
-    status,
-    value: {
-      contentType: 'text/plain',
-      value
     }
   };
 }

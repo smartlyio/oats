@@ -2,8 +2,7 @@ import * as oas from 'openapi3-ts';
 import * as ts from 'typescript';
 import * as assert from 'assert';
 import * as oautil from './util';
-import * as server from './server';
-import * as client from './client';
+import { server, client } from '@smartlyio/oats-runtime';
 import safe from '@smartlyio/safe-navigation';
 
 function generateRuntimeImport(runtimeModule: string) {
@@ -11,12 +10,7 @@ function generateRuntimeImport(runtimeModule: string) {
     ts.createImportDeclaration(
       undefined,
       undefined,
-      ts.createImportClause(
-        undefined,
-        ts.createNamedImports([
-          ts.createImportSpecifier(ts.createIdentifier('runtime'), ts.createIdentifier('oar'))
-        ])
-      ),
+      ts.createImportClause(undefined, ts.createNamespaceImport(ts.createIdentifier('oar'))),
       ts.createStringLiteral(runtimeModule)
     )
   ]);
