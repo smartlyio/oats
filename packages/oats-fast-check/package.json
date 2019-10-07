@@ -1,6 +1,6 @@
 {
   "name": "@smartlyio/oats",
-  "version": "1.5.5",
+  "version": "1.6.0-beta.3",
   "license": "MIT",
   "description": "Openapi3 based generator for typescript aware servers and clients",
   "private": false,
@@ -10,8 +10,9 @@
   "scripts": {
     "test": "yarn jest test/",
     "render": "yarn ts-node examples/driver.ts && yarn ts-node render.ts",
-    "build": "rm -rf ./dist/* && rm -f ./tmp/*.ts && yarn test && yarn render && yarn tsc",
+    "build": "rm -rf ./dist/* && rm -f ./tmp/*.ts && yarn test && yarn lint && yarn render && yarn tsc",
     "lint": "tslint -c tslint.json --project package.json",
+    "fix": "tslint --fix -c tslint.json --project package.json",
     "prepublish": "yarn build"
   },
   "repository": {
@@ -19,13 +20,8 @@
     "url": "https://github.com/smartlyio/oats.git"
   },
   "peerDependencies": {
-    "@types/koa": "^2.0.39",
-    "@types/koa-router": "^7.0.23",
-    "axios": "^0.18.0",
-    "form-data": "^2.3.2",
-    "koa": "^2.3.0",
-    "koa-body": "^4.0.4",
-    "koa-router": "^7.2.1"
+    "@smartlyio/oats-runtime": "^1.0.0",
+    "typescript": "^3.6.3"
   },
   "dependencies": {
     "@smartlyio/safe-navigation": "^4.0.1",
@@ -35,6 +31,7 @@
     "openapi3-ts": "^1.2.0"
   },
   "keywords": [
+    "oats",
     "openapi3",
     "rest",
     "generator",
@@ -43,25 +40,30 @@
     "client"
   ],
   "devDependencies": {
-    "@types/jest": "^24.0.18",
-    "@types/koa": "^2.0.39",
-    "@types/koa-router": "^7.0.23",
+    "typescript": "^3.6.3",
+    "@smartlyio/oats-runtime": "^1.0.0",
+    "@smartlyio/oats-axios-adapter": "^1.0.0",
+    "@smartlyio/oats-koa-adapter": "^1.0.0",
+    "@types/koa": "^2.0.50",
+    "@types/koa-mount": "^3.0.1",
+    "@types/koa-router": "^7.0.40",
     "@types/lodash": "^4.14.140",
     "@types/node": "^11.11.3",
+    "@types/jest": "^24.0.18",
     "axios": "^0.19.0",
     "form-data": "^2.3.2",
     "jest": "^24.9.0",
     "jsverify": "^0.8.4",
     "koa": "^2.3.0",
     "koa-body": "^4.0.4",
+    "koa-mount": "^3.0.0",
     "koa-router": "^7.2.1",
     "prettier": "^1.18.2",
     "ts-jest": "^24.1.0",
     "ts-node-dev": "^1.0.0-pre.24",
     "tslint": "^5.7.0",
     "tslint-config-prettier": "^1.18.0",
-    "tslint-plugin-prettier": "^2.0.1",
-    "typescript": "^3.6.3"
+    "tslint-plugin-prettier": "^2.0.1"
   },
   "jest": {
     "testEnvironment": "node",

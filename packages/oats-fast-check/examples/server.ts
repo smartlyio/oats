@@ -1,7 +1,8 @@
 // yarn ts-node examples/server.ts
 import * as api from '../tmp/server.generated';
 import * as types from '../tmp/server.types.generated';
-import { runtime, server } from '../index';
+import * as runtime from '@smartlyio/oats-runtime';
+import * as koaAdapter from '@smartlyio/oats-koa-adapter';
 import * as Koa from 'koa';
 import * as koaBody from 'koa-body';
 
@@ -37,9 +38,9 @@ const spec: api.Endpoints = {
   }
 };
 
-// 'server.koaBindRoutes'  binds the endpoint implemantion in'spec' to
+// 'koaAdapter.bind'  binds the endpoint implemantion in'spec' to
 // koa-router routes using a koa adapter
-const routes = server.koaBindRoutes<api.Endpoints>(api.router, spec);
+const routes = koaAdapter.bind<api.Endpoints>(api.router, spec);
 
 // finally we can create a Koa app from the routes
 export function createApp() {
