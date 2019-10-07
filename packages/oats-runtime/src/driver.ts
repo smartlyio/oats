@@ -7,7 +7,7 @@ import * as oas from 'openapi3-ts';
 
 function modulePath(importer: string, module: string | undefined) {
   if (!module) {
-    return '@smartlyio/oats';
+    return '@smartlyio/oats-runtime';
   }
   let p = path.relative(path.dirname(importer), path.dirname(module));
   if (p[0] !== '.') {

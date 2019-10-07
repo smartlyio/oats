@@ -22,7 +22,6 @@ describe('type generation', () => {
     const generatedServerFile = './tmp/' + randomString() + '.ts';
     config = {
       header: '/* tslint:disable variable-name only-arrow-functions*/',
-      runtimeFilePath: './index.ts',
       openapiFilePath: './test/example.yaml',
       generatedServerFile,
       generatedValueClassFile
@@ -57,10 +56,10 @@ describe('type generation', () => {
     import * as validator from './${path.basename(config.generatedValueClassFile, '.ts')}'; 
     import * as assert from 'assert';
     import * as _ from 'lodash';
-    import * as runtime from '../src/runtime';
+    import * as runtime from '@smartlyio/oats-runtime';
     const json = { id: 'id', name: 'item name' };
     const value = validator.Item.make(json).success();
-    assert(_.isEqual(runtime.toJSON(value), json));
+    assert(_.isEqual(runtime.valueClass.toJSON(value), json));
     assert(runtime.set(value, { name: "new name" }).success().name === 'new name', 'new value should have updated field');
     assert(value.name === "item name", 'original value should not have changed');
     `
