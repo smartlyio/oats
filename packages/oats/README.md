@@ -8,7 +8,8 @@ Generator for typescript clients and servers from openapi3 specs
 // yarn ts-node examples/server.ts
 import * as api from '../tmp/server.generated';
 import * as types from '../tmp/server.types.generated';
-import { runtime, server } from '../index';
+import * as runtime from '@smartlyio/oats-runtime';
+import * as koaAdapter from '@smartlyio/oats-koa-adapter';
 import * as Koa from 'koa';
 import * as koaBody from 'koa-body';
 
@@ -44,9 +45,9 @@ const spec: api.Endpoints = {
   }
 };
 
-// 'server.koaBindRoutes'  binds the endpoint implemantion in'spec' to
+// 'koaAdapter.bind'  binds the endpoint implemantion in'spec' to
 // koa-router routes using a koa adapter
-const routes = server.koaBindRoutes<api.Endpoints>(api.router, spec);
+const routes = koaAdapter.bind<api.Endpoints>(api.router, spec);
 
 // finally we can create a Koa app from the routes
 export function createApp() {
@@ -69,19 +70,20 @@ export function createApp() {
 ```js
 // yarn ts-node examples/client.ts
 import * as api from '../tmp/client.generated';
-import { client } from '../index';
+import * as axiosAdapter from '@smartlyio/oats-axios-adapter';
+import * as runtime from '@smartlyio/oats-runtime';
 import * as app from './server';
 import * as assert from 'assert';
 
 // 'api.client' is the abstract implementation of the client which is then
 // mapped to axios requests using 'axiosAdapter'
-const apiClient = api.client(client.axiosAdapter);
+const apiClient = api.client(axiosAdapter.bind);
 async function runClient() {
   const posted = await apiClient.item.post({
     headers: {
       authorization: 'Bearer ^-^'
     },
-    body: client.json({ id: 'id', name: 'name' })
+    body: runtime.client.json({ id: 'id', name: 'name' })
   });
   if (posted.status !== 201) {
     return assert.fail('wrong response');
@@ -91,7 +93,6 @@ async function runClient() {
     return assert.fail('wrong response');
   }
   assert(stored.value.value.id === 'id');
-
   const deleted = await apiClient.item(posted.value.value.id).delete();
   assert(deleted.status === 204);
   return;
@@ -121,7 +122,6 @@ import { driver } from '../index';
 driver.generate({
   generatedValueClassFile: './tmp/server.types.generated.ts',
   generatedServerFile: './tmp/server.generated.ts',
-  runtimeFilePath: './index.ts',
   header: '/* tslint:disable variable-name only-arrow-functions*/',
   openapiFilePath: './test/example.yaml'
 });
@@ -129,7 +129,6 @@ driver.generate({
 // generate client
 driver.generate({
   generatedValueClassFile: './tmp/client.types.generated.ts',
-  runtimeFilePath: './index.ts',
   generatedClientFile: './tmp/client.generated.ts',
   header: '/* tslint:disable variable-name only-arrow-functions*/',
   openapiFilePath: './test/example.yaml',
