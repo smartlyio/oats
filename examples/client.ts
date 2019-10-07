@@ -1,18 +1,19 @@
 // yarn ts-node examples/client.ts
 import * as api from '../tmp/client.generated';
-import { client } from '../index';
+import * as axiosAdapter from '@smartlyio/oats-axios-adapter';
+import * as runtime from '@smartlyio/oats-runtime';
 import * as app from './server';
 import * as assert from 'assert';
 
 // 'api.client' is the abstract implementation of the client which is then
 // mapped to axios requests using 'axiosAdapter'
-const apiClient = api.client(client.axiosAdapter);
+const apiClient = api.client(axiosAdapter.bind);
 async function runClient() {
   const posted = await apiClient.item.post({
     headers: {
       authorization: 'Bearer ^-^'
     },
-    body: client.json({ id: 'id', name: 'name' })
+    body: runtime.client.json({ id: 'id', name: 'name' })
   });
   if (posted.status !== 201) {
     return assert.fail('wrong response');
@@ -22,7 +23,6 @@ async function runClient() {
     return assert.fail('wrong response');
   }
   assert(stored.value.value.id === 'id');
-
   const deleted = await apiClient.item(posted.value.value.id).delete();
   assert(deleted.status === 204);
   return;
