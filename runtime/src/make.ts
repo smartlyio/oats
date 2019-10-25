@@ -87,13 +87,17 @@ export interface MakeOptions {
 
 export type Maker<Shape, V> = (value: Shape, opts?: MakeOptions) => Make<V>;
 
+function getErrorWithValueMsg<T>(msg: string, value: T): Make<T> {
+  return error(`${msg}, but got "${value}" instead.`);
+}
+
 function error<T>(error: string): Make<T> {
   return Make.error<T>([{ path: [], error }]);
 }
 
 function checkString(value: any) {
   if (typeof value !== 'string') {
-    return error('expected a string');
+    return getErrorWithValueMsg('expected a string', value);
   }
   return Make.ok(value);
 }
@@ -104,7 +108,7 @@ export function makeString() {
 
 function checkNumber(value: any): Make<number> {
   if (typeof value !== 'number') {
-    return error('expected a number');
+    return getErrorWithValueMsg('expected a number', value);
   }
   return Make.ok(value);
 }
@@ -113,7 +117,7 @@ export function makeNumber(value?: number): Maker<number, number> {
   if (value != null) {
     return (v: number) => {
       if (value !== v) {
-        return error('expected value ' + value);
+        return getErrorWithValueMsg('expected value ' + value, v);
       }
       return Make.ok(v);
     };
@@ -131,7 +135,7 @@ export function makeAny() {
 
 function checkVoid(value: any) {
   if (value != null) {
-    return error('expected no value');
+    return getErrorWithValueMsg('expected no value', value);
   }
   return Make.ok(value);
 }
@@ -144,7 +148,7 @@ export function makeEnum<T>(...args: T[]) {
   const err = 'expected value to be one of ' + args.join(', ');
   return (value: T) => {
     if (args.indexOf(value) < 0) {
-      return error(err);
+      return getErrorWithValueMsg(err, value);
     }
     return Make.ok(value);
   };
@@ -156,7 +160,7 @@ export function makeOptional(maker: any) {
 
 function checkBoolean(value: any) {
   if (typeof value !== 'boolean') {
-    return error('expected a boolean');
+    return getErrorWithValueMsg('expected a boolean', value);
   }
   return Make.ok(value);
 }
@@ -168,7 +172,7 @@ export function makeBoolean() {
 export function makeArray(maker: any) {
   return (value: any, opts?: MakeOptions) => {
     if (!Array.isArray(value)) {
-      return error('expected an array');
+      return getErrorWithValueMsg('expected an array', value);
     }
     const result = [];
     for (let index = 0; index < value.length; index++) {
@@ -233,7 +237,7 @@ export function makeObject<
 >(props: P, additionalProp?: any) {
   return (value: any, opts?: MakeOptions) => {
     if (typeof value !== 'object' || value == null) {
-      return error('expected an object');
+      return getErrorWithValueMsg('expected an object', value);
     }
     const result: { [key: string]: any } = {};
     for (const index of Object.keys(props)) {
@@ -303,7 +307,7 @@ function checkBinary(value: any) {
   if (value instanceof FormBinary) {
     return Make.ok(value);
   }
-  return error('expected a binary value');
+  return getErrorWithValueMsg('expected a binary value', value);
 }
 
 export function makeBinary() {
