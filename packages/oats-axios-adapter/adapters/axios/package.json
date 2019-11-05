@@ -17,7 +17,7 @@
   },
   "peerDependencies": {
     "typescript": "^3.6.3",
-    "axios": "^0.18.0"
+    "axios": "^0.19.0"
   },
   "dependencies": {
     "@smartlyio/oats-runtime": "^1.0.0",
