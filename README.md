@@ -116,12 +116,11 @@ app.createApp().listen(port, async () => {
 
 ```
 // yarn ts-node examples/driver.ts
-import { driver } from '../index';
-import * as util from '../src/util';
+import { driver, util } from '../index';
 
 // define how references to outside the example.yaml file are resolved
 const externals = {
-  externalOpenApiImports: [{ importFile: './common.types.generated', importAs: 'common'}],
+  externalOpenApiImports: [{ importFile: './tmp/common.types.generated', importAs: 'common'}],
   externalOpenApiSpecs: (url: string) => {
     if (url.startsWith('common.yaml')) {
       return 'common.' + util.refToTypeName(url.replace(/^common.yaml/, ''));
