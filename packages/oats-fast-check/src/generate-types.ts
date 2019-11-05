@@ -147,10 +147,17 @@ function generateParameterType(
   if (pathParams.length === 0) {
     return empty;
   }
+  const required: string[] = [];
+  pathParams.map(paramOrRef => {
+    const param = oautil.deref(paramOrRef, oasSchema);
+    if (param.required) {
+      required.push(normalize(param.name));
+    }
+  });
   const jointSchema: oas.SchemaObject = {
     type: 'object',
     additionalProperties: false,
-    required: pathParams.map(param => param.name),
+    required,
     properties: pathParams.reduce((memo: any, param) => {
       memo[normalize(param.name)] = param.schema;
       return memo;
