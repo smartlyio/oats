@@ -20,9 +20,16 @@ function modulePath(importer: string, module: string | undefined) {
   return p;
 }
 
+export interface ImportDefinition {
+  importFile: string;
+  importAs: string;
+}
+
 export interface Driver {
   openapiFilePath: string;
   generatedValueClassFile: string;
+  externalOpenApiImports?: readonly ImportDefinition[];
+  externalOpenApiSpecs?: (url: string) => string | undefined;
   header: string;
   generatedServerFile?: string;
   generatedClientFile?: string;
@@ -41,6 +48,8 @@ export function generate(driver: Driver) {
     driver.header +
       '\n' +
       types.run({
+        externalOpenApiImports: driver.externalOpenApiImports || [],
+        externalOpenApiSpecs: driver.externalOpenApiSpecs || (() => undefined),
         oas: spec,
         runtimeModule: modulePath(driver.generatedValueClassFile, driver.runtimeFilePath),
         emitStatusCode: driver.emitStatusCode || emitAllStatusCodes
