@@ -36,9 +36,9 @@
   ],
   "devDependencies": {
     "@types/koa": "2.0.50",
-    "@types/koa-router": "^7.0.23",
-    "@types/lodash": "^4.14.140",
-    "@types/node": "^11.11.3",
-    "typescript": "^3.6.3"
+    "@types/koa-router": "7.0.42",
+    "@types/lodash": "4.14.141",
+    "@types/node": "11.13.21",
+    "typescript": "3.6.3"
   }
 }
