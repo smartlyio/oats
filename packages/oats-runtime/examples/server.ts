@@ -1,13 +1,13 @@
 // yarn ts-node examples/server.ts
 import * as api from '../tmp/server.generated';
-import * as types from '../tmp/server.types.generated';
+import * as common from '../tmp/common.types.generated';
 import * as runtime from '@smartlyio/oats-runtime';
 import * as koaAdapter from '@smartlyio/oats-koa-adapter';
 import * as Koa from 'koa';
 import * as koaBody from 'koa-body';
 
 // setup a db :)
-const values: { [key: string]: types.Item } = {};
+const values: { [key: string]: common.Item } = {};
 
 // 'api.Endpoints' is the generated type of the server
 const spec: api.Endpoints = {
@@ -16,7 +16,7 @@ const spec: api.Endpoints = {
       if (ctx.headers.authorization !== 'Bearer ^-^') {
         return runtime.json(403, { message: 'Unauthorized' });
       }
-      values[ctx.body.value.id] = types.Item.make({
+      values[ctx.body.value.id] = common.Item.make({
         id: ctx.body.value.id,
         name: ctx.body.value.name
       }).success();

@@ -7,14 +7,14 @@ Generator for typescript clients and servers from openapi3 specs
 ```js
 // yarn ts-node examples/server.ts
 import * as api from '../tmp/server.generated';
-import * as types from '../tmp/server.types.generated';
+import * as common from '../tmp/common.types.generated';
 import * as runtime from '@smartlyio/oats-runtime';
 import * as koaAdapter from '@smartlyio/oats-koa-adapter';
 import * as Koa from 'koa';
 import * as koaBody from 'koa-body';
 
 // setup a db :)
-const values: { [key: string]: types.Item } = {};
+const values: { [key: string]: common.Item } = {};
 
 // 'api.Endpoints' is the generated type of the server
 const spec: api.Endpoints = {
@@ -23,7 +23,7 @@ const spec: api.Endpoints = {
       if (ctx.headers.authorization !== 'Bearer ^-^') {
         return runtime.json(403, { message: 'Unauthorized' });
       }
-      values[ctx.body.value.id] = types.Item.make({
+      values[ctx.body.value.id] = common.Item.make({
         id: ctx.body.value.id,
         name: ctx.body.value.name
       }).success();
@@ -116,18 +116,38 @@ app.createApp().listen(port, async () => {
 
 ```
 // yarn ts-node examples/driver.ts
-import { driver } from '../index';
+import { driver, util } from '../index';
 
-// generate server
+// define how references to outside the example.yaml file are resolved
+const externals = {
+  externalOpenApiImports: [{ importFile: './tmp/common.types.generated', importAs: 'common'}],
+  externalOpenApiSpecs: (url: string) => {
+    if (url.startsWith('common.yaml')) {
+      return 'common.' + util.refToTypeName(url.replace(/^common.yaml/, ''));
+    }
+    return;
+  }
+}
+
+// generate type definitions for schemas from an external openapi spec
 driver.generate({
+  generatedValueClassFile: './tmp/common.types.generated.ts',
+  header: '/* tslint:disable variable-name only-arrow-functions*/',
+  openapiFilePath: './test/common.yaml'
+});
+
+// generate server from the shared openapi spec
+driver.generate({
+  ...externals,
   generatedValueClassFile: './tmp/server.types.generated.ts',
   generatedServerFile: './tmp/server.generated.ts',
   header: '/* tslint:disable variable-name only-arrow-functions*/',
   openapiFilePath: './test/example.yaml'
 });
 
-// generate client
+// generate client from the shared openapi spec
 driver.generate({
+  ...externals,
   generatedValueClassFile: './tmp/client.types.generated.ts',
   generatedClientFile: './tmp/client.generated.ts',
   header: '/* tslint:disable variable-name only-arrow-functions*/',
@@ -135,6 +155,9 @@ driver.generate({
   // Omit error responses  from the client response types
   emitStatusCode: (code: number) => [200, 201, 204].indexOf(code) >= 0
 });
+
+
+
 
 ```
 

@@ -360,7 +360,11 @@ function generateType(
 ): ts.TypeNode {
   assert(schema, 'missing schema');
   if (oautil.isReferenceObject(schema)) {
-    return ts.createTypeReferenceNode(typeMapper(oautil.refToTypeName(schema.$ref)), undefined);
+    const resolved = resolveRefToTypeName(schema.$ref);
+    const type = resolved.qualified
+      ? ts.createQualifiedName(resolved.qualified, typeMapper(resolved.member))
+      : typeMapper(resolved.member);
+    return ts.createTypeReferenceNode(type, undefined);
   }
   if (schema.oneOf) {
     return ts.createUnionTypeNode(schema.oneOf.map(schema => generateType(schema, typeMapper)));
@@ -574,7 +578,12 @@ function quotedProp(prop: string) {
 
 function generateMakerExpression(schema: oas.ReferenceObject | oas.SchemaObject): ts.Expression {
   if (oautil.isReferenceObject(schema)) {
-    return generateMakerReference(oautil.refToTypeName(schema.$ref));
+    const resolved = resolveRefToTypeName(schema.$ref);
+    if (resolved.qualified) {
+      return ts.createPropertyAccess(resolved.qualified, generateMakerReference(resolved.member));
+    } else {
+      return generateMakerReference(resolved.member);
+    }
   }
   if (schema.oneOf) {
     return makeCall('makeOneOf', schema.oneOf.map(generateMakerExpression));
@@ -747,13 +756,17 @@ function generateTypeShape(key: string, schema: oas.SchemaObject) {
 
 function generateTopLevelType(key: string, schema: oas.SchemaObject | oas.ReferenceObject) {
   if (oautil.isReferenceObject(schema)) {
+    const resolved = resolveRefToTypeName(schema.$ref);
+    const type = resolved.qualified
+      ? ts.createQualifiedName(resolved.qualified, resolved.member)
+      : resolved.member;
     return [
       ts.createTypeAliasDeclaration(
         undefined,
         [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
         oautil.typenamify(key),
         undefined,
-        ts.createTypeReferenceNode(oautil.refToTypeName(schema.$ref), undefined)
+        ts.createTypeReferenceNode(type, undefined)
       ),
       generateTypeShape(key, schema),
       generateTopLevelMaker(key, schema)
@@ -806,7 +819,8 @@ function isScalar(schema: oas.SchemaObject): boolean {
   return ['string', 'integer', 'number', 'boolean'].indexOf(schema.type || '') >= 0;
 }
 
-function generateComponentSchemas(oas: oas.OpenAPIObject): ts.Node[] {
+function generateComponentSchemas(opts: Options): ts.Node[] {
+  const oas = opts.oas;
   const schemas = safe(oas).components.schemas.$;
   if (!schemas) {
     return [];
@@ -836,9 +850,10 @@ function generateComponentResponses(oas: oas.OpenAPIObject): ts.Node[] {
   }, []);
 }
 
-function generateComponents(oas: oas.OpenAPIObject): ts.NodeArray<ts.Node> {
+function generateComponents(opts: Options): ts.NodeArray<ts.Node> {
+  const oas = opts.oas;
   const nodes = [];
-  nodes.push(...oautil.errorTag('in component.schemas', () => generateComponentSchemas(oas)));
+  nodes.push(...oautil.errorTag('in component.schemas', () => generateComponentSchemas(opts)));
   nodes.push(...oautil.errorTag('in component.responses', () => generateComponentResponses(oas)));
   return ts.createNodeArray(nodes);
 }
@@ -852,6 +867,20 @@ function fromLib(...names: string[]): ts.QualifiedName {
 const runtimeLibrary = ts.createIdentifier('oar');
 const readonly = [ts.createModifier(ts.SyntaxKind.ReadonlyKeyword)];
 
+function generateExternals(imports: readonly ImportDefinition[]) {
+  return imports.map(external => {
+    return ts.createImportDeclaration(
+      undefined,
+      undefined,
+      ts.createImportClause(
+        undefined,
+        ts.createNamespaceImport(ts.createIdentifier(external.importAs))
+      ),
+      ts.createStringLiteral(external.importFile)
+    );
+  });
+}
+
 function generateBuiltins(runtimeModule: string) {
   return ts.createNodeArray([
     ts.createImportDeclaration(
@@ -863,7 +892,13 @@ function generateBuiltins(runtimeModule: string) {
   ]);
 }
 
+interface ImportDefinition {
+  importAs: string;
+  importFile: string;
+}
 export interface Options {
+  externalOpenApiImports: readonly ImportDefinition[];
+  externalOpenApiSpecs: (url: string) => string | undefined;
   oas: oas.OpenAPIObject;
   runtimeModule: string;
   emitStatusCode: (status: number) => boolean;
@@ -885,9 +920,26 @@ function addIndexSignatureIgnores(src: string) {
   return result.join('\n');
 }
 
+function resolveRefToTypeName(ref: string): { qualified?: ts.Identifier; member: string } {
+  if (ref[0] === '#') {
+    return { member: oautil.refToTypeName(ref) };
+  }
+  if (options.externalOpenApiSpecs) {
+    const name = options.externalOpenApiSpecs(ref);
+    if (name) {
+      const [qualified, member] = name.split('.');
+      return { member, qualified: ts.createIdentifier(qualified) };
+    }
+  }
+  return assert.fail('could not resolve typename for ' + ref);
+}
+
+let options: Options;
 export function run(opts: Options) {
+  options = opts;
   const builtins = generateBuiltins(opts.runtimeModule);
-  const types = generateComponents(opts.oas);
+  const externals = generateExternals(opts.externalOpenApiImports);
+  const types = generateComponents(opts);
   const queryTypes = generateQueryTypes(opts);
 
   const sourceFile: ts.SourceFile = ts.createSourceFile(
@@ -901,7 +953,7 @@ export function run(opts: Options) {
     .createPrinter()
     .printList(
       ts.ListFormat.MultiLine,
-      ts.createNodeArray([...builtins, ...types, ...queryTypes]),
+      ts.createNodeArray([...builtins, ...externals, ...types, ...queryTypes]),
       sourceFile
     );
   return addIndexSignatureIgnores(src);

@@ -20,9 +20,16 @@ function modulePath(importer: string, module: string | undefined) {
   return p;
 }
 
+export interface ImportDefinition {
+  importFile: string;
+  importAs: string;
+}
+
 export interface Driver {
   openapiFilePath: string;
   generatedValueClassFile: string;
+  externalOpenApiImports?: readonly ImportDefinition[];
+  externalOpenApiSpecs?: (url: string) => string | undefined;
   header: string;
   generatedServerFile?: string;
   generatedClientFile?: string;
@@ -33,6 +40,15 @@ export interface Driver {
 function emitAllStatusCodes() {
   return true;
 }
+
+function resolveModule(fromModule: string, toModule: string): string {
+  const p = path.relative(path.dirname(fromModule), toModule);
+  if (p[0] === '.') {
+    return p;
+  }
+  return './' + p;
+}
+
 export function generate(driver: Driver) {
   const file = fs.readFileSync(driver.openapiFilePath, 'utf8');
   const spec: oas.OpenAPIObject = yaml.load(file);
@@ -41,6 +57,11 @@ export function generate(driver: Driver) {
     driver.header +
       '\n' +
       types.run({
+        externalOpenApiImports: (driver.externalOpenApiImports || []).map(i => ({
+          importFile: resolveModule(driver.generatedValueClassFile, i.importFile),
+          importAs: i.importAs
+        })),
+        externalOpenApiSpecs: driver.externalOpenApiSpecs || (() => undefined),
         oas: spec,
         runtimeModule: modulePath(driver.generatedValueClassFile, driver.runtimeFilePath),
         emitStatusCode: driver.emitStatusCode || emitAllStatusCodes
