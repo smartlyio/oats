@@ -20,14 +20,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Item'
+              $ref: 'common.yaml#/components/schemas/Item'
       responses:
         '201':
           description: created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Item'
+                $ref: 'common.yaml#/components/schemas/Item'
         default:
           description: error
           content:
@@ -41,7 +41,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/ItemId'
+            $ref: 'common.yaml#/components/schemas/ItemId'
       responses:
         '204':
           $ref: '#/components/responses/NoContent'
@@ -51,14 +51,14 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/ItemId'
+            $ref: 'common.yaml#/components/schemas/ItemId'
       responses:
         '200':
           description: item found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Item"
+                $ref: "common.yaml#/components/schemas/Item"
         default:
           description: error
           content:
@@ -74,18 +74,6 @@ components:
           schema:
             type: string
   schemas:
-    ItemId:
-      type: string
-    Item:
-      type: object
-      required:
-        - id
-        - name
-      properties:
-        id:
-          $ref: '#/components/schemas/ItemId'
-        name:
-          type: string
     Error:
       type: object
       properties:

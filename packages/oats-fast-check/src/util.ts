@@ -20,6 +20,7 @@ export function typenamify(name: string) {
 }
 
 export function refToTypeName(ref: string) {
+  assert(ref[0] === '#', 'Resolving only local names is allowed. Tried: ' + ref);
   return typenamify(ref.split('/').reverse()[0]);
 }
 
