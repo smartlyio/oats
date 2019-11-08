@@ -18,7 +18,7 @@ function generateClassMembers(
       [ts.createToken(ts.SyntaxKind.ReadonlyKeyword)],
       quotedProp(key),
       required && required.indexOf(key) >= 0
-        ? undefined
+        ? ts.createToken(ts.SyntaxKind.ExclamationToken)
         : ts.createToken(ts.SyntaxKind.QuestionToken),
       generateType(value),
       undefined
