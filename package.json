@@ -10,7 +10,7 @@
   "scripts": {
     "test": "yarn jest test/",
     "render": "yarn ts-node examples/driver.ts && yarn ts-node render.ts",
-    "build": "rm -rf ./dist/* && rm -f ./tmp/*.ts && yarn test && yarn lint && yarn render && yarn tsc",
+    "build": "rm -rf ./dist/* && rm -f ./tmp/*.ts && yarn render && yarn test && yarn lint && yarn tsc",
     "lint": "tslint -c tslint.json --project package.json",
     "fix": "tslint --fix -c tslint.json --project package.json",
     "prepublish": "yarn build"
