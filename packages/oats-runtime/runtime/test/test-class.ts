@@ -9,8 +9,8 @@ export class TestClass extends ValueClass<TestClass, 1> {
   static make(v: ShapeOfTestClass): Make<TestClass> {
     return makeTestClass(v);
   }
-  public b: string;
-  public a: ReadonlyArray<string>;
+  public b!: string;
+  public a!: ReadonlyArray<string>;
   constructor(v: ShapeOfTestClass) {
     super();
     const value = makeObject({

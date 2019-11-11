@@ -91,14 +91,12 @@ function generateMethod<S extends oas.OperationObject, K extends keyof S>(
 function generateEndpoint(path: string, schema: oas.PathItemObject, opts: Options) {
   assert(!schema.$ref, '$ref in path not supported');
   assert(!schema.parameters, 'parameters in path not supported');
-  return ts.createTypeLiteralNode(
-    server.supportedMethods.reduce(
-      (memo, method) =>
-        oautil.errorTag('in method ' + method.toUpperCase(), () => {
-          const methodHandler = schema[method];
-          if (!methodHandler) {
-            return memo;
-          }
+  const signatures: ts.PropertySignature[] = [];
+  server.supportedMethods.forEach(
+    method =>
+      oautil.errorTag('in method ' + method.toUpperCase(), () => {
+        const methodHandler = schema[method];
+        if (methodHandler) {
           const endpoint = ts.createPropertySignature(
             readonly,
             ts.createStringLiteral(method),
@@ -106,11 +104,12 @@ function generateEndpoint(path: string, schema: oas.PathItemObject, opts: Option
             generateMethod(path, method, methodHandler, opts),
             undefined
           );
-          return [...memo, endpoint];
-        }),
-      []
-    )
+          signatures.push(endpoint);
+        }
+      }),
+    []
   );
+  return ts.createTypeLiteralNode(signatures);
 }
 
 function generateClientMethod(
