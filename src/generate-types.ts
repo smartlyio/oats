@@ -12,18 +12,20 @@ function generateClassMembers(
   required: oas.SchemaObject['required'],
   additional: oas.SchemaObject['additionalProperties']
 ): readonly ts.ClassElement[] {
-  const proptypes = _.map(properties, (value, key) =>
-    ts.createProperty(
+  const proptypes = _.map(properties, (value, key) => {
+    const token =
+      required && required.indexOf(key) >= 0
+        ? ts.createToken(ts.SyntaxKind.ExclamationToken)
+        : ts.createToken(ts.SyntaxKind.QuestionToken);
+    return ts.createProperty(
       undefined,
       [ts.createToken(ts.SyntaxKind.ReadonlyKeyword)],
       quotedProp(key),
-      required && required.indexOf(key) >= 0
-        ? undefined
-        : ts.createToken(ts.SyntaxKind.QuestionToken),
+      token,
       generateType(value),
       undefined
-    )
-  );
+    );
+  });
   if (additional !== false) {
     const type =
       additional === true || additional == null
@@ -754,7 +756,10 @@ function generateTypeShape(key: string, schema: oas.SchemaObject) {
   );
 }
 
-function generateTopLevelType(key: string, schema: oas.SchemaObject | oas.ReferenceObject) {
+function generateTopLevelType(
+  key: string,
+  schema: oas.SchemaObject | oas.ReferenceObject
+): readonly ts.Node[] {
   if (oautil.isReferenceObject(schema)) {
     const resolved = resolveRefToTypeName(schema.$ref);
     const type = resolved.qualified
@@ -825,10 +830,13 @@ function generateComponentSchemas(opts: Options): ts.Node[] {
   if (!schemas) {
     return [];
   }
-  return Object.keys(schemas).reduce((memo, key) => {
+  const nodes: ts.Node[] = [];
+  Object.keys(schemas).map(key => {
     const schema = schemas[key];
-    return [...memo, ...generateTopLevelType(key, schema)];
-  }, []);
+    const types = generateTopLevelType(key, schema);
+    types.map(t => nodes.push(t));
+  });
+  return nodes;
 }
 
 function generateComponentResponses(oas: oas.OpenAPIObject): ts.Node[] {
@@ -836,18 +844,17 @@ function generateComponentResponses(oas: oas.OpenAPIObject): ts.Node[] {
   if (!responses) {
     return [];
   }
-  return Object.keys(responses).reduce((memo, key) => {
+  const nodes: ts.Node[] = [];
+  Object.keys(responses).map(key => {
     const response = responses[key];
-    return [
-      ...memo,
-      ...generateTopLevelType(
-        key,
-        oautil.isReferenceObject(response)
-          ? { $ref: response.$ref }
-          : generateContentSchemaType(response.content || assert.fail('missing content'))
-      )
-    ];
-  }, []);
+    generateTopLevelType(
+      key,
+      oautil.isReferenceObject(response)
+        ? { $ref: response.$ref }
+        : generateContentSchemaType(response.content || assert.fail('missing content'))
+    ).map(t => nodes.push(t));
+  });
+  return nodes;
 }
 
 function generateComponents(opts: Options): ts.NodeArray<ts.Node> {
