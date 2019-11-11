@@ -22,7 +22,7 @@
   "dependencies": {
     "@smartlyio/oats-runtime": "^1.0.0",
     "@types/form-data": "^2.2.1",
-    "form-data": "^2.3.2"
+    "form-data": "^3.0.0"
   },
   "keywords": [
     "oats",
