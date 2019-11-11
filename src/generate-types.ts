@@ -13,15 +13,13 @@ function generateClassMembers(
   additional: oas.SchemaObject['additionalProperties']
 ): readonly ts.ClassElement[] {
   const proptypes = _.map(properties, (value, key) => {
-    const token =
-      required && required.indexOf(key) >= 0
-        ? ts.createToken(ts.SyntaxKind.ExclamationToken)
-        : ts.createToken(ts.SyntaxKind.QuestionToken);
     return ts.createProperty(
       undefined,
       [ts.createToken(ts.SyntaxKind.ReadonlyKeyword)],
       quotedProp(key),
-      token,
+      required && required.indexOf(key) >= 0
+        ? ts.createToken(ts.SyntaxKind.ExclamationToken)
+        : ts.createToken(ts.SyntaxKind.QuestionToken),
       generateType(value),
       undefined
     );
