@@ -137,12 +137,12 @@ export function safe<
       servers: ctx.servers,
       op: ctx.op,
       headers: cleanHeaders(headers, ctx.headers),
-      params: params(voidify(ctx.params)).success(throwRequestValidationError.bind(this, 'params')),
-      query: query(voidify(ctx.query)).success(throwRequestValidationError.bind(this, 'query')),
-      body: body(voidify(ctx.body)).success(throwRequestValidationError.bind(this, 'body'))
+      params: params(voidify(ctx.params)).success(throwRequestValidationError.bind(null, 'params')),
+      query: query(voidify(ctx.query)).success(throwRequestValidationError.bind(null, 'query')),
+      body: body(voidify(ctx.body)).success(throwRequestValidationError.bind(null, 'body'))
     });
     return response(result).success(
-      throwResponseValidationError.bind(this, `body ${ctx.path}`, result.value.value)
+      throwResponseValidationError.bind(null, `body ${ctx.path}`, result.value.value)
     );
   };
 }
@@ -201,14 +201,12 @@ export type ServerAdapter = (
   handler: SafeEndpoint
 ) => void;
 
-export function createHandlerFactory<Spec extends Endpoints>(
-  handlers: Handler[]
-): HandlerFactory<Spec> {
+export function createHandlerFactory<Spec>(handlers: Handler[]): HandlerFactory<Spec> {
   const tree = createTree(handlers);
   return (adapter: ServerAdapter) => {
     return (spec: Spec) => {
       Object.keys(spec).forEach(path => {
-        const endpoint: MethodHandlers = spec[path];
+        const endpoint: MethodHandlers = (spec as any)[path];
         Object.keys(endpoint).forEach(method => {
           const methodHandler = (endpoint as any)[method];
           const endpointWrapper = safeNavigation(tree)[path][method].$;

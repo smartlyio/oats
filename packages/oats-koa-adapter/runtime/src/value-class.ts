@@ -19,7 +19,7 @@ function asPlainObject(value: any): any {
 }
 
 export class ValueClass<Shape, BrandTag> extends Brand<BrandTag> {
-  private Shape: Shape;
+  private Shape!: Shape;
 }
 
 interface WritableArray<T> extends Array<Writable<T>> {}
