@@ -837,22 +837,28 @@ function generateComponentSchemas(opts: Options): ts.Node[] {
   return nodes;
 }
 
+function processComponents(components: {
+  [key: string]: oas.ResponseObject | oas.RequestBodyObject | oas.ReferenceObject;
+}): ts.Node[] {
+  const nodes: ts.Node[] = [];
+  Object.keys(components).map(key => {
+    const component = components[key];
+    generateTopLevelType(
+      key,
+      oautil.isReferenceObject(component)
+        ? { $ref: component.$ref }
+        : generateContentSchemaType(component.content || assert.fail('missing content'))
+    ).map(t => nodes.push(t));
+  });
+  return nodes;
+}
+
 function generateComponentResponses(oas: oas.OpenAPIObject): ts.Node[] {
   const responses = safe(oas).components.responses.$;
   if (!responses) {
     return [];
   }
-  const nodes: ts.Node[] = [];
-  Object.keys(responses).map(key => {
-    const response = responses[key];
-    generateTopLevelType(
-      key,
-      oautil.isReferenceObject(response)
-        ? { $ref: response.$ref }
-        : generateContentSchemaType(response.content || assert.fail('missing content'))
-    ).map(t => nodes.push(t));
-  });
-  return nodes;
+  return processComponents(responses);
 }
 
 function generateComponentRequestBodies(oas: oas.OpenAPIObject): ts.Node[] {
@@ -860,17 +866,7 @@ function generateComponentRequestBodies(oas: oas.OpenAPIObject): ts.Node[] {
   if (!requestBodies) {
     return [];
   }
-  const nodes: ts.Node[] = [];
-  Object.keys(requestBodies).map(key => {
-    const requestBody = requestBodies[key];
-    generateTopLevelType(
-      key,
-      oautil.isReferenceObject(requestBody)
-        ? { $ref: requestBody.$ref }
-        : generateContentSchemaType(requestBody.content || assert.fail('missing content'))
-    ).map(t => nodes.push(t));
-  });
-  return nodes;
+  return processComponents(requestBodies);
 }
 
 function generateComponents(opts: Options): ts.NodeArray<ts.Node> {
