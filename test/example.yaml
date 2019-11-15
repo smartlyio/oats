@@ -16,11 +16,7 @@ paths:
           schema:
             type: string
       requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: 'common.yaml#/components/schemas/Item'
+        $ref: "#/components/requestBodies/PostBody"
       responses:
         '201':
           description: created
@@ -73,6 +69,13 @@ components:
         text/plain:
           schema:
             type: string
+  requestBodies:
+    PostBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: 'common.yaml#/components/schemas/Item'
   schemas:
     Error:
       type: object
