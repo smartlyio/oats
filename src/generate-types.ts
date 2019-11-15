@@ -837,45 +837,37 @@ function generateComponentSchemas(opts: Options): ts.Node[] {
   return nodes;
 }
 
-function processComponents(components: {
+function generateComponentRequestsAndResponses(components?: {
   [key: string]: oas.ResponseObject | oas.RequestBodyObject | oas.ReferenceObject;
 }): ts.Node[] {
   const nodes: ts.Node[] = [];
-  Object.keys(components).map(key => {
-    const component = components[key];
-    generateTopLevelType(
-      key,
-      oautil.isReferenceObject(component)
-        ? { $ref: component.$ref }
-        : generateContentSchemaType(component.content || assert.fail('missing content'))
-    ).map(t => nodes.push(t));
-  });
+  if (components) {
+    Object.keys(components).map(key => {
+      const component = components[key];
+      generateTopLevelType(
+        key,
+        oautil.isReferenceObject(component)
+          ? { $ref: component.$ref }
+          : generateContentSchemaType(component.content || assert.fail('missing content'))
+      ).map(t => nodes.push(t));
+    });
+  }
   return nodes;
 }
 
-function generateComponentResponses(oas: oas.OpenAPIObject): ts.Node[] {
-  const responses = safe(oas).components.responses.$;
-  if (!responses) {
-    return [];
-  }
-  return processComponents(responses);
-}
-
-function generateComponentRequestBodies(oas: oas.OpenAPIObject): ts.Node[] {
-  const requestBodies = safe(oas).components.requestBodies.$;
-  if (!requestBodies) {
-    return [];
-  }
-  return processComponents(requestBodies);
-}
-
 function generateComponents(opts: Options): ts.NodeArray<ts.Node> {
-  const oas = opts.oas;
+  const oas = safe(opts.oas);
   const nodes = [];
   nodes.push(...oautil.errorTag('in component.schemas', () => generateComponentSchemas(opts)));
-  nodes.push(...oautil.errorTag('in component.responses', () => generateComponentResponses(oas)));
   nodes.push(
-    ...oautil.errorTag('in component.requestBodies', () => generateComponentRequestBodies(oas))
+    ...oautil.errorTag('in component.responses', () =>
+      generateComponentRequestsAndResponses(oas.components.responses.$)
+    )
+  );
+  nodes.push(
+    ...oautil.errorTag('in component.requestBodies', () =>
+      generateComponentRequestsAndResponses(oas.components.requestBodies.$)
+    )
   );
   return ts.createNodeArray(nodes);
 }
