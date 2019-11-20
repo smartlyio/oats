@@ -1,0 +1,41 @@
+{
+  "name": "@smartlyio/oats-nock-adapter",
+  "version": "1.0.0",
+  "license": "MIT",
+  "description": "Nock based test server adapter for Oats",
+  "private": false,
+  "author": "Smartly.io",
+  "main": "dist/nock.js",
+  "types": "dist/nock.d.ts",
+  "scripts": {
+    "build": "rm -rf ./dist/* && yarn tsc",
+    "prepublish": "yarn build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/smartlyio/oats.git"
+  },
+  "peerDependencies": {
+    "typescript": "^3.6.3",
+    "@types/nock": "10.0.3",
+    "nock": "10.0.6",
+    "@smartlyio/oats-runtime": "^1.0.0"
+  },
+  "keywords": [
+    "oats",
+    "nock",
+    "openapi3",
+    "rest",
+    "generator",
+    "typescript",
+    "server",
+    "test"
+  ],
+  "devDependencies": {
+    "@types/nock": "10.0.3",
+    "nock": "10.0.6",
+    "@types/lodash": "^4.14.140",
+    "@types/node": "^11.11.3",
+    "typescript": "^3.6.3"
+  }
+}
