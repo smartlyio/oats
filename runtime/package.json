@@ -36,24 +36,5 @@
     "@types/lodash": "^4.14.140",
     "@types/node": "^11.11.3",
     "typescript": "^3.6.3"
-  },
-  "jest": {
-    "testEnvironment": "node",
-    "globals": {
-      "ts-jest": {
-        "skipBabel": true
-      }
-    },
-    "testRegex": "test/.*\\.spec.(jsx?|tsx?)$",
-    "transform": {
-      "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
-    },
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "jsx",
-      "json"
-    ]
   }
 }

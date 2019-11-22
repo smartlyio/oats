@@ -8,7 +8,9 @@
   "main": "dist/nock.js",
   "types": "dist/nock.d.ts",
   "scripts": {
-    "build": "rm -rf ./dist/* && yarn tsc",
+    "render": "yarn ts-node examples/driver.ts && yarn ts-node render.ts",
+    "build": "rm -rf ./dist/* && rm -rf ./tmp && yarn render && yarn tsc",
+    "test": "yarn jest",
     "prepublish": "yarn build"
   },
   "repository": {
@@ -16,10 +18,10 @@
     "url": "https://github.com/smartlyio/oats.git"
   },
   "peerDependencies": {
-    "typescript": "^3.6.3",
+    "@smartlyio/oats-runtime": "^1.0.0",
     "@types/nock": "10.0.3",
     "nock": "10.0.6",
-    "@smartlyio/oats-runtime": "^1.0.0"
+    "typescript": "^3.6.3"
   },
   "keywords": [
     "oats",
@@ -32,10 +34,13 @@
     "test"
   ],
   "devDependencies": {
-    "@types/nock": "10.0.3",
-    "nock": "10.0.6",
+    "@smartlyio/oats": "^1.6.3",
+    "@types/jest": "^24.0.23",
     "@types/lodash": "^4.14.140",
+    "@types/nock": "10.0.3",
     "@types/node": "^11.11.3",
+    "nock": "10.0.6",
+    "ts-node": "^8.5.2",
     "typescript": "^3.6.3"
   }
 }
