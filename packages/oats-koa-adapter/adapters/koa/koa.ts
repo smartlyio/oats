@@ -20,7 +20,8 @@ function adapter(router: Router): runtime.server.ServerAdapter {
         }, {});
       }
       const contentType = ctx.request.type;
-      const value = { ...(ctx.request as any).body, ...fileFields };
+      const requestBody = (ctx.request as any).body;
+      const value = Array.isArray(requestBody) ? requestBody : { ...requestBody, ...fileFields };
       const body = Object.keys(value).length > 0 ? { value, contentType } : undefined;
       const result = await handler({
         path,
