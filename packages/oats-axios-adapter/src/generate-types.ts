@@ -24,6 +24,18 @@ function generateClassMembers(
       undefined
     );
   });
+
+  proptypes.push(
+    ts.createProperty(
+      undefined,
+      [ts.createToken(ts.SyntaxKind.PrivateKeyword), ts.createToken(ts.SyntaxKind.ReadonlyKeyword)],
+      quotedProp(oatsBrandFieldName),
+      ts.createToken(ts.SyntaxKind.ExclamationToken),
+      ts.createKeywordTypeNode(ts.SyntaxKind.StringKeyword),
+      undefined
+    )
+  );
+
   if (additional !== false) {
     const type =
       additional === true || additional == null
@@ -50,6 +62,8 @@ function generateClassMembers(
   }
   return proptypes;
 }
+
+const oatsBrandFieldName = '__oats_value_class_brand_tag';
 
 function generateObjectMembers(
   properties: oas.SchemaObject['properties'],
@@ -754,6 +768,25 @@ function generateTypeShape(key: string, schema: oas.SchemaObject) {
   );
 }
 
+function generateScalarBrand(key: string) {
+  const tag = ts.createProperty(
+    undefined,
+    [ts.createToken(ts.SyntaxKind.PrivateKeyword), ts.createToken(ts.SyntaxKind.ReadonlyKeyword)],
+    quotedProp(oatsBrandFieldName),
+    ts.createToken(ts.SyntaxKind.ExclamationToken),
+    ts.createKeywordTypeNode(ts.SyntaxKind.StringKeyword),
+    undefined
+  );
+  return ts.createClassDeclaration(
+    undefined,
+    [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
+    brandTypeName(key),
+    [],
+    [],
+    [tag]
+  );
+}
+
 function generateTopLevelType(
   key: string,
   schema: oas.SchemaObject | oas.ReferenceObject
@@ -786,13 +819,13 @@ function generateTopLevelType(
   }
   if (isScalar(schema)) {
     return [
-      generateBrand(key),
+      generateScalarBrand(key),
       ts.createTypeAliasDeclaration(
         undefined,
         [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
         oautil.typenamify(key),
         undefined,
-        typeWithBrand(key, generateType(schema))
+        scalarTypeWithBrand(key, generateType(schema))
       ),
       generateTypeShape(key, schema),
       generateTopLevelMaker(key, schema)
@@ -811,11 +844,8 @@ function generateTopLevelType(
   ];
 }
 
-function typeWithBrand(key: string, type: ts.TypeNode): ts.TypeNode {
-  return ts.createTypeReferenceNode(fromLib('valueClass', 'Branded'), [
-    type,
-    ts.createTypeReferenceNode(brandTypeName(key), [])
-  ]);
+function scalarTypeWithBrand(key: string, type: ts.TypeNode): ts.TypeNode {
+  return ts.createIntersectionTypeNode([type, ts.createTypeReferenceNode(brandTypeName(key), [])]);
 }
 
 function isScalar(schema: oas.SchemaObject): boolean {
@@ -928,6 +958,12 @@ function addIndexSignatureIgnores(src: string) {
         result.push(line);
         return;
       }
+    }
+    const brandMatch = line.match(new RegExp('\\s*private readonly ' + oatsBrandFieldName));
+    if (brandMatch) {
+      result.push('// @ts-ignore tsc does not like unused privates');
+      result.push(line);
+      return;
     }
     result.push(line);
   });
