@@ -20,12 +20,12 @@ interface RequestContext {
   messageIndex: number;
 }
 
-// 'api.Endpoints' is the generated type of the server
+// 'api.EndpointsWithContext' is the generated type of the server
 const spec: api.EndpointsWithContext<RequestContext> = {
   '/item': {
     post: async ctx => {
       if (ctx.headers.authorization !== 'Bearer ^-^') {
-        return runtime.json(403, { message: 'Unauthorized' });
+        return runtime.json(403, { message: 'Unauthorized', messageIndex: ctx.requestContext.messageIndex });
       }
       values[ctx.body.value.id] = common.Item.make({
         id: ctx.body.value.id,
