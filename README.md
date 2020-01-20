@@ -44,7 +44,7 @@ const spec: api.EndpointsWithContext<RequestContext> = {
       if (item) {
         return runtime.json(200, item);
       }
-      return runtime.json(400, { message: 'not found' });
+      return runtime.json(400, { message: 'not found', messageIndex: ctx.requestContext.messageIndex });
     }
   }
 };

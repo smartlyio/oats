@@ -13,7 +13,7 @@ interface RequestContext {
   messageIndex: number;
 }
 
-// 'api.Endpoints' is the generated type of the server
+// 'api.EndpointsWithContext' is the generated type of the server
 const spec: api.EndpointsWithContext<RequestContext> = {
   '/item': {
     post: async ctx => {
@@ -37,7 +37,7 @@ const spec: api.EndpointsWithContext<RequestContext> = {
       if (item) {
         return runtime.json(200, item);
       }
-      return runtime.json(400, { message: 'not found' });
+      return runtime.json(400, { message: 'not found', messageIndex: ctx.requestContext.messageIndex });
     }
   }
 };
