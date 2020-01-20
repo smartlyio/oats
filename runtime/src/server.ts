@@ -21,6 +21,8 @@ export type Headers = object;
 
 export type Query = object;
 
+export type RequestContext = any;
+
 export interface EndpointArg<
   H extends Headers | void,
   P extends Params | void,
@@ -36,20 +38,31 @@ export interface EndpointArg<
   query: Q;
   body: Body;
 }
+
+type ServerEndpointArg<
+  H extends Headers | void,
+  P extends Params | void,
+  Q extends Query | void,
+  Body extends RequestBody<any> | void,
+  RC extends RequestContext
+> = EndpointArg<H, P, Q, Body> & { readonly requestContext: RC };
+
 export type Endpoint<
   H extends Headers | void,
   P extends Params | void,
   Q extends Query | void,
   Body extends RequestBody<any> | void,
-  R extends Response<number, any, any>
-> = (ctx: EndpointArg<H, P, Q, Body>) => Promise<R>;
+  R extends Response<number, any, any>,
+  RC extends RequestContext
+> = (ctx: ServerEndpointArg<H, P, Q, Body, RC>) => Promise<R>;
 
 export type SafeEndpoint = Endpoint<
   Headers | undefined,
   Params | undefined,
   Query | undefined,
   RequestBody<any> | undefined,
-  Response<number, any, any>
+  Response<number, any, any>,
+  RequestContext
 >;
 
 export interface MethodHandlers {
@@ -121,15 +134,16 @@ export function safe<
   P extends Params,
   Q extends Query,
   Body extends RequestBody<any>,
-  R extends Response<any, any, any>
+  R extends Response<any, any, any>,
+  RC extends RequestContext
 >(
   headers: Maker<any, H>,
   params: Maker<any, P>,
   query: Maker<any, Q>,
   body: Maker<any, Body>,
   response: Maker<any, R>,
-  endpoint: Endpoint<H, P, Q, Body, R>
-): Endpoint<Headers, Params, Query, RequestBody<any>, Response<number, any, any>> {
+  endpoint: Endpoint<H, P, Q, Body, R, RC>
+): Endpoint<Headers, Params, Query, RequestBody<any>, Response<number, any, any>, RequestContext> {
   return async ctx => {
     const result = await endpoint({
       path: ctx.path,
@@ -139,7 +153,8 @@ export function safe<
       headers: cleanHeaders(headers, ctx.headers),
       params: params(voidify(ctx.params)).success(throwRequestValidationError.bind(null, 'params')),
       query: query(voidify(ctx.query)).success(throwRequestValidationError.bind(null, 'query')),
-      body: body(voidify(ctx.body)).success(throwRequestValidationError.bind(null, 'body'))
+      body: body(voidify(ctx.body)).success(throwRequestValidationError.bind(null, 'body')),
+      requestContext: ctx.requestContext as any
     });
     return response(result).success(
       throwResponseValidationError.bind(null, `body ${ctx.path}`, result.value.value)
@@ -155,7 +170,7 @@ type AnyMaker = Maker<any, any>;
 interface CheckingTree {
   [path: string]: {
     [method: string]: {
-      safeHandler: (e: Endpoint<any, any, any, any, any>) => SafeEndpoint;
+      safeHandler: (e: Endpoint<any, any, any, any, any, any>) => SafeEndpoint;
       op: string;
     };
   };
@@ -179,7 +194,7 @@ function createTree(handlers: Handler[]): CheckingTree {
       memo[element.path] = {};
     }
     memo[element.path][element.method] = {
-      safeHandler: (e: Endpoint<any, any, any, any, any>) =>
+      safeHandler: (e: Endpoint<any, any, any, any, any, any>) =>
         safe(element.headers, element.params, element.query, element.body, element.response, e),
       op: element.op
     };

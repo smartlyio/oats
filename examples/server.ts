@@ -9,8 +9,12 @@ import * as koaBody from 'koa-body';
 // setup a db :)
 const values: { [key: string]: common.Item } = {};
 
+interface RequestContext {
+  messageIndex: number;
+}
+
 // 'api.Endpoints' is the generated type of the server
-const spec: api.Endpoints = {
+const spec: api.EndpointsWithContext<RequestContext> = {
   '/item': {
     post: async ctx => {
       if (ctx.headers.authorization !== 'Bearer ^-^') {
@@ -38,9 +42,15 @@ const spec: api.Endpoints = {
   }
 };
 
+let index = 0;
+
 // 'koaAdapter.bind'  binds the endpoint implemantion in'spec' to
 // koa-router routes using a koa adapter
-const routes = koaAdapter.bind<api.Endpoints>(api.router, spec);
+const routes = koaAdapter.bind<api.EndpointsWithContext<RequestContext>, RequestContext>(
+  runtime.server.createHandlerFactory<api.EndpointsWithContext<RequestContext>>(api.endpointHandlers),
+  spec,
+  () => ({ messageIndex: index++ })
+);
 
 // finally we can create a Koa app from the routes
 export function createApp() {
