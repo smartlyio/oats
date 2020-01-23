@@ -58,7 +58,7 @@
     "koa-mount": "^4.0.0",
     "koa-router": "^7.2.1",
     "prettier": "^1.18.2",
-    "ts-jest": "^24.1.0",
+    "ts-jest": "^25.0.0",
     "ts-node-dev": "^1.0.0-pre.24",
     "tslint": "^5.7.0",
     "tslint-config-prettier": "^1.18.0",
