@@ -2,7 +2,7 @@ import * as Router from 'koa-router';
 import { ParameterizedContext } from 'koa';
 import * as runtime from '@smartlyio/oats-runtime';
 
-function adapter<StateT, CustomT, RequestContext extends object>(
+function adapter<StateT, CustomT, RequestContext>(
   router: Router<StateT, CustomT>,
   requestContextCreator: (ctx: ParameterizedContext<StateT, CustomT>) => RequestContext
 ): runtime.server.ServerAdapter {
@@ -51,7 +51,7 @@ function adapter<StateT, CustomT, RequestContext extends object>(
  * @param spec
  * @param requestContextCreator
  */
-export function bind<Spec, RequestContext = any, StateT = any, CustomT = {}>(
+export function bind<Spec, RequestContext = void, StateT = any, CustomT = {}>(
   handler: runtime.server.HandlerFactory<Spec>,
   spec: Spec,
   requestContextCreator?: (ctx: ParameterizedContext<StateT, CustomT>) => RequestContext
