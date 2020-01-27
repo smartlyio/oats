@@ -1,8 +1,11 @@
 import * as Router from 'koa-router';
-import * as Koa from 'koa';
+import { ParameterizedContext } from 'koa';
 import * as runtime from '@smartlyio/oats-runtime';
 
-function adapter(router: Router): runtime.server.ServerAdapter {
+function adapter<StateT, CustomT, RequestContext>(
+  router: Router<StateT, CustomT>,
+  requestContextCreator: (ctx: ParameterizedContext<StateT, CustomT>) => RequestContext
+): runtime.server.ServerAdapter {
   return (
     path: string,
     op: string,
@@ -10,7 +13,7 @@ function adapter(router: Router): runtime.server.ServerAdapter {
     handler: runtime.server.SafeEndpoint
   ) => {
     const koaPath = path.replace(/{([^}]+)}/g, (m, param) => ':' + param);
-    (router as any)[method](koaPath, async (ctx: Koa.Context) => {
+    (router as any)[method](koaPath, async (ctx: ParameterizedContext<StateT, CustomT>) => {
       const files = (ctx as any).request.files;
       let fileFields = {};
       if (files) {
@@ -29,9 +32,10 @@ function adapter(router: Router): runtime.server.ServerAdapter {
         servers: [],
         op,
         headers: ctx.request.headers,
-        params: ctx.params,
+        params: (ctx as any).params,
         query: ctx.query,
-        body
+        body,
+        requestContext: requestContextCreator(ctx)
       });
       ctx.status = result.status;
       ctx.body = result.value.value;
@@ -39,8 +43,20 @@ function adapter(router: Router): runtime.server.ServerAdapter {
   };
 }
 
-export function bind<Spec>(handler: runtime.server.HandlerFactory<Spec>, spec: Spec): Router {
-  const router = new Router();
-  handler(adapter(router))(spec);
+/**
+ * Bind provided handlers for the OpenAPI routes
+ *
+ * Koa's default StateT and CustomT values are selected as defaults
+ * @param handler
+ * @param spec
+ * @param requestContextCreator
+ */
+export function bind<Spec, RequestContext = void, StateT = any, CustomT = {}>(
+  handler: runtime.server.HandlerFactory<Spec>,
+  spec: Spec,
+  requestContextCreator?: (ctx: ParameterizedContext<StateT, CustomT>) => RequestContext
+): Router<StateT, CustomT> {
+  const router = new Router<StateT, CustomT>();
+  handler(adapter(router, requestContextCreator || (() => ({}))))(spec);
   return router;
 }

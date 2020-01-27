@@ -84,7 +84,8 @@ function generateMethod<S extends oas.OperationObject, K extends keyof S>(
     params,
     query,
     body,
-    response
+    response,
+    ts.createTypeReferenceNode('RequestContext', undefined)
   ]);
 }
 
@@ -246,10 +247,19 @@ function generateEndpointsType(opts: Options) {
     ts.createInterfaceDeclaration(
       undefined,
       [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
-      'Endpoints',
-      undefined,
+      'EndpointsWithContext',
+      [ts.createTypeParameterDeclaration('RequestContext', undefined, undefined)],
       undefined,
       members
+    ),
+    ts.createTypeAliasDeclaration(
+      undefined,
+      [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
+      'Endpoints',
+      undefined,
+      ts.createTypeReferenceNode('EndpointsWithContext', [
+        ts.createTypeReferenceNode('void', undefined)
+      ])
     )
   ]);
 }
@@ -307,7 +317,7 @@ function flattenPathAndMethod(paths: oas.PathsObject) {
 function generateHandler(schema: oas.OpenAPIObject, opts: Options) {
   const servers = (safe(schema).servers.$ || []).map(server => server.url);
   return ts.createVariableStatement(
-    undefined,
+    [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
     ts.createVariableDeclarationList(
       [
         ts.createVariableDeclaration(
