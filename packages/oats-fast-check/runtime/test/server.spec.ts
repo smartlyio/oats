@@ -4,7 +4,7 @@ import { makeNumber, makeObject, Maker, makeString, makeVoid } from '../src/make
 
 describe('safe', () => {
   it('validates request and response', async () => {
-    const endpoint = server.safe<any, any, any, any, any>(
+    const endpoint = server.safe<any, any, any, any, any, any>(
       makeVoid(),
       makeVoid(),
       makeObject({ param: makeNumber() }) as Maker<any, any>,
@@ -29,7 +29,8 @@ describe('safe', () => {
       headers: null as any,
       params: null as any,
       query: { param: 1 } as any,
-      body: null as any
+      body: null as any,
+      requestContext: {}
     });
     expect(response.status).toEqual(200);
     expect(response.value.value).toEqual('response');
