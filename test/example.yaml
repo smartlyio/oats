@@ -82,6 +82,9 @@ components:
       properties:
         message:
           type: string
+        messageIndex:
+          type: number
       required:
         - message
+        - messageIndex
 
