@@ -1,6 +1,6 @@
 {
   "name": "@smartlyio/oats-koa-adapter",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "license": "MIT",
   "description": "Koa adapter for Oats",
   "private": false,
