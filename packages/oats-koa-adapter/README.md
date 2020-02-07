@@ -1,10 +1,11 @@
-# oats
+# Oats
+Generator for TypeScript clients and servers using OpenAPI 3 specs, built on top of `axios` and `koa`.
 
-Generator for typescript clients and servers from openapi3 specs
+For some more context on why Oats came to be, and a more descriptive way of how to use it, check out our blogpost:
+https://medium.com/smartly-io/oats-how-we-learned-to-stop-worrying-and-love-types-aa0041aaa9cc
 
 ## Server usage
-
-```js
+```ts
 // yarn ts-node examples/server.ts
 import * as api from '../tmp/server.generated';
 import * as common from '../tmp/common.types.generated';
@@ -76,8 +77,7 @@ export function createApp() {
 ```
 
 ## Client usage
-
-```js
+```ts
 // yarn ts-node examples/client.ts
 import * as api from '../tmp/client.generated';
 import * as axiosAdapter from '@smartlyio/oats-axios-adapter';
@@ -123,8 +123,7 @@ app.createApp().listen(port, async () => {
 ```
 
 ## Generating clients and servers
-
-```
+```ts
 // yarn ts-node examples/driver.ts
 import { driver, util } from '../index';
 
@@ -166,8 +165,4 @@ driver.generate({
   emitStatusCode: (code: number) => [200, 201, 204].indexOf(code) >= 0
 });
 
-
-
-
 ```
-
