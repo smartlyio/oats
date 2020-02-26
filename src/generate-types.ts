@@ -14,7 +14,7 @@ function generateClassMembers(
 ): readonly ts.ClassElement[] {
   const proptypes = _.map(properties, (value, key) => {
     return ts.createProperty(
-      undefined,
+      [ts.createDecorator(generateTypegooseProp())],
       [ts.createToken(ts.SyntaxKind.ReadonlyKeyword)],
       quotedProp(key),
       required && required.indexOf(key) >= 0
@@ -932,6 +932,15 @@ function generateBuiltins(runtimeModule: string) {
       undefined,
       ts.createImportClause(undefined, ts.createNamespaceImport(runtimeLibrary)),
       ts.createStringLiteral(runtimeModule)
+    ),
+    ts.createImportDeclaration(
+      undefined,
+      undefined,
+      ts.createImportClause(
+        undefined,
+        ts.createNamedImports([ts.createImportSpecifier(undefined, ts.createIdentifier('prop'))])
+      ),
+      ts.createStringLiteral('@typegoose/typegoose')
     )
   ]);
 }
@@ -982,6 +991,10 @@ function resolveRefToTypeName(ref: string): { qualified?: ts.Identifier; member:
     }
   }
   return assert.fail('could not resolve typename for ' + ref);
+}
+
+function generateTypegooseProp(): ts.Expression {
+  return ts.createCall(ts.createIdentifier('prop'), undefined, undefined);
 }
 
 let options: Options;

@@ -25,9 +25,12 @@
   },
   "dependencies": {
     "@smartlyio/safe-navigation": "^4.0.1",
+    "@typegoose/typegoose": "^6.4.0",
     "@types/js-yaml": "^3.12.1",
+    "@types/mongoose": "^5.7.2",
     "js-yaml": "^3.13.1",
     "lodash": "^4.17.4",
+    "mongoose": "^5.9.2",
     "openapi3-ts": "^1.2.0"
   },
   "keywords": [

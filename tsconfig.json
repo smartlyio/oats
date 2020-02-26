@@ -12,7 +12,9 @@
     "typeRoots": ["./src/types", "./node_modules/@types"],
     "baseUrl": "./src/types",
     "forceConsistentCasingInFileNames": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
   "exclude": ["adapters/", "runtime/"]
 }
