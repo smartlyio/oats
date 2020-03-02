@@ -39,7 +39,7 @@ export interface EndpointArg<
   body: Body;
 }
 
-type ServerEndpointArg<
+export type ServerEndpointArg<
   H extends Headers | void,
   P extends Params | void,
   Q extends Query | void,
