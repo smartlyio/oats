@@ -4,7 +4,6 @@ import safe from '@smartlyio/safe-navigation';
 import * as _ from 'lodash';
 import * as assert from 'assert';
 import * as oautil from './util';
-
 const valueClassIndexSignatureKey = 'instanceIndexSignatureKey';
 
 function generateClassMembers(
@@ -675,6 +674,187 @@ function generateTopLevelClassBuilder(key: string, schema: oas.SchemaObject) {
   return generateTopLevelMaker(key, schema, 'build', 'ShapeOf' + oautil.typenamify(key));
 }
 
+function generateReflectionType(
+  schema: oas.SchemaObject | oas.ReferenceObject
+): ts.ObjectLiteralExpression {
+  if (oautil.isReferenceObject(schema)) {
+    const resolved = resolveRefToTypeName(schema.$ref);
+    const type: ts.Expression = resolved.qualified
+      ? ts.createPropertyAccess(resolved.qualified, 'type' + resolved.member)
+      : ts.createIdentifier('type' + resolved.member);
+    return ts.createObjectLiteral(
+      [
+        ts.createPropertyAssignment('type', ts.createStringLiteral('named')),
+        ts.createPropertyAssignment('reference', type)
+      ],
+      true
+    );
+  }
+  if (schema.oneOf) {
+    return ts.createObjectLiteral(
+      [
+        ts.createPropertyAssignment('type', ts.createStringLiteral('union')),
+        ts.createPropertyAssignment(
+          'options',
+          ts.createArrayLiteral(schema.oneOf.map(generateReflectionType), true)
+        )
+      ],
+      true
+    );
+  }
+  if (schema.allOf) {
+    return ts.createObjectLiteral(
+      [
+        ts.createPropertyAssignment('type', ts.createStringLiteral('intersection')),
+        ts.createPropertyAssignment(
+          'options',
+          ts.createArrayLiteral(schema.allOf.map(generateReflectionType), true)
+        )
+      ],
+      true
+    );
+  }
+
+  assert(!schema.anyOf, 'anyOf is not supported');
+
+  if (schema.nullable) {
+    return generateReflectionType({ oneOf: [{ ...schema, nullable: false }, { type: 'null' }] });
+  }
+
+  if (schema.type === 'null') {
+    return ts.createObjectLiteral(
+      [ts.createPropertyAssignment('type', ts.createStringLiteral('null'))],
+      true
+    );
+  }
+
+  if (schema.type === 'string') {
+    const enumValues = schema.enum
+      ? [
+          ts.createPropertyAssignment(
+            'enum',
+            ts.createArrayLiteral(schema.enum.map(ts.createStringLiteral))
+          )
+        ]
+      : [];
+
+    return ts.createObjectLiteral(
+      [ts.createPropertyAssignment('type', ts.createStringLiteral('string')), ...enumValues],
+      true
+    );
+  }
+  if (schema.type === 'number') {
+    assert(!schema.enum);
+    return ts.createObjectLiteral(
+      [ts.createPropertyAssignment('type', ts.createStringLiteral('number'))],
+      true
+    );
+  }
+  if (schema.type === 'integer') {
+    assert(!schema.enum);
+    return ts.createObjectLiteral(
+      [ts.createPropertyAssignment('type', ts.createStringLiteral('integer'))],
+      true
+    );
+  }
+  if (schema.type === 'boolean') {
+    assert(!schema.enum);
+    return ts.createObjectLiteral(
+      [ts.createPropertyAssignment('type', ts.createStringLiteral('boolean'))],
+      true
+    );
+  }
+  if (schema.type === 'array') {
+    return ts.createObjectLiteral(
+      [
+        ts.createPropertyAssignment('type', ts.createStringLiteral('array')),
+        ts.createPropertyAssignment('items', generateReflectionType(schema.items || {}))
+      ],
+      true
+    );
+  }
+  if (schema.type === 'object') {
+    return generateObjectReflectionType(schema);
+  }
+  if (!schema.type) {
+    return ts.createObjectLiteral(
+      [ts.createPropertyAssignment('type', ts.createStringLiteral('unknown'))],
+      true
+    );
+  }
+  assert.fail('todo generateReflectionType', schema);
+  throw new Error();
+}
+
+function generateObjectReflectionType(schema: oas.SchemaObject) {
+  const additionalProps = schema.additionalProperties
+    ? schema.additionalProperties === true
+      ? ts.createTrue()
+      : generateReflectionType(schema.additionalProperties)
+    : ts.createFalse();
+  return ts.createObjectLiteral(
+    [
+      ts.createPropertyAssignment('type', ts.createStringLiteral('object')),
+      ts.createPropertyAssignment('additionalProperties', additionalProps),
+      ts.createPropertyAssignment(
+        'properties',
+        ts.createObjectLiteral(
+          Object.keys(schema.properties || {}).map((propertyName: string) => {
+            return ts.createPropertyAssignment(
+              ts.createStringLiteral(propertyName),
+              ts.createObjectLiteral(
+                [
+                  ts.createPropertyAssignment(
+                    'required',
+                    (schema.required || []).indexOf(propertyName) >= 0
+                      ? ts.createTrue()
+                      : ts.createFalse()
+                  ),
+                  ts.createPropertyAssignment(
+                    'value',
+                    generateReflectionType((schema.properties as any)[propertyName])
+                  )
+                ],
+                true
+              )
+            );
+          }),
+          true
+        )
+      )
+    ],
+    true
+  );
+}
+
+function generateNamedTypeDefinition(key: string, schema: oas.SchemaObject) {
+  return ts.createVariableStatement(
+    [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
+    ts.createVariableDeclarationList(
+      [
+        ts.createVariableDeclaration(
+          'type' + oautil.typenamify(key),
+          ts.createTypeReferenceNode(fromLib('reflection', 'NamedTypeDefinition'), [
+            ts.createTypeReferenceNode(oautil.typenamify(key), [])
+          ]),
+          ts.createObjectLiteral(
+            [
+              ts.createPropertyAssignment('name', ts.createStringLiteral(oautil.typenamify(key))),
+              ts.createPropertyAssignment('definition', generateReflectionType(schema)),
+              ts.createPropertyAssignment(
+                'maker',
+                ts.createIdentifier('make' + oautil.typenamify(key))
+              )
+            ],
+            true
+          )
+        )
+      ],
+      ts.NodeFlags.Const
+    )
+  );
+}
+
 function generateTopLevelClassMaker(key: string, schema: oas.SchemaObject, constructor: string) {
   const makerFun = 'createMakerWith';
   const shape = 'ShapeOf' + oautil.typenamify(key);
@@ -814,7 +994,8 @@ function generateTopLevelType(
       generateBrand(key),
       generateValueClass(key, schema),
       generateTopLevelClassBuilder(key, schema),
-      generateTopLevelClassMaker(key, schema, oautil.typenamify(key))
+      generateTopLevelClassMaker(key, schema, oautil.typenamify(key)),
+      generateNamedTypeDefinition(key, schema)
     ];
   }
   if (isScalar(schema)) {
@@ -828,7 +1009,8 @@ function generateTopLevelType(
         scalarTypeWithBrand(key, generateType(schema))
       ),
       generateTypeShape(key, schema),
-      generateTopLevelMaker(key, schema)
+      generateTopLevelMaker(key, schema),
+      generateNamedTypeDefinition(key, schema)
     ];
   }
   return [
