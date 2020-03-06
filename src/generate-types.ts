@@ -515,6 +515,17 @@ function generateValueClass(key: string, schema: oas.SchemaObject) {
         )
       ])
     ),
+    ts.createProperty(
+      undefined,
+      [
+        ts.createModifier(ts.SyntaxKind.PublicKeyword),
+        ts.createModifier(ts.SyntaxKind.StaticKeyword)
+      ],
+      ts.createIdentifier('reflection'),
+      undefined,
+      undefined,
+      ts.createIdentifier('type' + oautil.typenamify(key))
+    ),
     ts.createMethod(
       undefined,
       [ts.createModifier(ts.SyntaxKind.StaticKeyword)],
@@ -992,10 +1003,10 @@ function generateTopLevelType(
     return [
       generateObjectShape(key, schema),
       generateBrand(key),
+      generateNamedTypeDefinition(key, schema),
       generateValueClass(key, schema),
       generateTopLevelClassBuilder(key, schema),
-      generateTopLevelClassMaker(key, schema, oautil.typenamify(key)),
-      generateNamedTypeDefinition(key, schema)
+      generateTopLevelClassMaker(key, schema, oautil.typenamify(key))
     ];
   }
   if (isScalar(schema)) {
