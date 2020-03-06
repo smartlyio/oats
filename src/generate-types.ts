@@ -749,6 +749,12 @@ function generateReflectionType(
     return generateReflectionType({ oneOf: [{ ...schema, nullable: false }, { type: 'null' }] });
   }
 
+  if (schema.type === 'void') {
+    return ts.createObjectLiteral(
+      [ts.createPropertyAssignment('type', ts.createStringLiteral('void'))],
+      true
+    );
+  }
   if (schema.type === 'null') {
     return ts.createObjectLiteral(
       [ts.createPropertyAssignment('type', ts.createStringLiteral('null'))],
@@ -772,16 +778,32 @@ function generateReflectionType(
     );
   }
   if (schema.type === 'number') {
-    assert(!schema.enum);
+    const enumValues = schema.enum
+      ? [
+          ts.createPropertyAssignment(
+            'enum',
+            ts.createArrayLiteral(schema.enum.map(i => ts.createNumericLiteral('' + i)))
+          )
+        ]
+      : [];
+
     return ts.createObjectLiteral(
-      [ts.createPropertyAssignment('type', ts.createStringLiteral('number'))],
+      [ts.createPropertyAssignment('type', ts.createStringLiteral('number')), ...enumValues],
       true
     );
   }
   if (schema.type === 'integer') {
-    assert(!schema.enum);
+    const enumValues = schema.enum
+      ? [
+          ts.createPropertyAssignment(
+            'enum',
+            ts.createArrayLiteral(schema.enum.map(i => ts.createNumericLiteral('' + i)))
+          )
+        ]
+      : [];
+
     return ts.createObjectLiteral(
-      [ts.createPropertyAssignment('type', ts.createStringLiteral('integer'))],
+      [ts.createPropertyAssignment('type', ts.createStringLiteral('integer')), ...enumValues],
       true
     );
   }
@@ -1024,7 +1046,8 @@ function generateTopLevelType(
         ts.createTypeReferenceNode(type, undefined)
       ),
       generateTypeShape(key, schema),
-      generateTopLevelMaker(key, schema)
+      generateTopLevelMaker(key, schema),
+      generateNamedTypeDefinitionAssignment(key, schema)
     ];
   }
   if (schema.type === 'object') {
@@ -1061,7 +1084,8 @@ function generateTopLevelType(
       generateType(schema)
     ),
     generateTypeShape(key, schema),
-    generateTopLevelMaker(key, schema)
+    generateTopLevelMaker(key, schema),
+    generateNamedTypeDefinitionAssignment(key, schema)
   ];
 }
 

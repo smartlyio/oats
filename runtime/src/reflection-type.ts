@@ -2,6 +2,7 @@ import { Maker } from './make';
 
 export type Type =
   | UnknownType
+  | VoidType
   | IntegerType
   | NumberType
   | NullType
@@ -20,6 +21,10 @@ export interface NamedTypeDefinition<A> {
 
 export interface UnknownType {
   readonly type: 'unknown';
+}
+
+export interface VoidType {
+  readonly type: 'void';
 }
 
 export interface NullType {
@@ -43,10 +48,12 @@ export interface StringType {
 
 export interface NumberType {
   readonly type: 'number';
+  readonly enum: number[];
 }
 
 export interface IntegerType {
   readonly type: 'integer';
+  readonly enum: number[];
 }
 
 export interface ArrayType {
