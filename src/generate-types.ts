@@ -515,17 +515,6 @@ function generateValueClass(key: string, schema: oas.SchemaObject) {
         )
       ])
     ),
-    ts.createProperty(
-      undefined,
-      [
-        ts.createModifier(ts.SyntaxKind.PublicKeyword),
-        ts.createModifier(ts.SyntaxKind.StaticKeyword)
-      ],
-      ts.createIdentifier('reflection'),
-      undefined,
-      undefined,
-      ts.createIdentifier('type' + oautil.typenamify(key))
-    ),
     ts.createMethod(
       undefined,
       [ts.createModifier(ts.SyntaxKind.StaticKeyword)],
@@ -978,6 +967,19 @@ function generateScalarBrand(key: string) {
   );
 }
 
+function generateValueClassReflectionAssignment(key: string) {
+  return ts.createExpressionStatement(
+    ts.createBinary(
+      ts.createPropertyAccess(
+        ts.createIdentifier(oautil.typenamify(key)),
+        ts.createIdentifier('reflection')
+      ),
+      ts.createToken(ts.SyntaxKind.EqualsToken),
+      ts.createNumericLiteral('type' + oautil.typenamify(key))
+    )
+  );
+}
+
 function generateTopLevelType(
   key: string,
   schema: oas.SchemaObject | oas.ReferenceObject
@@ -1003,10 +1005,11 @@ function generateTopLevelType(
     return [
       generateObjectShape(key, schema),
       generateBrand(key),
-      generateNamedTypeDefinition(key, schema),
       generateValueClass(key, schema),
       generateTopLevelClassBuilder(key, schema),
-      generateTopLevelClassMaker(key, schema, oautil.typenamify(key))
+      generateTopLevelClassMaker(key, schema, oautil.typenamify(key)),
+      generateNamedTypeDefinition(key, schema),
+      generateValueClassReflectionAssignment(key)
     ];
   }
   if (isScalar(schema)) {
