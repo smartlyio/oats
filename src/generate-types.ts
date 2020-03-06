@@ -515,6 +515,19 @@ function generateValueClass(key: string, schema: oas.SchemaObject) {
         )
       ])
     ),
+    ts.createProperty(
+      undefined,
+      [
+        ts.createModifier(ts.SyntaxKind.PublicKeyword),
+        ts.createModifier(ts.SyntaxKind.StaticKeyword)
+      ],
+      ts.createIdentifier('reflection'),
+      undefined,
+      ts.createTypeReferenceNode(fromLib('reflection', 'NamedTypeDefinition'), [
+        ts.createTypeReferenceNode(ts.createIdentifier(oautil.typenamify(key)), [])
+      ]),
+      undefined
+    ),
     ts.createMethod(
       undefined,
       [ts.createModifier(ts.SyntaxKind.StaticKeyword)],
