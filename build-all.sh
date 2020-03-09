@@ -10,14 +10,14 @@ yarn
 yarn link @smartlyio/oats-runtime
 yarn build
 yarn link
-cd ..
+cd ../..
 
 cd adapters/axios
 yarn
 yarn link @smartlyio/oats-runtime
 yarn build
 yarn link
-cd ..
+cd ../..
 
 yarn
 yarn link @smartlyio/oats-runtime
