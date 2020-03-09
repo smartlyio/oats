@@ -43,6 +43,7 @@ export interface IntersectionType {
 
 export interface StringType {
   readonly type: 'string';
+  readonly format?: string;
   readonly enum?: string[];
 }
 

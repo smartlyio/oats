@@ -771,9 +771,12 @@ function generateReflectionType(
           )
         ]
       : [];
+    const format = schema.format
+      ? [ts.createPropertyAssignment('format', ts.createStringLiteral(schema.format))]
+      : [];
 
     return ts.createObjectLiteral(
-      [ts.createPropertyAssignment('type', ts.createStringLiteral('string')), ...enumValues],
+      [ts.createPropertyAssignment('type', ts.createStringLiteral('string')), ...enumValues, ...format],
       true
     );
   }
