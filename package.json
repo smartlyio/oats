@@ -8,6 +8,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
+    "build-all": "./build-all.sh",
     "test": "yarn jest test/",
     "render": "yarn ts-node examples/driver.ts && yarn ts-node render.ts",
     "build": "rm -rf ./dist/* && rm -f ./tmp/*.ts && yarn render && yarn test && yarn lint && yarn tsc",
