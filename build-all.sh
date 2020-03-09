@@ -1,23 +1,23 @@
 set -e
 
-pushd runtime
+cd runtime
 yarn & yarn build
 yarn link
-popd
+cd ..
 
-pushd adapters/koa
+cd adapters/koa
 yarn
 yarn link @smartlyio/oats-runtime
 yarn build
 yarn link
-popd
+cd ..
 
-pushd adapters/axios
+cd adapters/axios
 yarn
 yarn link @smartlyio/oats-runtime
 yarn build
 yarn link
-popd
+cd ..
 
 yarn
 yarn link @smartlyio/oats-runtime
