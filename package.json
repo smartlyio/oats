@@ -14,7 +14,7 @@
     "build": "rm -rf ./dist/* && rm -f ./tmp/*.ts && yarn render && yarn test && yarn lint && yarn tsc",
     "lint": "tslint -c tslint.json --project package.json",
     "fix": "tslint --fix -c tslint.json --project package.json",
-    "prepublish": "yarn build"
+    "prepack": "yarn build-all"
   },
   "repository": {
     "type": "git",
