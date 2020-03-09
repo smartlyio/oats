@@ -776,7 +776,11 @@ function generateReflectionType(
       : [];
 
     return ts.createObjectLiteral(
-      [ts.createPropertyAssignment('type', ts.createStringLiteral('string')), ...enumValues, ...format],
+      [
+        ts.createPropertyAssignment('type', ts.createStringLiteral('string')),
+        ...enumValues,
+        ...format
+      ],
       true
     );
   }
