@@ -131,6 +131,21 @@ jest-get-type@^25.1.0:
   resolved "https://registry.yarnpkg.com/jest-get-type/-/jest-get-type-25.1.0.tgz#1cfe5fc34f148dc3a8a3b7275f6b9ce9e2e8a876"
   integrity sha512-yWkBnT+5tMr8ANB6V+OjmrIJufHtCAqI5ic2H40v+tRqxDmE0PGnIiTyvRWFOMtmVHYpwRqyazDbTnhpjsGvLw==
 
+jsverify@^0.8.4:
+  version "0.8.4"
+  resolved "https://registry.yarnpkg.com/jsverify/-/jsverify-0.8.4.tgz#b914ccc024103d946b503f18ee780ec43febeece"
+  integrity sha512-nUG73Sfi8L4eOkc7pv9sflgAm43v+z6XMuePGVdRoBUxBLJiVcMcf3Xgc4h19eHHF3JwsaagOkUu825UnPBLJw==
+  dependencies:
+    lazy-seq "^1.0.0"
+    rc4 "~0.1.5"
+    trampa "^1.0.0"
+    typify-parser "^1.1.0"
+
+lazy-seq@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/lazy-seq/-/lazy-seq-1.0.0.tgz#880cb8aab256026382e02f53ec089682a74c5b6a"
+  integrity sha1-iAy4qrJWAmOC4C9T7AiWgqdMW2o=
+
 lodash@^4.17.4:
   version "4.17.15"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
@@ -146,6 +161,11 @@ pretty-format@^25.1.0:
     ansi-styles "^4.0.0"
     react-is "^16.12.0"
 
+rc4@~0.1.5:
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/rc4/-/rc4-0.1.5.tgz#08c6e04a0168f6eb621c22ab6cb1151bd9f4a64d"
+  integrity sha1-CMbgSgFo9utiHCKrbLEVG9n0pk0=
+
 react-is@^16.12.0:
   version "16.12.0"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.12.0.tgz#2cc0fe0fba742d97fd527c42a13bec4eeb06241c"
@@ -158,7 +178,17 @@ supports-color@^7.1.0:
   dependencies:
     has-flag "^4.0.0"
 
+trampa@^1.0.0:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/trampa/-/trampa-1.0.1.tgz#b866bc192331f64b4f57a8acf4ab71d0e900b692"
+  integrity sha512-93WeyHNuRggPEsfCe+yHxCgM2s6H3Q8Wmlt6b6ObJL8qc7eZlRaFjQxwTrB+zbvGtlDRnAkMoYYo3+2uH/fEwA==
+
 typescript@^3.6.3:
   version "3.6.3"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.6.3.tgz#fea942fabb20f7e1ca7164ff626f1a9f3f70b4da"
   integrity sha512-N7bceJL1CtRQ2RiG0AQME13ksR7DiuQh/QehubYcghzv20tnh+MQnQIuJddTmsbqYj+dztchykemz0zFzlvdQw==
+
+typify-parser@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/typify-parser/-/typify-parser-1.1.0.tgz#ac73bfa5f25343468e2d0f3346c6117bc03d3c99"
+  integrity sha1-rHO/pfJTQ0aOLQ8zRsYRe8A9PJk=

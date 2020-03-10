@@ -1,3 +1,5 @@
+import { NamedTypeDefinition } from './reflection-type';
+
 export type Branded<A, BrandTag> = A & Brand<BrandTag>;
 
 export class Brand<B> {
@@ -19,6 +21,7 @@ function asPlainObject(value: any): any {
 }
 
 export class ValueClass<Shape, BrandTag> extends Brand<BrandTag> {
+  public static reflection: NamedTypeDefinition<ValueClass<any, any>>;
   private Shape!: Shape;
 }
 
