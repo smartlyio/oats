@@ -1,26 +1,35 @@
 set -e
+rm -rf node_modules
 
-pushd runtime
-yarn & yarn build
-yarn link
-popd
-
-pushd adapters/koa
+cd runtime
+echo "building $PWD"
+rm -rf node_modules
 yarn
-yarn link @smartlyio/oats-runtime
 yarn build
 yarn link
-popd
+cd ..
 
-pushd adapters/axios
-yarn
+cd adapters/koa
+echo "building $PWD"
+rm -rf node_modules
 yarn link @smartlyio/oats-runtime
+yarn
 yarn build
 yarn link
-popd
+cd ../..
 
+cd adapters/axios
+echo "building $PWD"
+rm -rf node_modules
+yarn link @smartlyio/oats-runtime
 yarn
+yarn build
+yarn link
+cd ../..
+
+echo "building $PWD"
 yarn link @smartlyio/oats-runtime
 yarn link @smartlyio/oats-koa-adapter
 yarn link @smartlyio/oats-axios-adapter
+yarn
 yarn build

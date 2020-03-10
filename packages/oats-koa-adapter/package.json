@@ -1,6 +1,6 @@
 {
   "name": "@smartlyio/oats",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "license": "MIT",
   "description": "Openapi3 based generator for typescript aware servers and clients",
   "private": false,
@@ -8,12 +8,13 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
+    "build-all": "./build-all.sh",
     "test": "yarn jest test/",
     "render": "yarn ts-node examples/driver.ts && yarn ts-node render.ts",
     "build": "rm -rf ./dist/* && rm -f ./tmp/*.ts && yarn render && yarn test && yarn lint && yarn tsc",
     "lint": "tslint -c tslint.json --project package.json",
     "fix": "tslint --fix -c tslint.json --project package.json",
-    "prepublish": "yarn build"
+    "prepack": "yarn build-all"
   },
   "repository": {
     "type": "git",
@@ -42,7 +43,7 @@
   "devDependencies": {
     "@smartlyio/oats-axios-adapter": "^1.0.1",
     "@smartlyio/oats-koa-adapter": "^1.0.4",
-    "@smartlyio/oats-runtime": "^1.0.5",
+    "@smartlyio/oats-runtime": "^1.0.7",
     "@types/jest": "^25.0.0",
     "@types/koa": "^2.0.50",
     "@types/koa-mount": "^4.0.0",
