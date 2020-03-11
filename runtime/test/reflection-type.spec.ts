@@ -52,7 +52,7 @@ describe('reflection-type', () => {
       const middle: reflectionType.NamedTypeDefinition<any> = {
         maker: 1 as any,
         name: 'middle',
-        isA: null,
+        isA: 1 as any,
         definition: {
           type: 'object',
           additionalProperties: false,
@@ -92,7 +92,7 @@ describe('reflection-type', () => {
       const root: reflectionType.NamedTypeDefinition<any> = {
         maker: 1 as any,
         name: 'X',
-        isA: null,
+        isA: 1 as any,
         definition: {
           type: 'object',
           additionalProperties: false,
@@ -118,7 +118,7 @@ describe('reflection-type', () => {
       const root: reflectionType.NamedTypeDefinition<any> = {
         maker: 1 as any,
         name: 'X',
-        isA: null,
+        isA: 1 as any,
         definition: {
           type: 'object',
           additionalProperties: false,
@@ -168,7 +168,7 @@ describe('reflection-type', () => {
       const root: reflectionType.NamedTypeDefinition<any> = {
         maker: 1 as any,
         name: 'X',
-        isA: null,
+        isA: 1 as any,
         definition: {
           type: 'object',
           additionalProperties: false,
@@ -184,6 +184,36 @@ describe('reflection-type', () => {
         }
       };
       expect(() => reflectionType.Traversal.compile(root, target)).not.toThrow();
+    });
+
+    it('rejects compile if nearest named thing is not an object', () => {
+      const union: reflectionType.NamedTypeDefinition<any> = {
+        maker: 1 as any,
+        name: 'uniony',
+        isA: null,
+        definition: {
+          type: 'union',
+          options: [{ type: 'named', reference: target }]
+        }
+      };
+      const root: reflectionType.NamedTypeDefinition<any> = {
+        maker: 1 as any,
+        name: 'X',
+        isA: null,
+        definition: {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            options: {
+              value: { type: 'named', reference: union },
+              required: false
+            }
+          }
+        }
+      };
+      expect(() => reflectionType.Traversal.compile(root, target)).toThrow(
+        /nearest containing named thing is not an object/
+      );
     });
 
     it('rejects compile if there is no way from parent to lead', () => {
@@ -233,6 +263,9 @@ describe('reflection-type', () => {
     properties('pmap');
 
     function properties(call: 'pmap' | 'map') {
+      async function asAsync(fn: () => any) {
+        return await fn();
+      }
       describe('traversal with ' + call, () => {
         it('throws if given value does not match root', async () => {
           const root: reflectionType.NamedTypeDefinition<any> = {
@@ -258,18 +291,15 @@ describe('reflection-type', () => {
             }
           };
           const traverser = reflectionType.Traversal.compile(root, target);
-
-          async function t() {
-            await traverser[call](new Date(), (a: any) => a);
-          }
-          await expect(t()).rejects.toThrow(/Root value does not match expected root type/);
+          const result = asAsync(() => traverser[call](new Date(), (a: any) => a));
+          await expect(result).rejects.toThrow(/Root value does not match expected root type/);
         });
 
         it('maps array properties', async () => {
           const root: reflectionType.NamedTypeDefinition<any> = {
             maker: 1 as any,
             name: 'X',
-            isA: (v): v is TestClass => v instanceof ArrayTestClass,
+            isA: (v): v is ArrayTestClass => v instanceof ArrayTestClass,
             definition: {
               type: 'object',
               additionalProperties: false,
@@ -288,10 +318,11 @@ describe('reflection-type', () => {
             }
           };
           const traverser = reflectionType.Traversal.compile(root, target);
-          await expect(
+          const result = asAsync(() =>
             traverser[call](makeArrayTestClass({ field: ['abc', 'xxx'] }).success(), ((a: any) =>
               'got ' + a) as any)
-          ).resolves.toEqual({
+          );
+          await expect(result).resolves.toEqual({
             field: ['got abc', 'got xxx']
           });
         });
@@ -312,9 +343,12 @@ describe('reflection-type', () => {
           };
           const traverser = reflectionType.Traversal.compile(root, target);
           await expect(
-            traverser[call](makeTestClass({ extra: 'abc', field: 'xx', other: 'vv' }).success(), ((
-              a: any
-            ) => 'got ' + a) as any)
+            asAsync(() =>
+              traverser[call](
+                makeTestClass({ extra: 'abc', field: 'xx', other: 'vv' }).success(),
+                ((a: any) => 'got ' + a) as any
+              )
+            )
           ).resolves.toEqual({
             field: 'xx',
             extra: 'got abc',
@@ -347,8 +381,11 @@ describe('reflection-type', () => {
           };
           const traverser = reflectionType.Traversal.compile(root, target);
           await expect(
-            traverser[call](makeTestClass({ field: 'abc', other: 'other' }).success(), ((a: any) =>
-              'got ' + a) as any)
+            asAsync(() =>
+              traverser[call](makeTestClass({ field: 'abc', other: 'other' }).success(), ((
+                a: any
+              ) => 'got ' + a) as any)
+            )
           ).resolves.toEqual({
             field: 'got abc',
             other: 'other'

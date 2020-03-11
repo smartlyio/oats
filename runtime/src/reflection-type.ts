@@ -141,7 +141,7 @@ export class Traversal<Root, Leaf> {
       const matchers = [];
       for (const [path, parent] of parents!.entries()) {
         if (
-          !parent.find(p => {
+          parent.find(p => {
             if (p.isA) {
               return p.isA(value);
             }
@@ -160,7 +160,17 @@ export class Traversal<Root, Leaf> {
 
   private createPathsToName(from: NamedTypeDefinition<unknown>, leaf: NamedTypeDefinition<Leaf>) {
     calculateReverseReach(new Set(), this.cache, from, leaf, false);
-    assert(this.cache.get(leaf), 'no path to target');
+    const found = this.cache.get(leaf);
+    if (!found) {
+      return assert.fail('no path to target');
+    }
+    for (const parents of found.values()) {
+      // we can only find objects with isA during traversal
+      // todo: we could relax this a bit by finding the unambiguous parent of parent if there is one
+      parents.forEach(parent =>
+        assert(parent.isA, 'nearest containing named thing is not an object ' + parent.name)
+      );
+    }
   }
 }
 
