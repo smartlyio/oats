@@ -461,10 +461,10 @@
     "@smartlyio/safe-navigation" "^4.0.1"
     lodash "^4.17.4"
 
-"@smartlyio/oats-runtime@^1.0.7":
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-1.0.7.tgz#52d8e54abd0d665a042d290522f30c7435f3f357"
-  integrity sha512-iFWWC7t3JpluVgjipwB4kdYa3yGipH9gig72NVczjk6FjpjwXXTEKI1qg1/n0J4yWsFOg6i8Py7LGqAofPkUaQ==
+"@smartlyio/oats-runtime@^1.0.8":
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-1.0.8.tgz#82eed5dd0db141957922fe1a3fde2e3d550a7713"
+  integrity sha512-OWDuNQ8c7dVsKW4Vfq2PjmyoCFDPDAktGC63E5bYLHMvZz87QOlv25gplGbsrDNbKhTK++x7mIUjsc/q3+QNMA==
   dependencies:
     "@smartlyio/safe-navigation" "^4.0.1"
     lodash "^4.17.4"
