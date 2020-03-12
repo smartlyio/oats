@@ -71,10 +71,19 @@ export interface NamedType {
   readonly reference: NamedTypeDefinition<unknown>;
 }
 
+export interface PropType {
+  required: boolean;
+  value: Type;
+}
+
+export interface Props {
+  [name: string]: PropType;
+}
+export type AdditionalProp = boolean | Type;
 export interface ObjectType {
   readonly type: 'object';
-  readonly additionalProperties: boolean | Type;
-  readonly properties: { [name: string]: { required: boolean; value: Type } };
+  readonly additionalProperties: AdditionalProp;
+  readonly properties: Props;
 }
 
 type Path = PathItem[];

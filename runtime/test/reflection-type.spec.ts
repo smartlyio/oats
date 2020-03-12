@@ -1,7 +1,11 @@
 import * as reflectionType from '../src/reflection-type';
 import { ValueClass } from '../src/value-class';
 import { createMakerWith, Make, makeArray, makeObject, Maker, makeString } from '../src/make';
-import { pseudoRandomBytes } from 'crypto';
+import * as fc from 'fast-check';
+import * as gen from './generator';
+import * as testType from '../tmp/fixture.types.generated';
+import { pmap } from '../src/runtime';
+import { Traversal } from '../src/reflection-type';
 
 describe('reflection-type', () => {
   describe('Traversal', () => {
@@ -9,7 +13,9 @@ describe('reflection-type', () => {
       static make(v: any): Make<ArrayTestClass> {
         return makeArrayTestClass(v);
       }
+
       public field!: string[];
+
       constructor(v: any) {
         super();
         const value = makeObject({
@@ -18,14 +24,17 @@ describe('reflection-type', () => {
         Object.assign(this, value);
       }
     }
+
     const makeArrayTestClass: Maker<any, ArrayTestClass> = createMakerWith(ArrayTestClass);
 
     class TestClass extends ValueClass<TestClass, 1> {
       static make(v: any): Make<TestClass> {
         return makeTestClass(v);
       }
+
       public field!: string;
       public other!: string;
+
       constructor(v: any) {
         super();
         const value = makeObject(
@@ -38,6 +47,7 @@ describe('reflection-type', () => {
         Object.assign(this, value);
       }
     }
+
     const makeTestClass: Maker<any, TestClass> = createMakerWith(TestClass);
 
     const target: reflectionType.NamedTypeDefinition<any> = {
@@ -259,139 +269,168 @@ describe('reflection-type', () => {
       );
     });
 
-    properties('map');
-    properties('pmap');
+    describe('pmap and map', () => {
+      properties('map');
+      properties('pmap');
 
-    function properties(call: 'pmap' | 'map') {
-      async function asAsync(fn: () => any) {
-        return await fn();
-      }
-      describe('traversal with ' + call, () => {
-        it('throws if given value does not match root', async () => {
-          const root: reflectionType.NamedTypeDefinition<any> = {
-            maker: 1 as any,
-            name: 'X',
-            isA: (v): v is TestClass => v instanceof TestClass,
-            definition: {
-              type: 'object',
-              additionalProperties: false,
-              properties: {
-                other: {
-                  value: { type: 'string' },
-                  required: false
-                },
-                field: {
-                  value: {
-                    type: 'named',
-                    reference: target
-                  },
-                  required: false
-                }
-              }
+      it('result in the same data', () =>
+        fc.assert(
+          fc.asyncProperty(
+            gen.named(testType.typeTestObject),
+            async (value: testType.TestObject) => {
+              const pmapTraverser = reflectionType.Traversal.compile(
+                testType.typeTestObject,
+                testType.typeTestTarget
+              );
+              const mapTraverser = reflectionType.Traversal.compile(
+                testType.typeTestObject,
+                testType.typeTestTarget
+              );
+              await expect(
+                pmapTraverser.pmap(value, async result =>
+                  testType.makeTestTarget('mapped ' + value).success()
+                )
+              ).resolves.toEqual(
+                mapTraverser.map(value, result =>
+                  testType.makeTestTarget('mapped ' + value).success()
+                )
+              );
             }
-          };
-          const traverser = reflectionType.Traversal.compile(root, target);
-          const result = asAsync(() => traverser[call](new Date(), (a: any) => a));
-          await expect(result).rejects.toThrow(/Root value does not match expected root type/);
-        });
+          )
+        ));
 
-        it('maps array properties', async () => {
-          const root: reflectionType.NamedTypeDefinition<any> = {
-            maker: 1 as any,
-            name: 'X',
-            isA: (v): v is ArrayTestClass => v instanceof ArrayTestClass,
-            definition: {
-              type: 'object',
-              additionalProperties: false,
-              properties: {
-                field: {
-                  value: {
-                    type: 'array',
-                    items: {
+      function properties(call: 'pmap' | 'map') {
+        async function asAsync(fn: () => any) {
+          return await fn();
+        }
+
+        describe('traversal with ' + call, () => {
+          it('throws if given value does not match root', async () => {
+            const root: reflectionType.NamedTypeDefinition<any> = {
+              maker: 1 as any,
+              name: 'X',
+              isA: (v): v is TestClass => v instanceof TestClass,
+              definition: {
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                  other: {
+                    value: { type: 'string' },
+                    required: false
+                  },
+                  field: {
+                    value: {
                       type: 'named',
                       reference: target
-                    }
-                  },
-                  required: false
+                    },
+                    required: false
+                  }
                 }
               }
-            }
-          };
-          const traverser = reflectionType.Traversal.compile(root, target);
-          const result = asAsync(() =>
-            traverser[call](makeArrayTestClass({ field: ['abc', 'xxx'] }).success(), ((a: any) =>
-              'got ' + a) as any)
-          );
-          await expect(result).resolves.toEqual({
-            field: ['got abc', 'got xxx']
+            };
+            const traverser = reflectionType.Traversal.compile(root, target);
+            const result = asAsync(() => traverser[call](new Date(), (a: any) => a));
+            await expect(result).rejects.toThrow(/Root value does not match expected root type/);
           });
-        });
 
-        it('maps object additional properties', async () => {
-          const root: reflectionType.NamedTypeDefinition<any> = {
-            maker: 1 as any,
-            name: 'X',
-            isA: (v): v is TestClass => v instanceof TestClass,
-            definition: {
-              type: 'object',
-              additionalProperties: { type: 'named', reference: target },
-              properties: {
-                field: { required: false, value: { type: 'string' } },
-                other: { required: false, value: { type: 'string' } }
+          it('maps array properties', async () => {
+            const root: reflectionType.NamedTypeDefinition<any> = {
+              maker: 1 as any,
+              name: 'X',
+              isA: (v): v is ArrayTestClass => v instanceof ArrayTestClass,
+              definition: {
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                  field: {
+                    value: {
+                      type: 'array',
+                      items: {
+                        type: 'named',
+                        reference: target
+                      }
+                    },
+                    required: false
+                  }
+                }
               }
-            }
-          };
-          const traverser = reflectionType.Traversal.compile(root, target);
-          await expect(
-            asAsync(() =>
-              traverser[call](
-                makeTestClass({ extra: 'abc', field: 'xx', other: 'vv' }).success(),
-                ((a: any) => 'got ' + a) as any
+            };
+            const traverser = reflectionType.Traversal.compile(root, target);
+            const result = asAsync(() =>
+              traverser[call](makeArrayTestClass({ field: ['abc', 'xxx'] }).success(), ((a: any) =>
+                'got ' + a) as any)
+            );
+            await expect(result).resolves.toEqual({
+              field: ['got abc', 'got xxx']
+            });
+          });
+
+          it('maps object additional properties', async () => {
+            const root: reflectionType.NamedTypeDefinition<any> = {
+              maker: 1 as any,
+              name: 'X',
+              isA: (v): v is TestClass => v instanceof TestClass,
+              definition: {
+                type: 'object',
+                additionalProperties: { type: 'named', reference: target },
+                properties: {
+                  field: { required: false, value: { type: 'string' } },
+                  other: { required: false, value: { type: 'string' } }
+                }
+              }
+            };
+            const traverser = reflectionType.Traversal.compile(root, target);
+            await expect(
+              asAsync(() =>
+                traverser[call](
+                  makeTestClass({ extra: 'abc', field: 'xx', other: 'vv' }).success(),
+                  ((a: any) => 'got ' + a) as any
+                )
               )
-            )
-          ).resolves.toEqual({
-            field: 'xx',
-            extra: 'got abc',
-            other: 'vv'
+            ).resolves.toEqual({
+              field: 'xx',
+              extra: 'got abc',
+              other: 'vv'
+            });
           });
-        });
 
-        it('maps object properties', async () => {
-          const root: reflectionType.NamedTypeDefinition<any> = {
-            maker: 1 as any,
-            name: 'X',
-            isA: (v): v is TestClass => v instanceof TestClass,
-            definition: {
-              type: 'object',
-              additionalProperties: false,
-              properties: {
-                other: {
-                  value: { type: 'string' },
-                  required: false
-                },
-                field: {
-                  value: {
-                    type: 'named',
-                    reference: target
+          it('maps object properties', async () => {
+            const root: reflectionType.NamedTypeDefinition<any> = {
+              maker: 1 as any,
+              name: 'X',
+              isA: (v): v is TestClass => v instanceof TestClass,
+              definition: {
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                  other: {
+                    value: { type: 'string' },
+                    required: false
                   },
-                  required: false
+                  field: {
+                    value: {
+                      type: 'named',
+                      reference: target
+                    },
+                    required: false
+                  }
                 }
               }
-            }
-          };
-          const traverser = reflectionType.Traversal.compile(root, target);
-          await expect(
-            asAsync(() =>
-              traverser[call](makeTestClass({ field: 'abc', other: 'other' }).success(), ((
-                a: any
-              ) => 'got ' + a) as any)
-            )
-          ).resolves.toEqual({
-            field: 'got abc',
-            other: 'other'
+            };
+            const traverser = reflectionType.Traversal.compile(root, target);
+            await expect(
+              asAsync(() =>
+                traverser[call](makeTestClass({ field: 'abc', other: 'other' }).success(), ((
+                  a: any
+                ) => 'got ' + a) as any)
+              )
+            ).resolves.toEqual({
+              field: 'got abc',
+              other: 'other'
+            });
           });
         });
-      });
-    }
+      }
+    });
   });
 });
