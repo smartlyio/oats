@@ -68,11 +68,11 @@
   },
   "jest": {
     "testEnvironment": "node",
-    "testRegex": "test/.*\\.spec.(jsx?|tsx?)$",
+    "testRegex": "test/.*\\.spec.ts$",
     "moduleFileExtensions": [
       "js",
-      "json",
       "jsx",
+      "json",
       "ts",
       "tsx"
     ],
