@@ -6,6 +6,7 @@ import * as gen from './generator';
 import * as testType from '../tmp/fixture.types.generated';
 import { pmap } from '../src/runtime';
 import { Traversal } from '../src/reflection-type';
+import safe from '@smartlyio/safe-navigation';
 
 describe('reflection-type', () => {
   describe('Traversal', () => {
@@ -305,6 +306,43 @@ describe('reflection-type', () => {
         }
 
         describe('traversal with ' + call, () => {
+          const traverser = reflectionType.Traversal.compile(
+            testType.typeTestObject,
+            testType.typeTestTarget
+          );
+
+          it('does not set value to non targets', async () =>
+            fc.assert(
+              fc.asyncProperty(
+                gen.named(testType.typeTestObject),
+                async (value: testType.TestObject) => {
+                  const original = safe(value).recursive.noHit.$;
+                  const mappedValue: testType.TestObject = await traverser[call](
+                    value,
+                    (str: any) => ('mapped ' + str) as any
+                  );
+                  expect(safe(mappedValue).recursive.noHit.$).toEqual(original);
+                }
+              )
+            ));
+
+          it('sets value', async () =>
+            fc.assert(
+              fc.asyncProperty(
+                gen.named(testType.typeTestObject),
+                async (value: testType.TestObject) => {
+                  const original = safe(value).recursive.immediate.$;
+                  const mappedValue: testType.TestObject = await traverser[call](
+                    value,
+                    (str: any) => ('mapped ' + str) as any
+                  );
+                  expect(safe(mappedValue).recursive.immediate.$).toEqual(
+                    original !== undefined ? 'mapped ' + original : undefined
+                  );
+                }
+              )
+            ));
+
           it('throws if given value does not match root', async () => {
             const root: reflectionType.NamedTypeDefinition<any> = {
               maker: 1 as any,
