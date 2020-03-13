@@ -59,7 +59,9 @@ export function generate(driver: Driver) {
       '\n' +
       types.run({
         externalOpenApiImports: (driver.externalOpenApiImports || []).map(i => ({
-          importFile: i.isInstalledModule ? i.importFile : resolveModule(driver.generatedValueClassFile, i.importFile),
+          importFile: i.isInstalledModule
+            ? i.importFile
+            : resolveModule(driver.generatedValueClassFile, i.importFile),
           importAs: i.importAs
         })),
         externalOpenApiSpecs: driver.externalOpenApiSpecs || (() => undefined),
