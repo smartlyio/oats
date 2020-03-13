@@ -23,6 +23,7 @@ function modulePath(importer: string, module: string | undefined) {
 export interface ImportDefinition {
   importFile: string;
   importAs: string;
+  isInstalledModule?: boolean;
 }
 
 export interface Driver {
@@ -58,7 +59,7 @@ export function generate(driver: Driver) {
       '\n' +
       types.run({
         externalOpenApiImports: (driver.externalOpenApiImports || []).map(i => ({
-          importFile: resolveModule(driver.generatedValueClassFile, i.importFile),
+          importFile: i.isInstalledModule ? i.importFile : resolveModule(driver.generatedValueClassFile, i.importFile),
           importAs: i.importAs
         })),
         externalOpenApiSpecs: driver.externalOpenApiSpecs || (() => undefined),
