@@ -4,7 +4,6 @@ import { createMakerWith, Make, makeArray, makeObject, Maker, makeString } from 
 import * as fc from 'fast-check';
 import * as gen from './generator';
 import * as testType from '../tmp/fixture.types.generated';
-import { pmap } from '../src/runtime';
 import { Traversal } from '../src/reflection-type';
 import safe from '@smartlyio/safe-navigation';
 
