@@ -1,4 +1,4 @@
-import { driver } from '../../index';
+import { driver } from '../index';
 
 // generate type definitions for schemas from an external openapi spec
 driver.generate({
