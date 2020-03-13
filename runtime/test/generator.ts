@@ -100,14 +100,14 @@ class GenObject extends fc.Arbitrary<any> {
   private onlyScalars(fields: string[]) {
     return fields.filter(field => {
       const type = this.props[field];
-      return type && this.isScalar(type.value.type)
+      return type && this.isScalar(type.value.type);
     });
   }
   private orderOptionals(fields: string[]) {
     const scalars = this.onlyScalars(fields);
     const nonScalars = fields.filter(field => {
       const type = this.props[field];
-      return !type || !this.isScalar(type.value.type)
+      return !type || !this.isScalar(type.value.type);
     });
     return [...scalars, ...nonScalars];
   }
