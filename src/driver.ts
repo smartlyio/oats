@@ -43,7 +43,7 @@ function emitAllStatusCodes() {
 
 function resolveModule(fromModule: string, toModule: string): string {
   if (!toModule.startsWith('.')) {
-      return toModule;
+    return toModule;
   }
 
   const p = path.relative(path.dirname(fromModule), toModule);
