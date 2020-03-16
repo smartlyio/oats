@@ -439,32 +439,32 @@
   dependencies:
     type-detect "4.0.8"
 
-"@smartlyio/oats-axios-adapter@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats-axios-adapter/-/oats-axios-adapter-1.0.1.tgz#60a2a797a3aca38c0bbe61c3b14d54c590579325"
-  integrity sha512-HIpzu3COTDlZHB8Vq11CkLOvgrnLrnqD/fEhAm8LMgcGSeLyYsd8AWZXtunXDs34K40a2Mv9n0x9/rf0LAGcIA==
+"@smartlyio/oats-axios-adapter@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats-axios-adapter/-/oats-axios-adapter-2.0.0.tgz#9033531098a9520ad4a46e756d0c4fdb536a381a"
+  integrity sha512-ro+nIJI89WtNAZ0BsaOb9uu8ckTkZLtObRMsQKaBTSDO59oTxId+IQh2hR7uCDlgPm/DZIraWJWZEQ9bGhXgzg==
   dependencies:
-    "@smartlyio/oats-runtime" "^1.0.0"
+    "@smartlyio/oats-runtime" "^2.0.0"
     "@types/form-data" "^2.2.1"
-    form-data "^2.3.2"
+    form-data "^3.0.0"
 
 "@smartlyio/oats-koa-adapter@^1.0.4":
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/@smartlyio/oats-koa-adapter/-/oats-koa-adapter-1.0.4.tgz#e554cf071af1b6aa9de999fb308a34dc1813a89c"
   integrity sha512-+nknruvNVjeNIpgENDXEMcZ/N5KWLb+XEoIvet8rIc2oby6UcCrqtaGyR7EfaQOcXXGeMXS1PLggVp0otabfMg==
 
-"@smartlyio/oats-runtime@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-1.0.0.tgz#74a60c00a1f3d8766628aa715b06e5d51eb01697"
-  integrity sha512-6rOmHxBqw4NnMLP7R54Jg5Oh0q0aYrVZ9nJevS/dEYjjM3NCZFHhXxIfuSrozm4he5aI48wRr/cKBmYR86C7Cg==
-  dependencies:
-    "@smartlyio/safe-navigation" "^4.0.1"
-    lodash "^4.17.4"
-
 "@smartlyio/oats-runtime@^1.0.8":
   version "1.0.8"
   resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-1.0.8.tgz#82eed5dd0db141957922fe1a3fde2e3d550a7713"
   integrity sha512-OWDuNQ8c7dVsKW4Vfq2PjmyoCFDPDAktGC63E5bYLHMvZz87QOlv25gplGbsrDNbKhTK++x7mIUjsc/q3+QNMA==
+  dependencies:
+    "@smartlyio/safe-navigation" "^4.0.1"
+    lodash "^4.17.4"
+
+"@smartlyio/oats-runtime@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-2.0.0.tgz#6a0dc99f47a8cbf09c617caae0d5226143392c9e"
+  integrity sha512-zRTkKZmN+BbDhtQoqnnrdT8wQvVY2rj8VrfCNnpewX4fdTTzxDgY3lX7l0B5G50jQ86TMlUJ74dnWmEXiK1fwQ==
   dependencies:
     "@smartlyio/safe-navigation" "^4.0.1"
     lodash "^4.17.4"
@@ -1723,7 +1723,7 @@ forever-agent@~0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/forever-agent/-/forever-agent-0.6.1.tgz#fbc71f0c41adeb37f96c577ad1ed42d8fdacca91"
 
-form-data@*, form-data@^2.3.2:
+form-data@*:
   version "2.5.1"
   resolved "https://registry.yarnpkg.com/form-data/-/form-data-2.5.1.tgz#f2cbec57b5e59e23716e128fe44d4e5dd23895f4"
   integrity sha512-m21N3WOmEEURgk6B9GLOE4RuWOFf28Lhh9qGYeNlGq4VDXUlJy2th2slBNU8Gp8EzloYZOibZJ7t5ecIrFSjVA==
