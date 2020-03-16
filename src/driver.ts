@@ -23,7 +23,6 @@ function modulePath(importer: string, module: string | undefined) {
 export interface ImportDefinition {
   importFile: string;
   importAs: string;
-  isInstalledModule?: boolean;
 }
 
 export interface Driver {
@@ -43,6 +42,10 @@ function emitAllStatusCodes() {
 }
 
 function resolveModule(fromModule: string, toModule: string): string {
+  if (!toModule.startsWith('.')) {
+      return toModule;
+  }
+
   const p = path.relative(path.dirname(fromModule), toModule);
   if (p[0] === '.') {
     return p;
@@ -59,9 +62,7 @@ export function generate(driver: Driver) {
       '\n' +
       types.run({
         externalOpenApiImports: (driver.externalOpenApiImports || []).map(i => ({
-          importFile: i.isInstalledModule
-            ? i.importFile
-            : resolveModule(driver.generatedValueClassFile, i.importFile),
+          importFile: resolveModule(driver.generatedValueClassFile, i.importFile),
           importAs: i.importAs
         })),
         externalOpenApiSpecs: driver.externalOpenApiSpecs || (() => undefined),
