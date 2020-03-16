@@ -1,5 +1,7 @@
 set -e
-rm -rf node_modules
+yarn
+yarn clean
+yarn prebuild
 
 cd runtime
 echo "building $PWD"

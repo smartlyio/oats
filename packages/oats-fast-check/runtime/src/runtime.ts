@@ -47,6 +47,28 @@ type ValueType =
   | boolean
   | number;
 
+export function map<A extends ValueType, T extends ValueType>(
+  value: A,
+  predicate: (a: any) => a is T,
+  fn: (p: T) => T
+): A {
+  if (predicate(value)) {
+    value = fn(value) as any;
+  }
+  if (Array.isArray(value)) {
+    const arr: any = value.map(item => map(item, predicate, fn));
+    return selectArray(value, arr) as any;
+  }
+  if (value && typeof value === 'object') {
+    const record: any = {};
+    Object.keys(value).map(key => {
+      record[key] = map((value as any)[key], predicate, fn);
+    });
+    return selectRecord(value, record);
+  }
+  return value;
+}
+
 export async function pmap<A extends ValueType, T extends ValueType>(
   value: A,
   predicate: (a: any) => a is T,
