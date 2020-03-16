@@ -1,6 +1,6 @@
 {
   "name": "@smartlyio/oats-runtime",
-  "version": "1.0.7",
+  "version": "2.0.0",
   "license": "MIT",
   "description": "Runtime for Oats a Openapi3 based generator for typescript aware servers and clients",
   "private": false,
@@ -35,26 +35,21 @@
     "@types/jest": "^25.0.0",
     "@types/lodash": "^4.14.140",
     "@types/node": "^11.11.3",
+    "fast-check": "^1.23.0",
     "jsverify": "^0.8.4",
     "typescript": "^3.6.3"
   },
   "jest": {
     "testEnvironment": "node",
-    "globals": {
-      "ts-jest": {
-        "skipBabel": true
-      }
-    },
     "testRegex": "test/.*\\.spec.(jsx?|tsx?)$",
-    "transform": {
-      "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
-    },
     "moduleFileExtensions": [
-      "ts",
-      "tsx",
       "js",
+      "json",
       "jsx",
-      "json"
-    ]
+      "ts",
+      "tsx"
+    ],
+    "preset": "ts-jest",
+    "testMatch": null
   }
 }
