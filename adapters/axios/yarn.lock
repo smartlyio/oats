@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@smartlyio/oats-runtime@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-1.0.0.tgz#74a60c00a1f3d8766628aa715b06e5d51eb01697"
-  integrity sha512-6rOmHxBqw4NnMLP7R54Jg5Oh0q0aYrVZ9nJevS/dEYjjM3NCZFHhXxIfuSrozm4he5aI48wRr/cKBmYR86C7Cg==
+"@smartlyio/oats-runtime@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-2.0.0.tgz#6a0dc99f47a8cbf09c617caae0d5226143392c9e"
+  integrity sha512-zRTkKZmN+BbDhtQoqnnrdT8wQvVY2rj8VrfCNnpewX4fdTTzxDgY3lX7l0B5G50jQ86TMlUJ74dnWmEXiK1fwQ==
   dependencies:
     "@smartlyio/safe-navigation" "^4.0.1"
     lodash "^4.17.4"
