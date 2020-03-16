@@ -448,10 +448,10 @@
     "@types/form-data" "^2.2.1"
     form-data "^2.3.2"
 
-"@smartlyio/oats-koa-adapter@^1.0.4":
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats-koa-adapter/-/oats-koa-adapter-1.0.4.tgz#e554cf071af1b6aa9de999fb308a34dc1813a89c"
-  integrity sha512-+nknruvNVjeNIpgENDXEMcZ/N5KWLb+XEoIvet8rIc2oby6UcCrqtaGyR7EfaQOcXXGeMXS1PLggVp0otabfMg==
+"@smartlyio/oats-koa-adapter@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats-koa-adapter/-/oats-koa-adapter-2.0.0.tgz#0ff88df7d9767034be1127084fedc9fe8de2898f"
+  integrity sha512-4FeQ1szZQWGISIOeAyd0pUH14jbHJSp2yhSz8Gq8XgPwyMV8vtBCoIpKFvNHAiA7V1cr1vg+UIJ9eXhU5iJ4FQ==
 
 "@smartlyio/oats-runtime@^1.0.0":
   version "1.0.0"
