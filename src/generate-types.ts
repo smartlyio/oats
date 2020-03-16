@@ -905,7 +905,36 @@ function generateNamedTypeDefinitionDeclaration(key: string) {
   );
 }
 
-function generateNamedTypeDefinitionAssignment(key: string, schema: oas.SchemaObject) {
+function generateIsA(type: string) {
+  return ts.createArrowFunction(
+    undefined,
+    undefined,
+    [
+      ts.createParameter(
+        undefined,
+        undefined,
+        undefined,
+        ts.createIdentifier('value'),
+        undefined,
+        ts.createKeywordTypeNode(ts.SyntaxKind.AnyKeyword),
+        undefined
+      )
+    ],
+    undefined,
+    ts.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
+    ts.createBinary(
+      ts.createIdentifier('value'),
+      ts.createToken(ts.SyntaxKind.InstanceOfKeyword),
+      ts.createIdentifier(type)
+    )
+  );
+}
+
+function generateNamedTypeDefinitionAssignment(
+  key: string,
+  schema: oas.SchemaObject,
+  isA?: string
+) {
   return ts.createCall(
     ts.createPropertyAccess(ts.createIdentifier('Object'), 'assign'),
     undefined,
@@ -915,7 +944,11 @@ function generateNamedTypeDefinitionAssignment(key: string, schema: oas.SchemaOb
         [
           ts.createPropertyAssignment('name', ts.createStringLiteral(oautil.typenamify(key))),
           ts.createPropertyAssignment('definition', generateReflectionType(schema)),
-          ts.createPropertyAssignment('maker', ts.createIdentifier('make' + oautil.typenamify(key)))
+          ts.createPropertyAssignment(
+            'maker',
+            ts.createIdentifier('make' + oautil.typenamify(key))
+          ),
+          ts.createPropertyAssignment('isA', isA ? generateIsA(isA) : ts.createNull())
         ],
         true
       )
@@ -1064,7 +1097,7 @@ function generateTopLevelType(
       generateValueClass(key, schema),
       generateTopLevelClassBuilder(key, schema),
       generateTopLevelClassMaker(key, schema, oautil.typenamify(key)),
-      generateNamedTypeDefinitionAssignment(key, schema)
+      generateNamedTypeDefinitionAssignment(key, schema, oautil.typenamify(key))
     ];
   }
   if (isScalar(schema)) {
