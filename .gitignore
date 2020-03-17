@@ -6,3 +6,4 @@ yarn-error.log
 dist/
 *.iml
 .DS_Store
+*.tgz
