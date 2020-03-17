@@ -13,5 +13,6 @@
     "baseUrl": "./src/types",
     "forceConsistentCasingInFileNames": true,
     "outDir": "dist"
-  }
+  },
+  "exclude": ["node_modules/*", "*/**/dist/*", "dist/*"],
 }
