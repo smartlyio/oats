@@ -4,7 +4,6 @@ import { createMakerWith, Make, makeArray, makeObject, Maker, makeString } from 
 import * as fc from 'fast-check';
 import * as gen from './generator';
 import * as testType from '../tmp/fixture.types.generated';
-import { Traversal } from '../src/reflection-type';
 import safe from '@smartlyio/safe-navigation';
 
 describe('reflection-type', () => {
@@ -287,13 +286,11 @@ describe('reflection-type', () => {
                 testType.typeTestTarget
               );
               await expect(
-                pmapTraverser.pmap(value, async result =>
+                pmapTraverser.pmap(value, async () =>
                   testType.makeTestTarget('mapped ' + value).success()
                 )
               ).resolves.toEqual(
-                mapTraverser.map(value, result =>
-                  testType.makeTestTarget('mapped ' + value).success()
-                )
+                mapTraverser.map(value, () => testType.makeTestTarget('mapped ' + value).success())
               );
             }
           )
