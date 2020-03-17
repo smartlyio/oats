@@ -90,14 +90,12 @@ export class ResponseValidationError extends Error {
   }
 }
 
-function throwRequestValidationError(tag: string, e: Make<any>) {
+function throwRequestValidationError(tag: string, e: Make<any>): any {
   throw new RequestValidationError(tag, e.errors);
-  return null as any;
 }
 
-function throwResponseValidationError(tag: string, originalValue: any, e: Make<any>) {
+function throwResponseValidationError(tag: string, originalValue: any, e: Make<any>): any {
   throw new ResponseValidationError(tag, originalValue, e.errors);
-  return null as any;
 }
 
 function lowercaseObject(o: {} | undefined | null): {} | null | undefined {

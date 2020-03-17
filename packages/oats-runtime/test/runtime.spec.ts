@@ -10,8 +10,8 @@ describe('pmap', () => {
     const clone = _.cloneDeep(dict);
     const mapped = await pmap(
       dict,
-      (n: any): n is string => false,
-      async (n: string) => assert.fail('cant happen')
+      (_n: any): _n is string => false,
+      async () => assert.fail('cant happen')
     );
     expect(mapped === dict).toBeTruthy();
     expect(mapped).toEqual(clone);
@@ -22,7 +22,7 @@ describe('pmap', () => {
     const clone = _.cloneDeep(dict);
     const mapped = await pmap(
       dict,
-      (n: any): n is any => true,
+      (_n: any): _n is any => true,
       async (n: any) => n
     );
     expect(mapped === dict).toBeTruthy();
@@ -64,7 +64,7 @@ describe('pmap', () => {
       await pmap(
         value,
         (n: any): n is string[] => _.isArray(n),
-        async (n: string[]) => n.map(w => 1 as any)
+        async (n: string[]) => n.map(() => 1 as any)
       );
     } catch (e) {
       expect(e).toBeInstanceOf(make.MakeError);

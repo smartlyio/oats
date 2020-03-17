@@ -147,8 +147,7 @@ export class Traversal<Root, Leaf> {
   private matcher(): (a: any) => boolean {
     const parents = this.cache.get(this.leaf);
     return function match(value: any) {
-      const matchers = [];
-      for (const [path, parent] of parents!.entries()) {
+      for (const [, parent] of parents!.entries()) {
         if (
           parent.find(p => {
             if (p.isA) {
@@ -194,7 +193,6 @@ function safeMapPath(value: any, path: Path, fn: (value: any) => any) {
       );
     }
     if (p.type === 'additionalProperty') {
-      const current = cursor.$;
       const fields = Object.keys(cursor.$ || {});
       const extraFields = fields.filter(field => p.definedProperties.indexOf(field) < 0);
       return cursor.$map((value: any) => {
@@ -220,7 +218,6 @@ async function safePmapPath(value: any, path: Path, fn: (value: any) => Promise<
       );
     }
     if (p.type === 'additionalProperty') {
-      const current = cursor.$;
       const fields = Object.keys(cursor.$ || {});
       const extraFields = fields.filter(field => p.definedProperties.indexOf(field) < 0);
       return cursor.$pmap(async (value: any) => {
@@ -241,32 +238,6 @@ async function safePmapPath(value: any, path: Path, fn: (value: any) => Promise<
 
 type ReachTo = Array<NamedTypeDefinition<unknown>>;
 type Reaches = Map<NamedTypeDefinition<unknown>, Map<string, ReachTo>>;
-
-function calculatePathsToLeaf(
-  processedNodes: Set<NamedTypeDefinition<unknown>>,
-  reachFrom: Reaches,
-  reachTo: Reaches,
-  root: NamedTypeDefinition<unknown>,
-  leaf: NamedTypeDefinition<unknown>
-) {
-  if (processedNodes.has(leaf)) {
-    return;
-  }
-  if (leaf === root) {
-    return;
-  }
-  processedNodes.add(leaf);
-  const reaches = reachTo.get(leaf);
-  if (!reaches) {
-    return assert.fail('empty to');
-  }
-  for (const path of reaches!.keys()) {
-    reaches.get(path)!.map(from => {
-      canReach(reachFrom, leaf, from, JSON.parse(path));
-      calculatePathsToLeaf(processedNodes, reachFrom, reachTo, root, from);
-    });
-  }
-}
 
 function canReach(
   reaches: Reaches,

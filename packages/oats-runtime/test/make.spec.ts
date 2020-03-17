@@ -26,7 +26,7 @@ describe('Make', () => {
   describe('success', () => {
     it('uses custom error handler', () => {
       const value = make.Make.error([{ path: [], error: 'xxx' }]);
-      expect(value.success(e => 'got error')).toEqual('got error');
+      expect(value.success(() => 'got error')).toEqual('got error');
     });
   });
 });
