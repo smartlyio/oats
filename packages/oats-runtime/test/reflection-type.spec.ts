@@ -394,8 +394,10 @@ describe('reflection-type', () => {
             };
             const traverser = reflectionType.Traversal.compile(root, target);
             const result = asAsync(() =>
-              traverser[call](makeArrayTestClass({ field: ['abc', 'xxx'] }).success(), ((a: any) =>
-                'got ' + a) as any)
+              traverser[call](
+                makeArrayTestClass({ field: ['abc', 'xxx'] }).success(),
+                ((a: any) => 'got ' + a) as any
+              )
             );
             await expect(result).resolves.toEqual({
               field: ['got abc', 'got xxx']
@@ -457,9 +459,10 @@ describe('reflection-type', () => {
             const traverser = reflectionType.Traversal.compile(root, target);
             await expect(
               asAsync(() =>
-                traverser[call](makeTestClass({ field: 'abc', other: 'other' }).success(), ((
-                  a: any
-                ) => 'got ' + a) as any)
+                traverser[call](
+                  makeTestClass({ field: 'abc', other: 'other' }).success(),
+                  ((a: any) => 'got ' + a) as any
+                )
               )
             ).resolves.toEqual({
               field: 'got abc',

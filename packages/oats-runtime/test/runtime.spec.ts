@@ -20,7 +20,11 @@ describe('pmap', () => {
 
   jsc.property('leaves object unchanged when no changes', jsc.json, async dict => {
     const clone = _.cloneDeep(dict);
-    const mapped = await pmap(dict, (n: any): n is any => true, async (n: any) => n);
+    const mapped = await pmap(
+      dict,
+      (n: any): n is any => true,
+      async (n: any) => n
+    );
     expect(mapped === dict).toBeTruthy();
     expect(mapped).toEqual(clone);
     return true;
