@@ -1,22 +1,18 @@
 {
-  "name": "@smartlyio/oats",
-  "version": "2.1.0",
+  "name": "@smartlyio/oats-koa-adapter",
+  "version": "2.0.0",
   "license": "MIT",
-  "description": "Openapi3 based generator for typescript aware servers and clients",
+  "description": "Koa adapter for Oats",
   "private": false,
   "author": "Smartly.io",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build-all": "./build-all.sh",
-    "test": "yarn ts-node test/runtime-driver.ts && yarn jest",
-    "render": "yarn ts-node examples/driver.ts && yarn ts-node render.ts",
-    "clean": "rm -rf ./dist/* && rm -f ./tmp/*.ts && rm -f ./runtime/tmp/*.ts",
-    "prebuild": "yarn ts-node test/runtime-driver.ts",
-    "build": "yarn clean && yarn render && yarn test && yarn lint && yarn tsc",
-    "lint": "tslint -c tslint.json --project package.json",
-    "fix": "tslint --fix -c tslint.json --project package.json",
-    "prepack": "yarn build-all"
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
+    "clean": "rm -rf ./dist && rm -f ./tmp/*.ts",
+    "build": "yarn clean && yarn lint && yarn tsc",
+    "prepublish": "yarn build"
   },
   "repository": {
     "type": "git",
@@ -24,17 +20,14 @@
   },
   "peerDependencies": {
     "@smartlyio/oats-runtime": "^2.0.0",
+    "koa": "^2.3.0",
+    "koa-body": "^4.0.4",
+    "koa-router": "^8.0.0",
     "typescript": "^3.6.3"
-  },
-  "dependencies": {
-    "@smartlyio/safe-navigation": "^4.0.1",
-    "@types/js-yaml": "^3.12.1",
-    "js-yaml": "^3.13.1",
-    "lodash": "^4.17.4",
-    "openapi3-ts": "^1.2.0"
   },
   "keywords": [
     "oats",
+    "koa",
     "openapi3",
     "rest",
     "generator",
@@ -43,43 +36,19 @@
     "client"
   ],
   "devDependencies": {
-    "@smartlyio/oats-axios-adapter": "^2.0.0",
-    "@smartlyio/oats-koa-adapter": "^2.0.0",
     "@smartlyio/oats-runtime": "^2.0.0",
-    "@types/jest": "^25.0.0",
-    "@types/koa": "^2.0.50",
-    "@types/koa-mount": "^4.0.0",
-    "@types/koa-router": "^7.0.40",
+    "@types/koa": "2.11.2",
+    "@types/koa-router": "^7.0.23",
     "@types/lodash": "^4.14.140",
     "@types/node": "^11.11.3",
-    "axios": "^0.19.0",
-    "fast-check": "^1.23.0",
-    "form-data": "^3.0.0",
-    "jest": "^25.0.0",
-    "jsverify": "^0.8.4",
-    "koa": "^2.3.0",
-    "koa-body": "^4.0.4",
-    "koa-mount": "^4.0.0",
-    "koa-router": "^8.0.0",
-    "prettier": "^1.18.2",
-    "ts-jest": "^25.0.0",
-    "ts-node-dev": "^1.0.0-pre.24",
-    "tslint": "^5.7.0",
-    "tslint-config-prettier": "^1.18.0",
-    "tslint-plugin-prettier": "^2.0.1",
-    "typescript": "^3.6.3"
-  },
-  "jest": {
-    "testEnvironment": "node",
-    "testRegex": "test/.*\\.spec.ts$",
-    "moduleFileExtensions": [
-      "js",
-      "jsx",
-      "json",
-      "ts",
-      "tsx"
-    ],
-    "preset": "ts-jest",
-    "testMatch": null
+    "@typescript-eslint/eslint-plugin": "^2.24.0",
+    "@typescript-eslint/parser": "^2.24.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-jest": "^23.8.2",
+    "eslint-plugin-prettier": "^3.1.2",
+    "prettier": "^1.19.1",
+    "typescript": "^3.8.3"
   }
 }

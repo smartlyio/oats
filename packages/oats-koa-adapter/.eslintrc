@@ -1,0 +1,60 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "root": true,
+  "env": {
+    "es6": true,
+    "node": true,
+    "jest/globals": true
+  },
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "plugins": [
+    "@typescript-eslint",
+    "prettier",
+    "jest",
+    "import"
+  ],
+  "extends": [
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:jest/recommended",
+    "prettier"
+  ],
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".ts"]
+      }
+    }
+  },
+  "rules": {
+    "no-console": "error",
+    "prettier/prettier": "error",
+    "require-atomic-updates": "off",
+    "no-constant-condition": "off",
+    "no-prototype-builtins": "off",
+    "no-unreachable": "error",
+    "@typescript-eslint/no-var-requires": "error",
+    "@typescript-eslint/no-floating-promises": "error",
+    "@typescript-eslint/no-unused-vars": [2, { "ignoreRestSiblings": true, "argsIgnorePattern": "^_" }],
+    "@typescript-eslint/camelcase": "off",
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-use-before-define": "off",
+    "@typescript-eslint/no-non-null-assertion": "off",
+    "@typescript-eslint/ban-ts-ignore": "off",
+    "jest/valid-expect-in-promise": "off",
+    "jest/no-identical-title": "off",
+    "jest/no-try-expect": "off",
+    "jest/expect-expect": "off",
+    "jest/no-standalone-expect": "off",
+    "jest/valid-describe": "off",
+    "import/no-cycle": "error",
+    "import/no-useless-path-segments": "error",
+    "import/no-self-import": "error",
+    "import/no-mutable-exports": "error",
+    "import/no-deprecated": "error",
+    "import/export": "error"
+  }
+}
