@@ -8,9 +8,12 @@
   "main": "dist/src/runtime.js",
   "types": "dist/src/runtime.d.ts",
   "scripts": {
-    "test": "yarn jest",
+    "test": "yarn ts-node test/runtime-driver.ts && yarn jest",
     "lint": "eslint . --ext .ts",
-    "lint:fix": "eslint . --ext .ts --fix"
+    "lint:fix": "eslint . --ext .ts --fix",
+    "clean": "rm -rf ./dist && rm -f ./tmp/*.ts",
+    "build": "yarn clean && yarn lint && yarn test && yarn tsc",
+    "prepublish": "yarn build"
   },
   "repository": {
     "type": "git",
@@ -33,6 +36,8 @@
     "client"
   ],
   "devDependencies": {
+    "@smartlyio/oats": "^2.1.0",
+    "@smartlyio/oats-runtime": "^2.0.0",
     "@types/jest": "^25.1.4",
     "@types/lodash": "^4.14.140",
     "@types/node": "^13.9.1",
@@ -48,6 +53,7 @@
     "jsverify": "^0.8.4",
     "prettier": "^1.19.1",
     "ts-jest": "^25.2.1",
+    "ts-node": "^8.6.2",
     "typescript": "^3.8.3"
   },
   "jest": {
