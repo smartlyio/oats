@@ -25,7 +25,7 @@ export class ValueClass<Shape, BrandTag> extends Brand<BrandTag> {
   private Shape!: Shape;
 }
 
-interface WritableArray<T> extends Array<Writable<T>> {}
+type WritableArray<T> = Array<Writable<T>>;
 type Fun = (...a: any[]) => any;
 
 type WritableObject<T> = { -readonly [P in keyof T]: Writable<T[P]> };

@@ -1,0 +1,8 @@
+node_modules
+.vscode
+.github
+.git
+bin
+dist
+tmp
+examples

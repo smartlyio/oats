@@ -13,6 +13,5 @@
     "baseUrl": "./src/types",
     "forceConsistentCasingInFileNames": true,
     "outDir": "dist"
-  },
-  "exclude": ["adapters/", "runtime/"]
+  }
 }
