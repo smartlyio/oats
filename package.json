@@ -8,11 +8,10 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "test": "yarn ts-node test/runtime-driver.ts && yarn jest",
     "render": "yarn ts-node examples/driver.ts && yarn ts-node render.ts",
-    "clean": "rm -rf ./dist/* && rm -f ./tmp/*.ts && rm -f ./runtime/tmp/*.ts",
-    "prebuild": "yarn ts-node test/runtime-driver.ts",
-    "build": "yarn clean && yarn render && yarn test && yarn lint && yarn tsc",
+    "clean": "rm -rf ./dist/*",
+    "build": "yarn clean && yarn render && yarn lint && yarn tsc",
+    "prepublish": "yarn build",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix"
   },

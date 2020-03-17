@@ -5,4 +5,4 @@ node_modules/
 yarn-error.log
 dist/
 *.iml
-
+.DS_Store
