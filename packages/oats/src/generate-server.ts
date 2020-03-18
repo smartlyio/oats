@@ -271,9 +271,7 @@ function generateMaker(
   servers: string[],
   path: string,
   method: string,
-  object: oas.OperationObject,
-  oasSchema: oas.OpenAPIObject,
-  opts: Options
+  object: oas.OperationObject
 ): ts.Expression {
   if (object.servers) {
     servers = object.servers.map(server => server.url);
@@ -314,7 +312,7 @@ function flattenPathAndMethod(paths: oas.PathsObject) {
   return flattened;
 }
 
-function generateHandler(schema: oas.OpenAPIObject, opts: Options) {
+function generateHandler(schema: oas.OpenAPIObject) {
   const servers = (safe(schema).servers.$ || []).map(server => server.url);
   return ts.createVariableStatement(
     [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
@@ -330,7 +328,7 @@ function generateHandler(schema: oas.OpenAPIObject, opts: Options) {
           ),
           ts.createArrayLiteral(
             flattenPathAndMethod(schema.paths).map(p =>
-              generateMaker(servers, p.path, p.method, p.object, schema, opts)
+              generateMaker(servers, p.path, p.method, p.object)
             )
           )
         )
@@ -402,7 +400,7 @@ export function run(opts: Options) {
   const types = generateImport('types', typemodule);
   const endpoints = generateEndpointsType(opts);
   const clientSpec = generateClientSpec(opts);
-  const handler = generateHandler(opts.oas, opts);
+  const handler = generateHandler(opts.oas);
   const router = generateRouter();
   const client = generateClient();
 

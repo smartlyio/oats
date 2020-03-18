@@ -1,4 +1,5 @@
-// tslint:disable: no-floating-promises no-console
+/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-floating-promises */
 
 import * as fs from 'fs';
 import * as child from 'child_process';
