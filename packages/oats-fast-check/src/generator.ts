@@ -1,5 +1,5 @@
 import * as fc from 'fast-check';
-import * as reflection from '../src/reflection-type';
+import { reflection } from '@smartlyio/oats-runtime';
 import * as assert from 'assert';
 import * as _ from 'lodash';
 

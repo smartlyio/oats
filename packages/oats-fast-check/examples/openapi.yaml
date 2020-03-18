@@ -12,6 +12,7 @@ components:
       type: string
     TestObject:
       type: object
+      additionalProperties: true
       properties:
         immediate:
           $ref: '#/components/schemas/TestTarget'
