@@ -18,7 +18,10 @@ const spec: api.EndpointsWithContext<RequestContext> = {
   '/item': {
     post: async ctx => {
       if (ctx.headers.authorization !== 'Bearer ^-^') {
-        return runtime.json(403, { message: 'Unauthorized', messageIndex: ctx.requestContext.messageIndex });
+        return runtime.json(403, {
+          message: 'Unauthorized',
+          messageIndex: ctx.requestContext.messageIndex
+        });
       }
       values[ctx.body.value.id] = common.Item.make({
         id: ctx.body.value.id,
@@ -37,7 +40,10 @@ const spec: api.EndpointsWithContext<RequestContext> = {
       if (item) {
         return runtime.json(200, item);
       }
-      return runtime.json(400, { message: 'not found', messageIndex: ctx.requestContext.messageIndex });
+      return runtime.json(400, {
+        message: 'not found',
+        messageIndex: ctx.requestContext.messageIndex
+      });
     }
   }
 };
@@ -47,7 +53,9 @@ let index = 0;
 // 'koaAdapter.bind'  binds the endpoint implemantion in'spec' to
 // koa-router routes using a koa adapter
 const routes = koaAdapter.bind<api.EndpointsWithContext<RequestContext>, RequestContext>(
-  runtime.server.createHandlerFactory<api.EndpointsWithContext<RequestContext>>(api.endpointHandlers),
+  runtime.server.createHandlerFactory<api.EndpointsWithContext<RequestContext>>(
+    api.endpointHandlers
+  ),
   spec,
   () => ({ messageIndex: index++ })
 );
