@@ -5,10 +5,11 @@ yarn-error.log
 yarn.lock
 .*
 *.tgz
+dist/render.*
 dist/test/
+renovate.json
+render.ts
 test/
-runtime/
-adapters/
 tmp/
 dist/tmp/
 examples/

@@ -1,12 +1,12 @@
 {
-  "name": "@smartlyio/oats-runtime",
-  "version": "2.0.0",
+  "name": "@smartlyio/oats-fast-check",
+  "version": "0.0.1",
   "license": "MIT",
-  "description": "Runtime for Oats a Openapi3 based generator for typescript aware servers and clients",
+  "description": "fast-check value generator for smartlyio/oats types",
   "private": false,
   "author": "Smartly.io",
-  "main": "dist/src/runtime.js",
-  "types": "dist/src/runtime.d.ts",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
   "scripts": {
     "test": "yarn ts-node examples/driver.ts && yarn jest && yarn render",
     "lint": "eslint . --ext .ts",
