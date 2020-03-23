@@ -332,6 +332,14 @@
   dependencies:
     type-detect "4.0.8"
 
+"@smartlyio/oats-fast-check@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats-fast-check/-/oats-fast-check-0.0.3.tgz#f86f35adb5eba7b6d9eb8aebf81fc0afa3de49ed"
+  integrity sha512-Kbn/nSAK6ScIi5fre0gTQd4NvqMmHcI9aoHDdeQX63vfDmfTJERN/nV8QGRnu3bV1fRgwc79oF6Q7eEiitDZrg==
+  dependencies:
+    "@smartlyio/safe-navigation" "^4.0.1"
+    lodash "^4.17.4"
+
 "@smartlyio/oats-runtime@^2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-2.0.0.tgz#6a0dc99f47a8cbf09c617caae0d5226143392c9e"

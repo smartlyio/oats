@@ -1,10 +1,13 @@
-import * as reflectionType from '../src/reflection-type';
-import { ValueClass } from '../src/value-class';
-import { createMakerWith, Make, makeArray, makeObject, Maker, makeString } from '../src/make';
+import * as runtime from '@smartlyio/oats-runtime';
+import { reflection as reflectionType } from '@smartlyio/oats-runtime';
 import * as fc from 'fast-check';
-import * as gen from './generator';
+import { generator as gen } from '@smartlyio/oats-fast-check';
 import * as testType from '../tmp/fixture.types.generated';
 import safe from '@smartlyio/safe-navigation';
+const { createMakerWith, makeArray, makeObject, makeString } = runtime.make;
+const ValueClass = runtime.valueClass.ValueClass;
+type Make<A> = runtime.make.Make<A>;
+type Maker<A, R> = runtime.make.Maker<A, R>;
 
 describe('reflection-type', () => {
   describe('Traversal', () => {
@@ -24,7 +27,9 @@ describe('reflection-type', () => {
       }
     }
 
-    const makeArrayTestClass: Maker<any, ArrayTestClass> = createMakerWith(ArrayTestClass);
+    const makeArrayTestClass: runtime.make.Maker<any, ArrayTestClass> = createMakerWith(
+      ArrayTestClass
+    );
 
     class TestClass extends ValueClass<TestClass, 1> {
       static make(v: any): Make<TestClass> {

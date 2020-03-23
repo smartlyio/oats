@@ -8,11 +8,13 @@
   "main": "dist/src/runtime.js",
   "types": "dist/src/runtime.d.ts",
   "scripts": {
-    "test": "yarn ts-node test/runtime-driver.ts && yarn jest",
+    "test": "yarn jest",
+    "oas": "yarn ts-node test/runtime-driver.ts",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
-    "clean": "rm -rf ./dist && rm -f ./tmp/*.ts",
-    "build": "yarn clean && yarn lint && yarn test && yarn tsc",
+    "clean": "yarn clean:dist && rm -f ./tmp/*.ts",
+    "clean:dist": "rm -rf ./dist",
+    "build": "yarn clean && yarn oas && yarn tsc && yarn link && yarn link @smartlyio/oats-runtime && yarn lint && yarn test && yarn tsc --noEmit",
     "prepublish": "yarn build"
   },
   "repository": {
@@ -37,6 +39,7 @@
   ],
   "devDependencies": {
     "@smartlyio/oats": "^2.1.0",
+    "@smartlyio/oats-fast-check": "^0.0.3",
     "@smartlyio/oats-runtime": "^2.0.0",
     "@types/jest": "^25.1.4",
     "@types/lodash": "^4.14.140",
@@ -58,7 +61,7 @@
   },
   "jest": {
     "testEnvironment": "node",
-    "testRegex": "test/.*\\.spec.(jsx?|tsx?)$",
+    "testRegex": "test/.*\\.spec.ts$",
     "moduleFileExtensions": [
       "js",
       "json",

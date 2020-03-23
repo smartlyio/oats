@@ -4,6 +4,5 @@ import { driver } from '@smartlyio/oats';
 driver.generate({
   generatedValueClassFile: './tmp/fixture.types.generated.ts',
   header: '/* tslint:disable variable-name only-arrow-functions*/',
-  openapiFilePath: './test/fixture.yaml',
-  runtimeFilePath: './src/runtime'
+  openapiFilePath: './test/fixture.yaml'
 });
