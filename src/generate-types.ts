@@ -43,21 +43,23 @@ function generateClassMembers(
             generateType(additional),
             ts.createKeywordTypeNode(ts.SyntaxKind.UndefinedKeyword)
           ]);
-    proptypes.push(ts.createIndexSignature(
-      undefined,
-      [ts.createToken(ts.SyntaxKind.ReadonlyKeyword)],
-      [
-        ts.createParameter(
-          undefined,
-          undefined,
-          undefined,
-          valueClassIndexSignatureKey,
-          undefined,
-          ts.createKeywordTypeNode(ts.SyntaxKind.StringKeyword)
-        )
-      ],
-      type
-    ) as any);
+    proptypes.push(
+      ts.createIndexSignature(
+        undefined,
+        [ts.createToken(ts.SyntaxKind.ReadonlyKeyword)],
+        [
+          ts.createParameter(
+            undefined,
+            undefined,
+            undefined,
+            valueClassIndexSignatureKey,
+            undefined,
+            ts.createKeywordTypeNode(ts.SyntaxKind.StringKeyword)
+          )
+        ],
+        type
+      ) as any
+    );
   }
   return proptypes;
 }
@@ -91,21 +93,23 @@ function generateObjectMembers(
             generateType(additional, typeMapper),
             ts.createKeywordTypeNode(ts.SyntaxKind.UndefinedKeyword)
           ]);
-    proptypes.push(ts.createIndexSignature(
-      undefined,
-      readonly,
-      [
-        ts.createParameter(
-          undefined,
-          undefined,
-          undefined,
-          'key',
-          undefined,
-          ts.createKeywordTypeNode(ts.SyntaxKind.StringKeyword)
-        )
-      ],
-      type
-    ) as any);
+    proptypes.push(
+      ts.createIndexSignature(
+        undefined,
+        readonly,
+        [
+          ts.createParameter(
+            undefined,
+            undefined,
+            undefined,
+            'key',
+            undefined,
+            ts.createKeywordTypeNode(ts.SyntaxKind.StringKeyword)
+          )
+        ],
+        type
+      ) as any
+    );
   }
   return proptypes;
 }
@@ -659,7 +663,10 @@ function generateMakerExpression(schema: oas.ReferenceObject | oas.SchemaObject)
   }
 
   if (schema.enum) {
-    return makeCall('makeEnum', schema.enum.map(value => ts.createLiteral(value)));
+    return makeCall(
+      'makeEnum',
+      schema.enum.map(value => ts.createLiteral(value))
+    );
   }
 
   if (schema.type === 'array') {
