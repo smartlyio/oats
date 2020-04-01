@@ -30,8 +30,8 @@ javascript class `NamedComponent`
  
  See [runtime](https://github.com/smartlyio/oats-runtime) for details on working with the types.
  
- The rest of the generated type definitions consists of the apis for clients and servers for actually 
- implementing or interacting the service.
+ The rest of the generated type definitions consist of the apis for clients and servers for actually 
+ implementing or interacting with the service.
 
 ## Server usage
 
