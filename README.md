@@ -1,10 +1,94 @@
 # Oats
-Generator for TypeScript clients and servers using OpenAPI 3 specs, built on top of `axios` and `koa`.
+
+Oats is a generator for TypeScript clients and servers using OpenAPI 3 specs.
 
 For some more context on why Oats came to be, and a more descriptive way of how to use it, check out our blogpost:
 https://medium.com/smartly-io/oats-how-we-learned-to-stop-worrying-and-love-types-aa0041aaa9cc
 
+This package provides the tooling for generating the type definitions. A separate package provides 
+the [runtime](https://github.com/smartlyio/oats-runtime) that contains the code and base types 
+needed for actually using the generated definitions.
+
+## Generating type definitions
+
+Oats exposes `driver.generate` for configuring and running the generator. 
+
+As an example here we are generating a client and server definitions from an api specification 
+in `example.yaml` that uses additional component schemas defined in `common.yaml`. 
+
+```ts
+// yarn ts-node examples/driver.ts
+import { driver, util } from '../index';
+
+// define how references to outside the example.yaml file are resolved
+const externals = {
+  externalOpenApiImports: [{ importFile: './tmp/common.types.generated', importAs: 'common' }],
+  externalOpenApiSpecs: (url: string) => {
+    if (url.startsWith('common.yaml')) {
+      return 'common.' + util.refToTypeName(url.replace(/^common.yaml/, ''));
+    }
+    return;
+  }
+};
+
+// generate type definitions for schemas from an external openapi spec
+driver.generate({
+  generatedValueClassFile: './tmp/common.types.generated.ts',
+  header: '/* tslint:disable variable-name only-arrow-functions*/',
+  openapiFilePath: './test/common.yaml'
+});
+
+// generate server from the shared openapi spec
+driver.generate({
+  ...externals,
+  generatedValueClassFile: './tmp/server.types.generated.ts',
+  generatedServerFile: './tmp/server.generated.ts',
+  header: '/* tslint:disable variable-name only-arrow-functions*/',
+  openapiFilePath: './test/example.yaml'
+});
+
+// generate client from the shared openapi spec
+driver.generate({
+  ...externals,
+  generatedValueClassFile: './tmp/client.types.generated.ts',
+  generatedClientFile: './tmp/client.generated.ts',
+  header: '/* tslint:disable variable-name only-arrow-functions*/',
+  openapiFilePath: './test/example.yaml',
+  // Omit error responses  from the client response types
+  emitStatusCode: (code: number) => [200, 201, 204].indexOf(code) >= 0
+});
+
+```
+
+The generated typescript types contain a type for all named components defined in the Openapi 
+spec `components/schemas`.  So for a component `named_component: ...`
+ - For top level `type: object` definitions oats generates a proper 
+javascript class `NamedComponent`
+ - For other types oats generates a typescript `type NamedComponent`. 
+ - For scalar types oats adds typescript branding to differentiate between various kinds of 
+ named scalar types
+ 
+ See [runtime](https://github.com/smartlyio/oats-runtime) for details on working with the types.
+ 
+ The rest of the generated type definitions consist of the apis for clients and servers for actually 
+ implementing or interacting with the service.
+
 ## Server usage
+
+The generated server definition can be adapted to http servers backends for node. 
+See for example the [koa adapter](https://github.com/smartlyio/oats-koa-adapter). 
+
+For each Openapi3 definition `get: /path/subpath` the generated server requires the user to provide a 
+value of type
+```
+{ 'path/subpath': { get: ctx => Promise<response> }}
+```
+
+for handling the requests to the server.
+
+The generated server definition enforces *strict* data validation for both input and output for all 
+defined paths. 
+
 ```ts
 // yarn ts-node examples/server.ts
 import * as api from '../tmp/server.generated';
@@ -85,6 +169,14 @@ export function createApp() {
 ```
 
 ## Client usage
+
+Oats generates also client side definitions that can be adapted to http client backends for node.
+See for example the [axios adapter](https://github.com/smartlyio/oats-axios-adapter). The 
+generated client provides a fluent interface so that for each Openapi3 definition 
+`get: /path/subpath/{pathParameter}` the 
+generated  api client can be called with `api.path.subpath(pathParameter).get()`. The generated 
+client will enforce *strict* data validation for both input and output of the calls.
+
 ```ts
 // yarn ts-node examples/client.ts
 import * as api from '../tmp/client.generated';
@@ -130,47 +222,8 @@ app.createApp().listen(port, async () => {
 
 ```
 
-## Generating clients and servers
-```ts
-// yarn ts-node examples/driver.ts
-import { driver, util } from '../index';
+## Testing
 
-// define how references to outside the example.yaml file are resolved
-const externals = {
-  externalOpenApiImports: [{ importFile: './tmp/common.types.generated', importAs: 'common' }],
-  externalOpenApiSpecs: (url: string) => {
-    if (url.startsWith('common.yaml')) {
-      return 'common.' + util.refToTypeName(url.replace(/^common.yaml/, ''));
-    }
-    return;
-  }
-};
-
-// generate type definitions for schemas from an external openapi spec
-driver.generate({
-  generatedValueClassFile: './tmp/common.types.generated.ts',
-  header: '/* tslint:disable variable-name only-arrow-functions*/',
-  openapiFilePath: './test/common.yaml'
-});
-
-// generate server from the shared openapi spec
-driver.generate({
-  ...externals,
-  generatedValueClassFile: './tmp/server.types.generated.ts',
-  generatedServerFile: './tmp/server.generated.ts',
-  header: '/* tslint:disable variable-name only-arrow-functions*/',
-  openapiFilePath: './test/example.yaml'
-});
-
-// generate client from the shared openapi spec
-driver.generate({
-  ...externals,
-  generatedValueClassFile: './tmp/client.types.generated.ts',
-  generatedClientFile: './tmp/client.generated.ts',
-  header: '/* tslint:disable variable-name only-arrow-functions*/',
-  openapiFilePath: './test/example.yaml',
-  // Omit error responses  from the client response types
-  emitStatusCode: (code: number) => [200, 201, 204].indexOf(code) >= 0
-});
-
-```
+We support also property based testing and test data generation with 
+[fast-check](https://github.com/dubzzz/fast-check) through 
+[oats-fast-check](https://github.com/smartlyio/oats-fast-check)
