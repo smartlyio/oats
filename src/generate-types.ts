@@ -823,9 +823,24 @@ function generateReflectionType(
     );
   }
   if (schema.type === 'boolean') {
-    assert(!schema.enum);
+    const enumValues = schema.enum
+      ? [
+          ts.createPropertyAssignment(
+            'enum',
+            ts.createArrayLiteral(
+              schema.enum.map(i =>
+                i === 'true'
+                  ? ts.createTrue()
+                  : i === 'false'
+                  ? ts.createFalse()
+                  : assert.fail('unknown enum ' + i)
+              )
+            )
+          )
+        ]
+      : [];
     return ts.createObjectLiteral(
-      [ts.createPropertyAssignment('type', ts.createStringLiteral('boolean'))],
+      [ts.createPropertyAssignment('type', ts.createStringLiteral('boolean')), ...enumValues],
       true
     );
   }
