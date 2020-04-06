@@ -65,6 +65,12 @@ export class GenType extends fc.Arbitrary<any> {
     if (type.type === 'object') {
       return new GenObject(type.properties, type.additionalProperties);
     }
+    if (type.type === 'boolean') {
+      if (type.enum) {
+        return fc.oneof(...type.enum.map(fc.constant));
+      }
+      return fc.boolean();
+    }
     return assert.fail('todo arb for missing type ' + type);
   }
 }
@@ -115,7 +121,7 @@ class GenObject extends fc.Arbitrary<any> {
   private makeGenerator() {
     const required = Object.keys(this.props).filter(prop => this.props[prop].required);
     const optional = Object.keys(this.props).filter(prop => !this.props[prop].required);
-    const smaller = this.bias ? this.bias - 1 : 1;
+    const smaller = this.bias ? Math.max(this.bias - 1, 1) : 1;
     const additionalFieldNames = this.additionalProperties
       ? fc.array(fc.hexaString()).withBias(smaller)
       : fc.constant([]);

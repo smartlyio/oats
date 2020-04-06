@@ -332,10 +332,10 @@
   dependencies:
     type-detect "4.0.8"
 
-"@smartlyio/oats-runtime@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-2.0.0.tgz#6a0dc99f47a8cbf09c617caae0d5226143392c9e"
-  integrity sha512-zRTkKZmN+BbDhtQoqnnrdT8wQvVY2rj8VrfCNnpewX4fdTTzxDgY3lX7l0B5G50jQ86TMlUJ74dnWmEXiK1fwQ==
+"@smartlyio/oats-runtime@^2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-2.2.0.tgz#404a10c641357ee076dc4b20b8d6f5a31976f772"
+  integrity sha512-XBS7jJptzy0E5UEHOCrPCrVDtCBVn83hlDfolDeEM0tXrPUtHUTBzgFj+dCJ4ijpzdjFQkepaZbzxyj9WoH8hA==
   dependencies:
     "@smartlyio/safe-navigation" "^4.0.1"
     lodash "^4.17.4"

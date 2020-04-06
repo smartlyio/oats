@@ -20,6 +20,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TestTarget'
+        booleanFlag:
+          type: boolean
         noHit:
           type: string
         recursive:
