@@ -6,6 +6,7 @@ import * as runtime from './runtime';
 export type Type =
   | UnknownType
   | VoidType
+  | BooleanType
   | IntegerType
   | NumberType
   | NullType
@@ -49,6 +50,11 @@ export interface StringType {
   readonly type: 'string';
   readonly format?: string;
   readonly enum?: string[];
+}
+
+export interface BooleanType {
+  readonly type: 'boolean';
+  readonly enum?: boolean[];
 }
 
 export interface NumberType {
