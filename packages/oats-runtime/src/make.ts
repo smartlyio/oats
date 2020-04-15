@@ -95,15 +95,65 @@ function error<T>(error: string): Make<T> {
   return Make.error<T>([{ path: [], error }]);
 }
 
-function checkString(value: any) {
-  if (typeof value !== 'string') {
-    return getErrorWithValueMsg('expected a string', value);
-  }
-  return Make.ok(value);
+export function registerFormat(format: string, maker: Maker<any, undefined>) {
+  assert(!formats[format], `format ${format} is already registered`);
+  formats[format] = maker;
 }
 
-export function makeString() {
-  return checkString;
+const formats: Record<string, Maker<any, undefined>> = {};
+
+function getFormatter(format: string | undefined): Maker<any, undefined> {
+  if (format === undefined) {
+    return () => Make.ok(undefined);
+  }
+  const formatter = formats[format];
+  if (!formatter) {
+    return () => Make.ok(undefined);
+  }
+  return formatter;
+}
+
+function getPatterner(pattern: string | undefined): Maker<any, void> {
+  if (pattern === undefined) {
+    return value => Make.ok(value);
+  }
+  try {
+    const reg = new RegExp(pattern);
+    return value => {
+      if (!reg.test(value)) {
+        return error(`${value} does not match pattern /${pattern}/`);
+      }
+      return Make.ok(undefined);
+    };
+  } catch (e) {
+    if (e instanceof SyntaxError) {
+      throw new Error("pattern for 'type: string' is not valid: " + e.message);
+    }
+    throw e;
+  }
+}
+
+export function makeString(
+  format: string | undefined = undefined,
+  pattern: string | undefined = undefined
+): Maker<any, string> {
+  const formatter = getFormatter(format);
+  const patterner = getPatterner(pattern);
+
+  return (value: any) => {
+    if (typeof value !== 'string') {
+      return getErrorWithValueMsg('expected a string', value);
+    }
+    const formatted = formatter(value);
+    if (formatted.isError()) {
+      return formatted;
+    }
+    const patterned = patterner(value);
+    if (patterned.isError()) {
+      return patterned;
+    }
+    return Make.ok(value);
+  };
 }
 
 function checkNumber(value: any): Make<number> {
