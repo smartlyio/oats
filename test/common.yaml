@@ -19,6 +19,8 @@ components:
           $ref: '#/components/schemas/ItemId'
         name:
           type: string
+          format: name-format
+          pattern: .*
         flag:
           type: boolean
 

@@ -681,7 +681,7 @@ function generateMakerExpression(schema: oas.ReferenceObject | oas.SchemaObject)
     return makeCall('makeVoid', []);
   }
   if (schema.type === 'string') {
-    return generateMakeString(schema.format);
+    return generateMakeString(schema.format, schema.pattern);
   }
   if (schema.type === 'integer' || schema.type === 'number') {
     return makeCall('makeNumber', []);
@@ -695,11 +695,18 @@ function generateMakerExpression(schema: oas.ReferenceObject | oas.SchemaObject)
   return assert.fail('unknown schema type: ' + schema.type);
 }
 
-function generateMakeString(format: string | undefined) {
+function litOrUndefined(value: string | undefined) {
+  if (value === undefined) {
+    return ts.createIdentifier('undefined');
+  }
+  return ts.createStringLiteral(value);
+}
+
+function generateMakeString(format: string | undefined, pattern: string | undefined) {
   if (format === 'binary') {
     return makeCall('makeBinary', []);
   }
-  return makeCall('makeString', []);
+  return makeCall('makeString', [litOrUndefined(format), litOrUndefined(pattern)]);
 }
 
 function generateMakerReference(key: string) {
@@ -782,12 +789,16 @@ function generateReflectionType(
     const format = schema.format
       ? [ts.createPropertyAssignment('format', ts.createStringLiteral(schema.format))]
       : [];
+    const pattern = schema.pattern
+      ? [ts.createPropertyAssignment('pattern', ts.createStringLiteral(schema.pattern))]
+      : [];
 
     return ts.createObjectLiteral(
       [
         ts.createPropertyAssignment('type', ts.createStringLiteral('string')),
         ...enumValues,
-        ...format
+        ...format,
+        ...pattern
       ],
       true
     );
