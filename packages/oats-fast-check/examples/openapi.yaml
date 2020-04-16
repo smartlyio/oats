@@ -20,6 +20,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TestTarget'
+        patternedString:
+          type: string
+          pattern: \d+
         booleanFlag:
           type: boolean
         noHit:

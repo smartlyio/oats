@@ -332,21 +332,20 @@
   dependencies:
     type-detect "4.0.8"
 
-"@smartlyio/oats-runtime@^2.2.0":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-2.2.0.tgz#404a10c641357ee076dc4b20b8d6f5a31976f772"
-  integrity sha512-XBS7jJptzy0E5UEHOCrPCrVDtCBVn83hlDfolDeEM0tXrPUtHUTBzgFj+dCJ4ijpzdjFQkepaZbzxyj9WoH8hA==
+"@smartlyio/oats-runtime@^2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-2.3.0.tgz#2cdc234fcd980ece8c35ff4bc0ed951cd82280ec"
+  integrity sha512-jQoAbo0DVqMnEYrdNIMvS4PYyWeFpwlkDrGoGRM8nMIJqxXfWlv6as9TXzbW6RPahrL0EWsq5SKFEemBCNpMmA==
   dependencies:
     "@smartlyio/safe-navigation" "^4.0.1"
     lodash "^4.17.4"
 
-"@smartlyio/oats@^2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats/-/oats-2.1.0.tgz#a42da67d9f97f00ed89eaad96b61dff7316bf045"
-  integrity sha512-vVzJvRcsoJN5VTjtKMVDlmi+IS5DJsbOVzcjxwy8V/0UwI1eLh7PLKlbIQGvOAFcUoIIIslTP0SZhTfKgEbDCQ==
+"@smartlyio/oats@^2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats/-/oats-2.3.0.tgz#644ab1e6ac815ad0b7f02f29550ddcdec8416bf5"
+  integrity sha512-x1PRTa+4GJshKbtrYoE3S9kf4Q+frKGgikI5t/wryfmn4zGyXL1eOkKbsD6sTsg2/+cVElbNXe5MzF9kAfp+dA==
   dependencies:
     "@smartlyio/safe-navigation" "^4.0.1"
-    "@types/js-yaml" "^3.12.1"
     js-yaml "^3.13.1"
     lodash "^4.17.4"
     openapi3-ts "^1.2.0"
@@ -428,11 +427,6 @@
   dependencies:
     jest-diff "^25.1.0"
     pretty-format "^25.1.0"
-
-"@types/js-yaml@^3.12.1":
-  version "3.12.2"
-  resolved "https://registry.yarnpkg.com/@types/js-yaml/-/js-yaml-3.12.2.tgz#a35a1809c33a68200fb6403d1ad708363c56470a"
-  integrity sha512-0CFu/g4mDSNkodVwWijdlr8jH7RoplRWNgovjFLEZeT+QEbbZXjBmCe3HwaWheAlCbHwomTwzZoSedeOycABug==
 
 "@types/json-schema@^7.0.3":
   version "7.0.4"
@@ -1151,6 +1145,11 @@ domexception@^1.0.1:
   integrity sha512-raigMkn7CJNNo6Ihro1fzG7wr3fHuYVytzquZKX5n0yizGsTcYgzdIUwj1X9pK0VvjeihV+XiclP+DjwbsSKug==
   dependencies:
     webidl-conversions "^4.0.2"
+
+drange@^1.0.2:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/drange/-/drange-1.1.1.tgz#b2aecec2aab82fcef11dbbd7b9e32b83f8f6c0b8"
+  integrity sha512-pYxfDYpued//QpnLIm4Avk7rsNtAtQkUES2cwAYSvD/wd2pKD71gN2Ebj3e7klzXwjocvE8c5vx/1fxwpqmSxA==
 
 ecc-jsbn@~0.1.1:
   version "0.1.2"
@@ -3231,6 +3230,14 @@ qs@~6.5.2:
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.2.tgz#cb3ae806e8740444584ef154ce8ee98d403f3e36"
   integrity sha512-N5ZAX4/LxJmF+7wN74pUD6qAh9/wnvdQcjq9TZjevvXzSUo7bfmw91saqMjzGS2xq91/odN2dW/WOl7qQHNDGA==
 
+randexp@^0.5.3:
+  version "0.5.3"
+  resolved "https://registry.yarnpkg.com/randexp/-/randexp-0.5.3.tgz#f31c2de3148b30bdeb84b7c3f59b0ebb9fec3738"
+  integrity sha512-U+5l2KrcMNOUPYvazA3h5ekF80FHTUG+87SEAmHZmolh1M+i/WyTCxVzmi+tidIa1tM4BSe8g2Y/D3loWDjj+w==
+  dependencies:
+    drange "^1.0.2"
+    ret "^0.2.0"
+
 rc4@~0.1.5:
   version "0.1.5"
   resolved "https://registry.yarnpkg.com/rc4/-/rc4-0.1.5.tgz#08c6e04a0168f6eb621c22ab6cb1151bd9f4a64d"
@@ -3391,6 +3398,11 @@ restore-cursor@^3.1.0:
   dependencies:
     onetime "^5.1.0"
     signal-exit "^3.0.2"
+
+ret@^0.2.0:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/ret/-/ret-0.2.2.tgz#b6861782a1f4762dce43402a71eb7a283f44573c"
+  integrity sha512-M0b3YWQs7R3Z917WRQy1HHA7Ba7D8hvZg6UE5mLykJxQVE2ju0IXbGlaHPPlkY+WN7wFP+wUMXmBFA0aV6vYGQ==
 
 ret@~0.1.10:
   version "0.1.15"

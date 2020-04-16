@@ -2,6 +2,7 @@ import * as fc from 'fast-check';
 import { reflection } from '@smartlyio/oats-runtime';
 import * as assert from 'assert';
 import * as _ from 'lodash';
+import * as randexp from 'randexp';
 
 export class GenType extends fc.Arbitrary<any> {
   private generator: fc.Arbitrary<any> | undefined;
@@ -28,6 +29,15 @@ export class GenType extends fc.Arbitrary<any> {
     if (type.type === 'string') {
       if (type.enum) {
         return fc.oneof(...type.enum.map(fc.constant));
+      }
+      if (type.pattern) {
+        const gen = new randexp(type.pattern);
+        return fc
+          .integer()
+          .map(() => {
+            return gen.gen();
+          })
+          .noShrink();
       }
       return fc.hexaString();
     }
