@@ -454,6 +454,9 @@ function generateType(
   if (schema.type === 'void') {
     return ts.createKeywordTypeNode(ts.SyntaxKind.VoidKeyword);
   }
+  if (schema.type === 'null') {
+    return ts.createKeywordTypeNode(ts.SyntaxKind.NullKeyword);
+  }
   if (!schema.type) {
     return ts.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword);
   }
@@ -688,6 +691,9 @@ function generateMakerExpression(schema: oas.ReferenceObject | oas.SchemaObject)
   }
   if (schema.type === 'boolean') {
     return makeCall('makeBoolean', []);
+  }
+  if (schema.type === 'null') {
+    return makeCall('makeEnum', [ts.createNull()]);
   }
   if (!schema.type) {
     return makeCall('makeAny', []);
@@ -1102,6 +1108,31 @@ function generateScalarBrand(key: string) {
   );
 }
 
+function generateTopLevelClass(key: string, schema: oas.SchemaObject): readonly ts.Node[] {
+  if (schema.nullable) {
+    const classKey = oautil.nonNullableClass(key);
+    const proxy = generateTopLevelType(key, {
+      oneOf: [{
+        type: 'null'
+      }, {
+        $ref: '#/components/schemas/' + classKey
+      }]
+    });
+    return [
+      ...generateTopLevelClass(classKey, { ...schema, nullable: false }),
+      ...proxy
+    ]
+  }
+  return [
+    generateObjectShape(key, schema),
+    generateBrand(key),
+    generateValueClass(key, schema),
+    generateTopLevelClassBuilder(key, schema),
+    generateTopLevelClassMaker(key, schema, oautil.typenamify(key)),
+    generateNamedTypeDefinitionAssignment(key, schema, oautil.typenamify(key))
+  ];
+}
+
 function generateTopLevelType(
   key: string,
   schema: oas.SchemaObject | oas.ReferenceObject
@@ -1125,15 +1156,9 @@ function generateTopLevelType(
     ];
   }
   if (schema.type === 'object') {
-    return [
-      generateObjectShape(key, schema),
-      generateBrand(key),
-      generateValueClass(key, schema),
-      generateTopLevelClassBuilder(key, schema),
-      generateTopLevelClassMaker(key, schema, oautil.typenamify(key)),
-      generateNamedTypeDefinitionAssignment(key, schema, oautil.typenamify(key))
-    ];
+    return generateTopLevelClass(key, schema);
   }
+
   if (isScalar(schema)) {
     return [
       generateScalarBrand(key),
@@ -1179,6 +1204,10 @@ function generateComponentSchemas(opts: Options): ts.Node[] {
   }
   const nodes: ts.Node[] = [];
   Object.keys(schemas).map(key => {
+    const schema: oas.SchemaObject = schemas[key];
+    if (schema.nullable && schema.type === 'object') {
+      nodes.push(generateNamedTypeDefinitionDeclaration(oautil.nonNullableClass(key)));
+    }
     nodes.push(generateNamedTypeDefinitionDeclaration(key));
   });
   Object.keys(schemas).map(key => {
