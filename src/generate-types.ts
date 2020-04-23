@@ -1112,16 +1112,16 @@ function generateTopLevelClass(key: string, schema: oas.SchemaObject): readonly 
   if (schema.nullable) {
     const classKey = oautil.nonNullableClass(key);
     const proxy = generateTopLevelType(key, {
-      oneOf: [{
-        type: 'null'
-      }, {
-        $ref: '#/components/schemas/' + classKey
-      }]
+      oneOf: [
+        {
+          type: 'null'
+        },
+        {
+          $ref: '#/components/schemas/' + classKey
+        }
+      ]
     });
-    return [
-      ...generateTopLevelClass(classKey, { ...schema, nullable: false }),
-      ...proxy
-    ]
+    return [...generateTopLevelClass(classKey, { ...schema, nullable: false }), ...proxy];
   }
   return [
     generateObjectShape(key, schema),
