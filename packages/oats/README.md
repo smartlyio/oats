@@ -68,6 +68,9 @@ javascript class `NamedComponent`
  - For scalar types oats adds typescript branding to differentiate between various kinds of 
  named scalar types
  
+ For `type: object` schemas that are `nullable: true` the type is split to a `type NamedComponent = null | NonNullableNamedComponent` 
+ where `NonNullableNamedComponent` is the actual class as class instances really cannot be `null`.
+ 
  See [runtime](https://github.com/smartlyio/oats-runtime) for details on working with the types.
  
  The rest of the generated type definitions consist of the apis for clients and servers for actually 

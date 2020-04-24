@@ -7,6 +7,12 @@ servers:
 paths: {}
 components:
   schemas:
+    Nullable:
+      type: object
+      nullable: true
+      properties:
+        field:
+          type: string
     ItemId:
       type: string
     Item:
@@ -23,4 +29,6 @@ components:
           pattern: .*
         flag:
           type: boolean
+        nullableField:
+          $ref: '#/components/schemas/Nullable'
 
