@@ -12,6 +12,11 @@ export function isReferenceObject(schema: any): schema is oas.ReferenceObject {
 export function capitalize(str: string) {
   return str[0].toUpperCase() + str.slice(1);
 }
+
+export function nonNullableClass(name: string) {
+  return 'nonNullable' + typenamify(name);
+}
+
 export function typenamify(name: string) {
   if (name.match(/^[^a-zA-Z]/)) {
     name = 'Type' + name;
