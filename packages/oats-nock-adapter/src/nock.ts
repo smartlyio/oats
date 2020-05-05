@@ -47,10 +47,22 @@ function adapter(
   path: string,
   op: string,
   method: runtime.server.Methods,
-  handler: runtime.server.SafeEndpoint
+  handler: runtime.server.SafeEndpoint,
+  servers: string[]
 ) {
-  nock(/.*/)
+  servers.map(server => adapterForServer(path, op, method, handler, server));
+}
+
+function adapterForServer(
+  path: string,
+  op: string,
+  method: runtime.server.Methods,
+  handler: runtime.server.SafeEndpoint,
+  server: string
+) {
+  nock(server)
     [method](getPathRegex(path))
+    .times(Infinity)
     .reply(
       // tslint:disable-next-line:only-arrow-functions
       async function(uri, requestBody, cb) {
@@ -60,7 +72,7 @@ function adapter(
           const result = await handler({
             path,
             method,
-            servers: [],
+            servers: [server],
             op,
             headers: this.req.headers,
             params: getParams(path, this.req.path),
