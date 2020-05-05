@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "declaration": true,
+    "target": "es2017",
+    "lib": ["es6", "es2017", "dom", "esnext.asynciterable"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "removeComments": false,
+    "alwaysStrict": true,
+    "typeRoots": ["./src/types", "./node_modules/@types"],
+    "baseUrl": "./src/types",
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "dist"
+  },
+  "exclude": ["node_modules/*", "*/**/dist/*", "dist/*"],
+}

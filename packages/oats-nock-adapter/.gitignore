@@ -1,0 +1,11 @@
+Dockerfile
+docker-compose.yml
+.idea
+node_modules/
+yarn-error.log
+dist/
+*.iml
+*.tgz
+*.generated.ts
+tmp/
+

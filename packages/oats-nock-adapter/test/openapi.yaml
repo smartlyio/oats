@@ -1,0 +1,98 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: example service
+servers:
+  - url: http://localhost:12000
+paths:
+  /item:
+    post:
+      description: create an item
+      parameters:
+        - in: header
+          description: Bearer Auth
+          name: Authorization
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Item'
+      responses:
+        '201':
+          description: created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        default:
+          description: error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /item/{id}:
+    delete:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ItemId'
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContent'
+    get:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ItemId'
+      responses:
+        '200':
+          description: item found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        default:
+          description: error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  responses:
+    NoContent:
+      description: success but no content
+      content:
+        text/plain:
+          schema:
+            type: string
+  schemas:
+    ItemId:
+      type: string
+    Item:
+      type: object
+      properties:
+        name:
+          type: string
+        id:
+          $ref: '#/components/schemas/ItemId'
+      required:
+        - id
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        messageIndex:
+          type: number
+      required:
+        - message
+        - messageIndex
+
