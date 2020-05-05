@@ -15,6 +15,100 @@ describe('server', () => {
 
   beforeEach(() => nock.cleanAll());
 
+  it('allows extending routes', async () => {
+    const server = nockAdapter.bind(api.router);
+    server.mock({
+      '/item': {
+        post: async ctx => {
+          return runtime.json(
+            201,
+            types.Item.make({
+              id: ctx.body.value.id + ' response',
+              name: ctx.body.value.name
+            }).success()
+          );
+        }
+      }
+    });
+    const response = await client.item.post({
+      headers: {
+        authorization: 'xxx'
+      },
+      body: runtime.client.json({ id: 'some-id', name: 'some-name' })
+    });
+    expect(response.value.value.id).toEqual('some-id response');
+  });
+
+  describe('overlaying routes', () => {
+    it('allows overlaying routes', async () => {
+      const server = nockAdapter.bind(api.router);
+      server.mock({
+        '/item': {
+          post: async ctx => {
+            return runtime.json(
+              201,
+              types.Item.make({
+                id: 'initial response',
+                name: ctx.body.value.name
+              }).success()
+            );
+          }
+        }
+      });
+      server.mock({
+        '/item': {
+          post: async ctx => {
+            return runtime.json(
+              201,
+              types.Item.make({
+                id: 'overlayed response',
+                name: ctx.body.value.name
+              }).success()
+            );
+          }
+        }
+      });
+      const response = await client.item.post({
+        headers: {
+          authorization: 'xxx'
+        },
+        body: runtime.client.json({ id: 'some-id', name: 'some-name' })
+      });
+      expect(response.value.value.id).toEqual('overlayed response');
+    });
+
+    it('allows skipping to next handler  by throwing Next', async () => {
+      const server = nockAdapter.bind(api.router);
+      server.mock({
+        '/item': {
+          post: async ctx => {
+            return runtime.json(
+              201,
+              types.Item.make({
+                id: 'initial response',
+                name: ctx.body.value.name
+              }).success()
+            );
+          }
+        }
+      });
+      server.mock({
+        '/item': {
+          post: async _ctx => {
+            throw new nockAdapter.Next();
+          }
+        }
+      });
+      const response = await client.item.post({
+        headers: {
+          authorization: 'xxx'
+        },
+        body: runtime.client.json({ id: 'some-id', name: 'some-name' })
+      });
+      expect(response.value.value.id).toEqual('initial response');
+    });
+  });
+
   it('binds routes', async () => {
     nockAdapter.bind(api.router, {
       '/item': {
