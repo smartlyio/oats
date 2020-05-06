@@ -39,7 +39,7 @@
   "devDependencies": {
     "@smartlyio/oats": "^2.3.0",
     "@smartlyio/oats-axios-adapter": "^2.0.0",
-    "@smartlyio/oats-runtime": "^2.3.0",
+    "@smartlyio/oats-runtime": "2.4.0",
     "@types/jest": "^25.1.4",
     "@types/lodash": "^4.14.140",
     "@types/node": "^13.9.1",

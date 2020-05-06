@@ -341,7 +341,15 @@
     "@types/form-data" "^2.2.1"
     form-data "^3.0.0"
 
-"@smartlyio/oats-runtime@^2.0.0", "@smartlyio/oats-runtime@^2.3.0":
+"@smartlyio/oats-runtime@2.4.0":
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-2.4.0.tgz#0dc13beebd95b427d5e9cbfd6b29fc3597932183"
+  integrity sha512-mnSWraDIMczeS/q8MrTnvfefCR6WSIqjb7AAUssPCrfIflrO+v5BUGcTujQc7vO5GYp4YQLnWvNjWYgegS3p4w==
+  dependencies:
+    "@smartlyio/safe-navigation" "^4.0.1"
+    lodash "^4.17.4"
+
+"@smartlyio/oats-runtime@^2.0.0":
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-2.3.0.tgz#2cdc234fcd980ece8c35ff4bc0ed951cd82280ec"
   integrity sha512-jQoAbo0DVqMnEYrdNIMvS4PYyWeFpwlkDrGoGRM8nMIJqxXfWlv6as9TXzbW6RPahrL0EWsq5SKFEemBCNpMmA==
