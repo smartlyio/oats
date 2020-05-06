@@ -7,5 +7,4 @@ dist/
 *.iml
 *.tgz
 *.generated.ts
-tmp/
 
