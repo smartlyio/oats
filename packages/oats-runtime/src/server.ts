@@ -170,6 +170,7 @@ interface CheckingTree {
     [method: string]: {
       safeHandler: (e: Endpoint<any, any, any, any, any, any>) => SafeEndpoint;
       op: string;
+      servers: string[];
     };
   };
 }
@@ -194,7 +195,8 @@ function createTree(handlers: Handler[]): CheckingTree {
     memo[element.path][element.method] = {
       safeHandler: (e: Endpoint<any, any, any, any, any, any>) =>
         safe(element.headers, element.params, element.query, element.body, element.response, e),
-      op: element.op
+      op: element.op,
+      servers: element.servers
     };
     return memo;
   }, {});
@@ -211,7 +213,8 @@ export type ServerAdapter = (
   path: string,
   op: string,
   method: Methods,
-  handler: SafeEndpoint
+  handler: SafeEndpoint,
+  servers: string[]
 ) => void;
 
 export function createHandlerFactory<Spec>(handlers: Handler[]): HandlerFactory<Spec> {
@@ -231,7 +234,8 @@ export function createHandlerFactory<Spec>(handlers: Handler[]): HandlerFactory<
             path,
             endpointWrapper.op,
             assertMethod(method),
-            endpointWrapper.safeHandler(methodHandler)
+            endpointWrapper.safeHandler(methodHandler),
+            endpointWrapper.servers
           );
         });
       });
