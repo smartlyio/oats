@@ -132,6 +132,35 @@ describe('server', () => {
     expect(response.value.value.id).toEqual('some-id response');
   });
 
+  it('persists routes', async () => {
+    nockAdapter.bind(api.router, {
+      '/item': {
+        post: async ctx => {
+          return runtime.json(
+            201,
+            types.Item.make({
+              id: ctx.body.value.id + ' response',
+              name: ctx.body.value.name
+            }).success()
+          );
+        }
+      }
+    });
+    await client.item.post({
+      headers: {
+        authorization: 'xxx'
+      },
+      body: runtime.client.json({ id: 'some-id', name: 'some-name' })
+    });
+    const response = await client.item.post({
+      headers: {
+        authorization: 'xxx'
+      },
+      body: runtime.client.json({ id: 'some-id', name: 'some-name' })
+    });
+    expect(response.value.value.id).toEqual('some-id response');
+  });
+
   it('distinguishes between mock servers', async () => {
     nockAdapter.bind(api.router, {
       '/item': {

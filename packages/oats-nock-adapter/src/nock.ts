@@ -124,7 +124,6 @@ export class Server<Spec> {
     const nocked = this.getNock(server, method, path);
     nock(server)
       [method](getPathRegex(path))
-      .times(Infinity)
       .reply(
         // tslint:disable-next-line:only-arrow-functions
         async function(uri, requestBody, cb) {
@@ -149,7 +148,8 @@ export class Server<Spec> {
             cb(e, [400, e.message]);
           }
         }
-      );
+      )
+      .persist(true);
   }
 }
 
