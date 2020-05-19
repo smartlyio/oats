@@ -1,5 +1,6 @@
 // yarn ts-node examples/driver.ts
 import { driver, util } from '../index';
+import { UnsupportedFeatureBehaviour } from '../src/driver';
 
 // define how references to outside the example.yaml file are resolved
 const externals = {

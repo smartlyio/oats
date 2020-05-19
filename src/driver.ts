@@ -35,6 +35,14 @@ export interface Driver {
   generatedClientFile?: string;
   runtimeFilePath?: string; // set path to runtime directly for testing
   emitStatusCode?: (statusCode: number) => boolean;
+  unsupportedFeatures?: {
+    security?: UnsupportedFeatureBehaviour
+  }
+}
+
+export enum UnsupportedFeatureBehaviour {
+  ignore = 'ignore',
+  reject = 'reject',
 }
 
 function emitAllStatusCodes() {
@@ -68,7 +76,7 @@ export function generate(driver: Driver) {
         externalOpenApiSpecs: driver.externalOpenApiSpecs || (() => undefined),
         oas: spec,
         runtimeModule: modulePath(driver.generatedValueClassFile, driver.runtimeFilePath),
-        emitStatusCode: driver.emitStatusCode || emitAllStatusCodes
+        emitStatusCode: driver.emitStatusCode || emitAllStatusCodes,
       })
   );
 
@@ -80,7 +88,10 @@ export function generate(driver: Driver) {
         runtimePath: modulePath(driver.generatedClientFile, driver.runtimeFilePath),
         typePath: modulePath(driver.generatedClientFile, driver.generatedValueClassFile),
         shapesAsResponses: false,
-        shapesAsRequests: true
+        shapesAsRequests: true,
+        unsupportedFeatures: {
+          security: driver.unsupportedFeatures?.security ?? UnsupportedFeatureBehaviour.reject
+        }
       })
     );
   }
@@ -92,7 +103,10 @@ export function generate(driver: Driver) {
         runtimePath: modulePath(driver.generatedServerFile, driver.runtimeFilePath),
         typePath: modulePath(driver.generatedServerFile, driver.generatedValueClassFile),
         shapesAsRequests: false,
-        shapesAsResponses: true
+        shapesAsResponses: true,
+        unsupportedFeatures: {
+          security: driver.unsupportedFeatures?.security ?? UnsupportedFeatureBehaviour.reject
+        }
       })
     );
   }

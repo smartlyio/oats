@@ -1309,6 +1309,14 @@ export interface Options {
   oas: oas.OpenAPIObject;
   runtimeModule: string;
   emitStatusCode: (status: number) => boolean;
+  unsupportedFeatures?: {
+    security?: UnsupportedFeatureBehaviour
+  }
+}
+
+enum UnsupportedFeatureBehaviour {
+  ignore = 'ignore',
+  reject = 'reject',
 }
 
 function addIndexSignatureIgnores(src: string) {
