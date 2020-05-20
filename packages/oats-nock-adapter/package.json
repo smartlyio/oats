@@ -1,12 +1,12 @@
 {
   "name": "@smartlyio/oats-nock-adapter",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
   "description": "nock server adapter for smartlyio/oats s",
   "private": false,
   "author": "Smartly.io",
-  "main": "dist/src/index.js",
-  "types": "dist/src/index.d.ts",
+  "main": "dist/src/nock.js",
+  "types": "dist/src/nock.d.ts",
   "scripts": {
     "test": "yarn ts-node examples/driver.ts && yarn jest && yarn render",
     "lint": "eslint . --ext .ts",
