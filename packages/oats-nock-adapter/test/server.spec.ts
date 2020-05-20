@@ -132,6 +132,23 @@ describe('server', () => {
     expect(response.value.value.id).toEqual('some-id response');
   });
 
+  it('binds routes with wonky path params', async () => {
+    nockAdapter.bind(api.router, {
+      '/item/something_{id}': {
+        get: async ctx => {
+          return runtime.json(
+            200,
+            types.Item.make({
+              id: ctx.params.id + ' response'
+            }).success()
+          );
+        }
+      }
+    });
+    const response = await client.item.something_('some-id').get();
+    expect(response.value.value.id).toEqual('some-id response');
+  });
+
   it('persists routes', async () => {
     nockAdapter.bind(api.router, {
       '/item': {

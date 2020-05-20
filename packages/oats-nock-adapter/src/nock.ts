@@ -28,9 +28,13 @@ function getParams(
   }
   const params: { [key: string]: string } = {};
   getPathParamNames(pathTemplate).forEach((key, index) => {
-    params[key] = match[index + 1];
+    params[stripCurlies(key)] = match[index + 1];
   });
   return Object.keys(params).length > 0 ? params : undefined;
+}
+
+function stripCurlies(param: string) {
+  return param.replace(/}|{/g, '');
 }
 
 function getPathParamNames(pathTemplate: string): readonly string[] {
@@ -136,7 +140,7 @@ export class Server<Spec> {
               servers: [server],
               op,
               headers: this.req.headers,
-              params: getParams(path, this.req.path),
+              params: getParams(path, uri),
               query: getQuery(url),
               body,
               requestContext: null

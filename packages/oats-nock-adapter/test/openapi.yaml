@@ -34,6 +34,27 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /item/something_{id}:
+    get:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ItemId'
+      responses:
+        '200':
+          description: item found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        default:
+          description: error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /item/{id}:
     delete:
       parameters:
