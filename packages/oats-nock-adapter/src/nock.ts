@@ -44,7 +44,7 @@ function getPathParamNames(pathTemplate: string): readonly string[] {
 function getPathRegex(pathTemplate: string): RegExp {
   const pathWithParams = pathTemplate.replace(/{([^}]+)}/g, (m, param) => ' ' + param + ' ');
   const escapedPath = pathWithParams.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  return new RegExp(escapedPath.replace(/ ([^ ]+) /g, '([^/]+)'));
+  return new RegExp(escapedPath.replace(/ ([^ ]+) /g, '([^?/]+)'));
 }
 
 export class Server<Spec> {

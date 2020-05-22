@@ -139,14 +139,14 @@ describe('server', () => {
           return runtime.json(
             200,
             types.Item.make({
-              id: ctx.params.id + ' response'
+              id: ctx.params.id + ' ' + ctx.query.query!
             }).success()
           );
         }
       }
     });
-    const response = await client.item.something_('some-id').get();
-    expect(response.value.value.id).toEqual('some-id response');
+    const response = await client.item.something_('some-id').get({ query: { query: 'abc' } });
+    expect(response.value.value.id).toEqual('some-id abc');
   });
 
   it('persists routes', async () => {

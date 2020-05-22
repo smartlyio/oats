@@ -37,6 +37,11 @@ paths:
   /item/something_{id}:
     get:
       parameters:
+        - name: query
+          in: query
+          required: false
+          schema:
+            type: string
         - name: id
           in: path
           required: true
