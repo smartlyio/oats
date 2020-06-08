@@ -426,13 +426,14 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@smartlyio/oats-fast-check@^0.0.4":
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats-fast-check/-/oats-fast-check-0.0.4.tgz#bdcc59706a0cec28f53b9bf2ac2b8e3c0b5b5a21"
-  integrity sha512-K+jAa+zcVUAZqxpGwN6MsPufM2jGMNewcNFOzHYjpNQ88lMYZZUOjmdInJj9lvmyPUzni0beKVwedDl1xsCz3A==
+"@smartlyio/oats-fast-check@^0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats-fast-check/-/oats-fast-check-0.0.5.tgz#103257a95429b847cadaaba66766a34f2de39e2a"
+  integrity sha512-cxNt1Hy+EOGQhqmSntDeGpy2dkRHNzrA/1qCWl+i26FCy72dUrtYJ1yZC4LEniML7ejfbAvo0R5+cAyu1twJxQ==
   dependencies:
     "@smartlyio/safe-navigation" "^4.0.1"
     lodash "^4.17.4"
+    randexp "^0.5.3"
 
 "@smartlyio/oats-runtime@^2.0.0":
   version "2.0.0"
@@ -1309,6 +1310,11 @@ domexception@^2.0.1:
   integrity sha512-yxJ2mFy/sibVQlu5qHjOkf9J3K6zgmCxgJ94u2EdvDOV09H+32LtRswEcUsmUWN72pVLOEnTSRaIVVzVQgS0dg==
   dependencies:
     webidl-conversions "^5.0.0"
+
+drange@^1.0.2:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/drange/-/drange-1.1.1.tgz#b2aecec2aab82fcef11dbbd7b9e32b83f8f6c0b8"
+  integrity sha512-pYxfDYpued//QpnLIm4Avk7rsNtAtQkUES2cwAYSvD/wd2pKD71gN2Ebj3e7klzXwjocvE8c5vx/1fxwpqmSxA==
 
 ecc-jsbn@~0.1.1:
   version "0.1.2"
@@ -3441,6 +3447,14 @@ qs@~6.5.2:
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.2.tgz#cb3ae806e8740444584ef154ce8ee98d403f3e36"
   integrity sha512-N5ZAX4/LxJmF+7wN74pUD6qAh9/wnvdQcjq9TZjevvXzSUo7bfmw91saqMjzGS2xq91/odN2dW/WOl7qQHNDGA==
 
+randexp@^0.5.3:
+  version "0.5.3"
+  resolved "https://registry.yarnpkg.com/randexp/-/randexp-0.5.3.tgz#f31c2de3148b30bdeb84b7c3f59b0ebb9fec3738"
+  integrity sha512-U+5l2KrcMNOUPYvazA3h5ekF80FHTUG+87SEAmHZmolh1M+i/WyTCxVzmi+tidIa1tM4BSe8g2Y/D3loWDjj+w==
+  dependencies:
+    drange "^1.0.2"
+    ret "^0.2.0"
+
 rc4@~0.1.5:
   version "0.1.5"
   resolved "https://registry.yarnpkg.com/rc4/-/rc4-0.1.5.tgz#08c6e04a0168f6eb621c22ab6cb1151bd9f4a64d"
@@ -3615,6 +3629,11 @@ restore-cursor@^3.1.0:
   dependencies:
     onetime "^5.1.0"
     signal-exit "^3.0.2"
+
+ret@^0.2.0:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/ret/-/ret-0.2.2.tgz#b6861782a1f4762dce43402a71eb7a283f44573c"
+  integrity sha512-M0b3YWQs7R3Z917WRQy1HHA7Ba7D8hvZg6UE5mLykJxQVE2ju0IXbGlaHPPlkY+WN7wFP+wUMXmBFA0aV6vYGQ==
 
 ret@~0.1.10:
   version "0.1.15"

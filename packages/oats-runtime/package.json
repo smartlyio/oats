@@ -39,7 +39,7 @@
   ],
   "devDependencies": {
     "@smartlyio/oats": "^2.1.0",
-    "@smartlyio/oats-fast-check": "^0.0.4",
+    "@smartlyio/oats-fast-check": "^0.0.5",
     "@smartlyio/oats-runtime": "^2.0.0",
     "@types/jest": "^25.1.4",
     "@types/lodash": "^4.14.140",
