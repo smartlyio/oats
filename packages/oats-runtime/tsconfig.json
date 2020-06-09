@@ -10,7 +10,10 @@
     "removeComments": false,
     "alwaysStrict": true,
     "typeRoots": ["./src/types", "./node_modules/@types"],
-    "baseUrl": "./src/types",
+    "baseUrl": ".",
+    "paths": {
+      "@smartlyio/oats-runtime": ["src/runtime"]
+    },
     "forceConsistentCasingInFileNames": true,
     "outDir": "dist"
   },

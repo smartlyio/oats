@@ -9,12 +9,12 @@
   "types": "dist/src/runtime.d.ts",
   "scripts": {
     "test": "yarn jest",
-    "oas": "yarn ts-node test/runtime-driver.ts",
+    "oas": "yarn ts-node -r tsconfig-paths/register test/runtime-driver.ts",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "clean": "yarn clean:dist && rm -f ./tmp/*.ts",
     "clean:dist": "rm -rf ./dist",
-    "build": "yarn clean && yarn oas && yarn tsc && yarn link && yarn link @smartlyio/oats-runtime && yarn lint && yarn test && yarn tsc --noEmit",
+    "build": "yarn clean && yarn oas && yarn tsc && yarn lint && yarn test",
     "prepublish": "yarn build"
   },
   "repository": {
@@ -40,7 +40,6 @@
   "devDependencies": {
     "@smartlyio/oats": "^2.1.0",
     "@smartlyio/oats-fast-check": "^0.0.5",
-    "@smartlyio/oats-runtime": "^2.0.0",
     "@types/jest": "^25.1.4",
     "@types/lodash": "^4.14.140",
     "@types/node": "^13.9.1",
@@ -57,6 +56,7 @@
     "prettier": "^2.0.0",
     "ts-jest": "^26.0.0",
     "ts-node": "^8.6.2",
+    "tsconfig-paths": "^3.9.0",
     "typescript": "^3.8.3"
   },
   "jest": {
@@ -69,6 +69,9 @@
       "ts",
       "tsx"
     ],
+    "moduleNameMapper": {
+      "@smartlyio/oats-runtime": "<rootDir>/src/runtime"
+    },
     "preset": "ts-jest",
     "testMatch": null
   }
