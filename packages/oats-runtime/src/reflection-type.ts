@@ -17,10 +17,10 @@ export type Type =
   | ObjectType
   | NamedType;
 
-export interface NamedTypeDefinition<A> {
+export interface NamedTypeDefinition<A, Shape = any> {
   readonly name: string;
   readonly definition: Type;
-  readonly maker: Maker<any, A>;
+  readonly maker: Maker<Shape, A>;
   readonly isA: null | ((value: any) => value is A);
 }
 
