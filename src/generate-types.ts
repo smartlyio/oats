@@ -932,7 +932,8 @@ function generateNamedTypeDefinitionDeclaration(key: string) {
         ts.createVariableDeclaration(
           'type' + oautil.typenamify(key),
           ts.createTypeReferenceNode(fromLib('reflection', 'NamedTypeDefinition'), [
-            ts.createTypeReferenceNode(oautil.typenamify(key), [])
+            ts.createTypeReferenceNode(oautil.typenamify(key), []),
+            ts.createTypeReferenceNode('ShapeOf' + oautil.typenamify(key), [])
           ]),
           ts.createAsExpression(
             ts.createObjectLiteral([], false),
