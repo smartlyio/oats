@@ -68,7 +68,7 @@
     "prettier": "^2.0.0",
     "ts-jest": "^26.0.0",
     "ts-node-dev": "^1.0.0-pre.24",
-    "typescript": "3.8.3"
+    "typescript": "3.9.5"
   },
   "jest": {
     "testEnvironment": "node",
