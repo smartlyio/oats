@@ -18,10 +18,10 @@
     esutils "^2.0.2"
     js-tokens "^4.0.0"
 
-"@smartlyio/oats-runtime@2.5.0":
-  version "2.5.0"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-2.5.0.tgz#8746003d82d33406523adc7167a519dcb5a9c9c7"
-  integrity sha512-70UfFDz53/yrhzCfX9mUnCMv+TMmZyIsZUt535UQr3VDb1wqbACdldrXqNJ80giOucaH/lP/5gMK5iB25tcYBg==
+"@smartlyio/oats-runtime@^2.5.2":
+  version "2.5.2"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-2.5.2.tgz#bfe73eb29ed9c652abe5c041d3d5e8389e6d7a47"
+  integrity sha512-LGQatOxx1jhzgNoQZtwS/9wwk7xDqcG0NXlUdIVGlxNYTeUFLf5i2eFoSt4n/mQkX01KPuAJWjvbrHAPRmz1hA==
   dependencies:
     "@smartlyio/safe-navigation" "^4.0.1"
     lodash "^4.17.4"

@@ -51,24 +51,33 @@ export const bind: runtime.client.ClientAdapter = async (
     data,
     validateStatus: () => true
   });
+  const contentType = getContentType(response);
   return {
     status: response.status,
     value: {
-      contentType: getContentType(response),
-      value: getResponseData(response)
+      contentType,
+      value: getResponseData(contentType, response)
     }
   };
 };
 
 function getContentType(response: AxiosResponse<any>) {
+  const type = response.headers['content-type'];
+  if (!type) {
+    return runtime.noContentContentType;
+  }
   if (response.status === 204) {
     return 'text/plain';
   }
-  const type = response.headers['content-type'];
   return type.split(';')[0].trim();
 }
 
-function getResponseData(response: AxiosResponse<any>) {
+function getResponseData(contentType: string, response: AxiosResponse<any>) {
+  if (contentType === runtime.noContentContentType) {
+    if (!response.data) {
+      return null;
+    }
+  }
   if (response.status === 204) {
     return '';
   }
