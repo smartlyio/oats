@@ -162,7 +162,15 @@ export function safe<
 }
 
 export type Methods = keyof MethodHandlers;
-export const supportedMethods: Methods[] = ['get', 'post', 'head', 'put', 'patch', 'options', 'delete'];
+export const supportedMethods: Methods[] = [
+  'get',
+  'post',
+  'head',
+  'put',
+  'patch',
+  'options',
+  'delete'
+];
 
 type AnyMaker = Maker<any, any>;
 
