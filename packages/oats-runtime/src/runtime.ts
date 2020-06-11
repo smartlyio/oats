@@ -6,6 +6,19 @@ import * as reflection from './reflection-type';
 
 export { make, server, client, valueClass, reflection };
 
+export const noContentContentType = 'oatsNoContent' as const;
+export function noContent<Status extends number>(
+  status: Status
+): server.Response<Status, typeof noContentContentType, null> {
+  return {
+    status,
+    value: {
+      contentType: noContentContentType,
+      value: null
+    }
+  };
+}
+
 export function json<Status extends number, Value>(
   status: Status,
   value: Value

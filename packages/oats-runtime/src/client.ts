@@ -41,6 +41,11 @@ export function body<T, ContentType extends string>(
   };
 }
 
+export const noContentContentType = 'oatsNoContent' as const;
+export function noContent(): RequestBody<null, typeof noContentContentType> {
+  return body(noContentContentType, null);
+}
+
 export function json<T>(data: T): RequestBody<T, 'application/json'> {
   return body('application/json', data);
 }
