@@ -1,6 +1,6 @@
 {
   "name": "@smartlyio/oats-axios-adapter",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "license": "MIT",
   "description": "Axios adapter for Oats a Openapi3 based generator for typescript aware servers and clients",
   "private": false,
@@ -19,11 +19,11 @@
     "url": "https://github.com/smartlyio/oats.git"
   },
   "peerDependencies": {
+    "@smartlyio/oats-runtime": "^2.5.0",
     "axios": "^0.19.0",
     "typescript": "^3.6.3"
   },
   "dependencies": {
-    "@smartlyio/oats-runtime": "^2.0.0",
     "@types/form-data": "^2.2.1",
     "form-data": "^3.0.0"
   },
@@ -37,6 +37,7 @@
     "client"
   ],
   "devDependencies": {
+    "@smartlyio/oats-runtime": "2.5.0",
     "@types/node": "^11.11.3",
     "@typescript-eslint/eslint-plugin": "^2.24.0",
     "@typescript-eslint/parser": "^2.24.0",
