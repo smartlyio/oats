@@ -569,12 +569,11 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@smartlyio/oats-axios-adapter@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats-axios-adapter/-/oats-axios-adapter-2.0.0.tgz#9033531098a9520ad4a46e756d0c4fdb536a381a"
-  integrity sha512-ro+nIJI89WtNAZ0BsaOb9uu8ckTkZLtObRMsQKaBTSDO59oTxId+IQh2hR7uCDlgPm/DZIraWJWZEQ9bGhXgzg==
+"@smartlyio/oats-axios-adapter@^2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats-axios-adapter/-/oats-axios-adapter-2.2.0.tgz#e41bad327bf0002d1dcad7e211894a29d3158360"
+  integrity sha512-K9d7JSjY6tU08TZlofku3UtB+hRu1Ztbp3QV/RIu91IeqBD/ywofxFZQy+dTgGE4nlwq1f0CJj/27oK3iojrRA==
   dependencies:
-    "@smartlyio/oats-runtime" "^2.0.0"
     "@types/form-data" "^2.2.1"
     form-data "^3.0.0"
 
@@ -583,18 +582,10 @@
   resolved "https://registry.yarnpkg.com/@smartlyio/oats-koa-adapter/-/oats-koa-adapter-2.0.0.tgz#0ff88df7d9767034be1127084fedc9fe8de2898f"
   integrity sha512-4FeQ1szZQWGISIOeAyd0pUH14jbHJSp2yhSz8Gq8XgPwyMV8vtBCoIpKFvNHAiA7V1cr1vg+UIJ9eXhU5iJ4FQ==
 
-"@smartlyio/oats-runtime@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-2.0.0.tgz#6a0dc99f47a8cbf09c617caae0d5226143392c9e"
-  integrity sha512-zRTkKZmN+BbDhtQoqnnrdT8wQvVY2rj8VrfCNnpewX4fdTTzxDgY3lX7l0B5G50jQ86TMlUJ74dnWmEXiK1fwQ==
-  dependencies:
-    "@smartlyio/safe-navigation" "^4.0.1"
-    lodash "^4.17.4"
-
-"@smartlyio/oats-runtime@^2.4.1":
-  version "2.4.1"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-2.4.1.tgz#651c576dc6ad1dd8d88f5df4327d4044c72d3447"
-  integrity sha512-ff/AK3d3Vwa0vwm5JXVGQ9/khInVPei0Etydc4207gP+V5RhRLfHijEuQLbXPEJeZM/AbdFD6co5ogz5S5rCqg==
+"@smartlyio/oats-runtime@^2.5.2":
+  version "2.5.2"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-2.5.2.tgz#bfe73eb29ed9c652abe5c041d3d5e8389e6d7a47"
+  integrity sha512-LGQatOxx1jhzgNoQZtwS/9wwk7xDqcG0NXlUdIVGlxNYTeUFLf5i2eFoSt4n/mQkX01KPuAJWjvbrHAPRmz1hA==
   dependencies:
     "@smartlyio/safe-navigation" "^4.0.1"
     lodash "^4.17.4"
