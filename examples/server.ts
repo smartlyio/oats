@@ -43,7 +43,7 @@ const spec: api.EndpointsWithContext<RequestContext> = {
     },
     delete: async ctx => {
       delete values[ctx.params.id];
-      return runtime.text(204, '');
+      return runtime.noContent(204);
     },
     get: async ctx => {
       const item = values[ctx.params.id];
