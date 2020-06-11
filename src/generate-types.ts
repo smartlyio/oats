@@ -298,7 +298,15 @@ function generateResponseType(opt: Options, op: string, responses: oas.Responses
           },
           value: oautil.isReferenceObject(response)
             ? { $ref: response.$ref }
-            : generateContentSchemaType(response.content || {})
+            : generateContentSchemaType(
+                response.content || {
+                  noContent: {
+                    schema: {
+                      type: 'null'
+                    }
+                  }
+                }
+              )
         },
         required: ['status', 'value'],
         additionalProperties: false

@@ -31,6 +31,22 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
   /item/{id}:
+    head:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: 'common.yaml#/components/schemas/ItemId'
+      responses:
+        '200':
+          description: item found
+        default:
+          description: error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
     delete:
       parameters:
         - name: id

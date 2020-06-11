@@ -31,6 +31,22 @@ const spec: api.EndpointsWithContext<RequestContext> = {
     }
   },
   '/item/{id}': {
+    head: async ctx => {
+      const item = values[ctx.params.id];
+      if (item) {
+        return {
+          status: 200,
+          value: {
+            contentType: 'noContent',
+            value: null
+          }
+        };
+      }
+      return runtime.json(400, {
+        message: 'not found',
+        messageIndex: ctx.requestContext.messageIndex
+      });
+    },
     delete: async ctx => {
       delete values[ctx.params.id];
       return runtime.text(204, '');
