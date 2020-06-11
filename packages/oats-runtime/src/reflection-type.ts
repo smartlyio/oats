@@ -105,13 +105,30 @@ export class Traversal<Root, Leaf> {
   }
 
   private cache: Reaches = new Map();
+  private cachedAncestors: Map<NamedTypeDefinition<unknown>, Path[]>;
+
   private constructor(
     private readonly root: NamedTypeDefinition<Root>,
     private readonly leaf: NamedTypeDefinition<Leaf>
   ) {
-    this.createPathsToName(root, leaf);
+    calculateReverseReach(new Set(), this.cache, this.root, this.leaf, false);
+    this.cachedAncestors = this.ancestorNamedObjects(this.leaf);
   }
 
+  private dedupePaths(ancestors: Map<NamedTypeDefinition<unknown>, Path[]>) {
+    const deduped = new Map();
+    for (const [ancestor, paths] of ancestors.entries()) {
+      const dedupedPaths: Set<string> = paths.reduce(
+        (memo, path) => memo.add(JSON.stringify(path)),
+        new Set<string>()
+      );
+      deduped.set(
+        ancestor,
+        [...dedupedPaths.values()].map(path => JSON.parse(path))
+      );
+    }
+    return deduped;
+  }
   map(value: Root, fn: (leaf: Leaf) => Leaf) {
     this.validateRoot(value);
     const match = this.matcher();
@@ -126,42 +143,28 @@ export class Traversal<Root, Leaf> {
   async pmap(value: Root, fn: (leaf: Leaf) => Promise<Leaf>) {
     this.validateRoot(value);
     const match = this.matcher();
-    return await runtime.pmap(
-      value,
-      ((value: any) => !!match(value)) as any,
-      async (value: any) => {
-        for (const path of this.paths(value)) {
-          value = await safePmapPath(value, path, fn);
-        }
-        return value;
+    return await runtime.pmap(value, ((value: any) => match(value)) as any, async (value: any) => {
+      for (const path of this.paths(value)) {
+        value = await safePmapPath(value, path, fn);
       }
-    );
+      return value;
+    });
   }
 
   private paths(value: any): Path[] {
-    const parents = this.cache.get(this.leaf);
     const paths: Path[] = [];
-    for (const [path, parent] of parents!.entries()) {
-      parent.forEach(p => {
-        if (p.isA && p.isA(value)) {
-          paths.push(JSON.parse(path));
-        }
-      });
+    for (const [ancestor, pathsFromAncestor] of this.cachedAncestors.entries()) {
+      if (ancestor.isA && ancestor.isA(value)) {
+        paths.push(...pathsFromAncestor);
+      }
     }
     return paths;
   }
 
   private matcher(): (a: any) => boolean {
-    const parents = this.cache.get(this.leaf);
-    return function match(value: any) {
-      for (const [, parent] of parents!.entries()) {
-        if (
-          parent.find(p => {
-            if (p.isA) {
-              return p.isA(value);
-            }
-          })
-        ) {
+    return (value: any) => {
+      for (const ancestor of this.cachedAncestors.keys()) {
+        if (ancestor.isA && ancestor.isA(value)) {
           return true;
         }
       }
@@ -173,19 +176,46 @@ export class Traversal<Root, Leaf> {
     assert(this.root.isA && this.root.isA(value), 'Root value does not match expected root type');
   }
 
-  private createPathsToName(from: NamedTypeDefinition<unknown>, leaf: NamedTypeDefinition<Leaf>) {
-    calculateReverseReach(new Set(), this.cache, from, leaf, false);
-    const found = this.cache.get(leaf);
+  private addAncestor(
+    ancestors: Map<NamedTypeDefinition<unknown>, Path[]>,
+    ancestor: NamedTypeDefinition<unknown>,
+    path: Path
+  ) {
+    const pathsToAncestor = ancestors.get(ancestor);
+    if (!pathsToAncestor) {
+      return ancestors.set(ancestor, [path]);
+    }
+    pathsToAncestor.push(path);
+    return ancestors;
+  }
+
+  private ancestorNamedObjects(
+    target: NamedTypeDefinition<unknown>
+  ): Map<NamedTypeDefinition<unknown>, Path[]> {
+    const found = this.cache.get(target);
     if (!found) {
       return assert.fail('no path to target');
     }
-    for (const parents of found.values()) {
-      // we can only find objects with isA during traversal
-      // todo: we could relax this a bit by finding the unambiguous parent of parent if there is one
-      parents.forEach(parent =>
-        assert(parent.isA, 'nearest containing named thing is not an object ' + parent.name)
-      );
+    const allAncestors: Map<NamedTypeDefinition<unknown>, Path[]> = new Map();
+    for (const [pathStr, parents] of found.entries()) {
+      const path: Path = JSON.parse(pathStr);
+      parents.forEach(ancestor => {
+        if (ancestor.isA) {
+          this.addAncestor(allAncestors, ancestor, path);
+        } else if (['array', 'named'].indexOf(ancestor.definition.type) >= 0) {
+          for (const [namedObjectAncestor, paths] of this.ancestorNamedObjects(
+            ancestor
+          ).entries()) {
+            paths.forEach(pathFromAncestor =>
+              this.addAncestor(allAncestors, namedObjectAncestor, [...pathFromAncestor, ...path])
+            );
+          }
+        } else {
+          assert.fail('nearest containing named thing is not an object: ' + ancestor.name);
+        }
+      });
     }
+    return this.dedupePaths(allAncestors);
   }
 }
 

@@ -9,7 +9,7 @@
       "request": "launch",
       "name": "Jest Watch Current File",
       "program": "${workspaceFolder}/node_modules/.bin/jest",
-      "args": ["--watch", "${relativeFile}"],
+      "args": ["-i", "--watch", "${relativeFile}"],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "skipFiles": [
