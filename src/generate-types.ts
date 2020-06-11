@@ -300,7 +300,7 @@ function generateResponseType(opt: Options, op: string, responses: oas.Responses
             ? { $ref: response.$ref }
             : generateContentSchemaType(
                 response.content || {
-                  noContent: {
+                  oatsNoContent: {
                     schema: {
                       type: 'null'
                     }

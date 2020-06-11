@@ -129,13 +129,7 @@ const spec: api.EndpointsWithContext<RequestContext> = {
     head: async ctx => {
       const item = values[ctx.params.id];
       if (item) {
-        return {
-          status: 200,
-          value: {
-            contentType: 'noContent',
-            value: null
-          }
-        };
+        return runtime.noContent(200)
       }
       return runtime.json(400, {
         message: 'not found',
