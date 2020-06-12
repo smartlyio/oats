@@ -5,7 +5,7 @@ export interface ShapeOfTestClass {
   a: ReadonlyArray<string>;
   b: string;
 }
-export class TestClass extends ValueClass<TestClass, 1> {
+export class TestClass extends ValueClass<ShapeOfTestClass, 1> {
   static make(v: ShapeOfTestClass): Make<TestClass> {
     return makeTestClass(v);
   }

@@ -3,8 +3,7 @@ import { NamedTypeDefinition } from './reflection-type';
 export type Branded<A, BrandTag> = A & Brand<BrandTag>;
 
 export class Brand<B> {
-  // @ts-ignore
-  private valueClassBrand: B; // branding, DO NOT ACCESS
+  protected readonly valueClassBrand!: B; // branding, DO NOT ACCESS
 }
 
 function asPlainObject(value: any): any {
@@ -22,7 +21,7 @@ function asPlainObject(value: any): any {
 
 export class ValueClass<Shape, BrandTag> extends Brand<BrandTag> {
   public static reflection: NamedTypeDefinition<ValueClass<any, any>>;
-  private Shape!: Shape;
+  protected readonly valueClassShape!: Shape; // stops TypeScript from ignoring the "Shape" type, DO NOT ACCESS
 }
 
 type WritableArray<T> = Array<Writable<T>>;
@@ -37,7 +36,9 @@ export type Writable<T> = T extends ReadonlyArray<infer R>
   ? WritableObject<T>
   : T;
 
-export function toJSON<Cls extends ValueClass<Shape, any>, Shape>(value: Cls): Writable<Shape> {
+export function toJSON<Cls>(
+  value: Cls
+): Cls extends ValueClass<infer Shape, any> ? Writable<Shape> : never {
   // we cant use _.cloneDeep as that copies the instance allowing a surprising way to
   // create proof carrying objects that do not respect the class constraints
   return asPlainObject(value as any); // how to say that 'this' is the extending class
