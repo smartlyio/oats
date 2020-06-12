@@ -11,15 +11,36 @@ export class MakeError extends Error {
   }
 }
 
+export interface ErrorGroup {
+  groupMessage: string;
+  errors: ValidationError[];
+}
+
 export interface ValidationError {
   path: Path;
-  error: string;
+  error: string | ErrorGroup;
 }
 
 type Path = ReadonlyArray<string>;
 
-export function validationErrorPrinter(error: ValidationError) {
-  return `${error.path.join('/')}: ${error.error}`;
+function indent(i: number) {
+  const str = [];
+  while (i-- > 0) {
+    str.push('    ');
+  }
+  return str.join('');
+}
+
+export function validationErrorPrinter(error: ValidationError, indentation = 0) {
+  if (typeof error.error === 'string') {
+    return `${indent(indentation)}${error.path.join('/')}: ${error.error}`;
+  }
+  const subErrors: string[] = error.error.errors.map(e =>
+    validationErrorPrinter(e, indentation + 1)
+  );
+  return `${indent(indentation)}${error.path.length > 0 ? error.path.join('/') + ': ' : ''}${
+    error.error.groupMessage
+  }\n${subErrors.join('\n')}`;
 }
 
 export class Make<V> {
@@ -58,6 +79,10 @@ export class Make<V> {
     }
     assert(this.isSuccess());
     return this.value as V;
+  }
+
+  public group(groupMessage: string) {
+    return new Make(null, [{ path: [], error: { groupMessage, errors: this.errors } }]);
   }
 
   public errorPath(path: string) {
@@ -259,13 +284,15 @@ export function makeOneOf(...options: any[]) {
           success = mapped;
         }
       } else {
-        errors = [...errors, ...mapped.errors];
+        errors = [...errors, mapped];
       }
     }
     if (preferredSuccess || success) {
       return preferredSuccess || success;
     }
-    return Make.error(errors).errorPath('(oneOf)');
+    return Make.error(errors.map((error, i) => error.group('- option ' + (i + 1)).errors[0])).group(
+      'no option of oneOf matched'
+    );
   };
 }
 

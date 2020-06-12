@@ -1,6 +1,7 @@
 import * as make from '../src/make';
 import * as jsc from 'jsverify';
 import { ShapeOfTestClass, TestClass } from './test-class';
+import { validationErrorPrinter } from '../src/make';
 
 describe('createMakerWith', () => {
   function maker() {
@@ -58,6 +59,24 @@ describe('makeOneOf', () => {
       make.makeObject({ a: make.makeAny() })
     );
     expect(fun({ a: 'x' }).isSuccess()).toBeFalsy();
+  });
+
+  it('groups errors', () => {
+    const fun = make.makeObject({
+      root: make.makeOneOf(
+        make.makeObject({ a: make.makeString() }),
+        make.makeObject({ b: make.makeAny() })
+      )
+    });
+    const result = fun({ root: { foo: 'x' } });
+    expect(result.isError()).toBeTruthy();
+    expect(result.errors.length).toEqual(1);
+    const expected = `root: no option of oneOf matched
+    - option 1
+        a: expected a string, but got "undefined" instead.
+    - option 2
+        foo: unexpected property`;
+    expect(validationErrorPrinter(result.errors[0])).toEqual(expected);
   });
 });
 
