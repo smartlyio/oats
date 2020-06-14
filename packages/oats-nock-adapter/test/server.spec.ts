@@ -1,6 +1,7 @@
 import * as nockAdapter from '../src/nock';
 import * as axiosClient from '@smartlyio/oats-axios-adapter';
 import * as runtime from '@smartlyio/oats-runtime';
+import safe from '@smartlyio/safe-navigation';
 
 import * as api from '../tmp/client.types.generated';
 import * as types from '../tmp/openapi.types.generated';
@@ -8,6 +9,7 @@ import * as types from '../tmp/openapi.types.generated';
 import * as api2 from '../tmp/client2.types.generated';
 import * as types2 from '../tmp/openapi2.types.generated';
 import * as nock from 'nock';
+import * as assert from 'assert';
 
 describe('server', () => {
   const client = api.client(axiosClient.bind);
@@ -219,5 +221,77 @@ describe('server', () => {
       body: runtime.client.json({ id: 'some-id', name: 'some-name' })
     });
     expect(response2.value.value.id).toEqual('2 server');
+  });
+
+  describe('content types handling', () => {
+    describe('form-data', () => {
+      it('handles multiple string', async () => {
+        nockAdapter.bind(api.router, {
+          '/item/formdata': {
+            post: async ctx => {
+              return runtime.json(
+                200,
+                types.Item.make({
+                  id: ctx.body.value.someValue + ' ' + safe(ctx).body.value.blob.options.$
+                }).success()
+              );
+            }
+          }
+        });
+        const formData = {
+          someValue: 'some value',
+          blob: new runtime.make.FormBinary(Buffer.from('abc'), 'some blob')
+        };
+        const response = await client.item.formdata.post({
+          body: runtime.client.formData(formData)
+        });
+        expect(response.value.value.id).toEqual('some value some blob');
+      });
+
+      it('handles string values', async () => {
+        nockAdapter.bind(api.router, {
+          '/item/formdata': {
+            post: async ctx => {
+              return runtime.json(
+                200,
+                types.Item.make({
+                  id: ctx.body.value.someValue!
+                }).success()
+              );
+            }
+          }
+        });
+        const formData = { someValue: 'some value' };
+        const response = await client.item.formdata.post({
+          body: runtime.client.formData(formData)
+        });
+        expect(response.value.value.id).toEqual('some value');
+      });
+
+      it('handles files', async () => {
+        nockAdapter.bind(api.router, {
+          '/item/formdata': {
+            post: async ctx => {
+              const binary = ctx.body.value.blob;
+              if (!(binary instanceof runtime.make.FormBinary)) {
+                return assert.fail('expected formbinary');
+              }
+              return runtime.json(
+                200,
+                types.Item.make({
+                  id: `${binary.binary} ${binary.options as string}`
+                }).success()
+              );
+            }
+          }
+        });
+        const data = Buffer.from('some data');
+        const formData = { blob: new runtime.make.FormBinary(data, 'some blob') };
+        const response = await client.item.formdata.post({
+          body: runtime.client.formData(formData)
+        });
+        expect(response.value.value.id).toEqual(data + ' some blob');
+      });
+    });
   });
 });

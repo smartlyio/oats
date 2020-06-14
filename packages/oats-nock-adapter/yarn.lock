@@ -332,27 +332,18 @@
   dependencies:
     type-detect "4.0.8"
 
-"@smartlyio/oats-axios-adapter@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats-axios-adapter/-/oats-axios-adapter-2.0.0.tgz#9033531098a9520ad4a46e756d0c4fdb536a381a"
-  integrity sha512-ro+nIJI89WtNAZ0BsaOb9uu8ckTkZLtObRMsQKaBTSDO59oTxId+IQh2hR7uCDlgPm/DZIraWJWZEQ9bGhXgzg==
+"@smartlyio/oats-axios-adapter@^2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats-axios-adapter/-/oats-axios-adapter-2.2.0.tgz#e41bad327bf0002d1dcad7e211894a29d3158360"
+  integrity sha512-K9d7JSjY6tU08TZlofku3UtB+hRu1Ztbp3QV/RIu91IeqBD/ywofxFZQy+dTgGE4nlwq1f0CJj/27oK3iojrRA==
   dependencies:
-    "@smartlyio/oats-runtime" "^2.0.0"
     "@types/form-data" "^2.2.1"
     form-data "^3.0.0"
 
-"@smartlyio/oats-runtime@2.4.0":
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-2.4.0.tgz#0dc13beebd95b427d5e9cbfd6b29fc3597932183"
-  integrity sha512-mnSWraDIMczeS/q8MrTnvfefCR6WSIqjb7AAUssPCrfIflrO+v5BUGcTujQc7vO5GYp4YQLnWvNjWYgegS3p4w==
-  dependencies:
-    "@smartlyio/safe-navigation" "^4.0.1"
-    lodash "^4.17.4"
-
-"@smartlyio/oats-runtime@^2.0.0":
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-2.3.0.tgz#2cdc234fcd980ece8c35ff4bc0ed951cd82280ec"
-  integrity sha512-jQoAbo0DVqMnEYrdNIMvS4PYyWeFpwlkDrGoGRM8nMIJqxXfWlv6as9TXzbW6RPahrL0EWsq5SKFEemBCNpMmA==
+"@smartlyio/oats-runtime@^2.5.4":
+  version "2.5.4"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-2.5.4.tgz#a7168d812f7636b8dd4e3cc152300f3beb76f528"
+  integrity sha512-Wj6moTmxtu177TwR6ObPRDnPSdcjWEBo0ZCHOp2t5WgG8ZTbOhOKJlu2NvphU5ieQOVLt56X+pvRgGn2bl0k5g==
   dependencies:
     "@smartlyio/safe-navigation" "^4.0.1"
     lodash "^4.17.4"

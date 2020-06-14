@@ -2,11 +2,79 @@ import * as nock from 'nock';
 import * as runtime from '@smartlyio/oats-runtime';
 import * as assert from 'assert';
 
-function getBody(contentType: string, value: unknown) {
+function parseContentDisposition(contentDispositionValue: string): Record<string, string> {
+  return contentDispositionValue
+    .split(';')
+    .map(part => part.trim())
+    .map(part => {
+      const [key, ...values] = part.split('=');
+      return [
+        key,
+        values
+          .join('=')
+          .replace(/^"/g, '')
+          .replace(/"$/, '')
+      ];
+    })
+    .reduce((memo, [key, value]) => ({ ...memo, [key]: value }), {});
+}
+
+function parseFormItem(item: string) {
+  const headers: Record<string, string> = {};
+  const lines = item.split('\r\n');
+  let data;
+  for (let i = 0; i < lines.length; i++) {
+    if (lines[i] === '') {
+      data = lines.slice(i + 1).join('\n');
+      break;
+    }
+    const [header, ...headerValues] = lines[i].split(':');
+    headers[header.toLowerCase()] = headerValues.join(':').trim();
+  }
+  if (headers['content-disposition']) {
+    const contentDisposition = parseContentDisposition(headers['content-disposition']);
+    if (contentDisposition.filename) {
+      return {
+        key: contentDisposition.name,
+        value: new runtime.make.FormBinary(Buffer.from(data || ''), contentDisposition.filename)
+      };
+    }
+    return {
+      key: contentDisposition.name,
+      value: data
+    };
+  }
+}
+
+function parseFormData(boundary: RegExp, value: unknown) {
+  if (typeof value !== 'string') {
+    return assert.fail('form-data value is not a string');
+  }
+  return value.split(boundary).reduce((memo, item) => {
+    if (item === '') {
+      return memo;
+    }
+    const parsed = parseFormItem(item);
+    if (!parsed) {
+      return memo;
+    }
+    return { ...memo, [parsed.key]: parsed.value };
+  }, {});
+}
+
+function getBody(contentType: string | undefined, value: unknown) {
+  if (!contentType) {
+    return value;
+  }
   if (/application\/json/.test(contentType)) {
     return { contentType: 'application/json', value };
   }
-  return undefined;
+  const formData = contentType.match(/^multipart\/form-data.*; boundary=([^;]+)/);
+  if (formData) {
+    const boundary = new RegExp('(?:\r\n)?[^\r\n]*' + formData[1] + '[^\r\n]*(?:\r\n)?');
+    return { contentType: 'multipart/form-data', value: parseFormData(boundary, value) };
+  }
+  return value as any;
 }
 
 function getQuery(url: URL): undefined | { [key: string]: string } {

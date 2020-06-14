@@ -5,6 +5,27 @@ info:
 servers:
   - url: http://localhost:12000
 paths:
+  /item/formdata:
+    post:
+      requestBody:
+        required: true
+        content:
+            multipart/form-data:
+              schema:
+                description: form data
+                type: object
+                properties:
+                  someValue:
+                    type: string
+                  blob:
+                    type: string
+                    format: binary
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
   /item:
     post:
       description: create an item
