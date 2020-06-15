@@ -45,9 +45,9 @@ export function text<Status extends number, Value>(
   };
 }
 
-export function set<Cls extends valueClass.ValueClass<Shape, any>, Shape>(
+export function set<Cls>(
   to: Cls,
-  set: Partial<Shape>
+  set: Cls extends valueClass.ValueClass<infer Shape, any> ? Partial<Shape> : never
 ): make.Make<Cls> {
   return (to as any).constructor.make({ ...to, ...set });
 }
@@ -137,7 +137,7 @@ function selectRecord<T extends { [key: string]: unknown }>(original: T, newReco
     return original;
   }
   if (original instanceof valueClass.ValueClass) {
-    return set(original, newRecord).success();
+    return set<valueClass.ValueClass<any, any>>(original, newRecord).success();
   }
   return newRecord;
 }
