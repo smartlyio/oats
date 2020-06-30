@@ -22,11 +22,11 @@
     "url": "https://github.com/smartlyio/oats.git"
   },
   "peerDependencies": {
-    "typescript": "^3.6.3"
+    "typescript": "3.6.3"
   },
   "dependencies": {
-    "@smartlyio/safe-navigation": "^4.0.1",
-    "lodash": "^4.17.4"
+    "@smartlyio/safe-navigation": "4.0.1",
+    "lodash": "4.17.4"
   },
   "keywords": [
     "oats",
@@ -38,26 +38,26 @@
     "client"
   ],
   "devDependencies": {
-    "@smartlyio/oats": "^2.1.0",
-    "@smartlyio/oats-fast-check": "^0.0.5",
-    "@types/jest": "^26.0.0",
-    "@types/lodash": "^4.14.140",
-    "@types/node": "^13.9.1",
-    "@typescript-eslint/eslint-plugin": "^2.24.0",
-    "@typescript-eslint/parser": "^2.24.0",
-    "eslint": "^7.0.0",
-    "eslint-config-prettier": "^6.10.0",
-    "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-jest": "^23.8.2",
-    "eslint-plugin-prettier": "^3.1.2",
-    "fast-check": "^1.23.0",
-    "jest": "^26.0.0",
-    "jsverify": "^0.8.4",
-    "prettier": "^2.0.0",
-    "ts-jest": "^26.0.0",
-    "ts-node": "^8.6.2",
-    "tsconfig-paths": "^3.9.0",
-    "typescript": "^3.8.3"
+    "@smartlyio/oats": "2.1.0",
+    "@smartlyio/oats-fast-check": "0.0.5",
+    "@types/jest": "26.0.0",
+    "@types/lodash": "4.14.140",
+    "@types/node": "13.9.1",
+    "@typescript-eslint/eslint-plugin": "2.24.0",
+    "@typescript-eslint/parser": "2.24.0",
+    "eslint": "7.0.0",
+    "eslint-config-prettier": "6.10.0",
+    "eslint-plugin-import": "2.20.1",
+    "eslint-plugin-jest": "23.8.2",
+    "eslint-plugin-prettier": "3.1.2",
+    "fast-check": "1.23.0",
+    "jest": "26.0.0",
+    "jsverify": "0.8.4",
+    "prettier": "2.0.0",
+    "ts-jest": "26.0.0",
+    "ts-node": "8.6.2",
+    "tsconfig-paths": "3.9.0",
+    "typescript": "3.8.3"
   },
   "jest": {
     "testEnvironment": "node",
