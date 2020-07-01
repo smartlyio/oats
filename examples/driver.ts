@@ -29,6 +29,20 @@ driver.generate({
   openapiFilePath: './test/example.yaml'
 });
 
+// generate server from the shared openapi spec
+// This example uses a specification file that contains compliant but unsupported nodes,
+// such as 'securitySchemes' and 'security'
+driver.generate({
+  ...externals,
+  generatedValueClassFile: './tmp/server.types.generated.ts',
+  generatedServerFile: './tmp/server.generated.ts',
+  header: '/* tslint:disable variable-name only-arrow-functions*/',
+  openapiFilePath: './test/example-with-security-nodes.yaml',
+  unsupportedFeatures: {
+    security: UnsupportedFeatureBehaviour.ignore
+  }
+});
+
 // generate client from the shared openapi spec
 driver.generate({
   ...externals,
@@ -39,3 +53,4 @@ driver.generate({
   // Omit error responses  from the client response types
   emitStatusCode: (code: number) => [200, 201, 204].indexOf(code) >= 0
 });
+
