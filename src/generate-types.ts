@@ -1310,13 +1310,13 @@ export interface Options {
   runtimeModule: string;
   emitStatusCode: (status: number) => boolean;
   unsupportedFeatures?: {
-    security?: UnsupportedFeatureBehaviour
-  }
+    security?: UnsupportedFeatureBehaviour;
+  };
 }
 
 enum UnsupportedFeatureBehaviour {
   ignore = 'ignore',
-  reject = 'reject',
+  reject = 'reject'
 }
 
 function addIndexSignatureIgnores(src: string) {

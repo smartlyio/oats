@@ -43,7 +43,10 @@ function generateMethod<S extends oas.OperationObject, K extends keyof S>(
   schema: S,
   opts: Options
 ) {
-  if ((safe(opts).unsupportedFeatures.security.$ ?? UnsupportedFeatureBehaviour.reject) === UnsupportedFeatureBehaviour.reject) {
+  if (
+    (safe(opts).unsupportedFeatures.security.$ ?? UnsupportedFeatureBehaviour.reject) ===
+    UnsupportedFeatureBehaviour.reject
+  ) {
     assert(!schema.security, 'security not supported');
   }
 
@@ -122,7 +125,10 @@ function generateClientMethod(
   method: string,
   op: oas.OperationObject
 ): ts.TypeNode {
-  if ((safe(opts).unsupportedFeatures.security.$ ?? UnsupportedFeatureBehaviour.reject) === UnsupportedFeatureBehaviour.reject) {
+  if (
+    (safe(opts).unsupportedFeatures.security.$ ?? UnsupportedFeatureBehaviour.reject) ===
+    UnsupportedFeatureBehaviour.reject
+  ) {
     assert(!op.security, 'security not supported');
   }
   const headers = ts.createTypeReferenceNode(
@@ -396,15 +402,14 @@ interface Options {
   shapesAsRequests: boolean;
   shapesAsResponses: boolean;
   unsupportedFeatures: {
-    security?: UnsupportedFeatureBehaviour
-  }
+    security?: UnsupportedFeatureBehaviour;
+  };
 }
 
 enum UnsupportedFeatureBehaviour {
   ignore = 'ignore',
-  reject = 'reject',
+  reject = 'reject'
 }
-
 
 export function run(opts: Options) {
   const runtimeModule = opts.runtimePath;

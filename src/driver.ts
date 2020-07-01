@@ -36,13 +36,13 @@ export interface Driver {
   runtimeFilePath?: string; // set path to runtime directly for testing
   emitStatusCode?: (statusCode: number) => boolean;
   unsupportedFeatures?: {
-    security?: UnsupportedFeatureBehaviour
-  }
+    security?: UnsupportedFeatureBehaviour;
+  };
 }
 
 export enum UnsupportedFeatureBehaviour {
   ignore = 'ignore',
-  reject = 'reject',
+  reject = 'reject'
 }
 
 function emitAllStatusCodes() {
@@ -76,7 +76,7 @@ export function generate(driver: Driver) {
         externalOpenApiSpecs: driver.externalOpenApiSpecs || (() => undefined),
         oas: spec,
         runtimeModule: modulePath(driver.generatedValueClassFile, driver.runtimeFilePath),
-        emitStatusCode: driver.emitStatusCode || emitAllStatusCodes,
+        emitStatusCode: driver.emitStatusCode || emitAllStatusCodes
       })
   );
 
