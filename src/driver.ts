@@ -4,6 +4,7 @@ import * as types from './generate-types';
 import * as server from './generate-server';
 import * as path from 'path';
 import * as oas from 'openapi3-ts';
+import { UnsupportedFeatureBehaviour } from './util';
 
 function modulePath(importer: string, module: string | undefined) {
   if (!module) {
@@ -35,6 +36,9 @@ export interface Driver {
   generatedClientFile?: string;
   runtimeFilePath?: string; // set path to runtime directly for testing
   emitStatusCode?: (statusCode: number) => boolean;
+  unsupportedFeatures?: {
+    security?: UnsupportedFeatureBehaviour;
+  };
 }
 
 function emitAllStatusCodes() {
@@ -80,7 +84,10 @@ export function generate(driver: Driver) {
         runtimePath: modulePath(driver.generatedClientFile, driver.runtimeFilePath),
         typePath: modulePath(driver.generatedClientFile, driver.generatedValueClassFile),
         shapesAsResponses: false,
-        shapesAsRequests: true
+        shapesAsRequests: true,
+        unsupportedFeatures: {
+          security: driver.unsupportedFeatures?.security ?? UnsupportedFeatureBehaviour.reject
+        }
       })
     );
   }
@@ -92,8 +99,15 @@ export function generate(driver: Driver) {
         runtimePath: modulePath(driver.generatedServerFile, driver.runtimeFilePath),
         typePath: modulePath(driver.generatedServerFile, driver.generatedValueClassFile),
         shapesAsRequests: false,
-        shapesAsResponses: true
+        shapesAsResponses: true,
+        unsupportedFeatures: {
+          security: driver.unsupportedFeatures?.security ?? UnsupportedFeatureBehaviour.reject
+        }
       })
     );
   }
 }
+
+// Re-exporting to expose a more unified  API via the 'driver' module.
+//  People are free to import straight out of 'util' but that's up to them.
+export { UnsupportedFeatureBehaviour };
