@@ -87,6 +87,11 @@ export function deref<T>(
   return deref(nextObject, schema, [...visited, object.$ref]);
 }
 
+export enum UnsupportedFeatureBehaviour {
+  ignore = 'ignore',
+  reject = 'reject'
+}
+
 function resolve(key: string, schema: oas.OpenAPIObject): oas.SchemaObject | undefined {
   const hit = safe(schema).components.schemas[key].$;
   if (!hit) {

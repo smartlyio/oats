@@ -4,6 +4,7 @@ import safe from '@smartlyio/safe-navigation';
 import * as _ from 'lodash';
 import * as assert from 'assert';
 import * as oautil from './util';
+import { UnsupportedFeatureBehaviour } from './util';
 const valueClassIndexSignatureKey = 'instanceIndexSignatureKey';
 
 function generateClassMembers(
@@ -1309,6 +1310,9 @@ export interface Options {
   oas: oas.OpenAPIObject;
   runtimeModule: string;
   emitStatusCode: (status: number) => boolean;
+  unsupportedFeatures?: {
+    security?: UnsupportedFeatureBehaviour;
+  };
 }
 
 function addIndexSignatureIgnores(src: string) {

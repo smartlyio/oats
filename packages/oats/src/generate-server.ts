@@ -4,6 +4,7 @@ import * as assert from 'assert';
 import * as oautil from './util';
 import { server, client } from '@smartlyio/oats-runtime';
 import safe from '@smartlyio/safe-navigation';
+import { UnsupportedFeatureBehaviour } from './util';
 
 function generateRuntimeImport(runtimeModule: string) {
   return ts.createNodeArray([
@@ -43,7 +44,13 @@ function generateMethod<S extends oas.OperationObject, K extends keyof S>(
   schema: S,
   opts: Options
 ) {
-  assert(!schema.security, 'security not supported');
+  if (
+    (safe(opts).unsupportedFeatures.security.$ ?? UnsupportedFeatureBehaviour.reject) ===
+    UnsupportedFeatureBehaviour.reject
+  ) {
+    assert(!schema.security, 'security not supported');
+  }
+
   const headers = ts.createTypeReferenceNode(
     fromTypes(
       (opts.shapesAsRequests ? 'ShapeOf' : '') +
@@ -119,7 +126,12 @@ function generateClientMethod(
   method: string,
   op: oas.OperationObject
 ): ts.TypeNode {
-  assert(!op.security, 'security not supported');
+  if (
+    (safe(opts).unsupportedFeatures.security.$ ?? UnsupportedFeatureBehaviour.reject) ===
+    UnsupportedFeatureBehaviour.reject
+  ) {
+    assert(!op.security, 'security not supported');
+  }
   const headers = ts.createTypeReferenceNode(
     fromTypes(
       (opts.shapesAsRequests ? 'ShapeOf' : '') +
@@ -390,6 +402,9 @@ interface Options {
   typePath: string;
   shapesAsRequests: boolean;
   shapesAsResponses: boolean;
+  unsupportedFeatures: {
+    security?: UnsupportedFeatureBehaviour;
+  };
 }
 
 export function run(opts: Options) {
