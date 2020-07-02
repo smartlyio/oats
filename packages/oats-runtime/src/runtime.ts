@@ -96,15 +96,15 @@ function mapInternal<A extends ValueType, T extends ValueType>(
 export function getAll<A extends ValueType, T extends ValueType>(
   value: A,
   predicate: (a: any) => a is T
-): readonly A[] {
+): readonly T[] {
   return getAllInternal(value, predicate);
 }
 
 function getAllInternal<A extends ValueType, T extends ValueType>(
   value: A,
   predicate: (a: any) => a is T
-): readonly A[] {
-  const match: A[] = [];
+): readonly T[] {
+  const match: T[] = [];
   if (predicate(value)) {
     match.push(value);
   }
