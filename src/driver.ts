@@ -4,6 +4,7 @@ import * as types from './generate-types';
 import * as server from './generate-server';
 import * as path from 'path';
 import * as oas from 'openapi3-ts';
+import { UnsupportedFeatureBehaviour } from './util';
 
 function modulePath(importer: string, module: string | undefined) {
   if (!module) {
@@ -38,11 +39,6 @@ export interface Driver {
   unsupportedFeatures?: {
     security?: UnsupportedFeatureBehaviour;
   };
-}
-
-export enum UnsupportedFeatureBehaviour {
-  ignore = 'ignore',
-  reject = 'reject'
 }
 
 function emitAllStatusCodes() {
@@ -111,3 +107,7 @@ export function generate(driver: Driver) {
     );
   }
 }
+
+// Re-exporting to expose a more unified  API via the 'driver' module.
+//  People are free to import straight out of 'util' but that's up to them.
+export { UnsupportedFeatureBehaviour };

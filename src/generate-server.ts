@@ -4,6 +4,7 @@ import * as assert from 'assert';
 import * as oautil from './util';
 import { server, client } from '@smartlyio/oats-runtime';
 import safe from '@smartlyio/safe-navigation';
+import { UnsupportedFeatureBehaviour } from './util';
 
 function generateRuntimeImport(runtimeModule: string) {
   return ts.createNodeArray([
@@ -404,11 +405,6 @@ interface Options {
   unsupportedFeatures: {
     security?: UnsupportedFeatureBehaviour;
   };
-}
-
-enum UnsupportedFeatureBehaviour {
-  ignore = 'ignore',
-  reject = 'reject'
 }
 
 export function run(opts: Options) {
