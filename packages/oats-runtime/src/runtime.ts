@@ -93,6 +93,36 @@ function mapInternal<A extends ValueType, T extends ValueType>(
   return value;
 }
 
+export function getAll<A extends ValueType, T extends ValueType>(
+  value: A,
+  predicate: (a: any) => a is T
+): readonly A[] {
+  return getAllInternal(value, predicate);
+}
+
+function getAllInternal<A extends ValueType, T extends ValueType>(
+  value: A,
+  predicate: (a: any) => a is T
+): readonly A[] {
+  const match: A[] = [];
+  if (predicate(value)) {
+    match.push(value);
+  }
+  if (Array.isArray(value)) {
+    return [
+      ...match,
+      ...value.reduce((acc, item) => acc.concat(getAllInternal(item, predicate)), [])
+    ];
+  }
+  if (value && typeof value === 'object') {
+    return [
+      ...match,
+      ...Object.values(value).reduce((acc, item) => acc.concat(getAllInternal(item, predicate)), [])
+    ];
+  }
+  return match;
+}
+
 export async function pmap<A extends ValueType, T extends ValueType>(
   value: A,
   predicate: (a: any) => a is T,

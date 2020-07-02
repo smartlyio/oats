@@ -2,7 +2,7 @@ import * as jsc from 'jsverify';
 import * as _ from 'lodash';
 import * as assert from 'assert';
 import { promisify } from 'util';
-import { make, pmap, set, map } from '../src/runtime';
+import { make, pmap, set, map, getAll } from '../src/runtime';
 import { TestClass } from './test-class';
 
 const getWithTraversalPath = (dict: any, path: string[]): any => {
@@ -209,6 +209,55 @@ describe('map', () => {
       const value = getWithTraversalPath(mapped, path);
       expect(value).toEqual(value.toUpperCase());
     });
+    return true;
+  });
+});
+
+describe('getAll', () => {
+  jsc.property('returns empty array when no matches', jsc.json, async dict => {
+    const items = await getAll(dict, (_n: any): _n is string => false);
+    expect(items).toEqual([]);
+    return true;
+  });
+
+  jsc.property(
+    'matches array filter with one dimensional arrays',
+    jsc.array(jsc.oneof([jsc.asciistring, jsc.integer, jsc.bool])),
+    async arr => {
+      const items = await getAll(arr, (n: any): n is string => _.isString(n));
+      expect(items).toEqual(arr.filter(item => _.isString(item)));
+      return true;
+    }
+  );
+
+  jsc.property(
+    'matches Object.values.filter with one dimensional objects',
+    jsc.dict(jsc.oneof([jsc.asciistring, jsc.integer, jsc.bool])),
+    async dict => {
+      const items = await getAll(dict, (n: any): n is string => _.isString(n));
+      expect(items).toEqual(Object.values(dict).filter(item => _.isString(item)));
+      return true;
+    }
+  );
+
+  jsc.property(
+    'matches single primitives',
+    jsc.oneof([jsc.asciistring, jsc.integer, jsc.bool]),
+    async item => {
+      const items = await getAll(item, (n: any): n is string => _.isString(n));
+      expect(items).toEqual(_.isString(item) ? [item] : []);
+      return true;
+    }
+  );
+
+  jsc.property('returns all nested values with the property', jsc.json, async value => {
+    const predicate = (n: any): n is object => typeof n === 'object';
+    const found: any[] = [];
+    map(value, predicate, a => {
+      found.push(a);
+      return a;
+    });
+    expect(getAll(value, predicate)).toEqual(found);
     return true;
   });
 });
