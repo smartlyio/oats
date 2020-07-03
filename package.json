@@ -67,7 +67,7 @@
     "koa-router": "9.1.0",
     "prettier": "2.0.5",
     "ts-jest": "26.1.1",
-    "ts-node-dev": "1.0.0-pre.24",
+    "ts-node-dev": "1.0.0-pre.50",
     "typescript": "3.9.6"
   },
   "jest": {
