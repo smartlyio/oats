@@ -62,7 +62,7 @@
     "jest": "26.1.0",
     "jsverify": "0.8.4",
     "koa": "2.13.0",
-    "koa-body": "4.0.4",
+    "koa-body": "4.2.0",
     "koa-mount": "4.0.0",
     "koa-router": "9.1.0",
     "prettier": "2.0.5",
