@@ -59,7 +59,7 @@
     "eslint-plugin-prettier": "3.1.4",
     "fast-check": "1.23.0",
     "form-data": "3.0.0",
-    "jest": "26.0.0",
+    "jest": "26.1.0",
     "jsverify": "0.8.4",
     "koa": "2.13.0",
     "koa-body": "4.0.4",
