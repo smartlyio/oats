@@ -27,7 +27,7 @@
     "@smartlyio/safe-navigation": "5.0.0",
     "js-yaml": "3.13.1",
     "lodash": "4.17.15",
-    "openapi3-ts": "1.2.0"
+    "openapi3-ts": "1.4.0"
   },
   "keywords": [
     "oats",
