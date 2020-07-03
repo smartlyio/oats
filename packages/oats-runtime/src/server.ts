@@ -99,7 +99,7 @@ function throwResponseValidationError(tag: string, originalValue: any, e: Make<a
   throw new ResponseValidationError(tag, originalValue, e.errors);
 }
 
-function lowercaseObject(o: {} | undefined | null): {} | null | undefined {
+function lowercaseObject(o: object | undefined | null): object | null | undefined {
   if (o == null) {
     return o;
   }
@@ -110,14 +110,14 @@ function lowercaseObject(o: {} | undefined | null): {} | null | undefined {
   return result;
 }
 
-function voidify(value: {} | undefined | null) {
+function voidify(value: object | undefined | null) {
   if (value && Object.keys(value).length > 0) {
     return value;
   }
   return null;
 }
 
-function cleanHeaders<H>(maker: Maker<any, H>, headers: {}) {
+function cleanHeaders<H>(maker: Maker<any, H>, headers: object) {
   const normalized = voidify(lowercaseObject(headers));
   const acceptsNull = maker(null);
   if (acceptsNull.isSuccess()) {

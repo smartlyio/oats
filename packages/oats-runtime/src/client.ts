@@ -4,7 +4,7 @@ import safe from '@smartlyio/safe-navigation';
 
 type HeaderProp<H, Next> = H extends void ? Next : { headers: H } & Next;
 type QueryProp<Q, Next> = Q extends void ? Next : { query: Q } & Next;
-type BodyProp<B> = B extends void ? {} : { body: B };
+type BodyProp<B> = B extends void ? object : { body: B };
 
 export type ClientArg<
   H extends server.Headers | void,
@@ -17,7 +17,7 @@ export type ClientEndpoint<
   Q extends server.Query | void,
   B extends server.RequestBody<any> | void,
   R extends server.Response<number, any, any>
-> = {} extends ClientArg<H, Q, B> ? () => Promise<R> : (ctx: ClientArg<H, Q, B>) => Promise<R>;
+> = object extends ClientArg<H, Q, B> ? () => Promise<R> : (ctx: ClientArg<H, Q, B>) => Promise<R>;
 
 type PathParam = (param: string) => ClientSpec | ClientEndpoint<any, any, any, any>;
 export interface ClientSpec {
