@@ -435,13 +435,12 @@
     lodash "^4.17.4"
     randexp "^0.5.3"
 
-"@smartlyio/oats@2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats/-/oats-2.1.0.tgz#a42da67d9f97f00ed89eaad96b61dff7316bf045"
-  integrity sha512-vVzJvRcsoJN5VTjtKMVDlmi+IS5DJsbOVzcjxwy8V/0UwI1eLh7PLKlbIQGvOAFcUoIIIslTP0SZhTfKgEbDCQ==
+"@smartlyio/oats@2.5.1":
+  version "2.5.1"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats/-/oats-2.5.1.tgz#d154d73e0945e4094bdc9e5e9f09f6c3ca7e2dd2"
+  integrity sha512-N9tnkpngICTZqp/9UDs4nIBKeJMYjDHzs+78S8O9q62b6nMFwr93PYHW3ieF8mflurqUGsMuV73Mf5Ia9J67jg==
   dependencies:
     "@smartlyio/safe-navigation" "^4.0.1"
-    "@types/js-yaml" "^3.12.1"
     js-yaml "^3.13.1"
     lodash "^4.17.4"
     openapi3-ts "^1.2.0"
@@ -548,11 +547,6 @@
   dependencies:
     jest-diff "^25.2.1"
     pretty-format "^25.2.1"
-
-"@types/js-yaml@^3.12.1":
-  version "3.12.2"
-  resolved "https://registry.yarnpkg.com/@types/js-yaml/-/js-yaml-3.12.2.tgz#a35a1809c33a68200fb6403d1ad708363c56470a"
-  integrity sha512-0CFu/g4mDSNkodVwWijdlr8jH7RoplRWNgovjFLEZeT+QEbbZXjBmCe3HwaWheAlCbHwomTwzZoSedeOycABug==
 
 "@types/json-schema@^7.0.3":
   version "7.0.4"
