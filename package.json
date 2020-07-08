@@ -26,7 +26,7 @@
   "dependencies": {
     "@smartlyio/safe-navigation": "5.0.0",
     "js-yaml": "3.14.0",
-    "lodash": "4.17.15",
+    "lodash": "4.17.19",
     "openapi3-ts": "1.4.0"
   },
   "keywords": [
