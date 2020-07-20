@@ -368,7 +368,14 @@
     lodash "^4.17.4"
     openapi3-ts "^1.2.0"
 
-"@smartlyio/safe-navigation@4.0.1", "@smartlyio/safe-navigation@^4.0.1":
+"@smartlyio/safe-navigation@5.0.0":
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/@smartlyio/safe-navigation/-/safe-navigation-5.0.0.tgz#f43c5703e9f830712f8604a5ce6000dbff948799"
+  integrity sha512-Y2WJtaSGjKtweV7h3iHoipdH1iHgGNz55lcGTSTuwNi4ORYmXVbyHNVRhu+AcS2OfCNehMS+OCOyB37bYj5bgg==
+  dependencies:
+    lodash "^4.17.4"
+
+"@smartlyio/safe-navigation@^4.0.1":
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/@smartlyio/safe-navigation/-/safe-navigation-4.0.1.tgz#f6666e9b040275c30cbf80bf50f9d2ecddc85660"
   integrity sha512-k0iC1PIFZgkGpxnGV0qm+swtpSZv5fkrkJe9BYFzmQ4f/skBcDbq5XFA25ZMXphz5FD5p2yE1rSM8IKwGZafPQ==
