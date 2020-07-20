@@ -38,7 +38,7 @@
     "client"
   ],
   "devDependencies": {
-    "@smartlyio/oats": "2.5.1",
+    "@smartlyio/oats": "2.5.2",
     "@smartlyio/oats-fast-check": "0.0.6",
     "@types/jest": "26.0.5",
     "@types/lodash": "4.14.157",
