@@ -50,7 +50,7 @@
     "eslint-plugin-import": "2.22.0",
     "eslint-plugin-jest": "23.18.0",
     "eslint-plugin-prettier": "3.1.4",
-    "fast-check": "1.23.0",
+    "fast-check": "1.26.0",
     "jest": "26.1.0",
     "jsverify": "0.8.4",
     "prettier": "1.19.1",
