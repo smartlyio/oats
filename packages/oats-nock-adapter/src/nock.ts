@@ -8,13 +8,7 @@ function parseContentDisposition(contentDispositionValue: string): Record<string
     .map(part => part.trim())
     .map(part => {
       const [key, ...values] = part.split('=');
-      return [
-        key,
-        values
-          .join('=')
-          .replace(/^"/g, '')
-          .replace(/"$/, '')
-      ];
+      return [key, values.join('=').replace(/^"/g, '').replace(/"$/, '')];
     })
     .reduce((memo, [key, value]) => ({ ...memo, [key]: value }), {});
 }
@@ -196,31 +190,28 @@ export class Server<Spec> {
     const nocked = this.getNock(server, method, path);
     nock(server)
       [method](getPathRegex(path))
-      .reply(
-        // tslint:disable-next-line:only-arrow-functions
-        async function(uri, requestBody, cb) {
-          const body = getBody(this.req.headers['content-type'], requestBody);
-          const url = new URL('http://host-for-nock' + uri);
-          try {
-            const result = await nocked({
-              path,
-              method,
-              servers: [server],
-              op,
-              headers: this.req.headers,
-              params: getParams(path, uri),
-              query: getQuery(url),
-              body,
-              requestContext: null
-            });
-            const status = result.status;
-            const responseBody = result.value.value;
-            cb(null, [status, responseBody]);
-          } catch (e) {
-            cb(e, [400, e.message]);
-          }
+      .reply(async function (uri, requestBody, cb) {
+        const body = getBody(this.req.headers['content-type'], requestBody);
+        const url = new URL('http://host-for-nock' + uri);
+        try {
+          const result = await nocked({
+            path,
+            method,
+            servers: [server],
+            op,
+            headers: this.req.headers,
+            params: getParams(path, uri),
+            query: getQuery(url),
+            body,
+            requestContext: null
+          });
+          const status = result.status;
+          const responseBody = result.value.value;
+          cb(null, [status, responseBody]);
+        } catch (e) {
+          cb(e, [400, e.message]);
         }
-      )
+      })
       .persist(true);
   }
 }
