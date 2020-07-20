@@ -51,7 +51,7 @@ function adapter<StateT, CustomT, RequestContext>(
  * @param spec
  * @param requestContextCreator
  */
-export function bind<Spec, RequestContext = void, StateT = any, CustomT = {}>(
+export function bind<Spec, RequestContext = void, StateT = any, CustomT = Record<string, unknown>>(
   handler: runtime.server.HandlerFactory<Spec>,
   spec: Spec,
   requestContextCreator?: (ctx: ParameterizedContext<StateT, CustomT>) => RequestContext
