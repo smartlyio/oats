@@ -1,6 +1,6 @@
 {
   "name": "@smartlyio/oats-axios-adapter",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "license": "MIT",
   "description": "Axios adapter for Oats a Openapi3 based generator for typescript aware servers and clients",
   "private": false,
