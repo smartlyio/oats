@@ -35,6 +35,8 @@
     "no-constant-condition": "off",
     "no-prototype-builtins": "off",
     "no-unreachable": "error",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/no-var-requires": "error",
     "@typescript-eslint/no-floating-promises": "error",
     "@typescript-eslint/no-unused-vars": [2, { "ignoreRestSiblings": true, "argsIgnorePattern": "^_" }],
