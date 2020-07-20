@@ -332,18 +332,18 @@
   dependencies:
     type-detect "4.0.8"
 
-"@smartlyio/oats-runtime@2.3.0":
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-2.3.0.tgz#2cdc234fcd980ece8c35ff4bc0ed951cd82280ec"
-  integrity sha512-jQoAbo0DVqMnEYrdNIMvS4PYyWeFpwlkDrGoGRM8nMIJqxXfWlv6as9TXzbW6RPahrL0EWsq5SKFEemBCNpMmA==
+"@smartlyio/oats-runtime@2.6.1":
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-2.6.1.tgz#f07c182340c9e600625a02e7e0f64987b59087d9"
+  integrity sha512-kDjc3Oy/W5eTzZNCRLsTnLJ6zy4VEhpOdioKjp8pdzKTqsiMoxa9afA6wV7Jf3f8UXN5BxwVjFISndYjeqiOJQ==
   dependencies:
-    "@smartlyio/safe-navigation" "^4.0.1"
-    lodash "^4.17.4"
+    "@smartlyio/safe-navigation" "4.0.1"
+    lodash "4.17.4"
 
-"@smartlyio/oats@2.3.0":
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats/-/oats-2.3.0.tgz#644ab1e6ac815ad0b7f02f29550ddcdec8416bf5"
-  integrity sha512-x1PRTa+4GJshKbtrYoE3S9kf4Q+frKGgikI5t/wryfmn4zGyXL1eOkKbsD6sTsg2/+cVElbNXe5MzF9kAfp+dA==
+"@smartlyio/oats@2.5.1":
+  version "2.5.1"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats/-/oats-2.5.1.tgz#d154d73e0945e4094bdc9e5e9f09f6c3ca7e2dd2"
+  integrity sha512-N9tnkpngICTZqp/9UDs4nIBKeJMYjDHzs+78S8O9q62b6nMFwr93PYHW3ieF8mflurqUGsMuV73Mf5Ia9J67jg==
   dependencies:
     "@smartlyio/safe-navigation" "^4.0.1"
     js-yaml "^3.13.1"
