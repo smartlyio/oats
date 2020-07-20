@@ -569,33 +569,26 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@smartlyio/oats-axios-adapter@2.2.0":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats-axios-adapter/-/oats-axios-adapter-2.2.0.tgz#e41bad327bf0002d1dcad7e211894a29d3158360"
-  integrity sha512-K9d7JSjY6tU08TZlofku3UtB+hRu1Ztbp3QV/RIu91IeqBD/ywofxFZQy+dTgGE4nlwq1f0CJj/27oK3iojrRA==
+"@smartlyio/oats-axios-adapter@2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats-axios-adapter/-/oats-axios-adapter-2.2.1.tgz#d878c668e1e8f383ecd5196cf73a7e22e31ca049"
+  integrity sha512-pk31fOs2XPWE6Iis/ZojoKgzgxdWKJBVtCJN9Jcxb/sKKbnrKrKw2A7xNymrveDS/DZSTDqowJASKX9/vlwIew==
   dependencies:
-    "@types/form-data" "^2.2.1"
-    form-data "^3.0.0"
+    "@types/form-data" "2.2.1"
+    form-data "3.0.0"
 
-"@smartlyio/oats-koa-adapter@2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats-koa-adapter/-/oats-koa-adapter-2.0.0.tgz#0ff88df7d9767034be1127084fedc9fe8de2898f"
-  integrity sha512-4FeQ1szZQWGISIOeAyd0pUH14jbHJSp2yhSz8Gq8XgPwyMV8vtBCoIpKFvNHAiA7V1cr1vg+UIJ9eXhU5iJ4FQ==
+"@smartlyio/oats-koa-adapter@2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats-koa-adapter/-/oats-koa-adapter-2.0.1.tgz#aac15fb429de4c945d9bdc5c466afc437b0fe94f"
+  integrity sha512-Ub5g/EA3zBP3++lWD3dJRU+7Gn2JXK0+GoOTFJAsKD0ebW4SPkquTrXXGVOuD7zGu9BGaCEbQxGb2daaGp3XeA==
 
-"@smartlyio/oats-runtime@2.6.1":
-  version "2.6.1"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-2.6.1.tgz#f07c182340c9e600625a02e7e0f64987b59087d9"
-  integrity sha512-kDjc3Oy/W5eTzZNCRLsTnLJ6zy4VEhpOdioKjp8pdzKTqsiMoxa9afA6wV7Jf3f8UXN5BxwVjFISndYjeqiOJQ==
+"@smartlyio/oats-runtime@2.6.2":
+  version "2.6.2"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-2.6.2.tgz#04b009651b15824fcb23b73f5a0bba543ce6d4d3"
+  integrity sha512-T3G4jXA1nzaZIkzPzHEW3lNvnF3zfqN0YXwYh424I6Ih4FTxM1eTwlYT99YXODZ2uwaaSBJl6zrf1tNyjm3DYg==
   dependencies:
-    "@smartlyio/safe-navigation" "4.0.1"
-    lodash "4.17.4"
-
-"@smartlyio/safe-navigation@4.0.1":
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/@smartlyio/safe-navigation/-/safe-navigation-4.0.1.tgz#f6666e9b040275c30cbf80bf50f9d2ecddc85660"
-  integrity sha512-k0iC1PIFZgkGpxnGV0qm+swtpSZv5fkrkJe9BYFzmQ4f/skBcDbq5XFA25ZMXphz5FD5p2yE1rSM8IKwGZafPQ==
-  dependencies:
-    lodash "^4.17.4"
+    "@smartlyio/safe-navigation" "5.0.0"
+    lodash "4.17.19"
 
 "@smartlyio/safe-navigation@5.0.0":
   version "5.0.0"
@@ -714,12 +707,12 @@
     "@types/express-serve-static-core" "*"
     "@types/serve-static" "*"
 
-"@types/form-data@^2.2.1":
-  version "2.5.0"
-  resolved "https://registry.yarnpkg.com/@types/form-data/-/form-data-2.5.0.tgz#5025f7433016f923348434c40006d9a797c1b0e8"
-  integrity sha512-23/wYiuckYYtFpL+4RPWiWmRQH2BjFuqCUi2+N3amB1a1Drv+i/byTrGvlLwRVLFNAZbwpbQ7JvTK+VCAPMbcg==
+"@types/form-data@2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@types/form-data/-/form-data-2.2.1.tgz#ee2b3b8eaa11c0938289953606b745b738c54b1e"
+  integrity sha512-JAMFhOaHIciYVh8fb5/83nmuO/AHwmto+Hq7a9y8FzLDcC1KCU344XDOMEmahnrTFlHjgh4L0WJFczNIX2GxnQ==
   dependencies:
-    form-data "*"
+    "@types/node" "*"
 
 "@types/formidable@^1.0.31":
   version "1.0.31"
@@ -2208,16 +2201,7 @@ forever-agent@~0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/forever-agent/-/forever-agent-0.6.1.tgz#fbc71f0c41adeb37f96c577ad1ed42d8fdacca91"
 
-form-data@*:
-  version "2.5.1"
-  resolved "https://registry.yarnpkg.com/form-data/-/form-data-2.5.1.tgz#f2cbec57b5e59e23716e128fe44d4e5dd23895f4"
-  integrity sha512-m21N3WOmEEURgk6B9GLOE4RuWOFf28Lhh9qGYeNlGq4VDXUlJy2th2slBNU8Gp8EzloYZOibZJ7t5ecIrFSjVA==
-  dependencies:
-    asynckit "^0.4.0"
-    combined-stream "^1.0.6"
-    mime-types "^2.1.12"
-
-form-data@3.0.0, form-data@^3.0.0:
+form-data@3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/form-data/-/form-data-3.0.0.tgz#31b7e39c85f1355b7139ee0c647cf0de7f83c682"
   integrity sha512-CKMFDglpbMi6PyN+brwB9Q/GOw0eAnsrEZDgcsH5Krhz5Od/haKHAX0NmQfha2zPPz0JpWzA7GJHGSnvCRLWsg==
@@ -3452,11 +3436,6 @@ lodash@4.17.19, lodash@^4.17.11, lodash@^4.17.13, lodash@^4.17.14, lodash@^4.17.
   version "4.17.19"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.19.tgz#e48ddedbe30b3321783c5b4301fbd353bc1e4a4b"
   integrity sha512-JNvd8XER9GQX0v2qJgsaN/mzFCNA5BRe/j8JN9d+tWyGLSodKQHKFicdwNYzWwI3wjRnaKPsGj1XkBjx/F96DQ==
-
-lodash@4.17.4:
-  version "4.17.4"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
-  integrity sha1-eCA6TRwyiuHYbcpkYONptX9AVa4=
 
 make-dir@^3.0.0:
   version "3.0.0"
