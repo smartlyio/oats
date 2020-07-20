@@ -24,9 +24,9 @@
     "typescript": "^3.6.3"
   },
   "dependencies": {
-    "@smartlyio/safe-navigation": "^4.0.1",
-    "lodash": "^4.17.4",
-    "randexp": "^0.5.3"
+    "@smartlyio/safe-navigation": "4.0.1",
+    "lodash": "4.17.4",
+    "randexp": "0.5.3"
   },
   "keywords": [
     "oats",
@@ -38,25 +38,25 @@
     "client"
   ],
   "devDependencies": {
-    "@smartlyio/oats": "^2.3.0",
-    "@smartlyio/oats-runtime": "^2.3.0",
-    "@types/jest": "^25.1.4",
-    "@types/lodash": "^4.14.140",
-    "@types/node": "^13.9.1",
-    "@typescript-eslint/eslint-plugin": "^2.24.0",
-    "@typescript-eslint/parser": "^2.24.0",
-    "eslint": "^6.8.0",
-    "eslint-config-prettier": "^6.10.0",
-    "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-jest": "^23.8.2",
-    "eslint-plugin-prettier": "^3.1.2",
-    "fast-check": "^1.23.0",
-    "jest": "^25.1.0",
-    "jsverify": "^0.8.4",
-    "prettier": "^1.19.1",
-    "ts-jest": "^25.2.1",
-    "ts-node": "^8.6.2",
-    "typescript": "^3.8.3"
+    "@smartlyio/oats": "2.3.0",
+    "@smartlyio/oats-runtime": "2.3.0",
+    "@types/jest": "25.1.4",
+    "@types/lodash": "4.14.140",
+    "@types/node": "13.9.1",
+    "@typescript-eslint/eslint-plugin": "2.24.0",
+    "@typescript-eslint/parser": "2.24.0",
+    "eslint": "6.8.0",
+    "eslint-config-prettier": "6.10.0",
+    "eslint-plugin-import": "2.20.1",
+    "eslint-plugin-jest": "23.8.2",
+    "eslint-plugin-prettier": "3.1.2",
+    "fast-check": "1.23.0",
+    "jest": "25.1.0",
+    "jsverify": "0.8.4",
+    "prettier": "1.19.1",
+    "ts-jest": "25.2.1",
+    "ts-node": "8.6.2",
+    "typescript": "3.8.3"
   },
   "jest": {
     "testEnvironment": "node",
