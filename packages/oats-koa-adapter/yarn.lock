@@ -18,18 +18,18 @@
     esutils "^2.0.2"
     js-tokens "^4.0.0"
 
-"@smartlyio/oats-runtime@2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-2.0.0.tgz#6a0dc99f47a8cbf09c617caae0d5226143392c9e"
-  integrity sha512-zRTkKZmN+BbDhtQoqnnrdT8wQvVY2rj8VrfCNnpewX4fdTTzxDgY3lX7l0B5G50jQ86TMlUJ74dnWmEXiK1fwQ==
+"@smartlyio/oats-runtime@2.6.2":
+  version "2.6.2"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-2.6.2.tgz#04b009651b15824fcb23b73f5a0bba543ce6d4d3"
+  integrity sha512-T3G4jXA1nzaZIkzPzHEW3lNvnF3zfqN0YXwYh424I6Ih4FTxM1eTwlYT99YXODZ2uwaaSBJl6zrf1tNyjm3DYg==
   dependencies:
-    "@smartlyio/safe-navigation" "^4.0.1"
-    lodash "^4.17.4"
+    "@smartlyio/safe-navigation" "5.0.0"
+    lodash "4.17.19"
 
-"@smartlyio/safe-navigation@^4.0.1":
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/@smartlyio/safe-navigation/-/safe-navigation-4.0.1.tgz#f6666e9b040275c30cbf80bf50f9d2ecddc85660"
-  integrity sha512-k0iC1PIFZgkGpxnGV0qm+swtpSZv5fkrkJe9BYFzmQ4f/skBcDbq5XFA25ZMXphz5FD5p2yE1rSM8IKwGZafPQ==
+"@smartlyio/safe-navigation@5.0.0":
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/@smartlyio/safe-navigation/-/safe-navigation-5.0.0.tgz#f43c5703e9f830712f8604a5ce6000dbff948799"
+  integrity sha512-Y2WJtaSGjKtweV7h3iHoipdH1iHgGNz55lcGTSTuwNi4ORYmXVbyHNVRhu+AcS2OfCNehMS+OCOyB37bYj5bgg==
   dependencies:
     lodash "^4.17.4"
 
@@ -967,15 +967,15 @@ locate-path@^2.0.0:
     p-locate "^2.0.0"
     path-exists "^3.0.0"
 
+lodash@4.17.19, lodash@^4.17.19:
+  version "4.17.19"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.19.tgz#e48ddedbe30b3321783c5b4301fbd353bc1e4a4b"
+  integrity sha512-JNvd8XER9GQX0v2qJgsaN/mzFCNA5BRe/j8JN9d+tWyGLSodKQHKFicdwNYzWwI3wjRnaKPsGj1XkBjx/F96DQ==
+
 lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.4:
   version "4.17.15"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
   integrity sha512-8xOcRHvCjnocdS5cpwXQXVzmmh5e5+saE2QGoeQmbKmRS6J3VQppPOIt0MnmE+4xlZoumy0GPG0D0MVIQbNA1A==
-
-lodash@^4.17.19:
-  version "4.17.19"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.19.tgz#e48ddedbe30b3321783c5b4301fbd353bc1e4a4b"
-  integrity sha512-JNvd8XER9GQX0v2qJgsaN/mzFCNA5BRe/j8JN9d+tWyGLSodKQHKFicdwNYzWwI3wjRnaKPsGj1XkBjx/F96DQ==
 
 minimatch@^3.0.4:
   version "3.0.4"
