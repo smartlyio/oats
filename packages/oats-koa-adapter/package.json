@@ -36,19 +36,19 @@
     "client"
   ],
   "devDependencies": {
-    "@smartlyio/oats-runtime": "^2.0.0",
+    "@smartlyio/oats-runtime": "2.0.0",
     "@types/koa": "2.11.2",
-    "@types/koa-router": "^7.0.23",
-    "@types/lodash": "^4.14.140",
-    "@types/node": "^11.11.3",
-    "@typescript-eslint/eslint-plugin": "^2.24.0",
-    "@typescript-eslint/parser": "^2.24.0",
-    "eslint": "^6.8.0",
-    "eslint-config-prettier": "^6.10.0",
-    "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-jest": "^23.8.2",
-    "eslint-plugin-prettier": "^3.1.2",
-    "prettier": "^1.19.1",
-    "typescript": "^3.8.3"
+    "@types/koa-router": "7.4.1",
+    "@types/lodash": "4.14.140",
+    "@types/node": "11.11.3",
+    "@typescript-eslint/eslint-plugin": "2.24.0",
+    "@typescript-eslint/parser": "2.24.0",
+    "eslint": "6.8.0",
+    "eslint-config-prettier": "6.10.0",
+    "eslint-plugin-import": "2.20.1",
+    "eslint-plugin-jest": "23.8.2",
+    "eslint-plugin-prettier": "3.1.2",
+    "prettier": "1.19.1",
+    "typescript": "3.8.3"
   }
 }
