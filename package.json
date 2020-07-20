@@ -24,7 +24,7 @@
     "typescript": "^3.8.3"
   },
   "dependencies": {
-    "@smartlyio/safe-navigation": "5.0.0",
+    "@smartlyio/safe-navigation": "5.0.1",
     "js-yaml": "3.14.0",
     "lodash": "4.17.19",
     "openapi3-ts": "1.4.0"
