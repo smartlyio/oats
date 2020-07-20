@@ -22,7 +22,7 @@
     "@smartlyio/oats-runtime": "^2.0.0",
     "koa": "^2.3.0",
     "koa-body": "^4.0.4",
-    "koa-router": "^8.0.0",
+    "koa-router": "^9.0.0",
     "typescript": "^3.6.3"
   },
   "keywords": [
