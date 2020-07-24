@@ -468,13 +468,13 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@smartlyio/oats-axios-adapter@2.2.0":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats-axios-adapter/-/oats-axios-adapter-2.2.0.tgz#e41bad327bf0002d1dcad7e211894a29d3158360"
-  integrity sha512-K9d7JSjY6tU08TZlofku3UtB+hRu1Ztbp3QV/RIu91IeqBD/ywofxFZQy+dTgGE4nlwq1f0CJj/27oK3iojrRA==
+"@smartlyio/oats-axios-adapter@2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats-axios-adapter/-/oats-axios-adapter-2.2.1.tgz#d878c668e1e8f383ecd5196cf73a7e22e31ca049"
+  integrity sha512-pk31fOs2XPWE6Iis/ZojoKgzgxdWKJBVtCJN9Jcxb/sKKbnrKrKw2A7xNymrveDS/DZSTDqowJASKX9/vlwIew==
   dependencies:
-    "@types/form-data" "^2.2.1"
-    form-data "^3.0.0"
+    "@types/form-data" "2.2.1"
+    form-data "3.0.0"
 
 "@smartlyio/oats-runtime@2.6.2":
   version "2.6.2"
@@ -484,15 +484,15 @@
     "@smartlyio/safe-navigation" "5.0.0"
     lodash "4.17.19"
 
-"@smartlyio/oats@2.5.1":
-  version "2.5.1"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats/-/oats-2.5.1.tgz#d154d73e0945e4094bdc9e5e9f09f6c3ca7e2dd2"
-  integrity sha512-N9tnkpngICTZqp/9UDs4nIBKeJMYjDHzs+78S8O9q62b6nMFwr93PYHW3ieF8mflurqUGsMuV73Mf5Ia9J67jg==
+"@smartlyio/oats@2.5.2":
+  version "2.5.2"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats/-/oats-2.5.2.tgz#4760f04b9de546b3a65ed1c30f9ff635d06b60a8"
+  integrity sha512-tx834/Cc2jems5pNjbSs+xb4SdY8Z8rZp6AcdbuQpCKptu6SjL0u5PKrChPKe4j9wV8r60toteB0VFLjSFGHrw==
   dependencies:
-    "@smartlyio/safe-navigation" "^4.0.1"
-    js-yaml "^3.13.1"
-    lodash "^4.17.4"
-    openapi3-ts "^1.2.0"
+    "@smartlyio/safe-navigation" "5.0.1"
+    js-yaml "3.14.0"
+    lodash "4.17.19"
+    openapi3-ts "1.4.0"
 
 "@smartlyio/safe-navigation@5.0.0":
   version "5.0.0"
@@ -507,13 +507,6 @@
   integrity sha512-d3Vs/UcOlZv0Ph6fAId7bJEQ5V1EUtwwi03I6HNT+1pXWnGSRPujHcs75v1c+JFwPyBID7n7PnfUw+ZkKAeOww==
   dependencies:
     lodash "4.17.19"
-
-"@smartlyio/safe-navigation@^4.0.1":
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/@smartlyio/safe-navigation/-/safe-navigation-4.0.1.tgz#f6666e9b040275c30cbf80bf50f9d2ecddc85660"
-  integrity sha512-k0iC1PIFZgkGpxnGV0qm+swtpSZv5fkrkJe9BYFzmQ4f/skBcDbq5XFA25ZMXphz5FD5p2yE1rSM8IKwGZafPQ==
-  dependencies:
-    lodash "^4.17.4"
 
 "@types/babel__core@^7.0.0", "@types/babel__core@^7.1.7":
   version "7.1.9"
@@ -558,12 +551,12 @@
   resolved "https://registry.yarnpkg.com/@types/eslint-visitor-keys/-/eslint-visitor-keys-1.0.0.tgz#1ee30d79544ca84d68d4b3cdb0af4f205663dd2d"
   integrity sha512-OCutwjDZ4aFS6PB1UZ988C4YgwlBHJd6wCeQqaLdmadZ/7e+w79+hbMUFC1QXDNCmdyoRfAFdm0RypzwR+Qpag==
 
-"@types/form-data@^2.2.1":
-  version "2.5.0"
-  resolved "https://registry.yarnpkg.com/@types/form-data/-/form-data-2.5.0.tgz#5025f7433016f923348434c40006d9a797c1b0e8"
-  integrity sha512-23/wYiuckYYtFpL+4RPWiWmRQH2BjFuqCUi2+N3amB1a1Drv+i/byTrGvlLwRVLFNAZbwpbQ7JvTK+VCAPMbcg==
+"@types/form-data@2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@types/form-data/-/form-data-2.2.1.tgz#ee2b3b8eaa11c0938289953606b745b738c54b1e"
+  integrity sha512-JAMFhOaHIciYVh8fb5/83nmuO/AHwmto+Hq7a9y8FzLDcC1KCU344XDOMEmahnrTFlHjgh4L0WJFczNIX2GxnQ==
   dependencies:
-    form-data "*"
+    "@types/node" "*"
 
 "@types/graceful-fs@^4.1.2":
   version "4.1.3"
@@ -1894,7 +1887,7 @@ forever-agent@~0.6.1:
   resolved "https://registry.yarnpkg.com/forever-agent/-/forever-agent-0.6.1.tgz#fbc71f0c41adeb37f96c577ad1ed42d8fdacca91"
   integrity sha1-+8cfDEGt6zf5bFd60e1C2P2sypE=
 
-form-data@*, form-data@^3.0.0:
+form-data@3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/form-data/-/form-data-3.0.0.tgz#31b7e39c85f1355b7139ee0c647cf0de7f83c682"
   integrity sha512-CKMFDglpbMi6PyN+brwB9Q/GOw0eAnsrEZDgcsH5Krhz5Od/haKHAX0NmQfha2zPPz0JpWzA7GJHGSnvCRLWsg==
@@ -2815,6 +2808,14 @@ js-tokens@^4.0.0:
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
   integrity sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==
 
+js-yaml@3.14.0:
+  version "3.14.0"
+  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.14.0.tgz#a7a34170f26a21bb162424d8adacb4113a69e482"
+  integrity sha512-/4IbIeHcD9VMHFqDR/gQ7EdZdLimOvW2DdcxFjdyyZ9NsbS+ccrXqVWDtab/lRl5AlUqmpBx8EhPaWR+OtY17A==
+  dependencies:
+    argparse "^1.0.7"
+    esprima "^4.0.0"
+
 js-yaml@^3.13.1:
   version "3.13.1"
   resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.13.1.tgz#aff151b30bfdfa8e49e05da22e7415e9dfa37847"
@@ -3333,10 +3334,10 @@ onetime@^5.1.0:
   dependencies:
     mimic-fn "^2.1.0"
 
-openapi3-ts@^1.2.0:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/openapi3-ts/-/openapi3-ts-1.3.0.tgz#a6b4a6dda1d037cb826f3230426ce5243c75edb3"
-  integrity sha512-Xk3hsB0PzB4dzr/r/FdmK+VfQbZH7lQQ2iipMS1/1eoz1wUvh5R7rmOakYvw0bQJJE6PYrOLx8UHsYmzgTr+YQ==
+openapi3-ts@1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/openapi3-ts/-/openapi3-ts-1.4.0.tgz#679d5a24be0efc36f5de4fc2c4b8513663e16f65"
+  integrity sha512-8DmE2oKayvSkIR3XSZ4+pRliBsx19bSNeIzkTPswY8r4wvjX86bMxsORdqwAwMxE8PefOcSAT2auvi/0TZe9yA==
 
 optionator@^0.8.1:
   version "0.8.3"

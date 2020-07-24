@@ -37,8 +37,8 @@
     "client"
   ],
   "devDependencies": {
-    "@smartlyio/oats": "2.5.1",
-    "@smartlyio/oats-axios-adapter": "2.2.0",
+    "@smartlyio/oats": "2.5.2",
+    "@smartlyio/oats-axios-adapter": "2.2.1",
     "@smartlyio/oats-runtime": "2.6.2",
     "@types/jest": "26.0.7",
     "@types/lodash": "4.14.158",
