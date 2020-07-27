@@ -191,7 +191,7 @@ export class Server<Spec> {
     nock(server)
       [method](getPathRegex(path))
       .reply(async function (uri, requestBody, cb) {
-        const body = getBody(this.req.headers['content-type'], requestBody);
+        const body = getBody(this.req.headers?.['content-type'], requestBody);
         const url = new URL('http://host-for-nock' + uri);
         try {
           const result = await nocked({
