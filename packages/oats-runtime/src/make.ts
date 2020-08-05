@@ -309,6 +309,10 @@ export function makeAllOf(...all: any[]) {
   };
 }
 
+function isMagic(field: string) {
+  return ['__proto__', 'constructor'].indexOf(field) >= 0;
+}
+
 export function makeObject<
   P extends { [key: string]: Maker<any, any> | { optional: Maker<any, any> } }
 >(props: P, additionalProp?: any) {
@@ -318,6 +322,9 @@ export function makeObject<
     }
     const result: { [key: string]: any } = {};
     for (const index of Object.keys(props)) {
+      if (isMagic(index)) {
+        return error(`Using ${index} as field of an object is not allowed`);
+      }
       let maker: any = props[index];
       if (maker.optional) {
         if (!(index in value) || value[index] === undefined) {
@@ -332,6 +339,9 @@ export function makeObject<
       result[index] = propResult.success();
     }
     for (const index of Object.keys(value)) {
+      if (isMagic(index)) {
+        return error(`Using ${index} as objects additional field is not allowed.`);
+      }
       if (props[index]) {
         continue;
       }

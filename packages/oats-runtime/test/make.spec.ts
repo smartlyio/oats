@@ -155,6 +155,44 @@ describe('makeArray', () => {
 });
 
 describe('makeObject', () => {
+  describe('magic fields', () => {
+    it('disallows __proto__', () => {
+      const obj = Object.create(null);
+      obj.__proto__ = make.makeNumber();
+      const fun = make.makeObject(obj);
+      const value = JSON.parse(`{"__proto__": 1}`);
+      expect(fun(value).errors[0].error).toEqual(
+        'Using __proto__ as field of an object is not allowed'
+      );
+    });
+
+    it('disallows constructor', () => {
+      const obj = Object.create(null);
+      obj.constructor = make.makeNumber();
+      const fun = make.makeObject(obj);
+      const value = JSON.parse(`{"constructor": 1}`);
+      expect(fun(value).errors[0].error).toEqual(
+        'Using constructor as field of an object is not allowed'
+      );
+    });
+
+    it('disallows __proto__ in additionalFields', () => {
+      const fun = make.makeObject({}, make.makeNumber());
+      const value = JSON.parse(`{"__proto__": 1}`);
+      expect(fun(value).errors[0].error).toEqual(
+        'Using __proto__ as objects additional field is not allowed.'
+      );
+    });
+
+    it('disallows constructor in additionalFields', () => {
+      const fun = make.makeObject({}, make.makeNumber());
+      const value = JSON.parse(`{"constructor": 1}`);
+      expect(fun(value).errors[0].error).toEqual(
+        'Using constructor as objects additional field is not allowed.'
+      );
+    });
+  });
+
   it('drops unknown properties if told to', () => {
     const fun = make.makeObject({ a: make.makeNumber() });
     expect(fun({ a: 1, missing: 'a' }, { unknownField: 'drop' }).success()).toEqual({ a: 1 });
