@@ -1042,21 +1042,25 @@ function generateTopLevelMaker(
       [
         ts.createVariableDeclaration(
           name + oautil.typenamify(key),
-          ts.createTypeReferenceNode(fromLib('make', 'Maker'), [
-            ts.createTypeReferenceNode(shape, []),
-            ts.createTypeReferenceNode(resultType, [])
-          ]),
-          makeCall(makerFun, [
-            ts.createFunctionExpression(
-              undefined,
-              undefined,
-              undefined,
-              undefined,
-              [],
-              undefined,
-              ts.createBlock([ts.createReturn(generateMakerExpression(schema))])
-            )
-          ])
+          schema['x-oats-maker']
+            ? undefined
+            : ts.createTypeReferenceNode(fromLib('make', 'Maker'), [
+                ts.createTypeReferenceNode(shape, []),
+                ts.createTypeReferenceNode(resultType, [])
+              ]),
+          schema['x-oats-maker']
+            ? ts.createIdentifier(schema['x-oats-maker'])
+            : makeCall(makerFun, [
+                ts.createFunctionExpression(
+                  undefined,
+                  undefined,
+                  undefined,
+                  undefined,
+                  [],
+                  undefined,
+                  ts.createBlock([ts.createReturn(generateMakerExpression(schema))])
+                )
+              ])
         )
       ],
       ts.NodeFlags.Const
