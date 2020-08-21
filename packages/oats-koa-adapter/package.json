@@ -36,7 +36,7 @@
     "client"
   ],
   "devDependencies": {
-    "@smartlyio/oats-runtime": "2.6.2",
+    "@smartlyio/oats-runtime": "2.6.3",
     "@types/koa": "2.11.4",
     "@types/koa-router": "7.4.1",
     "@types/lodash": "4.14.159",
