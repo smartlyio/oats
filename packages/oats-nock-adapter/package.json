@@ -53,7 +53,7 @@
     "eslint-plugin-prettier": "3.1.4",
     "jest": "26.1.0",
     "jsverify": "0.8.4",
-    "nock": "13.0.2",
+    "nock": "13.0.4",
     "prettier": "2.0.5",
     "ts-jest": "26.2.0",
     "ts-node": "8.10.2",
