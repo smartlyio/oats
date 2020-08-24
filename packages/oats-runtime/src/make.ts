@@ -113,7 +113,7 @@ export interface MakeOptions {
 export type Maker<Shape, V> = (value: Shape, opts?: MakeOptions) => Make<V>;
 
 function getErrorWithValueMsg<T>(msg: string, value: T): Make<T> {
-  return error(`${msg}, but got "${value}" instead.`);
+  return error(`${msg}, but got "${JSON.stringify(value)}" instead.`);
 }
 
 function error<T>(error: string): Make<T> {
