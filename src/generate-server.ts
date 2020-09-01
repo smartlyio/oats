@@ -38,7 +38,7 @@ function fromTypes(name: string) {
 
 const readonly = [ts.createModifier(ts.SyntaxKind.ReadonlyKeyword)];
 
-function generateMethod<S extends oas.OperationObject, K extends keyof S>(
+function generateMethod<S extends oas.OperationObject>(
   path: string,
   method: string,
   schema: S,
