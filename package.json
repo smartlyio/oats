@@ -8,7 +8,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "render": "mkdir -p tmp/server && mkdir -p tmp/client && yarn ts-node examples/driver.ts && yarn ts-node render.ts",
+    "render": "yarn ts-node examples/driver.ts && yarn ts-node render.ts",
     "clean": "rm -rf ./dist/* && rm -rf ./tmp",
     "build": "yarn clean && yarn render && yarn jest && yarn lint && yarn tsc",
     "prepublish": "yarn build",
