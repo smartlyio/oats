@@ -12,8 +12,12 @@ interface ImportDefinition {
   importAs: string;
   importFile: string;
 }
-export type Resolve = (ref: string, options: Options) =>
-  | { importAs: string; importFrom: string, name: string, generate: () => Promise<void> }
+
+export type Resolve = (
+  ref: string,
+  options: Options
+) =>
+  | { importAs: string; importFrom: string; name: string; generate?: () => Promise<void> }
   | { name: string }
   | undefined;
 
@@ -23,7 +27,7 @@ export interface Options {
   externalOpenApiImports: readonly ImportDefinition[];
   targetFile: string;
   resolve: Resolve;
-  externalOpenApiSpecs: (url: string) => string | undefined;
+  externalOpenApiSpecs?: (url: string) => string | undefined;
   oas: oas.OpenAPIObject;
   runtimeModule: string;
   emitStatusCode: (status: number) => boolean;
@@ -34,26 +38,73 @@ export interface Options {
 
 export function deprecated(condition: any, message: string) {
   if (condition) {
+    // eslint-disable-next-line no-console
     console.log('deprecation warning: ' + message);
   }
 }
+const oatsBrandFieldName = '__oats_value_class_brand_tag';
+const makeTypeTypeName = 'Make';
+const runtimeLibrary = ts.createIdentifier('oar');
+const readonly = [ts.createModifier(ts.SyntaxKind.ReadonlyKeyword)];
+const statusCodes = [
+  100,
+  200,
+  201,
+  202,
+  204,
+  206,
+  301,
+  302,
+  303,
+  304,
+  307,
+  308,
+  400,
+  401,
+  403,
+  404,
+  406,
+  407,
+  410,
+  412,
+  416,
+  418,
+  425,
+  451,
+  500,
+  501,
+  502,
+  503,
+  504
+];
+
 export function run(options: Options) {
-  console.log(`generating ${options.targetFile} from ${options.sourceFile}`)
-  deprecated(options.externalOpenApiImports.length > 0, "'externalOpenApiImports' is deprecated. Consider using 'resolve' instead");
-  deprecated(options.externalOpenApiSpecs, "'externalOpenApiSpecs' is deprecated. Consider using 'resolve' instead");
+  // eslint-disable-next-line no-console
+  console.log(`generating ${options.targetFile} from ${options.sourceFile}`);
+  deprecated(
+    options.externalOpenApiImports.length > 0,
+    "'externalOpenApiImports' is deprecated. Consider using 'resolve' instead"
+  );
+  deprecated(
+    options.externalOpenApiSpecs,
+    "'externalOpenApiSpecs' is deprecated. Consider using 'resolve' instead"
+  );
 
   const state = {
     cwd: path.dirname(options.sourceFile),
-    imports: new Map() as Map<string, string>,
+    imports: {} as Record<string, string>,
     actions: [] as Array<() => Promise<void>>
   };
-  const builtins = generateBuiltins(options.runtimeModule);
+  const builtins = generateBuiltins();
   const types = generateComponents(options);
   const queryTypes = generateQueryTypes(options);
 
-  const externals = generateExternals([...state.imports.entries()].map(([importAs, importFile]) => ({
-    importAs, importFile: resolveModule(options.targetFile, importFile)
-  })));
+  const externals = generateExternals(
+    Object.entries(state.imports).map(([importAs, importFile]) => ({
+      importAs,
+      importFile: resolveModule(options.targetFile, importFile)
+    }))
+  );
   state.actions.forEach(action => action());
 
   const sourceFile: ts.SourceFile = ts.createSourceFile(
@@ -70,7 +121,8 @@ export function run(options: Options) {
       ts.createNodeArray([...builtins, ...externals, ...types, ...queryTypes]),
       sourceFile
     );
-  return addIndexSignatureIgnores(src);
+  const finished = addIndexSignatureIgnores(src);
+  return finished;
 
   function generateClassMembers(
     properties: oas.SchemaObject['properties'],
@@ -93,7 +145,10 @@ export function run(options: Options) {
     proptypes.push(
       ts.createProperty(
         undefined,
-        [ts.createToken(ts.SyntaxKind.PrivateKeyword), ts.createToken(ts.SyntaxKind.ReadonlyKeyword)],
+        [
+          ts.createToken(ts.SyntaxKind.PrivateKeyword),
+          ts.createToken(ts.SyntaxKind.ReadonlyKeyword)
+        ],
         quotedProp(oatsBrandFieldName),
         ts.createToken(ts.SyntaxKind.ExclamationToken),
         ts.createKeywordTypeNode(ts.SyntaxKind.StringKeyword),
@@ -106,9 +161,9 @@ export function run(options: Options) {
         additional === true || additional == null
           ? ts.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword)
           : ts.createUnionTypeNode([
-            generateType(additional),
-            ts.createKeywordTypeNode(ts.SyntaxKind.UndefinedKeyword)
-          ]);
+              generateType(additional),
+              ts.createKeywordTypeNode(ts.SyntaxKind.UndefinedKeyword)
+            ]);
       proptypes.push(
         ts.createIndexSignature(
           undefined,
@@ -129,8 +184,6 @@ export function run(options: Options) {
     }
     return proptypes;
   }
-
-  const oatsBrandFieldName = '__oats_value_class_brand_tag';
 
   function generateObjectMembers(
     properties: oas.SchemaObject['properties'],
@@ -156,9 +209,9 @@ export function run(options: Options) {
         additional === true || additional == null
           ? ts.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword)
           : ts.createUnionTypeNode([
-            generateType(additional, typeMapper),
-            ts.createKeywordTypeNode(ts.SyntaxKind.UndefinedKeyword)
-          ]);
+              generateType(additional, typeMapper),
+              ts.createKeywordTypeNode(ts.SyntaxKind.UndefinedKeyword)
+            ]);
       proptypes.push(
         ts.createIndexSignature(
           undefined,
@@ -294,38 +347,6 @@ export function run(options: Options) {
     });
   }
 
-  const statusCodes = [
-    100,
-    200,
-    201,
-    202,
-    204,
-    206,
-    301,
-    302,
-    303,
-    304,
-    307,
-    308,
-    400,
-    401,
-    403,
-    404,
-    406,
-    407,
-    410,
-    412,
-    416,
-    418,
-    425,
-    451,
-    500,
-    501,
-    502,
-    503,
-    504
-  ];
-
   function expandedWildcardCode(code: string): number[] {
     if (code === 'default') {
       return [];
@@ -351,9 +372,10 @@ export function run(options: Options) {
     const responseSchemas: oas.SchemaObject[] = [];
     Object.keys(responses).map(status => {
       const response: oas.ReferenceObject | oas.ResponseObject = responses[status];
-      const statuses = (status === 'default' ? defaultStatuses : expandedWildcardCode(status)).filter(
-        opt.emitStatusCode
-      );
+      const statuses = (status === 'default'
+        ? defaultStatuses
+        : expandedWildcardCode(status)
+      ).filter(opt.emitStatusCode);
       if (statuses.length > 0) {
         const schema: oas.SchemaObject = {
           type: 'object',
@@ -365,14 +387,14 @@ export function run(options: Options) {
             value: oautil.isReferenceObject(response)
               ? { $ref: response.$ref }
               : generateContentSchemaType(
-                response.content || {
-                  oatsNoContent: {
-                    schema: {
-                      type: 'null'
+                  response.content || {
+                    oatsNoContent: {
+                      schema: {
+                        type: 'null'
+                      }
                     }
                   }
-                }
-              )
+                )
           },
           required: ['status', 'value'],
           additionalProperties: false
@@ -598,10 +620,11 @@ export function run(options: Options) {
                 ts.createIdentifier('this'),
                 ts.createCall(
                   ts.createPropertyAccess(
-                    ts.createCall(ts.createIdentifier('build' + oautil.typenamify(key)), undefined, [
-                      ts.createIdentifier('value'),
-                      ts.createIdentifier('opts')
-                    ]),
+                    ts.createCall(
+                      ts.createIdentifier('build' + oautil.typenamify(key)),
+                      undefined,
+                      [ts.createIdentifier('value'), ts.createIdentifier('opts')]
+                    ),
                     ts.createIdentifier('success')
                   ),
                   undefined,
@@ -860,11 +883,11 @@ export function run(options: Options) {
     if (schema.type === 'string') {
       const enumValues = schema.enum
         ? [
-          ts.createPropertyAssignment(
-            'enum',
-            ts.createArrayLiteral(schema.enum.map(ts.createStringLiteral))
-          )
-        ]
+            ts.createPropertyAssignment(
+              'enum',
+              ts.createArrayLiteral(schema.enum.map(ts.createStringLiteral))
+            )
+          ]
         : [];
       const format = schema.format
         ? [ts.createPropertyAssignment('format', ts.createStringLiteral(schema.format))]
@@ -886,11 +909,11 @@ export function run(options: Options) {
     if (schema.type === 'number') {
       const enumValues = schema.enum
         ? [
-          ts.createPropertyAssignment(
-            'enum',
-            ts.createArrayLiteral(schema.enum.map(i => ts.createNumericLiteral('' + i)))
-          )
-        ]
+            ts.createPropertyAssignment(
+              'enum',
+              ts.createArrayLiteral(schema.enum.map(i => ts.createNumericLiteral('' + i)))
+            )
+          ]
         : [];
 
       return ts.createObjectLiteral(
@@ -901,11 +924,11 @@ export function run(options: Options) {
     if (schema.type === 'integer') {
       const enumValues = schema.enum
         ? [
-          ts.createPropertyAssignment(
-            'enum',
-            ts.createArrayLiteral(schema.enum.map(i => ts.createNumericLiteral('' + i)))
-          )
-        ]
+            ts.createPropertyAssignment(
+              'enum',
+              ts.createArrayLiteral(schema.enum.map(i => ts.createNumericLiteral('' + i)))
+            )
+          ]
         : [];
 
       return ts.createObjectLiteral(
@@ -916,19 +939,19 @@ export function run(options: Options) {
     if (schema.type === 'boolean') {
       const enumValues = schema.enum
         ? [
-          ts.createPropertyAssignment(
-            'enum',
-            ts.createArrayLiteral(
-              schema.enum.map(i =>
-                i === 'true'
-                  ? ts.createTrue()
-                  : i === 'false'
-                  ? ts.createFalse()
-                  : assert.fail('unknown enum ' + i)
+            ts.createPropertyAssignment(
+              'enum',
+              ts.createArrayLiteral(
+                schema.enum.map(i =>
+                  i === 'true'
+                    ? ts.createTrue()
+                    : i === 'false'
+                    ? ts.createFalse()
+                    : assert.fail('unknown enum ' + i)
+                )
               )
             )
-          )
-        ]
+          ]
         : [];
       return ts.createObjectLiteral(
         [ts.createPropertyAssignment('type', ts.createStringLiteral('boolean')), ...enumValues],
@@ -1264,7 +1287,10 @@ export function run(options: Options) {
   }
 
   function scalarTypeWithBrand(key: string, type: ts.TypeNode): ts.TypeNode {
-    return ts.createIntersectionTypeNode([type, ts.createTypeReferenceNode(brandTypeName(key), [])]);
+    return ts.createIntersectionTypeNode([
+      type,
+      ts.createTypeReferenceNode(brandTypeName(key), [])
+    ]);
   }
 
   function isScalar(schema: oas.SchemaObject): boolean {
@@ -1331,14 +1357,9 @@ export function run(options: Options) {
     return ts.createNodeArray(nodes);
   }
 
-  const makeTypeTypeName = 'Make';
-
   function fromLib(...names: string[]): ts.QualifiedName {
     return ts.createQualifiedName(runtimeLibrary, names.join('.'));
   }
-
-  const runtimeLibrary = ts.createIdentifier('oar');
-  const readonly = [ts.createModifier(ts.SyntaxKind.ReadonlyKeyword)];
 
   function generateExternals(imports: readonly ImportDefinition[]) {
     return imports.map(external => {
@@ -1354,17 +1375,16 @@ export function run(options: Options) {
     });
   }
 
-  function generateBuiltins(runtimeModule: string) {
+  function generateBuiltins() {
     return ts.createNodeArray([
       ts.createImportDeclaration(
         undefined,
         undefined,
         ts.createImportClause(undefined, ts.createNamespaceImport(runtimeLibrary)),
-        ts.createStringLiteral(runtimeModule)
+        ts.createStringLiteral(options.runtimeModule)
       )
     ]);
   }
-
 
   function addIndexSignatureIgnores(src: string) {
     const result: string[] = [];
@@ -1388,15 +1408,29 @@ export function run(options: Options) {
     return result.join('\n');
   }
 
+  function addToImports(
+    importAs: string,
+    importFile: string | undefined,
+    action?: (() => Promise<void>) | undefined
+  ) {
+    if (!state.imports[importAs]) {
+      if (importFile) {
+        // eslint-disable-next-line no-console
+        console.log('First import of ' + importAs + ' from file ' + importFile);
+        state.imports[importAs] = importFile;
+        if (action) {
+          state.actions.push(action);
+        }
+      }
+    }
+  }
+
   function resolveRefToTypeName(ref: string): { qualified?: ts.Identifier; member: string } {
     const external = options.resolve(ref, options);
     if (external) {
       const importAs = safe(external).importAs.$;
       if (importAs) {
-        if (!state.imports.has(importAs)) {
-          state.imports.set(importAs, safe(external).importFrom.$!);
-          state.actions.push(safe(external).generate.$!);
-        }
+        addToImports(importAs, safe(external).importFrom.$, safe(external).generate.$);
         return { member: external.name, qualified: ts.createIdentifier(importAs) };
       }
       return { member: external.name };
@@ -1408,8 +1442,9 @@ export function run(options: Options) {
       const name = options.externalOpenApiSpecs(ref);
       if (name) {
         const [qualified, member] = name.split('.');
-        state.imports.set(qualified, options.externalOpenApiImports
-          .find(def => def.importAs === qualified)?.importFile!);
+        const file = options.externalOpenApiImports.find(def => def.importAs === qualified)
+          ?.importFile;
+        addToImports(qualified, file);
         return { member, qualified: ts.createIdentifier(qualified) };
       }
     }
@@ -1428,4 +1463,3 @@ export function run(options: Options) {
     return './' + p;
   }
 }
-

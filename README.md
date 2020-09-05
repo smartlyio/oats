@@ -21,42 +21,15 @@ in `example.yaml` that uses additional component schemas defined in `common.yaml
 import { driver, util } from '../index';
 import { UnsupportedFeatureBehaviour } from '../src/driver';
 
-// define how references to outside the example.yaml file are resolved
-const externals = {
-  externalOpenApiImports: [{ importFile: './tmp/common.types.generated', importAs: 'common' }],
-  externalOpenApiSpecs: (url: string) => {
-    if (url.startsWith('common.yaml')) {
-      return 'common.' + util.refToTypeName(url.replace(/^common.yaml/, ''));
-    }
-    return;
-  }
-};
-
-// generate type definitions for schemas from an external openapi spec
-driver.generate({
-  generatedValueClassFile: './tmp/common.types.generated.ts',
-  header: '/* tslint:disable variable-name only-arrow-functions*/',
-  openapiFilePath: './test/common.yaml'
-});
-
-// generate server from the shared openapi spec
-driver.generate({
-  ...externals,
-  generatedValueClassFile: './tmp/server.types.generated.ts',
-  generatedServerFile: './tmp/server.generated.ts',
-  header: '/* tslint:disable variable-name only-arrow-functions*/',
-  openapiFilePath: './test/example.yaml'
-});
-
 // generate server from the shared openapi spec
 // This example uses a specification file that contains compliant but unsupported nodes,
 // such as 'securitySchemes' and 'security'
 driver.generate({
-  ...externals,
-  generatedValueClassFile: './tmp/server.types.generated.ts',
-  generatedServerFile: './tmp/server.generated.ts',
+  generatedValueClassFile: './tmp/server/types.generated.ts',
+  generatedServerFile: './tmp/server/generated.ts',
   header: '/* tslint:disable variable-name only-arrow-functions*/',
   openapiFilePath: './test/example-with-security-nodes.yaml',
+  resolve: driver.compose(driver.generateFile(), driver.localResolve),
   unsupportedFeatures: {
     security: UnsupportedFeatureBehaviour.ignore
   }
@@ -64,11 +37,11 @@ driver.generate({
 
 // generate client from the shared openapi spec
 driver.generate({
-  ...externals,
-  generatedValueClassFile: './tmp/client.types.generated.ts',
-  generatedClientFile: './tmp/client.generated.ts',
+  generatedValueClassFile: './tmp/client/types.generated.ts',
+  generatedClientFile: './tmp/client/generated.ts',
   header: '/* tslint:disable variable-name only-arrow-functions*/',
   openapiFilePath: './test/example.yaml',
+  resolve: driver.compose(driver.generateFile(), driver.localResolve),
   // Omit error responses  from the client response types
   emitStatusCode: (code: number) => [200, 201, 204].indexOf(code) >= 0
 });
@@ -92,6 +65,25 @@ javascript class `NamedComponent`
  The rest of the generated type definitions consist of the apis for clients and servers for actually 
  implementing or interacting with the service.
 
+## Type resolution
+
+By default the `driver` will only resolve `$ref`  references to absolute paths inside the processed file. This behaviour can be 
+added to by using the `resolve` option to `driver` which defines a function of type `Resolve` to be used when a `$ref` is 
+encountered.
+
+```
+export type Resolve = (ref: string, options: Options) =>
+  | { importAs: string; importFrom: string, name: string, generate?: () => Promise<void> }
+  | { name: string }
+  | undefined;
+
+```
+
+There are two builtin helpers for resolution which are used in the above code example
+
+ - `generateFile` which follows the references and generates the required files and import declarations
+ - `localFile` which only resolves `$ref` inside the same file to the name produced from `$ref` value. 
+
 ## Server usage
 
 The generated server definition can be adapted to http servers backends for node. 
@@ -110,8 +102,8 @@ defined paths.
 
 ```ts
 // yarn ts-node examples/server.ts
-import * as api from '../tmp/server.generated';
-import * as common from '../tmp/common.types.generated';
+import * as api from '../tmp/server/generated';
+import * as common from '../tmp/server/common.types.generated';
 import * as runtime from '@smartlyio/oats-runtime';
 import * as koaAdapter from '@smartlyio/oats-koa-adapter';
 import * as Koa from 'koa';
@@ -208,7 +200,7 @@ client will enforce *strict* data validation for both input and output of the ca
 
 ```ts
 // yarn ts-node examples/client.ts
-import * as api from '../tmp/client.generated';
+import * as api from '../tmp/client/generated';
 import * as axiosAdapter from '@smartlyio/oats-axios-adapter';
 import * as runtime from '@smartlyio/oats-runtime';
 import * as app from './server';

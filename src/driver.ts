@@ -68,12 +68,12 @@ export function compose(...fns: types.Resolve[]): types.Resolve {
   };
 }
 
-function makeModuleName(filename: string) {
-  return path
-    .basename(filename, '.yml')
-    .split(/[^a-zA-Z0-9]/)
-    .map(capitalize)
-    .join('');
+function makeModuleName(filename: string): string {
+  const parts = path
+    .basename(filename)
+    .replace(/\.[^.]*$/, '')
+    .split(/[^a-zA-Z0-9]/);
+  return [parts[0], ...parts.slice(1).map(capitalize)].join('');
 }
 
 export function generateFile(): types.Resolve {
@@ -81,21 +81,22 @@ export function generateFile(): types.Resolve {
     if (ref[0] === '#') {
       return;
     }
-    const localName = ref.replace(/^[#]+/, '');
+    const localName = ref.replace(/^[^#]+/, '');
     const fileName = ref.replace(/#.+$/, '');
+    const ymlFile = path.resolve(path.dirname(options.sourceFile), fileName);
+    const generatedFileName = `${path.basename(ymlFile).replace(/\.[^.]*$/, '')}.types.generated`;
     const moduleName = makeModuleName(fileName);
-    const ymlFile = path.resolve(options.sourceFile, fileName);
-    const generatedFileName = `${path.basename(fileName, '.yml')}.types.generated.ts`;
     const generatedFile = path.dirname(options.targetFile) + '/' + generatedFileName;
+
     return {
       importAs: moduleName,
       importFrom: generatedFile,
       name: refToTypeName(localName),
-      generate: async () => {
+      generate: () => {
         generate({
           openapiFilePath: ymlFile,
           header: options.header,
-          generatedValueClassFile: generatedFile,
+          generatedValueClassFile: generatedFile + '.ts',
           resolve: options.resolve,
           externalOpenApiSpecs: options.externalOpenApiSpecs,
           externalOpenApiImports: options.externalOpenApiImports,
@@ -128,7 +129,7 @@ export function generate(driver: Driver) {
           importFile: i.importFile,
           importAs: i.importAs
         })),
-        externalOpenApiSpecs: driver.externalOpenApiSpecs || (() => undefined),
+        externalOpenApiSpecs: driver.externalOpenApiSpecs,
         oas: spec,
         runtimeModule: modulePath(driver.generatedValueClassFile, driver.runtimeFilePath),
         emitStatusCode: driver.emitStatusCode || emitAllStatusCodes
