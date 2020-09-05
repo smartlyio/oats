@@ -119,25 +119,23 @@ export function generate(driver: Driver) {
     'generating both server and client files from the same definition is frowned upon and will be prevented later on'
   );
   fs.mkdirSync(path.dirname(driver.generatedValueClassFile), { recursive: true });
-  fs.writeFileSync(
-    driver.generatedValueClassFile,
-    driver.header +
-      '\n' +
-      types.run({
-        header: driver.header || '',
-        sourceFile: driver.openapiFilePath,
-        targetFile: driver.generatedValueClassFile,
-        resolve: driver.resolve || defaultResolve,
-        externalOpenApiImports: (driver.externalOpenApiImports || []).map(i => ({
-          importFile: i.importFile,
-          importAs: i.importAs
-        })),
-        externalOpenApiSpecs: driver.externalOpenApiSpecs,
-        oas: spec,
-        runtimeModule: modulePath(driver.generatedValueClassFile, driver.runtimeFilePath),
-        emitStatusCode: driver.emitStatusCode || emitAllStatusCodes
-      })
-  );
+  const typeSource = types.run({
+    header: driver.header || '',
+    sourceFile: driver.openapiFilePath,
+    targetFile: driver.generatedValueClassFile,
+    resolve: driver.resolve || defaultResolve,
+    externalOpenApiImports: (driver.externalOpenApiImports || []).map(i => ({
+      importFile: i.importFile,
+      importAs: i.importAs
+    })),
+    externalOpenApiSpecs: driver.externalOpenApiSpecs,
+    oas: spec,
+    runtimeModule: modulePath(driver.generatedValueClassFile, driver.runtimeFilePath),
+    emitStatusCode: driver.emitStatusCode || emitAllStatusCodes
+  });
+  if (typeSource) {
+    fs.writeFileSync(driver.generatedValueClassFile, driver.header + '\n' + typeSource);
+  }
 
   if (driver.generatedClientFile) {
     fs.mkdirSync(path.dirname(driver.generatedClientFile), { recursive: true });

@@ -36,11 +36,6 @@ export interface Options {
   };
 }
 
-export function info(message: string) {
-  // eslint-disable-next-line no-console
-  console.log(message);
-}
-
 export function deprecated(condition: any, message: string) {
   if (condition) {
     // eslint-disable-next-line no-console
@@ -88,8 +83,7 @@ const statusCodes = [
 const generatedFiles: Set<string> = new Set();
 
 export function run(options: Options) {
-  // eslint-disable-next-line no-console
-  info(`generating ${options.targetFile} from ${options.sourceFile}`);
+  generatedFiles.add(options.targetFile);
   deprecated(
     options.externalOpenApiImports.length > 0,
     "'externalOpenApiImports' is deprecated. Consider using 'resolve' instead"
@@ -1424,15 +1418,14 @@ export function run(options: Options) {
   ) {
     if (!state.imports[importAs]) {
       if (importFile) {
-        info('First import of ' + importAs + ' from file ' + importFile);
+        importFile = './' + path.normalize(importFile);
         state.imports[importAs] = importFile;
         if (action) {
           if (generatedFiles.has(importFile)) {
-            info('already generating ' + importFile + ' skipping action');
-          } else {
-            generatedFiles.add(importFile);
-            state.actions.push(action);
+            return;
           }
+          generatedFiles.add(importFile);
+          state.actions.push(action);
         }
       }
     }
