@@ -118,7 +118,7 @@ export function generate(driver: Driver) {
     driver.generatedServerFile && driver.generatedClientFile,
     'generating both server and client files from the same definition is frowned upon and will be prevented later on'
   );
-  fs.mkdirSync(path.dirname(driver.generatedValueClassFile), { recursive: true});
+  fs.mkdirSync(path.dirname(driver.generatedValueClassFile), { recursive: true });
   fs.writeFileSync(
     driver.generatedValueClassFile,
     driver.header +
@@ -140,7 +140,7 @@ export function generate(driver: Driver) {
   );
 
   if (driver.generatedClientFile) {
-    fs.mkdirSync(path.dirname(driver.generatedClientFile), { recursive: true});
+    fs.mkdirSync(path.dirname(driver.generatedClientFile), { recursive: true });
     fs.writeFileSync(
       driver.generatedClientFile,
       server.run({
@@ -156,7 +156,7 @@ export function generate(driver: Driver) {
     );
   }
   if (driver.generatedServerFile) {
-    fs.mkdirSync(path.dirname(driver.generatedServerFile), { recursive: true});
+    fs.mkdirSync(path.dirname(driver.generatedServerFile), { recursive: true });
     fs.writeFileSync(
       driver.generatedServerFile,
       server.run({
