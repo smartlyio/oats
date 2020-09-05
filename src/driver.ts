@@ -53,7 +53,7 @@ function defaultResolve() {
 
 export function localResolve(ref: string) {
   if (ref[0] === '#') {
-    return refToTypeName(ref);
+    return { name: refToTypeName(ref) };
   }
 }
 
@@ -110,6 +110,11 @@ export function generateFile(): types.Resolve {
 export function generate(driver: Driver) {
   const file = fs.readFileSync(driver.openapiFilePath, 'utf8');
   const spec: oas.OpenAPIObject = yaml.load(file);
+
+  types.deprecated(
+    driver.generatedServerFile && driver.generatedClientFile,
+    'generating both server and client files from the same definition is frowned upon and will be prevented later on'
+  );
   fs.writeFileSync(
     driver.generatedValueClassFile,
     driver.header +

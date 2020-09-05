@@ -32,7 +32,7 @@ export interface Options {
   };
 }
 
-function deprecated(condition: any, message: string) {
+export function deprecated(condition: any, message: string) {
   if (condition) {
     console.log('deprecation warning: ' + message);
   }
