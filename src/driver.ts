@@ -55,6 +55,7 @@ export function localResolve(ref: string) {
   if (ref[0] === '#') {
     return { name: refToTypeName(ref) };
   }
+  return;
 }
 
 export function compose(...fns: types.Resolve[]): types.Resolve {
@@ -65,6 +66,7 @@ export function compose(...fns: types.Resolve[]): types.Resolve {
         return match;
       }
     }
+    return;
   };
 }
 
@@ -86,7 +88,7 @@ export function generateFile(): types.Resolve {
     const ymlFile = path.resolve(path.dirname(options.sourceFile), fileName);
     const generatedFileName = `${path.basename(ymlFile).replace(/\.[^.]*$/, '')}.types.generated`;
     const moduleName = makeModuleName(fileName);
-    const generatedFile = path.dirname(options.targetFile) + '/' + generatedFileName;
+    const generatedFile = './' + path.dirname(options.targetFile) + '/' + generatedFileName;
 
     return {
       importAs: moduleName,
