@@ -22,6 +22,7 @@ export type Resolve = (
   | undefined;
 
 export interface Options {
+  forceGenerateTypes?: boolean;
   header: string;
   sourceFile: string;
   externalOpenApiImports: readonly ImportDefinition[];
@@ -82,7 +83,16 @@ const statusCodes = [
 // to prevent calling an action to generate it again and causing maybe some race conditions
 const generatedFiles: Set<string> = new Set();
 
+// query to figure out whether the file is being already generated
+function isGenerating(file: string): boolean {
+  return generatedFiles.has(file);
+}
+
 export function run(options: Options) {
+  options.targetFile = './' + path.normalize(options.targetFile);
+  if (isGenerating(options.targetFile) && !options.forceGenerateTypes) {
+    return;
+  }
   generatedFiles.add(options.targetFile);
   deprecated(
     options.externalOpenApiImports.length > 0,

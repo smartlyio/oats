@@ -41,6 +41,7 @@ export interface Driver {
   unsupportedFeatures?: {
     security?: UnsupportedFeatureBehaviour;
   };
+  forceGenerateTypes?: boolean; // output the type file even if it would have been already generated
 }
 
 function emitAllStatusCodes() {
@@ -96,6 +97,7 @@ export function generateFile(): types.Resolve {
       name: refToTypeName(localName),
       generate: () => {
         generate({
+          forceGenerateTypes: true,
           openapiFilePath: ymlFile,
           header: options.header,
           generatedValueClassFile: generatedFile + '.ts',
@@ -120,6 +122,7 @@ export function generate(driver: Driver) {
   );
   fs.mkdirSync(path.dirname(driver.generatedValueClassFile), { recursive: true });
   const typeSource = types.run({
+    forceGenerateTypes: driver.forceGenerateTypes,
     header: driver.header || '',
     sourceFile: driver.openapiFilePath,
     targetFile: driver.generatedValueClassFile,
