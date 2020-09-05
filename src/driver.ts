@@ -4,7 +4,8 @@ import * as types from './generate-types';
 import * as server from './generate-server';
 import * as path from 'path';
 import * as oas from 'openapi3-ts';
-import { UnsupportedFeatureBehaviour } from './util';
+import { UnsupportedFeatureBehaviour, refToTypeName, capitalize } from './util';
+import { Resolve } from './generate-types';
 
 function modulePath(importer: string, module: string | undefined) {
   if (!module) {
@@ -29,6 +30,7 @@ export interface ImportDefinition {
 export interface Driver {
   openapiFilePath: string;
   generatedValueClassFile: string;
+  resolve?: Resolve;
   externalOpenApiImports?: readonly ImportDefinition[];
   externalOpenApiSpecs?: (url: string) => string | undefined;
   header: string;
@@ -45,16 +47,64 @@ function emitAllStatusCodes() {
   return true;
 }
 
-function resolveModule(fromModule: string, toModule: string): string {
-  if (!toModule.startsWith('.')) {
-    return toModule;
-  }
+function defaultResolve() {
+  return undefined;
+}
 
-  const p = path.relative(path.dirname(fromModule), toModule);
-  if (p[0] === '.') {
-    return p;
+export function localResolve(ref: string) {
+  if (ref[0] === '#') {
+    return refToTypeName(ref);
   }
-  return './' + p;
+}
+
+export function compose(...fns: types.Resolve[]): types.Resolve {
+  return (ref, options) => {
+    for (const f of fns) {
+      const match = f(ref, options);
+      if (match) {
+        return match;
+      }
+    }
+  };
+}
+
+function makeModuleName(filename: string) {
+  return path
+    .basename(filename, '.yml')
+    .split(/[^a-zA-Z0-9]/)
+    .map(capitalize)
+    .join('');
+}
+
+export function generateFile(): types.Resolve {
+  return (ref: string, options: types.Options) => {
+    if (ref[0] === '#') {
+      return;
+    }
+    const localName = ref.replace(/^[#]+/, '');
+    const fileName = ref.replace(/#.+$/, '');
+    const moduleName = makeModuleName(fileName);
+    const ymlFile = path.resolve(options.sourceFile, fileName);
+    const generatedFileName = `${path.basename(fileName, '.yml')}.types.generated.ts`;
+    const generatedFile = path.dirname(options.targetFile) + '/' + generatedFileName;
+    return {
+      importAs: moduleName,
+      importFrom: generatedFile,
+      name: refToTypeName(localName),
+      generate: async () => {
+        generate({
+          openapiFilePath: ymlFile,
+          header: options.header,
+          generatedValueClassFile: generatedFile,
+          resolve: options.resolve,
+          externalOpenApiSpecs: options.externalOpenApiSpecs,
+          externalOpenApiImports: options.externalOpenApiImports,
+          emitStatusCode: options.emitStatusCode,
+          unsupportedFeatures: options.unsupportedFeatures
+        });
+      }
+    };
+  };
 }
 
 export function generate(driver: Driver) {
@@ -65,8 +115,12 @@ export function generate(driver: Driver) {
     driver.header +
       '\n' +
       types.run({
+        header: driver.header || '',
+        sourceFile: driver.openapiFilePath,
+        targetFile: driver.generatedValueClassFile,
+        resolve: driver.resolve || defaultResolve,
         externalOpenApiImports: (driver.externalOpenApiImports || []).map(i => ({
-          importFile: resolveModule(driver.generatedValueClassFile, i.importFile),
+          importFile: i.importFile,
           importAs: i.importAs
         })),
         externalOpenApiSpecs: driver.externalOpenApiSpecs || (() => undefined),
