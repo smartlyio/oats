@@ -86,7 +86,9 @@ export interface PropType {
 export interface Props {
   [name: string]: PropType;
 }
+
 export type AdditionalProp = boolean | Type;
+
 export interface ObjectType {
   readonly type: 'object';
   readonly additionalProperties: AdditionalProp;
@@ -129,6 +131,7 @@ export class Traversal<Root, Leaf> {
     }
     return deduped;
   }
+
   map(value: Root, fn: (leaf: Leaf) => Leaf) {
     this.validateRoot(value);
     const match = this.matcher();

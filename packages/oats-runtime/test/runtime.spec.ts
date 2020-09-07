@@ -65,15 +65,14 @@ describe('pmap', () => {
 
   it('throws when setting ValueClass with incorrect value', async () => {
     const value = TestClass.make({ a: ['a value'], b: 'b value' }).success();
-    try {
-      await pmap(
+
+    await expect(
+      pmap(
         value,
         (n: any): n is string[] => _.isArray(n),
         async (n: string[]) => n.map(() => 1 as any)
-      );
-    } catch (e) {
-      expect(e).toBeInstanceOf(make.MakeError);
-    }
+      )
+    ).rejects.toBeInstanceOf(make.MakeError);
   });
 
   jsc.property('maps arrays', jsc.array(jsc.asciistring), async arr => {
