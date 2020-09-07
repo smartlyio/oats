@@ -29,6 +29,7 @@ export interface Options {
   externalOpenApiImports: readonly ImportDefinition[];
   targetFile: string;
   resolve: Resolve;
+  /** @deprecated Consider using 'resolve' instead */
   externalOpenApiSpecs?: (url: string) => string | undefined;
   oas: oas.OpenAPIObject;
   runtimeModule: string;
