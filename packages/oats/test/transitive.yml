@@ -1,0 +1,12 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: transitive definitions reached by following dependencies
+servers:
+  - url: http://localhost:12000
+paths: {}
+components:
+  schemas:
+    ItemId:
+      type: string
+

@@ -14,7 +14,7 @@ components:
         field:
           type: string
     ItemId:
-      type: string
+      $ref: './transitive.yml#/components/schemas/ItemId'
     Item:
       type: object
       required:

@@ -36,6 +36,25 @@ javascript class `NamedComponent`
  The rest of the generated type definitions consist of the apis for clients and servers for actually 
  implementing or interacting with the service.
 
+## Type resolution
+
+By default the `driver` will only resolve `$ref`  references to absolute paths inside the processed file. This behaviour can be 
+added to by using the `resolve` option to `driver` which defines a function of type `Resolve` to be used when a `$ref` is 
+encountered.
+
+```
+export type Resolve = (ref: string, options: Options) =>
+  | { importAs: string; importFrom: string, name: string, generate?: () => Promise<void> }
+  | { name: string }
+  | undefined;
+
+```
+
+There are two builtin helpers for resolution which are used in the above code example
+
+ - `generateFile` which follows the references and generates the required files and import declarations
+ - `localFile` which only resolves `$ref` inside the same file to the name produced from `$ref` value. 
+
 ## Server usage
 
 The generated server definition can be adapted to http servers backends for node. 

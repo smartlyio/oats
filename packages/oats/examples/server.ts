@@ -1,6 +1,6 @@
 // yarn ts-node examples/server.ts
-import * as api from '../tmp/server.generated';
-import * as common from '../tmp/common.types.generated';
+import * as api from '../tmp/server/generated';
+import * as common from '../tmp/server/common.types.generated';
 import * as runtime from '@smartlyio/oats-runtime';
 import * as koaAdapter from '@smartlyio/oats-koa-adapter';
 import * as Koa from 'koa';

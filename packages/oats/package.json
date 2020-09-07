@@ -1,6 +1,6 @@
 {
   "name": "@smartlyio/oats",
-  "version": "2.5.2",
+  "version": "2.5.7",
   "license": "MIT",
   "description": "Openapi3 based generator for typescript aware servers and clients",
   "private": false,
@@ -9,7 +9,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "render": "yarn ts-node examples/driver.ts && yarn ts-node render.ts",
-    "clean": "rm -rf ./dist/*",
+    "clean": "rm -rf ./dist/* && rm -rf ./tmp",
     "build": "yarn clean && yarn render && yarn jest && yarn lint && yarn tsc",
     "prepublish": "yarn build",
     "lint": "eslint . --ext .ts",
