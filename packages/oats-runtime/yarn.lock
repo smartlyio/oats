@@ -462,15 +462,15 @@
     lodash "4.17.19"
     randexp "0.5.3"
 
-"@smartlyio/oats@2.5.2":
-  version "2.5.2"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats/-/oats-2.5.2.tgz#4760f04b9de546b3a65ed1c30f9ff635d06b60a8"
-  integrity sha512-tx834/Cc2jems5pNjbSs+xb4SdY8Z8rZp6AcdbuQpCKptu6SjL0u5PKrChPKe4j9wV8r60toteB0VFLjSFGHrw==
+"@smartlyio/oats@2.5.8":
+  version "2.5.8"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats/-/oats-2.5.8.tgz#37f542a4f36747a801181876681b0c30af089f67"
+  integrity sha512-PnuXqTfCom7LHVUBHdvNDncECZi4viMAIRhLQa9nhMbqOaBLc1QBhyrORfY76daUDUQI1GW3Zp8fYegdrFNOpA==
   dependencies:
-    "@smartlyio/safe-navigation" "5.0.1"
-    js-yaml "3.14.0"
-    lodash "4.17.19"
-    openapi3-ts "1.4.0"
+    "@smartlyio/safe-navigation" "^5.0.1"
+    js-yaml "^3.14.0"
+    lodash "^4.17.20"
+    openapi3-ts "^1.4.0"
 
 "@smartlyio/safe-navigation@5.0.0":
   version "5.0.0"
@@ -479,7 +479,7 @@
   dependencies:
     lodash "^4.17.4"
 
-"@smartlyio/safe-navigation@5.0.1":
+"@smartlyio/safe-navigation@5.0.1", "@smartlyio/safe-navigation@^5.0.1":
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/@smartlyio/safe-navigation/-/safe-navigation-5.0.1.tgz#6d386d888937946859c1a33e8ed7e8dc914d04f1"
   integrity sha512-d3Vs/UcOlZv0Ph6fAId7bJEQ5V1EUtwwi03I6HNT+1pXWnGSRPujHcs75v1c+JFwPyBID7n7PnfUw+ZkKAeOww==
@@ -2827,18 +2827,18 @@ js-tokens@^4.0.0:
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
   integrity sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==
 
-js-yaml@3.14.0:
-  version "3.14.0"
-  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.14.0.tgz#a7a34170f26a21bb162424d8adacb4113a69e482"
-  integrity sha512-/4IbIeHcD9VMHFqDR/gQ7EdZdLimOvW2DdcxFjdyyZ9NsbS+ccrXqVWDtab/lRl5AlUqmpBx8EhPaWR+OtY17A==
-  dependencies:
-    argparse "^1.0.7"
-    esprima "^4.0.0"
-
 js-yaml@^3.13.1:
   version "3.13.1"
   resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.13.1.tgz#aff151b30bfdfa8e49e05da22e7415e9dfa37847"
   integrity sha512-YfbcO7jXDdyj0DGxYVSlSeQNHbD7XPWvrVWeVUujrQEoZzWJIRrCPoyk6kL6IAjAG2IolMK4T0hNUe0HOUs5Jw==
+  dependencies:
+    argparse "^1.0.7"
+    esprima "^4.0.0"
+
+js-yaml@^3.14.0:
+  version "3.14.0"
+  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.14.0.tgz#a7a34170f26a21bb162424d8adacb4113a69e482"
+  integrity sha512-/4IbIeHcD9VMHFqDR/gQ7EdZdLimOvW2DdcxFjdyyZ9NsbS+ccrXqVWDtab/lRl5AlUqmpBx8EhPaWR+OtY17A==
   dependencies:
     argparse "^1.0.7"
     esprima "^4.0.0"
@@ -3044,7 +3044,7 @@ lodash@4.17.19, lodash@^4.17.19:
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.19.tgz#e48ddedbe30b3321783c5b4301fbd353bc1e4a4b"
   integrity sha512-JNvd8XER9GQX0v2qJgsaN/mzFCNA5BRe/j8JN9d+tWyGLSodKQHKFicdwNYzWwI3wjRnaKPsGj1XkBjx/F96DQ==
 
-lodash@4.17.20:
+lodash@4.17.20, lodash@^4.17.20:
   version "4.17.20"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.20.tgz#b44a9b6297bcb698f1c51a3545a2b3b368d59c52"
   integrity sha512-PlhdFcillOINfeV7Ni6oF1TAEayyZBoZ8bcshTHqOYJYlrqzRK5hagpagky5o4HfCzzd1TRkXPMFq6cKk9rGmA==
@@ -3343,7 +3343,7 @@ onetime@^5.1.0:
   dependencies:
     mimic-fn "^2.1.0"
 
-openapi3-ts@1.4.0:
+openapi3-ts@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/openapi3-ts/-/openapi3-ts-1.4.0.tgz#679d5a24be0efc36f5de4fc2c4b8513663e16f65"
   integrity sha512-8DmE2oKayvSkIR3XSZ4+pRliBsx19bSNeIzkTPswY8r4wvjX86bMxsORdqwAwMxE8PefOcSAT2auvi/0TZe9yA==
