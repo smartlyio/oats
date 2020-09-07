@@ -4,7 +4,8 @@ import * as types from './generate-types';
 import * as server from './generate-server';
 import * as path from 'path';
 import * as oas from 'openapi3-ts';
-import { UnsupportedFeatureBehaviour } from './util';
+import { UnsupportedFeatureBehaviour, refToTypeName, capitalize } from './util';
+import { Resolve } from './generate-types';
 
 function modulePath(importer: string, module: string | undefined) {
   if (!module) {
@@ -29,6 +30,7 @@ export interface ImportDefinition {
 export interface Driver {
   openapiFilePath: string;
   generatedValueClassFile: string;
+  resolve?: Resolve;
   externalOpenApiImports?: readonly ImportDefinition[];
   externalOpenApiSpecs?: (url: string) => string | undefined;
   header: string;
@@ -39,44 +41,107 @@ export interface Driver {
   unsupportedFeatures?: {
     security?: UnsupportedFeatureBehaviour;
   };
+  forceGenerateTypes?: boolean; // output the type file even if it would have been already generated
 }
 
 function emitAllStatusCodes() {
   return true;
 }
 
-function resolveModule(fromModule: string, toModule: string): string {
-  if (!toModule.startsWith('.')) {
-    return toModule;
-  }
+function defaultResolve() {
+  return undefined;
+}
 
-  const p = path.relative(path.dirname(fromModule), toModule);
-  if (p[0] === '.') {
-    return p;
+export function localResolve(ref: string) {
+  if (ref[0] === '#') {
+    return { name: refToTypeName(ref) };
   }
-  return './' + p;
+  return;
+}
+
+export function compose(...fns: types.Resolve[]): types.Resolve {
+  return (ref, options) => {
+    for (const f of fns) {
+      const match = f(ref, options);
+      if (match) {
+        return match;
+      }
+    }
+    return;
+  };
+}
+
+function makeModuleName(filename: string): string {
+  const parts = path
+    .basename(filename)
+    .replace(/\.[^.]*$/, '')
+    .split(/[^a-zA-Z0-9]/);
+  return [parts[0], ...parts.slice(1).map(capitalize)].join('');
+}
+
+export function generateFile(): types.Resolve {
+  return (ref: string, options: types.Options) => {
+    if (ref[0] === '#') {
+      return;
+    }
+    const localName = ref.replace(/^[^#]+/, '');
+    const fileName = ref.replace(/#.+$/, '');
+    const ymlFile = path.resolve(path.dirname(options.sourceFile), fileName);
+    const generatedFileName = `${path.basename(ymlFile).replace(/\.[^.]*$/, '')}.types.generated`;
+    const moduleName = makeModuleName(fileName);
+    const generatedFile = './' + path.dirname(options.targetFile) + '/' + generatedFileName;
+
+    return {
+      importAs: moduleName,
+      importFrom: generatedFile,
+      name: refToTypeName(localName),
+      generate: () => {
+        generate({
+          forceGenerateTypes: true,
+          openapiFilePath: ymlFile,
+          header: options.header,
+          generatedValueClassFile: generatedFile + '.ts',
+          resolve: options.resolve,
+          externalOpenApiSpecs: options.externalOpenApiSpecs,
+          externalOpenApiImports: options.externalOpenApiImports,
+          emitStatusCode: options.emitStatusCode,
+          unsupportedFeatures: options.unsupportedFeatures
+        });
+      }
+    };
+  };
 }
 
 export function generate(driver: Driver) {
   const file = fs.readFileSync(driver.openapiFilePath, 'utf8');
   const spec: oas.OpenAPIObject = yaml.load(file);
-  fs.writeFileSync(
-    driver.generatedValueClassFile,
-    driver.header +
-      '\n' +
-      types.run({
-        externalOpenApiImports: (driver.externalOpenApiImports || []).map(i => ({
-          importFile: resolveModule(driver.generatedValueClassFile, i.importFile),
-          importAs: i.importAs
-        })),
-        externalOpenApiSpecs: driver.externalOpenApiSpecs || (() => undefined),
-        oas: spec,
-        runtimeModule: modulePath(driver.generatedValueClassFile, driver.runtimeFilePath),
-        emitStatusCode: driver.emitStatusCode || emitAllStatusCodes
-      })
+
+  types.deprecated(
+    driver.generatedServerFile && driver.generatedClientFile,
+    'generating both server and client files from the same definition is frowned upon and will be prevented later on'
   );
+  fs.mkdirSync(path.dirname(driver.generatedValueClassFile), { recursive: true });
+  const typeSource = types.run({
+    forceGenerateTypes: driver.forceGenerateTypes,
+    header: driver.header || '',
+    sourceFile: driver.openapiFilePath,
+    targetFile: driver.generatedValueClassFile,
+    resolve: driver.resolve || defaultResolve,
+    externalOpenApiImports: (driver.externalOpenApiImports || []).map(i => ({
+      importFile: i.importFile,
+      importAs: i.importAs
+    })),
+    externalOpenApiSpecs: driver.externalOpenApiSpecs,
+    oas: spec,
+    runtimeModule: modulePath(driver.generatedValueClassFile, driver.runtimeFilePath),
+    emitStatusCode: driver.emitStatusCode || emitAllStatusCodes
+  });
+  if (typeSource) {
+    fs.writeFileSync(driver.generatedValueClassFile, driver.header + '\n' + typeSource);
+  }
 
   if (driver.generatedClientFile) {
+    fs.mkdirSync(path.dirname(driver.generatedClientFile), { recursive: true });
     fs.writeFileSync(
       driver.generatedClientFile,
       server.run({
@@ -92,6 +157,7 @@ export function generate(driver: Driver) {
     );
   }
   if (driver.generatedServerFile) {
+    fs.mkdirSync(path.dirname(driver.generatedServerFile), { recursive: true });
     fs.writeFileSync(
       driver.generatedServerFile,
       server.run({
