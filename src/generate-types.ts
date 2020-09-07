@@ -25,6 +25,7 @@ export interface Options {
   forceGenerateTypes?: boolean;
   header: string;
   sourceFile: string;
+  /** @deprecated Consider using 'resolve' instead */
   externalOpenApiImports: readonly ImportDefinition[];
   targetFile: string;
   resolve: Resolve;
