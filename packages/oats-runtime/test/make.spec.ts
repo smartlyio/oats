@@ -166,6 +166,11 @@ describe('makeObject', () => {
       );
     });
 
+    it('disallows array', () => {
+      const fun = make.makeObject({}, make.makeAny());
+      expect(fun([]).errors[0].error).toEqual('expected an object, but got "[]" instead.');
+    });
+
     it('disallows constructor', () => {
       const obj = Object.create(null);
       obj.constructor = make.makeNumber();

@@ -317,7 +317,7 @@ export function makeObject<
   P extends { [key: string]: Maker<any, any> | { optional: Maker<any, any> } }
 >(props: P, additionalProp?: any) {
   return (value: any, opts?: MakeOptions) => {
-    if (typeof value !== 'object' || value == null) {
+    if (typeof value !== 'object' || value == null || Array.isArray(value)) {
       return getErrorWithValueMsg('expected an object', value);
     }
     const result: { [key: string]: any } = {};
