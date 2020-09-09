@@ -90,7 +90,6 @@ export function generateFile(): types.Resolve {
     const generatedFileName = `${path.basename(ymlFile).replace(/\.[^.]*$/, '')}.types.generated`;
     const moduleName = makeModuleName(fileName);
     const generatedFile = './' + path.dirname(options.targetFile) + '/' + generatedFileName;
-
     return {
       importAs: moduleName,
       importFrom: generatedFile,
