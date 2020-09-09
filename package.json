@@ -57,7 +57,7 @@
     "eslint-plugin-import": "2.22.0",
     "eslint-plugin-jest": "24.0.0",
     "eslint-plugin-prettier": "3.1.4",
-    "fast-check": "2.2.1",
+    "fast-check": "2.3.0",
     "form-data": "3.0.0",
     "jest": "26.4.2",
     "jsverify": "0.8.4",
