@@ -26,7 +26,3 @@ driver.generate({
   // Omit error responses  from the client response types
   emitStatusCode: (code: number) => [200, 201, 204].indexOf(code) >= 0
 });
-
-
-
-
