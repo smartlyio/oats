@@ -46,7 +46,6 @@ driver.generate({
   emitStatusCode: (code: number) => [200, 201, 204].indexOf(code) >= 0
 });
 
-
 ```
 
 The generated typescript types contain a type for all named components defined in the Openapi 
