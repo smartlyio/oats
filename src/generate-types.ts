@@ -39,6 +39,11 @@ export interface Options {
   };
 }
 
+export function info(message: string) {
+  // eslint-disable-next-line no-console
+  console.log('info: ' + message);
+}
+
 export function deprecated(condition: any, message: string) {
   if (condition) {
     // eslint-disable-next-line no-console
@@ -1430,7 +1435,7 @@ export function run(options: Options) {
   ) {
     if (!state.imports[importAs]) {
       if (importFile) {
-        importFile = './' + path.normalize(importFile);
+        importFile = /^(\.|\/)/.test(importFile) ? './' + path.normalize(importFile) : importFile;
         state.imports[importAs] = importFile;
         if (action) {
           if (generatedFiles.has(importFile)) {
@@ -1471,10 +1476,11 @@ export function run(options: Options) {
 
   function resolveModule(fromModule: string, toModule: string): string {
     if (!toModule.startsWith('.')) {
+      info(`importing ${toModule} to ${fromModule} as a package import`);
       return toModule;
     }
-
     const p = path.relative(path.dirname(fromModule), toModule);
+    info(`importing ${toModule} to ${fromModule} as a relative import`);
     if (p[0] === '.') {
       return p;
     }
