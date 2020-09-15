@@ -41,7 +41,7 @@
   "devDependencies": {
     "@smartlyio/oats-axios-adapter": "2.2.1",
     "@smartlyio/oats-koa-adapter": "2.0.1",
-    "@smartlyio/oats-runtime": "2.6.5",
+    "@smartlyio/oats-runtime": "2.6.6",
     "@types/jest": "26.0.13",
     "@types/js-yaml": "3.12.5",
     "@types/koa": "2.11.4",
