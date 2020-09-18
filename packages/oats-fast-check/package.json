@@ -40,9 +40,9 @@
   "devDependencies": {
     "@smartlyio/oats": "2.5.9",
     "@smartlyio/oats-runtime": "2.6.6",
-    "@types/jest": "26.0.10",
-    "@types/lodash": "4.14.159",
-    "@types/node": "13.13.15",
+    "@types/jest": "26.0.14",
+    "@types/lodash": "4.14.161",
+    "@types/node": "13.13.21",
     "@typescript-eslint/eslint-plugin": "4.1.1",
     "@typescript-eslint/parser": "4.1.1",
     "eslint": "7.9.0",
