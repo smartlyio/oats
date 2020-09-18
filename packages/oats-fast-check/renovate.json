@@ -1,28 +1,11 @@
 {
   "extends": [
-    "config:base"
+    "config:js-lib"
   ],
   "timezone": "Europe/Helsinki",
   "prHourlyLimit": 5,
   "labels": ["patch"],
   "packageRules": [
-    {
-      "groupName": "Smartly packages",
-      "packagePatterns": [
-        "^@smartly\/"
-      ],
-      "excludePackagePatterns": [
-        "^@smartly\/asset-"
-      ],
-      "schedule": "at any time"
-    },
-    {
-      "groupName": "Smartly Asset Library Components",
-      "packagePatterns": [
-        "^@smartly\/asset-"
-      ],
-      "schedule": "at any time"
-    },
     {
       "groupName": "Smartly Oats",
       "packagePatterns": [
