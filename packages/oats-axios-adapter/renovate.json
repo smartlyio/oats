@@ -1,6 +1,6 @@
 {
   "extends": [
-    "config:base"
+    "config:js-lib"
   ],
   "timezone": "Europe/Helsinki",
   "prHourlyLimit": 5,
@@ -31,22 +31,11 @@
       "schedule": "at any time"
     },
     {
-      "groupName": "ESLint",
-      "packagePatterns": [
-        "eslint"
-      ],
-      "schedule": "at any time"
-    },
-    {
-      "groupName": "@types",
-      "packagePatterns": [
-        "^@types\/"
-      ],
-      "schedule": "at any time"
-    },
-    {
       "depTypeList": ["devDependencies"],
-      "labels": ["no-release"]
+      "schedule" : "before 8am on monday",
+      "groupName": "devDependencies",
+      "automerge": true,
+      "labels": ["dependencies", "no release"]
     }
   ]
 }
