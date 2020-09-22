@@ -24,7 +24,7 @@
     "typescript": "^3.6.3"
   },
   "dependencies": {
-    "@smartlyio/safe-navigation": "5.0.1",
+    "@smartlyio/safe-navigation": "5.0.2",
     "lodash": "4.17.20"
   },
   "keywords": [

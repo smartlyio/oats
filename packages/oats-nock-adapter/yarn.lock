@@ -516,6 +516,13 @@
   dependencies:
     lodash "4.17.19"
 
+"@smartlyio/safe-navigation@5.0.2":
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/@smartlyio/safe-navigation/-/safe-navigation-5.0.2.tgz#fd2b3583dff4b25f077000a785bc25a7bc39751d"
+  integrity sha512-Y7HZ7RL/AOKZwzwOpU8jlcys7m7ArWW372Fidi1PdCBKNODEfRpm5lyNGw05ClEQ7h/byiCX+lrNcDw9WFt8uA==
+  dependencies:
+    lodash "^4.17.19"
+
 "@types/babel__core@^7.0.0", "@types/babel__core@^7.1.7":
   version "7.1.9"
   resolved "https://registry.yarnpkg.com/@types/babel__core/-/babel__core-7.1.9.tgz#77e59d438522a6fb898fa43dc3455c6e72f3963d"
