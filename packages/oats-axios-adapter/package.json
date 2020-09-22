@@ -20,7 +20,7 @@
   },
   "peerDependencies": {
     "@smartlyio/oats-runtime": "^2.5.0",
-    "axios": "^0.19.0",
+    "axios": "^0.20.0",
     "typescript": "^3.6.3"
   },
   "dependencies": {
@@ -41,7 +41,7 @@
     "@types/node": "11.15.21",
     "@typescript-eslint/eslint-plugin": "3.9.1",
     "@typescript-eslint/parser": "3.9.1",
-    "axios": "0.19.2",
+    "axios": "0.20.0",
     "eslint": "7.7.0",
     "eslint-config-prettier": "6.11.0",
     "eslint-plugin-import": "2.22.0",
