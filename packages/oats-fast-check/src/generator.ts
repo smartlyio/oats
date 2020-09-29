@@ -235,7 +235,15 @@ class OptRecord extends fc.Arbitrary<any> {
 
 // we need this for handling recursive definitions.
 // note: key is the identity of the definition object so should be unique
-const namedGeneratorCache: Map<reflection.NamedTypeDefinition<any>, GenNamed<any>> = new Map();
+const namedGeneratorCache: Map<reflection.NamedTypeDefinition<any>, fc.Arbitrary<any>> = new Map();
+
+export function override<A>(name: reflection.NamedTypeDefinition<A>, override: fc.Arbitrary<A>) {
+  namedGeneratorCache.set(name, override);
+}
+
+export function clear(name: reflection.NamedTypeDefinition<any>) {
+  namedGeneratorCache.delete(name);
+}
 
 export function named<A>(name: reflection.NamedTypeDefinition<A>): fc.Arbitrary<A> {
   const existing = namedGeneratorCache.get(name);

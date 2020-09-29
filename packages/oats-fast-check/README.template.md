@@ -11,3 +11,11 @@ Generate values of named types from the openapi specification. Here using a jest
 >>examples/type.spec.ts
 ```
 
+## generator.override
+
+Override automatic generators globally with a custom Arbitrary
+
+```
+>>examples/override.spec.ts
+```
+
