@@ -29,10 +29,9 @@ components:
           pattern: .*
         flag:
           type: boolean
-        guard:
-          type: boolean
-          enum:
-            - true
         nullableField:
           $ref: '#/components/schemas/Nullable'
-
+    Guard:
+      type: boolean
+      enum:
+        - true
