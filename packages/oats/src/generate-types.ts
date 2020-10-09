@@ -963,9 +963,9 @@ export function run(options: Options) {
               'enum',
               ts.createArrayLiteral(
                 schema.enum.map(i =>
-                  i === 'true'
+                  i === true
                     ? ts.createTrue()
-                    : i === 'false'
+                    : i === false
                     ? ts.createFalse()
                     : assert.fail('unknown enum ' + i)
                 )
