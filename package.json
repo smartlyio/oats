@@ -13,7 +13,7 @@
     "generate:render": "yarn ts-node examples/driver.ts",
     "render": "yarn generate:render && yarn ts-node render.ts",
     "clean": "rm -rf ./dist/* && rm -rf ./tmp && find test -name '*generated.ts' -exec rm {} \\;",
-    "build": "yarn clean && yarn testt && yarn lint && yarn tsc",
+    "build": "yarn clean && yarn test && yarn lint && yarn tsc",
     "prepublish": "yarn build",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix"
