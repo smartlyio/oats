@@ -1,3 +1,4 @@
+import * as process from 'process';
 import * as oas from 'openapi3-ts';
 import * as ts from 'typescript';
 import safe from '@smartlyio/safe-navigation';

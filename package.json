@@ -8,9 +8,12 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "render": "yarn ts-node examples/driver.ts && yarn ts-node render.ts",
-    "clean": "rm -rf ./dist/* && rm -rf ./tmp",
-    "build": "yarn clean && yarn render && yarn jest && yarn lint && yarn tsc",
+    "generate:test": "find test -name driver.ts -exec yarn ts-node -r tsconfig-paths/register --project tsconfig.json {} \\;",
+    "test": "yarn generate:test && yarn generate:render && yarn jest",
+    "generate:render": "yarn ts-node examples/driver.ts",
+    "render": "yarn generate:render && yarn ts-node render.ts",
+    "clean": "rm -rf ./dist/* && rm -rf ./tmp && find test -name '*generated.ts' -exec rm {} \\;",
+    "build": "yarn clean && yarn testt && yarn lint && yarn tsc",
     "prepublish": "yarn build",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix"
@@ -41,7 +44,7 @@
   "devDependencies": {
     "@smartlyio/oats-axios-adapter": "2.2.3",
     "@smartlyio/oats-koa-adapter": "2.0.1",
-    "@smartlyio/oats-runtime": "2.6.6",
+    "@smartlyio/oats-runtime": "file:.yalc/@smartlyio/oats-runtime",
     "@types/jest": "26.0.15",
     "@types/js-yaml": "3.12.5",
     "@types/koa": "2.11.6",
@@ -81,6 +84,9 @@
       "tsx"
     ],
     "preset": "ts-jest",
-    "testMatch": null
+    "testMatch": null,
+    "moduleNameMapper": {
+      "^@smartlyio/oats$": "<rootDir>/index"
+    }
   }
 }
