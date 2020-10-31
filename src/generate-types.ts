@@ -1,4 +1,3 @@
-import * as process from 'process';
 import * as oas from 'openapi3-ts';
 import * as ts from 'typescript';
 import safe from '@smartlyio/safe-navigation';
@@ -260,7 +259,7 @@ export function run(options: Options) {
     oasSchema: oas.OpenAPIObject
   ) {
     if (!paramSchema) {
-      return generateTopLevelType(op, { type: 'void' });
+      return generateTopLevelType(op, { type: 'object', additionalProperties: false });
     }
     const schema = oautil.deref(paramSchema, oasSchema);
     const queryParams = schema

@@ -68,7 +68,7 @@ describe('optional queries', () => {
   });
 
   it('prevents using non existing query parameter', async () => {
-    // @ts-expect-error
+    // @ts-expect-error unknown query parameter
     await expect(apiClient.item.get({ query: { error: 1 } })).rejects.toThrow();
   });
 
