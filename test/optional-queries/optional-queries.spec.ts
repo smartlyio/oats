@@ -11,6 +11,9 @@ import * as http from 'http';
 // 'api.EndpointsWithContext' is the generated type of the server
 const spec: server.Endpoints = {
   '/item': {
+    post: async () => {
+      return runtime.json(200, { ok: 'post' });
+    },
     get: async ctx => {
       return runtime.json(200, { ok: ctx.query.field || 'no value' });
     }
@@ -67,18 +70,31 @@ describe('optional queries', () => {
     });
   });
 
-  it('prevents using non existing query parameter', async () => {
-    // @ts-expect-error unknown query parameter
-    await expect(apiClient.item.get({ query: { error: 1 } })).rejects.toThrow();
+  describe('with no query parameters', () => {
+    it('allows calling without any query paramets', async () => {
+      const item = await apiClient.item.post();
+      expect(item.value.value.ok).toEqual('post');
+    });
+    it('prevents using non existing query parameters', async () => {
+      // @ts-expect-error unknown query parameter
+      await expect(apiClient.item.get({ query: { a: 'a' } })).rejects.toThrow();
+    });
   });
 
-  it('allows calling without any query paramets', async () => {
-    const item = await apiClient.item.get();
-    expect(item.value.value.ok).toEqual('no value');
-  });
+  describe('with optional query params', () => {
+    it('prevents using non existing query parameter', async () => {
+      // @ts-expect-error unknown query parameter
+      await expect(apiClient.item.get({ query: { error: 1 } })).rejects.toThrow();
+    });
 
-  it('allows calling without query paramets', async () => {
-    const item = await apiClient.item.get({ query: { field: 'something' } });
-    expect(item.value.value.ok).toEqual('something');
+    it('allows calling without any query paramets', async () => {
+      const item = await apiClient.item.get();
+      expect(item.value.value.ok).toEqual('no value');
+    });
+
+    it('allows calling without query paramets', async () => {
+      const item = await apiClient.item.get({ query: { field: 'something' } });
+      expect(item.value.value.ok).toEqual('something');
+    });
   });
 });

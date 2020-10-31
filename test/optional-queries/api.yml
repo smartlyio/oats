@@ -6,8 +6,17 @@ servers:
   - url: http://localhost:12000
 paths:
   /item:
+    post:
+      description: no query parameters
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
     get:
-      description: get item
+      description: optional parameters
       parameters:
         - in: query
           name: field
