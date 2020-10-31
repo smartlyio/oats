@@ -10,6 +10,9 @@ import * as http from 'http';
 
 // 'api.EndpointsWithContext' is the generated type of the server
 const spec: server.Endpoints = {
+  '/item/{id}': {
+    post: async () => runtime.json(200, { ok: 'post with id' })
+  },
   '/item': {
     post: async () => {
       return runtime.json(200, { ok: 'post' });
@@ -71,6 +74,10 @@ describe('optional queries', () => {
   });
 
   describe('with no query parameters', () => {
+    it('allows calling without any query parameters whene there are path params', async () => {
+      const item = await apiClient.item('abc').post();
+      expect(item.value.value.ok).toEqual('post with id');
+    });
     it('allows calling without any query paramets', async () => {
       const item = await apiClient.item.post();
       expect(item.value.value.ok).toEqual('post');
