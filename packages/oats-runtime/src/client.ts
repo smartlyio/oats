@@ -2,10 +2,11 @@ import * as server from './server';
 import * as assert from 'assert';
 import safe from '@smartlyio/safe-navigation';
 
-type NotVoidKeys<T> = {
-  [P in keyof T]: T[P] extends void ? never : P;
-}[keyof T];
-type RemoveVoidProps<T> = Pick<T, NotVoidKeys<T>>;
+type HeaderProp<H, Next> = H extends void ? Next : { headers: H } & Next;
+type QueryProp<Q, Next> = true extends HasOnlyOptionalTypes<Q>
+  ? { query?: Q } | ({ query?: Q } & Next) | Next
+  : { query: Q } | ({ query: Q } & Next);
+type BodyProp<B> = B extends void ? void : { body: B };
 
 type HasOnlyOptionalTypes<O> = Partial<O> extends O ? true : false;
 
@@ -13,12 +14,7 @@ export type ClientArg<
   H extends server.Headers | void,
   Q extends server.Query | void,
   B extends server.RequestBody<any> | void
-> = RemoveVoidProps<
-  {
-    headers: H;
-    body: B;
-  } & (true extends HasOnlyOptionalTypes<Q> ? { query?: Q } : { query: Q })
->;
+> = HeaderProp<H, QueryProp<Q, BodyProp<B>>>;
 
 export type ClientEndpoint<
   H extends server.Headers | void,
