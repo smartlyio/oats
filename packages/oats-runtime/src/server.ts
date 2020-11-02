@@ -151,7 +151,7 @@ export function safe<
       op: ctx.op,
       headers: cleanHeaders(headers, ctx.headers),
       params: params(voidify(ctx.params)).success(throwRequestValidationError.bind(null, 'params')),
-      query: query(voidify(ctx.query)).success(throwRequestValidationError.bind(null, 'query')),
+      query: query(ctx.query || {}).success(throwRequestValidationError.bind(null, 'query')),
       body: body(voidify(ctx.body)).success(throwRequestValidationError.bind(null, 'body')),
       requestContext: ctx.requestContext as any
     });
