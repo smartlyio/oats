@@ -10,9 +10,12 @@
     "removeComments": false,
     "alwaysStrict": true,
     "typeRoots": ["./src/types", "./node_modules/@types"],
-    "baseUrl": "./src/types",
+    "baseUrl": ".",
     "forceConsistentCasingInFileNames": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "paths": {
+      "@smartlyio/oats": ["index"]
+    }
   },
   "exclude": ["examples/"]
 }
