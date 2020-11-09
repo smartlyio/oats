@@ -13,6 +13,9 @@ interface ImportDefinition {
   importFile: string;
 }
 
+// bit of a lie here really
+const voidSchema: oas.SchemaObject = { type: 'void' as any };
+
 export type Resolve = (
   ref: string,
   options: Options
@@ -258,7 +261,7 @@ export function run(options: Options) {
     paramSchema: undefined | ReadonlyArray<oas.ParameterObject | oas.ReferenceObject>,
     oasSchema: oas.OpenAPIObject
   ) {
-    const noQueryParams = { type: 'object', additionalProperties: false };
+    const noQueryParams = { type: 'object' as const, additionalProperties: false };
     if (!paramSchema) {
       return generateTopLevelType(op, noQueryParams);
     }
@@ -293,7 +296,7 @@ export function run(options: Options) {
     oasSchema: oas.OpenAPIObject,
     normalize = (name: string) => name
   ) {
-    const empty = generateTopLevelType(op, { type: 'void' });
+    const empty = generateTopLevelType(op, voidSchema);
     if (!paramSchema) {
       return empty;
     }
@@ -352,9 +355,7 @@ export function run(options: Options) {
     requestBody: undefined | oas.ReferenceObject | oas.RequestBodyObject
   ) {
     if (requestBody == null) {
-      return generateTopLevelType(op, {
-        type: 'void'
-      });
+      return generateTopLevelType(op, voidSchema);
     }
     if (oautil.isReferenceObject(requestBody)) {
       return generateTopLevelType(op, { $ref: requestBody.$ref });
@@ -364,7 +365,7 @@ export function run(options: Options) {
       return generateTopLevelType(op, generateContentSchemaType(requestBody.content));
     }
     return generateTopLevelType(op, {
-      oneOf: [generateContentSchemaType(requestBody.content), { type: 'void' }]
+      oneOf: [generateContentSchemaType(requestBody.content), voidSchema]
     });
   }
 
@@ -424,7 +425,7 @@ export function run(options: Options) {
       }
     });
     if (responseSchemas.length === 0) {
-      return generateTopLevelType(op, { type: 'void' });
+      return generateTopLevelType(op, voidSchema);
     }
     return generateTopLevelType(op, {
       oneOf: responseSchemas
@@ -568,6 +569,7 @@ export function run(options: Options) {
     if (schema.type === 'boolean') {
       return ts.createKeywordTypeNode(ts.SyntaxKind.BooleanKeyword);
     }
+    // @ts-expect-error schemas really do not have void type. but we do
     if (schema.type === 'void') {
       return ts.createKeywordTypeNode(ts.SyntaxKind.VoidKeyword);
     }
@@ -798,6 +800,7 @@ export function run(options: Options) {
       }
     }
 
+    // @ts-expect-error schemas really do not have void type. but we do
     if (schema.type === 'void') {
       return makeCall('makeVoid', []);
     }
@@ -888,6 +891,7 @@ export function run(options: Options) {
       return generateReflectionType({ oneOf: [{ ...schema, nullable: false }, { type: 'null' }] });
     }
 
+    // @ts-expect-error schemas really do not have void type. but we do
     if (schema.type === 'void') {
       return ts.createObjectLiteral(
         [ts.createPropertyAssignment('type', ts.createStringLiteral('void'))],
