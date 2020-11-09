@@ -1,6 +1,6 @@
 {
   "name": "@smartlyio/oats",
-  "version": "2.5.9",
+  "version": "2.7.1",
   "license": "MIT",
   "description": "Openapi3 based generator for typescript aware servers and clients",
   "private": false,
@@ -8,9 +8,12 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "render": "yarn ts-node examples/driver.ts && yarn ts-node render.ts",
-    "clean": "rm -rf ./dist/* && rm -rf ./tmp",
-    "build": "yarn clean && yarn render && yarn jest && yarn lint && yarn tsc",
+    "generate:test": "find test -name driver.ts -exec yarn ts-node -r tsconfig-paths/register --project tsconfig.json {} \\;",
+    "test": "yarn generate:test && yarn generate:render && yarn jest",
+    "generate:render": "yarn ts-node examples/driver.ts",
+    "render": "yarn generate:render && yarn ts-node render.ts",
+    "clean": "rm -rf ./dist/* && rm -rf ./tmp && find test -name '*generated.ts' -exec rm {} \\;",
+    "build": "yarn clean && yarn test && yarn lint && yarn tsc",
     "prepublish": "yarn build",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix"
@@ -20,7 +23,7 @@
     "url": "https://github.com/smartlyio/oats.git"
   },
   "peerDependencies": {
-    "@smartlyio/oats-runtime": "^2.4.1",
+    "@smartlyio/oats-runtime": "^2.7.1",
     "typescript": "^3.8.3"
   },
   "dependencies": {
@@ -41,32 +44,32 @@
   "devDependencies": {
     "@smartlyio/oats-axios-adapter": "2.2.3",
     "@smartlyio/oats-koa-adapter": "2.0.1",
-    "@smartlyio/oats-runtime": "2.6.6",
-    "@types/jest": "26.0.14",
+    "@smartlyio/oats-runtime": "2.7.1",
+    "@types/jest": "26.0.15",
     "@types/js-yaml": "3.12.5",
-    "@types/koa": "2.11.4",
+    "@types/koa": "2.11.6",
     "@types/koa-mount": "4.0.0",
     "@types/koa-router": "7.4.1",
-    "@types/lodash": "4.14.161",
+    "@types/lodash": "4.14.165",
     "@types/node": "11.15.21",
-    "@typescript-eslint/eslint-plugin": "4.2.0",
-    "@typescript-eslint/parser": "4.2.0",
-    "axios": "0.20.0",
-    "eslint": "7.10.0",
-    "eslint-config-prettier": "6.12.0",
-    "eslint-plugin-import": "2.22.0",
-    "eslint-plugin-jest": "24.0.2",
+    "@typescript-eslint/eslint-plugin": "4.6.1",
+    "@typescript-eslint/parser": "4.6.1",
+    "axios": "0.21.0",
+    "eslint": "7.13.0",
+    "eslint-config-prettier": "6.15.0",
+    "eslint-plugin-import": "2.22.1",
+    "eslint-plugin-jest": "24.1.0",
     "eslint-plugin-prettier": "3.1.4",
-    "fast-check": "2.3.0",
+    "fast-check": "2.6.1",
     "form-data": "3.0.0",
-    "jest": "26.4.2",
+    "jest": "26.6.3",
     "jsverify": "0.8.4",
     "koa": "2.13.0",
     "koa-body": "4.2.0",
     "koa-mount": "4.0.0",
     "koa-router": "9.4.0",
     "prettier": "2.1.2",
-    "ts-jest": "26.4.0",
+    "ts-jest": "26.4.4",
     "ts-node": "9.0.0",
     "typescript": "3.9.7"
   },
@@ -81,6 +84,9 @@
       "tsx"
     ],
     "preset": "ts-jest",
-    "testMatch": null
+    "testMatch": null,
+    "moduleNameMapper": {
+      "^@smartlyio/oats$": "<rootDir>/index"
+    }
   }
 }

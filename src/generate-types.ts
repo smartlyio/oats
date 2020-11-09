@@ -258,15 +258,16 @@ export function run(options: Options) {
     paramSchema: undefined | ReadonlyArray<oas.ParameterObject | oas.ReferenceObject>,
     oasSchema: oas.OpenAPIObject
   ) {
+    const noQueryParams = { type: 'object', additionalProperties: false };
     if (!paramSchema) {
-      return generateTopLevelType(op, { type: 'void' });
+      return generateTopLevelType(op, noQueryParams);
     }
     const schema = oautil.deref(paramSchema, oasSchema);
     const queryParams = schema
       .map(schema => oautil.deref(schema, oasSchema))
       .filter(schema => schema.in === 'query');
     if (queryParams.length === 0) {
-      return generateTopLevelType(op, { type: 'void' });
+      return generateTopLevelType(op, noQueryParams);
     }
     if (queryParams.some(param => !!param.explode)) {
       assert(queryParams.length === 1, 'only one explode: true parameter is supported');
@@ -963,9 +964,9 @@ export function run(options: Options) {
               'enum',
               ts.createArrayLiteral(
                 schema.enum.map(i =>
-                  i === 'true'
+                  i === true
                     ? ts.createTrue()
-                    : i === 'false'
+                    : i === false
                     ? ts.createFalse()
                     : assert.fail('unknown enum ' + i)
                 )

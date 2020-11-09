@@ -6,4 +6,9 @@ describe('codegen', () => {
       types.NonNullableNullable
     );
   });
+
+  it('works correctly with boolean enums', () => {
+    expect(types.typeGuard.maker(true).success()).toBe(true);
+    expect(types.typeGuard.maker(false as any).success).toThrowError();
+  });
 });

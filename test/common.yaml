@@ -31,4 +31,7 @@ components:
           type: boolean
         nullableField:
           $ref: '#/components/schemas/Nullable'
-
+    Guard:
+      type: boolean
+      enum:
+        - true
