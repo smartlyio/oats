@@ -33,7 +33,7 @@ export interface Driver {
   resolve?: Resolve;
   externalOpenApiImports?: readonly ImportDefinition[];
   externalOpenApiSpecs?: (url: string) => string | undefined;
-  header: string;
+  header?: string;
   generatedServerFile?: string;
   generatedClientFile?: string;
   runtimeFilePath?: string; // set path to runtime directly for testing
@@ -114,6 +114,7 @@ export function generateFile(): types.Resolve {
 export function generate(driver: Driver) {
   const file = fs.readFileSync(driver.openapiFilePath, 'utf8');
   const spec: oas.OpenAPIObject = yaml.load(file);
+  const header = driver.header ? driver.header + '\n' : '';
 
   types.deprecated(
     driver.generatedServerFile && driver.generatedClientFile,
@@ -136,39 +137,41 @@ export function generate(driver: Driver) {
     emitStatusCode: driver.emitStatusCode || emitAllStatusCodes
   });
   if (typeSource) {
-    fs.writeFileSync(driver.generatedValueClassFile, driver.header + '\n' + typeSource);
+    fs.writeFileSync(driver.generatedValueClassFile, header + typeSource);
   }
 
   if (driver.generatedClientFile) {
     fs.mkdirSync(path.dirname(driver.generatedClientFile), { recursive: true });
     fs.writeFileSync(
       driver.generatedClientFile,
-      server.run({
-        oas: spec,
-        runtimePath: modulePath(driver.generatedClientFile, driver.runtimeFilePath),
-        typePath: modulePath(driver.generatedClientFile, driver.generatedValueClassFile),
-        shapesAsResponses: false,
-        shapesAsRequests: true,
-        unsupportedFeatures: {
-          security: driver.unsupportedFeatures?.security ?? UnsupportedFeatureBehaviour.reject
-        }
-      })
+      header +
+        server.run({
+          oas: spec,
+          runtimePath: modulePath(driver.generatedClientFile, driver.runtimeFilePath),
+          typePath: modulePath(driver.generatedClientFile, driver.generatedValueClassFile),
+          shapesAsResponses: false,
+          shapesAsRequests: true,
+          unsupportedFeatures: {
+            security: driver.unsupportedFeatures?.security ?? UnsupportedFeatureBehaviour.reject
+          }
+        })
     );
   }
   if (driver.generatedServerFile) {
     fs.mkdirSync(path.dirname(driver.generatedServerFile), { recursive: true });
     fs.writeFileSync(
       driver.generatedServerFile,
-      server.run({
-        oas: spec,
-        runtimePath: modulePath(driver.generatedServerFile, driver.runtimeFilePath),
-        typePath: modulePath(driver.generatedServerFile, driver.generatedValueClassFile),
-        shapesAsRequests: false,
-        shapesAsResponses: true,
-        unsupportedFeatures: {
-          security: driver.unsupportedFeatures?.security ?? UnsupportedFeatureBehaviour.reject
-        }
-      })
+      header +
+        server.run({
+          oas: spec,
+          runtimePath: modulePath(driver.generatedServerFile, driver.runtimeFilePath),
+          typePath: modulePath(driver.generatedServerFile, driver.generatedValueClassFile),
+          shapesAsRequests: false,
+          shapesAsResponses: true,
+          unsupportedFeatures: {
+            security: driver.unsupportedFeatures?.security ?? UnsupportedFeatureBehaviour.reject
+          }
+        })
     );
   }
 }
