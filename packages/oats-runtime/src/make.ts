@@ -332,7 +332,7 @@ export function makeObject<
         }
         maker = maker.optional;
       }
-      const propResult: Make<any> = maker(value[index]);
+      const propResult: Make<any> = maker(value[index], opts);
       if (propResult.isError()) {
         return propResult.errorPath(index);
       }
@@ -351,7 +351,7 @@ export function makeObject<
         }
         return error('unexpected property').errorPath(index);
       }
-      const propResult: Make<any> = additionalProp(value[index]);
+      const propResult: Make<any> = additionalProp(value[index], opts);
       if (propResult.isError()) {
         return propResult.errorPath(index);
       }

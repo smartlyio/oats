@@ -203,6 +203,20 @@ describe('makeObject', () => {
     expect(fun({ a: 1, missing: 'a' }, { unknownField: 'drop' }).success()).toEqual({ a: 1 });
   });
 
+  it('drops unknown properties in nested objects', () => {
+    const fun = make.makeObject({ a: make.makeObject({ b: make.makeNumber() }) });
+    expect(fun({ a: { b: 1, missing: 'value' } }, { unknownField: 'drop' }).success()).toEqual({
+      a: { b: 1 }
+    });
+  });
+
+  it('drops unknown properties in nested additional prop objects', () => {
+    const fun = make.makeObject({}, make.makeObject({ b: make.makeNumber() }));
+    expect(fun({ a: { b: 1, missing: 'value' } }, { unknownField: 'drop' }).success()).toEqual({
+      a: { b: 1 }
+    });
+  });
+
   it('disallows extra fields', () => {
     const fun = make.makeObject({ a: make.makeNumber() });
     expect(fun({ a: 1, missing: 'a' }).isError()).toBeTruthy();
