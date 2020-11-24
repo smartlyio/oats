@@ -42,6 +42,28 @@ describe('ClientEndpoint', () => {
     });
   });
 
+  it('requires body', () => {
+    // @ts-expect-error
+    void mock<client.ClientEndpoint<void, void, typeof body, typeof response>>()();
+  });
+
+  it('allows no body when body can be void', () => {
+    void mock<client.ClientEndpoint<void, void, typeof body | void, typeof response>>()();
+  });
+
+  it('allows body when body can be void', () => {
+    void mock<client.ClientEndpoint<void, void, typeof body | void, typeof response>>()({
+      body
+    });
+  });
+
+  it('requires body with correct type', () => {
+    void mock<client.ClientEndpoint<void, void, typeof body, typeof response>>()({
+      // @ts-expect-error
+      body: { foo: 1 }
+    });
+  });
+
   it('allows passing no query when body is present', () => {
     void mock<client.ClientEndpoint<void, { a?: string }, typeof body, typeof response>>()({
       body
