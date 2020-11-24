@@ -73,6 +73,17 @@ describe('optional queries', () => {
     });
   });
 
+  describe('with mandatory body', () => {
+    it('requires body to be given', async () => {
+      // @ts-expect-error unknown query parameter
+      await expect(apiClient.hasbody.post()).rejects.toThrow();
+    });
+
+    it('allows body', async () => {
+      await expect(apiClient.hasbody.post({ body: runtime.client.json('abc') })).rejects.toThrow();
+    });
+  });
+
   describe('with no query parameters', () => {
     it('allows calling without any query parameters whene there are path params', async () => {
       const item = await apiClient.item('abc').post();
