@@ -359,7 +359,7 @@ export function run(options: Options) {
         required.push(headerName);
         return { ...memo, [headerName]: headerObject };
       } else if (headerObject.schema) {
-        required.push(headerName);
+        if (headerObject.required) required.push(headerName);
         return { ...memo, [headerName]: headerObject.schema };
       }
       return memo;
