@@ -439,7 +439,7 @@ export function run(options: Options) {
                     }
                   }
                 ),
-            headers: { type: 'object', nullable: true }
+            headers: { type: 'object' }
           },
           required: ['status', 'value', 'headers'],
           additionalProperties: false
