@@ -438,14 +438,14 @@ export function run(options: Options) {
                       }
                     }
                   }
-                )
+                ),
+            headers: { type: 'object', nullable: true }
           },
-          required: ['status', 'value'],
+          required: ['status', 'value', 'headers'],
           additionalProperties: false
         };
         if (!oautil.isReferenceObject(response) && response.headers) {
           schema.properties!.headers = generateHeadersSchemaType(response.headers);
-          schema.required!.push('headers');
         }
         responseSchemas.push(schema);
       }
