@@ -352,6 +352,26 @@ export function run(options: Options) {
     };
   }
 
+  function generateHeadersSchemaType(headers: oas.HeadersObject): oas.SchemaObject {
+    const required: string[] = [];
+    const properties = Object.entries(headers).reduce((memo, [headerName, headerObject]) => {
+      if (oautil.isReferenceObject(headerObject)) {
+        required.push(headerName);
+        return { ...memo, [headerName]: headerObject };
+      } else if (headerObject.schema) {
+        required.push(headerName);
+        return { ...memo, [headerName]: headerObject.schema };
+      }
+      return memo;
+    }, {} as { [key: string]: oas.SchemaObject | oas.ReferenceObject });
+    return {
+      type: 'object',
+      properties,
+      required,
+      additionalProperties: true
+    };
+  }
+
   function generateRequestBodyType(
     op: string,
     requestBody: undefined | oas.ReferenceObject | oas.RequestBodyObject
@@ -423,6 +443,10 @@ export function run(options: Options) {
           required: ['status', 'value'],
           additionalProperties: false
         };
+        if (!oautil.isReferenceObject(response) && response.headers) {
+          schema.properties!.headers = generateHeadersSchemaType(response.headers);
+          schema.required!.push('headers');
+        }
         responseSchemas.push(schema);
       }
     });
