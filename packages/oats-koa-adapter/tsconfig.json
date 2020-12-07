@@ -14,5 +14,5 @@
     "forceConsistentCasingInFileNames": true,
     "outDir": "dist"
   },
-  "exclude": ["adapters/", "runtime/"]
+  "exclude": ["adapters/", "runtime/", "examples/"]
 }

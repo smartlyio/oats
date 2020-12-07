@@ -12,7 +12,9 @@
     "lint:fix": "eslint . --ext .ts --fix",
     "clean": "rm -rf ./dist && rm -f ./tmp/*.ts",
     "build": "yarn clean && yarn lint && yarn tsc",
-    "prepublish": "yarn build"
+    "prepublish": "yarn build",
+    "render": "ts-node render-docs.ts",
+    "render:watch": "nodemon -w \"examples/\" -w \"README.template.md\" render-docs.ts"
   },
   "repository": {
     "type": "git",
@@ -47,8 +49,10 @@
     "eslint-config-prettier": "6.15.0",
     "eslint-plugin-import": "2.22.1",
     "eslint-plugin-jest": "23.20.0",
+    "nodemon": "^2.0.6",
     "eslint-plugin-prettier": "3.2.0",
     "prettier": "2.2.1",
+    "ts-node": "9.0.0",
     "typescript": "3.9.7"
   }
 }
