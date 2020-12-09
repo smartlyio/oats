@@ -34,7 +34,7 @@ function axiosToJson(data: any) {
 
 export const bind: runtime.client.ClientAdapter = async (
   arg: runtime.server.EndpointArg<any, any, any, any>
-): Promise<any> => {
+): Promise<runtime.server.Response<any, any, any, Record<string, any>>> => {
   if (arg.servers.length !== 1) {
     return assert.fail('cannot decide which server to use from ' + arg.servers.join(', '));
   }
@@ -57,7 +57,8 @@ export const bind: runtime.client.ClientAdapter = async (
     value: {
       contentType,
       value: getResponseData(contentType, response)
-    }
+    },
+    headers: response.headers ?? {}
   };
 };
 
