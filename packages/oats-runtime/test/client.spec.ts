@@ -3,7 +3,11 @@
 import * as client from '../src/client';
 describe('ClientEndpoint', () => {
   const body = { contentType: 'application/json', value: { foo: 'some string' } };
-  const response = { status: 200, value: { contentType: 'application/json', value: {} } };
+  const response = {
+    status: 200,
+    value: { contentType: 'application/json', value: {} },
+    headers: {}
+  };
   function mock<R>(): R {
     return (() => null) as any;
   }

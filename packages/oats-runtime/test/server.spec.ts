@@ -14,7 +14,8 @@ describe('safe', () => {
         value: makeObject({
           contentType: makeString(),
           value: makeString()
-        })
+        }),
+        headers: makeObject({})
       }),
       async () => {
         return oar.json(200, 'response');

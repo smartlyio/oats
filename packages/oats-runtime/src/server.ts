@@ -2,12 +2,18 @@ import * as assert from 'assert';
 import safeNavigation from '@smartlyio/safe-navigation';
 import { Make, Maker, ValidationError, validationErrorPrinter } from './make';
 
-export interface Response<Status extends number, ContentType, Value> {
+export interface Response<
+  Status extends number,
+  ContentType,
+  Value,
+  Headers extends Record<string, any>
+> {
   status: Status;
   value: {
     contentType: ContentType;
     value: Value;
   };
+  headers: Headers;
 }
 
 export interface RequestBody<A> {
@@ -52,7 +58,7 @@ export type Endpoint<
   P extends Params | void,
   Q extends Query | void,
   Body extends RequestBody<any> | void,
-  R extends Response<number, any, any>,
+  R extends Response<number, any, any, Record<string, any>>,
   RC extends RequestContext
 > = (ctx: ServerEndpointArg<H, P, Q, Body, RC>) => Promise<R>;
 
@@ -61,7 +67,7 @@ export type SafeEndpoint = Endpoint<
   Params | undefined,
   Query | undefined,
   RequestBody<any> | undefined,
-  Response<number, any, any>,
+  Response<number, any, any, Record<string, any>>,
   RequestContext
 >;
 
@@ -133,7 +139,7 @@ export function safe<
   P extends Params,
   Q extends Query,
   Body extends RequestBody<any>,
-  R extends Response<any, any, any>,
+  R extends Response<any, any, any, Record<string, any>>,
   RC extends RequestContext
 >(
   headers: Maker<any, H>,
@@ -142,7 +148,14 @@ export function safe<
   body: Maker<any, Body>,
   response: Maker<any, R>,
   endpoint: Endpoint<H, P, Q, Body, R, RC>
-): Endpoint<Headers, Params, Query, RequestBody<any>, Response<number, any, any>, RequestContext> {
+): Endpoint<
+  Headers,
+  Params,
+  Query,
+  RequestBody<any>,
+  Response<number, any, any, Record<string, any>>,
+  RequestContext
+> {
   return async ctx => {
     const result = await endpoint({
       path: ctx.path,

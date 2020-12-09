@@ -18,7 +18,7 @@ export type ClientEndpoint<
   H extends server.Headers | void,
   Q extends server.Query | void,
   B extends server.RequestBody<any> | void,
-  R extends server.Response<number, any, any>
+  R extends server.Response<number, any, any, Record<string, any>>
 > = object extends ClientArg<H, Q, B>
   ? (ctx?: ClientArg<H, Q, B>) => Promise<R>
   : (ctx: ClientArg<H, Q, B>) => Promise<R>;
