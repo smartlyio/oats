@@ -652,10 +652,10 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@smartlyio/oats-axios-adapter@2.2.4":
-  version "2.2.4"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats-axios-adapter/-/oats-axios-adapter-2.2.4.tgz#221efa8ef375ce535095594d2a4750c1e9bccae0"
-  integrity sha512-Wod6mQI3YwQHsNA4NjnLfHYqrWpcnZhhxCinjPjRxXUo+UxvQON7uuTi2uKB8SGS9EYrWPxz1zLLNGsxFkWjwg==
+"@smartlyio/oats-axios-adapter@2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats-axios-adapter/-/oats-axios-adapter-2.3.0.tgz#fa1d26ea4d96c30e2bfb788254d9469c22bb118d"
+  integrity sha512-R5vZ7lHjywGDB1pNdeqTo32dGeu0UjqnWkiEBDF2BLqkfwr9/6hfjnC2JruEbBj/rHzMFeqEE5Y24ovWvNVQTw==
   dependencies:
     form-data "^3.0.0"
 
