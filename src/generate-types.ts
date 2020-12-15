@@ -368,7 +368,9 @@ export function run(options: Options) {
       type: 'object',
       properties,
       required,
-      additionalProperties: true
+      additionalProperties: {
+        type: 'string'
+      }
     };
   }
 
