@@ -8,3 +8,5 @@ dist/
 *.iml
 .DS_Store
 *.tgz
+.yalc
+yalc.lock
