@@ -1,6 +1,6 @@
 {
   "name": "@smartlyio/oats-koa-adapter",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "license": "MIT",
   "description": "Koa adapter for Oats",
   "private": false,
@@ -21,7 +21,7 @@
     "url": "https://github.com/smartlyio/oats.git"
   },
   "peerDependencies": {
-    "@smartlyio/oats-runtime": "^2.0.0",
+    "@smartlyio/oats-runtime": "^2.8.0",
     "koa": "^2.3.0",
     "koa-body": "^4.0.4",
     "koa-router": "^10.0.0",

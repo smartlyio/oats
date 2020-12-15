@@ -39,6 +39,7 @@ function adapter<StateT, CustomT, RequestContext>(
       });
       ctx.status = result.status;
       ctx.body = result.value.value;
+      ctx.set(result.headers);
     });
   };
 }
