@@ -1218,25 +1218,6 @@ export function run(options: Options) {
     );
   }
 
-  function generateScalarBrand(key: string) {
-    const tag = ts.createProperty(
-      undefined,
-      [ts.createToken(ts.SyntaxKind.PrivateKeyword), ts.createToken(ts.SyntaxKind.ReadonlyKeyword)],
-      quotedProp(oatsBrandFieldName),
-      ts.createToken(ts.SyntaxKind.ExclamationToken),
-      ts.createKeywordTypeNode(ts.SyntaxKind.StringKeyword),
-      undefined
-    );
-    return ts.createClassDeclaration(
-      undefined,
-      [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
-      brandTypeName(key),
-      [],
-      [],
-      [tag]
-    );
-  }
-
   function generateTopLevelClass(key: string, schema: oas.SchemaObject): readonly ts.Node[] {
     if (schema.nullable) {
       const classKey = oautil.nonNullableClass(key);
@@ -1290,7 +1271,7 @@ export function run(options: Options) {
 
     if (isScalar(schema)) {
       return [
-        generateScalarBrand(key),
+        generateBrand(key),
         ts.createTypeAliasDeclaration(
           undefined,
           [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
@@ -1318,7 +1299,7 @@ export function run(options: Options) {
   }
 
   function scalarTypeWithBrand(key: string, type: ts.TypeNode): ts.TypeNode {
-    return ts.createIntersectionTypeNode([
+    return ts.createTypeReferenceNode(fromLib('BrandedScalar'), [
       type,
       ts.createTypeReferenceNode(brandTypeName(key), [])
     ]);
