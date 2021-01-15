@@ -1,12 +1,11 @@
 import { ValueClass } from '../src/value-class';
 import { createMakerWith, Make, makeArray, makeObject, Maker, makeString } from '../src/make';
+import { ShapeOf } from '../src/runtime';
 
-export interface ShapeOfTestClass {
-  a: ReadonlyArray<string>;
-  b: string;
-}
-export class TestClass extends ValueClass<ShapeOfTestClass, 1> {
-  static make(v: ShapeOfTestClass): Make<TestClass> {
+export type ShapeOfTestClass = ShapeOf<TestClass>;
+
+export class TestClass extends ValueClass<never, 1> {
+  static make(v: ShapeOf<TestClass>): Make<TestClass> {
     return makeTestClass(v);
   }
   public b!: string;
@@ -20,4 +19,4 @@ export class TestClass extends ValueClass<ShapeOfTestClass, 1> {
     Object.assign(this, value);
   }
 }
-export const makeTestClass: Maker<ShapeOfTestClass, TestClass> = createMakerWith(TestClass);
+export const makeTestClass: Maker<ShapeOf<TestClass>, TestClass> = createMakerWith(TestClass);

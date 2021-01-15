@@ -8,6 +8,39 @@ export { make, server, client, valueClass, reflection };
 
 export const noContentContentType = 'oatsNoContent' as const;
 
+type Scalar = number | string | boolean;
+
+const typeWitnessKey = Symbol();
+const tagKey = Symbol();
+
+type ScalarWithoutBrand<V> = V extends ShapedClass<infer S> ? S : V;
+
+export type ShapeOf<A> = A extends Scalar
+  ? ScalarWithoutBrand<A>
+  : A extends ShapedClass<infer S>
+  ? S
+  : unknown extends A
+  ? unknown
+  : A extends Array<infer Item>
+  ? Array<ShapeOf<Item>>
+  : { [K in keyof A]: ShapeOf<A[K]> };
+
+class ShapedClass<Shape> {
+  protected [typeWitnessKey]: Shape;
+}
+
+class BrandedClass<Tag> {
+  protected [tagKey]: Tag;
+}
+
+export type Shaped<Type, Shape> = Type extends Nully ? Type : Type & ShapedClass<Shape>;
+
+type Nully = null | undefined;
+// note: null and undefined intersected with a {} result in 'never'
+export type BrandedScalar<Type, Tag> = Type extends Nully
+  ? Type
+  : Shaped<Type, Type> & BrandedClass<Tag>;
+
 export function setHeaders<
   Status extends number,
   ConntentType,
@@ -54,7 +87,7 @@ export function text<Status extends number, Value>(
 
 export function set<Cls>(
   to: Cls,
-  set: Cls extends valueClass.ValueClass<infer Shape, any> ? Partial<Shape> : never
+  set: Cls extends valueClass.ValueClass<any, any> ? Partial<ShapeOf<Cls>> : never
 ): make.Make<Cls> {
   return (to as any).constructor.make({ ...to, ...set });
 }
