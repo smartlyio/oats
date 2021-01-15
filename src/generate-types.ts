@@ -625,14 +625,10 @@ export function run(options: Options) {
     );
     const brand = ts.createExpressionWithTypeArguments(
       [
-        ts.createTypeReferenceNode(ts.createIdentifier('ShapeOf' + oautil.typenamify(key)), []),
+        ts.createTypeReferenceNode(ts.createIdentifier('never'), []),
         ts.createTypeReferenceNode(ts.createIdentifier('BrandOf' + oautil.typenamify(key)), [])
       ],
       ts.createPropertyAccess(runtimeLibrary, 'valueClass.ValueClass')
-    );
-    const shape = ts.createExpressionWithTypeArguments(
-      [],
-      ts.createIdentifier('ShapeOf' + oautil.typenamify(key))
     );
     const builtinMembers = [
       ts.createMethod(
@@ -742,10 +738,7 @@ export function run(options: Options) {
       [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
       oautil.typenamify(key),
       [],
-      [
-        ts.createHeritageClause(ts.SyntaxKind.ExtendsKeyword, [brand]),
-        ts.createHeritageClause(ts.SyntaxKind.ImplementsKeyword, [shape])
-      ],
+      [ts.createHeritageClause(ts.SyntaxKind.ExtendsKeyword, [brand])],
       [...members, ...builtinMembers]
     );
   }
@@ -1205,23 +1198,6 @@ export function run(options: Options) {
     );
   }
 
-  function generateObjectShape(key: string, schema: oas.SchemaObject) {
-    const members = generateObjectMembers(
-      schema.properties,
-      schema.required,
-      schema.additionalProperties,
-      (typeName: string) => 'ShapeOf' + typeName
-    );
-    return ts.createInterfaceDeclaration(
-      undefined,
-      [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
-      'ShapeOf' + oautil.typenamify(key),
-      undefined,
-      undefined,
-      members
-    );
-  }
-
   function brandTypeName(key: string): string {
     return 'BrandOf' + oautil.typenamify(key);
   }
@@ -1230,32 +1206,15 @@ export function run(options: Options) {
     return ts.createEnumDeclaration(undefined, undefined, brandTypeName(key), []);
   }
 
-  function generateTypeShape(key: string, schema: oas.SchemaObject) {
+  function generateTypeShape(key: string) {
     return ts.createTypeAliasDeclaration(
       undefined,
       [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
       'ShapeOf' + oautil.typenamify(key),
       undefined,
-      generateType(schema, name => 'ShapeOf' + name)
-    );
-  }
-
-  function generateScalarBrand(key: string) {
-    const tag = ts.createProperty(
-      undefined,
-      [ts.createToken(ts.SyntaxKind.PrivateKeyword), ts.createToken(ts.SyntaxKind.ReadonlyKeyword)],
-      quotedProp(oatsBrandFieldName),
-      ts.createToken(ts.SyntaxKind.ExclamationToken),
-      ts.createKeywordTypeNode(ts.SyntaxKind.StringKeyword),
-      undefined
-    );
-    return ts.createClassDeclaration(
-      undefined,
-      [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
-      brandTypeName(key),
-      [],
-      [],
-      [tag]
+      ts.createTypeReferenceNode(fromLib('ShapeOf'), [
+        ts.createTypeReferenceNode(oautil.typenamify(key), [])
+      ])
     );
   }
 
@@ -1275,7 +1234,7 @@ export function run(options: Options) {
       return [...generateTopLevelClass(classKey, { ...schema, nullable: false }), ...proxy];
     }
     return [
-      generateObjectShape(key, schema),
+      generateTypeShape(key),
       generateBrand(key),
       generateValueClass(key, schema),
       generateTopLevelClassBuilder(key, schema),
@@ -1301,7 +1260,7 @@ export function run(options: Options) {
           undefined,
           ts.createTypeReferenceNode(type, undefined)
         ),
-        generateTypeShape(key, schema),
+        generateTypeShape(key),
         generateTopLevelMaker(key, schema),
         generateNamedTypeDefinitionAssignment(key, schema)
       ];
@@ -1312,7 +1271,7 @@ export function run(options: Options) {
 
     if (isScalar(schema)) {
       return [
-        generateScalarBrand(key),
+        generateBrand(key),
         ts.createTypeAliasDeclaration(
           undefined,
           [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
@@ -1320,7 +1279,7 @@ export function run(options: Options) {
           undefined,
           scalarTypeWithBrand(key, generateType(schema))
         ),
-        generateTypeShape(key, schema),
+        generateTypeShape(key),
         generateTopLevelMaker(key, schema),
         generateNamedTypeDefinitionAssignment(key, schema)
       ];
@@ -1333,14 +1292,14 @@ export function run(options: Options) {
         undefined,
         generateType(schema)
       ),
-      generateTypeShape(key, schema),
+      generateTypeShape(key),
       generateTopLevelMaker(key, schema),
       generateNamedTypeDefinitionAssignment(key, schema)
     ];
   }
 
   function scalarTypeWithBrand(key: string, type: ts.TypeNode): ts.TypeNode {
-    return ts.createIntersectionTypeNode([
+    return ts.createTypeReferenceNode(fromLib('BrandedScalar'), [
       type,
       ts.createTypeReferenceNode(brandTypeName(key), [])
     ]);
