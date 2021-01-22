@@ -1384,12 +1384,17 @@ export function run(options: Options) {
     oneOf: (oas.SchemaObject | oas.ReferenceObject)[],
     param = 'value'
   ) {
-    // TODO support non-ref options in oneOf
-    if (oneOf.some(obj => !oautil.isReferenceObject(obj))) return;
+    const calls = oneOf.map(obj => {
+      if (oautil.isReferenceObject(obj)) {
+        return generateIsACall('type' + resolveRefToTypeName(obj.$ref).member, param);
+      } else if (obj.items) {
+        const arrayIsA = getExpressionsForArrayIsA(obj.items);
+        return arrayIsA ? ts.createParen(arrayIsA) : undefined;
+      }
+    });
 
-    const calls = oneOf.map(obj =>
-      generateIsACall('type' + resolveRefToTypeName(obj.$ref).member, param)
-    );
+    // TODO support non-ref options in oneOf
+    if (calls.some(call => !call)) return;
     assert(calls.length > 0, 'empty oneOf should not be possible');
 
     return calls.length === 1
@@ -1397,12 +1402,14 @@ export function run(options: Options) {
       : calls
           .slice(2)
           .reduce(
-            (acc, memo) => ts.createBinary(acc, ts.SyntaxKind.BarBarToken, memo),
-            ts.createBinary(calls[0], ts.SyntaxKind.BarBarToken, calls[1])
+            (acc, memo) => ts.createBinary(acc, ts.SyntaxKind.BarBarToken, memo!),
+            ts.createBinary(calls[0]!, ts.SyntaxKind.BarBarToken, calls[1]!)
           );
   }
 
-  function generateIsAForArray(items: oas.SchemaObject | oas.ReferenceObject) {
+  function getExpressionsForArrayIsA(
+    items: oas.SchemaObject | oas.ReferenceObject
+  ): ts.Expression | undefined {
     let call: ts.Expression | undefined = undefined;
     if (oautil.isReferenceObject(items)) {
       call = generateIsACall('type' + resolveRefToTypeName(items.$ref).member, 'element');
@@ -1413,38 +1420,45 @@ export function run(options: Options) {
     // TODO support non-ref options in array
     if (!call) return;
 
+    return ts.createBinary(
+      ts.createCall(ts.createPropertyAccess(ts.createIdentifier('Array'), 'isArray'), undefined, [
+        ts.createIdentifier('value')
+      ]),
+      ts.SyntaxKind.AmpersandAmpersandToken,
+      ts.createCall(ts.createPropertyAccess(ts.createIdentifier('value'), 'every'), undefined, [
+        ts.createArrowFunction(
+          undefined,
+          undefined,
+          [
+            ts.createParameter(
+              undefined,
+              undefined,
+              undefined,
+              ts.createIdentifier('element'),
+              undefined,
+              undefined,
+              undefined
+            )
+          ],
+          undefined,
+          ts.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
+          call
+        )
+      ])
+    );
+  }
+
+  function generateIsAForArray(items: oas.SchemaObject | oas.ReferenceObject) {
+    const expression = getExpressionsForArrayIsA(items);
+    if (!expression) return;
+
     return ts.createArrowFunction(
       undefined,
       undefined,
       [makeAnyProperty('value')],
       undefined,
       ts.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
-      ts.createBinary(
-        ts.createCall(ts.createPropertyAccess(ts.createIdentifier('Array'), 'isArray'), undefined, [
-          ts.createIdentifier('value')
-        ]),
-        ts.SyntaxKind.AmpersandAmpersandToken,
-        ts.createCall(ts.createPropertyAccess(ts.createIdentifier('value'), 'every'), undefined, [
-          ts.createArrowFunction(
-            undefined,
-            undefined,
-            [
-              ts.createParameter(
-                undefined,
-                undefined,
-                undefined,
-                ts.createIdentifier('element'),
-                undefined,
-                undefined,
-                undefined
-              )
-            ],
-            undefined,
-            ts.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
-            call
-          )
-        ])
-      )
+      expression
     );
   }
 
