@@ -381,7 +381,11 @@ export class File {
   // @ts-ignore
   private brand: FileBrand;
 
-  constructor(public readonly path: string, public readonly size: number) {}
+  constructor(
+    public readonly path: string,
+    public readonly size: number,
+    public readonly name?: string
+  ) {}
 }
 
 function checkBinary(value: any) {
