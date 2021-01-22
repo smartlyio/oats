@@ -747,6 +747,18 @@ export function run(options: Options) {
     return ts.createCall(ts.createPropertyAccess(runtimeLibrary, 'make.' + fun), undefined, args);
   }
 
+  function makeAnyProperty(name: string) {
+    return ts.createParameter(
+      undefined,
+      undefined,
+      undefined,
+      ts.createIdentifier(name),
+      undefined,
+      ts.createKeywordTypeNode(ts.SyntaxKind.AnyKeyword),
+      undefined
+    );
+  }
+
   function generateAdditionalPropertiesMaker(
     schema: oas.ReferenceObject | oas.SchemaObject | boolean | undefined
   ) {
@@ -1131,17 +1143,7 @@ export function run(options: Options) {
     return ts.createArrowFunction(
       undefined,
       undefined,
-      [
-        ts.createParameter(
-          undefined,
-          undefined,
-          undefined,
-          ts.createIdentifier('value'),
-          undefined,
-          ts.createKeywordTypeNode(ts.SyntaxKind.AnyKeyword),
-          undefined
-        )
-      ],
+      [makeAnyProperty('value')],
       undefined,
       ts.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
       ts.createBinary(
@@ -1155,7 +1157,7 @@ export function run(options: Options) {
   function generateNamedTypeDefinitionAssignment(
     key: string,
     schema: oas.SchemaObject,
-    isA?: string
+    isA?: ts.ArrowFunction
   ) {
     return ts.createCall(
       ts.createPropertyAccess(ts.createIdentifier('Object'), 'assign'),
@@ -1170,7 +1172,7 @@ export function run(options: Options) {
               'maker',
               ts.createIdentifier('make' + oautil.typenamify(key))
             ),
-            ts.createPropertyAssignment('isA', isA ? generateIsA(isA) : ts.createNull())
+            ts.createPropertyAssignment('isA', isA ?? ts.createNull())
           ],
           true
         )
@@ -1277,7 +1279,7 @@ export function run(options: Options) {
       generateValueClass(key, schema),
       generateTopLevelClassBuilder(key, schema),
       generateTopLevelClassMaker(key, schema, oautil.typenamify(key)),
-      generateNamedTypeDefinitionAssignment(key, schema, oautil.typenamify(key))
+      generateNamedTypeDefinitionAssignment(key, schema, generateIsA(oautil.typenamify(key)))
     ];
   }
 
