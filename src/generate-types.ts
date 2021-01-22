@@ -1367,21 +1367,8 @@ export function run(options: Options) {
   }
 
   function generateIsAForOneOf(oneOf: (oas.SchemaObject | oas.ReferenceObject)[]) {
-    // TODO support non-ref options in oneOf
-    if (oneOf.some(obj => !oautil.isReferenceObject(obj))) return;
-
-    const calls = oneOf.map(obj => generateIsACall('type' + resolveRefToTypeName(obj.$ref).member));
-    assert(calls.length > 0, 'empty oneOf should not be possible');
-
-    const expression =
-      calls.length === 1
-        ? calls[0]
-        : calls
-            .slice(2)
-            .reduce(
-              (acc, memo) => ts.createBinary(acc, ts.SyntaxKind.BarBarToken, memo),
-              ts.createBinary(calls[0], ts.SyntaxKind.BarBarToken, calls[1])
-            );
+    const expression = getExpressionsForOneOfIsA(oneOf);
+    if (!expression) return;
 
     return ts.createArrowFunction(
       undefined,
@@ -1393,9 +1380,38 @@ export function run(options: Options) {
     );
   }
 
+  function getExpressionsForOneOfIsA(
+    oneOf: (oas.SchemaObject | oas.ReferenceObject)[],
+    param = 'value'
+  ) {
+    // TODO support non-ref options in oneOf
+    if (oneOf.some(obj => !oautil.isReferenceObject(obj))) return;
+
+    const calls = oneOf.map(obj =>
+      generateIsACall('type' + resolveRefToTypeName(obj.$ref).member, param)
+    );
+    assert(calls.length > 0, 'empty oneOf should not be possible');
+
+    return calls.length === 1
+      ? calls[0]
+      : calls
+          .slice(2)
+          .reduce(
+            (acc, memo) => ts.createBinary(acc, ts.SyntaxKind.BarBarToken, memo),
+            ts.createBinary(calls[0], ts.SyntaxKind.BarBarToken, calls[1])
+          );
+  }
+
   function generateIsAForArray(items: oas.SchemaObject | oas.ReferenceObject) {
+    let call: ts.Expression | undefined = undefined;
+    if (oautil.isReferenceObject(items)) {
+      call = generateIsACall('type' + resolveRefToTypeName(items.$ref).member, 'element');
+    } else if (items.oneOf) {
+      call = getExpressionsForOneOfIsA(items.oneOf, 'element');
+    }
+
     // TODO support non-ref options in array
-    if (!oautil.isReferenceObject(items)) return;
+    if (!call) return;
 
     return ts.createArrowFunction(
       undefined,
@@ -1425,7 +1441,7 @@ export function run(options: Options) {
             ],
             undefined,
             ts.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
-            generateIsACall('type' + resolveRefToTypeName(items.$ref).member, 'element')
+            call
           )
         ])
       )
