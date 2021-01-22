@@ -1310,29 +1310,6 @@ export function run(options: Options) {
     }
 
     if (isScalar(schema)) {
-      let isA: ts.ArrowFunction | undefined = undefined;
-      if (schema.enum) {
-        isA = ts.createArrowFunction(
-          undefined,
-          undefined,
-          [makeAnyProperty('value')],
-          undefined,
-          ts.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
-          ts.createBinary(
-            ts.createCall(
-              ts.createPropertyAccess(
-                ts.createArrayLiteral(schema.enum.map(v => ts.createLiteral(v))),
-                'indexOf'
-              ),
-              undefined,
-              [ts.createIdentifier('value')]
-            ),
-            ts.createToken(ts.SyntaxKind.GreaterThanEqualsToken),
-            ts.createIdentifier('0')
-          )
-        );
-      }
-
       return [
         generateBrand(key),
         ts.createTypeAliasDeclaration(
@@ -1344,7 +1321,27 @@ export function run(options: Options) {
         ),
         generateTypeShape(key),
         generateTopLevelMaker(key, schema),
-        generateNamedTypeDefinitionAssignment(key, schema, isA)
+        generateNamedTypeDefinitionAssignment(
+          key,
+          schema,
+          ts.createArrowFunction(
+            undefined,
+            undefined,
+            [makeAnyProperty('value')],
+            undefined,
+            ts.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
+            ts.createCall(
+              ts.createPropertyAccess(
+                ts.createCall(ts.createIdentifier('make' + oautil.typenamify(key)), undefined, [
+                  ts.createIdentifier('value')
+                ]),
+                'isSuccess'
+              ),
+              undefined,
+              []
+            )
+          )
+        )
       ];
     }
 
