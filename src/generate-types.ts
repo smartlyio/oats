@@ -1321,28 +1321,15 @@ export function run(options: Options) {
         ),
         generateTypeShape(key),
         generateTopLevelMaker(key, schema),
-        generateNamedTypeDefinitionAssignment(
-          key,
-          schema,
-          ts.createArrowFunction(
-            undefined,
-            undefined,
-            [makeAnyProperty('value')],
-            undefined,
-            ts.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
-            ts.createCall(
-              ts.createPropertyAccess(
-                ts.createCall(ts.createIdentifier('make' + oautil.typenamify(key)), undefined, [
-                  ts.createIdentifier('value')
-                ]),
-                'isSuccess'
-              ),
-              undefined,
-              []
-            )
-          )
-        )
+        generateNamedTypeDefinitionAssignment(key, schema, generateIsAForScalar(key))
       ];
+    }
+
+    let isA: ts.ArrowFunction | undefined = undefined;
+    if (schema.oneOf) {
+      isA = generateIsAForOneOf(schema.oneOf);
+    } else if (schema.items) {
+      isA = generateIsAForArray(schema.items);
     }
 
     return [
@@ -1355,8 +1342,102 @@ export function run(options: Options) {
       ),
       generateTypeShape(key),
       generateTopLevelMaker(key, schema),
-      generateNamedTypeDefinitionAssignment(key, schema)
+      generateNamedTypeDefinitionAssignment(key, schema, isA)
     ];
+  }
+
+  function generateIsAForScalar(key: string) {
+    return ts.createArrowFunction(
+      undefined,
+      undefined,
+      [makeAnyProperty('value')],
+      undefined,
+      ts.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
+      ts.createCall(
+        ts.createPropertyAccess(
+          ts.createCall(ts.createIdentifier('make' + oautil.typenamify(key)), undefined, [
+            ts.createIdentifier('value')
+          ]),
+          'isSuccess'
+        ),
+        undefined,
+        []
+      )
+    );
+  }
+
+  function generateIsAForOneOf(oneOf: (oas.SchemaObject | oas.ReferenceObject)[]) {
+    // TODO support non-ref options in oneOf
+    if (oneOf.some(obj => !oautil.isReferenceObject(obj))) return;
+
+    const calls = oneOf.map(obj => generateIsACall('type' + resolveRefToTypeName(obj.$ref).member));
+    assert(calls.length > 0, 'empty oneOf should not be possible');
+
+    const expression =
+      calls.length === 1
+        ? calls[0]
+        : calls
+            .slice(2)
+            .reduce(
+              (acc, memo) => ts.createBinary(acc, ts.SyntaxKind.BarBarToken, memo),
+              ts.createBinary(calls[0], ts.SyntaxKind.BarBarToken, calls[1])
+            );
+
+    return ts.createArrowFunction(
+      undefined,
+      undefined,
+      [makeAnyProperty('value')],
+      undefined,
+      ts.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
+      expression
+    );
+  }
+
+  function generateIsAForArray(items: oas.SchemaObject | oas.ReferenceObject) {
+    // TODO support non-ref options in array
+    if (!oautil.isReferenceObject(items)) return;
+
+    return ts.createArrowFunction(
+      undefined,
+      undefined,
+      [makeAnyProperty('value')],
+      undefined,
+      ts.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
+      ts.createBinary(
+        ts.createCall(ts.createPropertyAccess(ts.createIdentifier('Array'), 'isArray'), undefined, [
+          ts.createIdentifier('value')
+        ]),
+        ts.SyntaxKind.AmpersandAmpersandToken,
+        ts.createCall(ts.createPropertyAccess(ts.createIdentifier('value'), 'every'), undefined, [
+          ts.createArrowFunction(
+            undefined,
+            undefined,
+            [
+              ts.createParameter(
+                undefined,
+                undefined,
+                undefined,
+                ts.createIdentifier('element'),
+                undefined,
+                undefined,
+                undefined
+              )
+            ],
+            undefined,
+            ts.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
+            generateIsACall('type' + resolveRefToTypeName(items.$ref).member, 'element')
+          )
+        ])
+      )
+    );
+  }
+
+  function generateIsACall(typeName: string, param = 'value') {
+    return ts.createCall(
+      ts.createNonNullExpression(ts.createPropertyAccess(ts.createIdentifier(typeName), 'isA')),
+      undefined,
+      [ts.createIdentifier(param)]
+    );
   }
 
   function scalarTypeWithBrand(key: string, type: ts.TypeNode): ts.TypeNode {
