@@ -815,7 +815,11 @@ export function run(options: Options) {
 
     if (schema.type === 'array') {
       if (schema.items) {
-        return makeCall('makeArray', [generateMakerExpression(schema.items)]);
+        return makeCall('makeArray', [
+          generateMakerExpression(schema.items),
+          litOrUndefined(schema.minItems),
+          litOrUndefined(schema.maxItems)
+        ]);
       } else {
         return makeCall('makeArray', []);
       }
@@ -843,11 +847,13 @@ export function run(options: Options) {
     return assert.fail('unknown schema type: ' + schema.type);
   }
 
-  function litOrUndefined(value: string | undefined) {
+  function litOrUndefined(value: string | number | undefined) {
     if (value === undefined) {
       return ts.createIdentifier('undefined');
     }
-    return ts.createStringLiteral(value);
+    return typeof value === 'string'
+      ? ts.createStringLiteral(value)
+      : ts.createNumericLiteral('' + value);
   }
 
   function generateMakeString(format: string | undefined, pattern: string | undefined) {
@@ -1404,14 +1410,14 @@ export function run(options: Options) {
       const m = line.match(new RegExp('\\[\\s*' + valueClassIndexSignatureKey));
       if (m) {
         if (!/\b(unknown|any)\b/.test(line)) {
-          result.push('// @ts-ignore tsc does not like the branding type in index signatures');
+          result.push('    // @ts-ignore tsc does not like the branding type in index signatures');
           result.push(line);
           return;
         }
       }
       const brandMatch = line.match(new RegExp('\\s*private readonly ' + oatsBrandFieldName));
       if (brandMatch) {
-        result.push('// @ts-ignore tsc does not like unused privates');
+        result.push('    // @ts-ignore tsc does not like unused privates');
         result.push(line);
         return;
       }
