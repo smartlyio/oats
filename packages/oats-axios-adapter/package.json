@@ -36,7 +36,7 @@
     "client"
   ],
   "devDependencies": {
-    "@smartlyio/oats-runtime": "2.9.0",
+    "@smartlyio/oats-runtime": "2.10.0",
     "@types/form-data": "2.5.0",
     "@types/node": "11.15.21",
     "@typescript-eslint/eslint-plugin": "3.9.1",

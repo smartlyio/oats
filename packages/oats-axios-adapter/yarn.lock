@@ -34,10 +34,10 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
-"@smartlyio/oats-runtime@2.9.0":
-  version "2.9.0"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-2.9.0.tgz#5c3ddaec378d1d419ffdf4eac6aeed9799d2a546"
-  integrity sha512-wZGvT763uwZwGlRNVkVBspFe7T3JAd0AnjX4qzjysEPtZcDewUFraPgN1MBOEgKkxpYiIB6pinorT/mvWGH1ww==
+"@smartlyio/oats-runtime@2.10.0":
+  version "2.10.0"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-2.10.0.tgz#67ef79c3a7c2fff0625e7ff21ebe2dae947cd4db"
+  integrity sha512-KuYYpvExxied9rrZPUaA5ggJV/Fl9DqvuzWeXKXRZkI9L2h5PkHXAg0Ka4Q4GslXfdLisDIcRvHv81u0dXUlUA==
   dependencies:
     "@smartlyio/safe-navigation" "^5.0.1"
     lodash "^4.17.20"
