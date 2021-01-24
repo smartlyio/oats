@@ -39,10 +39,10 @@
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-0.14.0.tgz#9fb3a3cf3132328151f353de4632e01e52102bea"
   integrity sha512-9NET910DNaIPngYnLLPeg+Ogzqsi9uM4mSboU5y6p8S5DzMTVEsJZrawi+BoDNUVBa2DhJqQYUFvMDfgU062LQ==
 
-"@smartlyio/oats-runtime@2.9.0":
-  version "2.9.0"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-2.9.0.tgz#5c3ddaec378d1d419ffdf4eac6aeed9799d2a546"
-  integrity sha512-wZGvT763uwZwGlRNVkVBspFe7T3JAd0AnjX4qzjysEPtZcDewUFraPgN1MBOEgKkxpYiIB6pinorT/mvWGH1ww==
+"@smartlyio/oats-runtime@2.10.0":
+  version "2.10.0"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-2.10.0.tgz#67ef79c3a7c2fff0625e7ff21ebe2dae947cd4db"
+  integrity sha512-KuYYpvExxied9rrZPUaA5ggJV/Fl9DqvuzWeXKXRZkI9L2h5PkHXAg0Ka4Q4GslXfdLisDIcRvHv81u0dXUlUA==
   dependencies:
     "@smartlyio/safe-navigation" "^5.0.1"
     lodash "^4.17.20"
@@ -190,10 +190,10 @@
     "@types/koa-compose" "*"
     "@types/node" "*"
 
-"@types/lodash@4.14.167":
-  version "4.14.167"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.167.tgz#ce7d78553e3c886d4ea643c37ec7edc20f16765e"
-  integrity sha512-w7tQPjARrvdeBkX/Rwg95S592JwxqOjmms3zWQ0XZgSyxSLdzWaYH3vErBhdVS/lRBX7F8aBYcYJYTr5TMGOzw==
+"@types/lodash@4.14.168":
+  version "4.14.168"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.168.tgz#fe24632e79b7ade3f132891afff86caa5e5ce008"
+  integrity sha512-oVfRvqHV/V6D1yifJbVRU3TMp8OT6o6BG+U9MkwuJ3U8/CsDHvalRpsxBqivn71ztOFZBTfJMvETbqHiaNSj7Q==
 
 "@types/mime@*":
   version "2.0.1"
