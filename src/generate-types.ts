@@ -149,6 +149,17 @@ export function run(options: Options) {
   const finished = addIndexSignatureIgnores(src);
   return finished;
 
+  function generateOatsBandProperty() {
+    return ts.createProperty(
+      undefined,
+      [ts.createToken(ts.SyntaxKind.PrivateKeyword), ts.createToken(ts.SyntaxKind.ReadonlyKeyword)],
+      quotedProp(oatsBrandFieldName),
+      ts.createToken(ts.SyntaxKind.ExclamationToken),
+      ts.createKeywordTypeNode(ts.SyntaxKind.StringKeyword),
+      undefined
+    );
+  }
+
   function generateClassMembers(
     properties: oas.SchemaObject['properties'],
     required: oas.SchemaObject['required'],
@@ -167,19 +178,7 @@ export function run(options: Options) {
       );
     });
 
-    proptypes.push(
-      ts.createProperty(
-        undefined,
-        [
-          ts.createToken(ts.SyntaxKind.PrivateKeyword),
-          ts.createToken(ts.SyntaxKind.ReadonlyKeyword)
-        ],
-        quotedProp(oatsBrandFieldName),
-        ts.createToken(ts.SyntaxKind.ExclamationToken),
-        ts.createKeywordTypeNode(ts.SyntaxKind.StringKeyword),
-        undefined
-      )
-    );
+    proptypes.push(generateOatsBandProperty());
 
     if (additional !== false) {
       const type =
@@ -617,6 +616,22 @@ export function run(options: Options) {
     return ts.createKeywordTypeNode(ts.SyntaxKind.StringKeyword);
   }
 
+  function generateReflectionProperty(key: string) {
+    return ts.createProperty(
+      undefined,
+      [
+        ts.createModifier(ts.SyntaxKind.PublicKeyword),
+        ts.createModifier(ts.SyntaxKind.StaticKeyword)
+      ],
+      ts.createIdentifier('reflection'),
+      undefined,
+      ts.createTypeReferenceNode(fromLib('reflection', 'NamedTypeDefinition'), [
+        ts.createTypeReferenceNode(ts.createIdentifier(oautil.typenamify(key)), [])
+      ]),
+      ts.createIdentifier('type' + oautil.typenamify(key))
+    );
+  }
+
   function generateValueClass(key: string, schema: oas.SchemaObject) {
     const members = generateClassMembers(
       schema.properties,
@@ -682,19 +697,7 @@ export function run(options: Options) {
           )
         ])
       ),
-      ts.createProperty(
-        undefined,
-        [
-          ts.createModifier(ts.SyntaxKind.PublicKeyword),
-          ts.createModifier(ts.SyntaxKind.StaticKeyword)
-        ],
-        ts.createIdentifier('reflection'),
-        undefined,
-        ts.createTypeReferenceNode(fromLib('reflection', 'NamedTypeDefinition'), [
-          ts.createTypeReferenceNode(ts.createIdentifier(oautil.typenamify(key)), [])
-        ]),
-        ts.createIdentifier('type' + oautil.typenamify(key))
-      ),
+      generateReflectionProperty(key),
       ts.createMethod(
         undefined,
         [ts.createModifier(ts.SyntaxKind.StaticKeyword)],
@@ -1329,7 +1332,26 @@ export function run(options: Options) {
     if (schema.oneOf) {
       isA = generateIsAForOneOf(schema.oneOf);
     } else if (schema.items) {
-      isA = generateIsAForArray(schema.items);
+      return [
+        ts.createClassDeclaration(
+          undefined,
+          [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
+          oautil.typenamify(key),
+          [],
+          [
+            ts.createHeritageClause(ts.SyntaxKind.ExtendsKeyword, [
+              ts.createExpressionWithTypeArguments(
+                [generateType(schema.items)],
+                ts.createIdentifier('Array')
+              )
+            ])
+          ],
+          [generateOatsBandProperty(), generateReflectionProperty(key)]
+        ),
+        generateTypeShape(key),
+        generateTopLevelMaker(key, schema),
+        generateNamedTypeDefinitionAssignment(key, schema, generateIsA(oautil.typenamify(key)))
+      ];
     }
 
     return [
@@ -1445,20 +1467,6 @@ export function run(options: Options) {
           call
         )
       ])
-    );
-  }
-
-  function generateIsAForArray(items: oas.SchemaObject | oas.ReferenceObject) {
-    const expression = getExpressionsForArrayIsA(items);
-    if (!expression) return;
-
-    return ts.createArrowFunction(
-      undefined,
-      undefined,
-      [makeAnyProperty('value')],
-      undefined,
-      ts.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
-      expression
     );
   }
 
