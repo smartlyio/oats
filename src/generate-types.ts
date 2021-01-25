@@ -632,6 +632,107 @@ export function run(options: Options) {
     );
   }
 
+  function generateClassConstructor(key: string) {
+    return ts.createMethod(
+      undefined,
+      [ts.createModifier(ts.SyntaxKind.PublicKeyword)],
+      undefined,
+      'constructor',
+      undefined,
+      undefined,
+      [
+        ts.createParameter(
+          undefined,
+          undefined,
+          undefined,
+          'value',
+          undefined,
+          ts.createTypeReferenceNode('ShapeOf' + oautil.typenamify(key), [])
+        ),
+        ts.createParameter(
+          undefined,
+          undefined,
+          undefined,
+          'opts',
+          ts.createToken(ts.SyntaxKind.QuestionToken),
+          ts.createTypeReferenceNode(fromLib('make', 'MakeOptions'), [])
+        )
+      ],
+      undefined,
+      ts.createBlock([
+        ts.createExpressionStatement(ts.createCall(ts.createIdentifier('super'), [], [])),
+        ts.createExpressionStatement(
+          ts.createCall(
+            ts.createPropertyAccess(ts.createIdentifier('Object'), 'assign'),
+            [],
+            [
+              ts.createIdentifier('this'),
+              ts.createCall(
+                ts.createPropertyAccess(
+                  ts.createCall(ts.createIdentifier('build' + oautil.typenamify(key)), undefined, [
+                    ts.createIdentifier('value'),
+                    ts.createIdentifier('opts')
+                  ]),
+                  ts.createIdentifier('success')
+                ),
+                undefined,
+                []
+              )
+            ]
+          )
+        )
+      ])
+    );
+  }
+
+  function generateClassMakeMethod(key: string) {
+    return ts.createMethod(
+      undefined,
+      [ts.createModifier(ts.SyntaxKind.StaticKeyword)],
+      undefined,
+      'make',
+      undefined,
+      undefined,
+      [
+        ts.createParameter(
+          undefined,
+          undefined,
+          undefined,
+          'value',
+          undefined,
+          ts.createTypeReferenceNode('ShapeOf' + oautil.typenamify(key), [])
+        ),
+        ts.createParameter(
+          undefined,
+          undefined,
+          undefined,
+          'opts',
+          ts.createToken(ts.SyntaxKind.QuestionToken),
+          ts.createTypeReferenceNode(fromLib('make', 'MakeOptions'), [])
+        )
+      ],
+      ts.createTypeReferenceNode(fromLib('make', makeTypeTypeName), [
+        ts.createTypeReferenceNode(oautil.typenamify(key), [])
+      ]),
+      ts.createBlock([
+        ts.createReturn(
+          ts.createCall(ts.createIdentifier('make' + oautil.typenamify(key)), undefined, [
+            ts.createIdentifier('value'),
+            ts.createIdentifier('opts')
+          ])
+        )
+      ])
+    );
+  }
+
+  function generateClassBuiltindMembers(key: string) {
+    return [
+      generateClassConstructor(key),
+      generateReflectionProperty(key),
+      generateClassMakeMethod(key)
+    ];
+  }
+
   function generateValueClass(key: string, schema: oas.SchemaObject) {
     const members = generateClassMembers(
       schema.properties,
@@ -645,104 +746,13 @@ export function run(options: Options) {
       ],
       ts.createPropertyAccess(runtimeLibrary, 'valueClass.ValueClass')
     );
-    const builtinMembers = [
-      ts.createMethod(
-        undefined,
-        [ts.createModifier(ts.SyntaxKind.PublicKeyword)],
-        undefined,
-        'constructor',
-        undefined,
-        undefined,
-        [
-          ts.createParameter(
-            undefined,
-            undefined,
-            undefined,
-            'value',
-            undefined,
-            ts.createTypeReferenceNode('ShapeOf' + oautil.typenamify(key), [])
-          ),
-          ts.createParameter(
-            undefined,
-            undefined,
-            undefined,
-            'opts',
-            ts.createToken(ts.SyntaxKind.QuestionToken),
-            ts.createTypeReferenceNode(fromLib('make', 'MakeOptions'), [])
-          )
-        ],
-        undefined,
-        ts.createBlock([
-          ts.createExpressionStatement(ts.createCall(ts.createIdentifier('super'), [], [])),
-          ts.createExpressionStatement(
-            ts.createCall(
-              ts.createPropertyAccess(ts.createIdentifier('Object'), 'assign'),
-              [],
-              [
-                ts.createIdentifier('this'),
-                ts.createCall(
-                  ts.createPropertyAccess(
-                    ts.createCall(
-                      ts.createIdentifier('build' + oautil.typenamify(key)),
-                      undefined,
-                      [ts.createIdentifier('value'), ts.createIdentifier('opts')]
-                    ),
-                    ts.createIdentifier('success')
-                  ),
-                  undefined,
-                  []
-                )
-              ]
-            )
-          )
-        ])
-      ),
-      generateReflectionProperty(key),
-      ts.createMethod(
-        undefined,
-        [ts.createModifier(ts.SyntaxKind.StaticKeyword)],
-        undefined,
-        'make',
-        undefined,
-        undefined,
-        [
-          ts.createParameter(
-            undefined,
-            undefined,
-            undefined,
-            'value',
-            undefined,
-            ts.createTypeReferenceNode('ShapeOf' + oautil.typenamify(key), [])
-          ),
-          ts.createParameter(
-            undefined,
-            undefined,
-            undefined,
-            'opts',
-            ts.createToken(ts.SyntaxKind.QuestionToken),
-            ts.createTypeReferenceNode(fromLib('make', 'MakeOptions'), [])
-          )
-        ],
-        ts.createTypeReferenceNode(fromLib('make', makeTypeTypeName), [
-          ts.createTypeReferenceNode(oautil.typenamify(key), [])
-        ]),
-        ts.createBlock([
-          ts.createReturn(
-            ts.createCall(ts.createIdentifier('make' + oautil.typenamify(key)), undefined, [
-              ts.createIdentifier('value'),
-              ts.createIdentifier('opts')
-            ])
-          )
-        ])
-      )
-    ];
     return ts.createClassDeclaration(
       undefined,
       [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
       oautil.typenamify(key),
       [],
       [ts.createHeritageClause(ts.SyntaxKind.ExtendsKeyword, [brand])],
-      [...members, ...builtinMembers]
+      [...members, ...generateClassBuiltindMembers(key)]
     );
   }
 
@@ -1183,7 +1193,7 @@ export function run(options: Options) {
     );
   }
 
-  function generateTopLevelClassMaker(key: string, schema: oas.SchemaObject, constructor: string) {
+  function generateTopLevelClassMaker(key: string, constructor: string) {
     const makerFun = 'createMakerWith';
     const shape = 'ShapeOf' + oautil.typenamify(key);
     return ts.createVariableStatement(
@@ -1281,7 +1291,7 @@ export function run(options: Options) {
       generateBrand(key),
       generateValueClass(key, schema),
       generateTopLevelClassBuilder(key, schema),
-      generateTopLevelClassMaker(key, schema, oautil.typenamify(key)),
+      generateTopLevelClassMaker(key, oautil.typenamify(key)),
       generateNamedTypeDefinitionAssignment(key, schema, generateIsA(oautil.typenamify(key)))
     ];
   }
@@ -1346,10 +1356,11 @@ export function run(options: Options) {
               )
             ])
           ],
-          [generateOatsBandProperty(), generateReflectionProperty(key)]
+          [generateOatsBandProperty(), ...generateClassBuiltindMembers(key)]
         ),
         generateTypeShape(key),
-        generateTopLevelMaker(key, schema),
+        generateTopLevelClassBuilder(key, schema),
+        generateTopLevelClassMaker(key, oautil.typenamify(key)),
         generateNamedTypeDefinitionAssignment(key, schema, generateIsA(oautil.typenamify(key)))
       ];
     }
