@@ -18,7 +18,7 @@ function adapter<StateT, CustomT, RequestContext>(
       let fileFields = {};
       if (files) {
         fileFields = Object.keys(files).reduce((memo: any, name) => {
-          memo[name] = new runtime.make.File(files[name].path, files[name].size);
+          memo[name] = new runtime.make.File(files[name].path, files[name].size, files[name].name);
           return memo;
         }, {});
       }

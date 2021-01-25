@@ -1,6 +1,6 @@
 {
   "name": "@smartlyio/oats-koa-adapter",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "license": "MIT",
   "description": "Koa adapter for Oats",
   "private": false,
@@ -21,7 +21,7 @@
     "url": "https://github.com/smartlyio/oats.git"
   },
   "peerDependencies": {
-    "@smartlyio/oats-runtime": "^2.8.0",
+    "@smartlyio/oats-runtime": "^2.10.0",
     "koa": "^2.3.0",
     "koa-body": "^4.0.4",
     "koa-router": "^10.0.0",
@@ -49,8 +49,8 @@
     "eslint-config-prettier": "6.15.0",
     "eslint-plugin-import": "2.22.1",
     "eslint-plugin-jest": "23.20.0",
-    "nodemon": "2.0.7",
     "eslint-plugin-prettier": "3.3.1",
+    "nodemon": "2.0.7",
     "prettier": "2.2.1",
     "ts-node": "9.1.1",
     "typescript": "3.9.7"
