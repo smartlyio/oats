@@ -664,10 +664,10 @@
   resolved "https://registry.yarnpkg.com/@smartlyio/oats-koa-adapter/-/oats-koa-adapter-2.1.0.tgz#bb01b997764bb953431e20ee40df8c6f841cab83"
   integrity sha512-T+PNjNefygEv2j0FzfUNInw+mZ7PFfkZpicYzlmIChggtDZqEN7OwAgGL6lCtmDcmX9T61G7G9TIM2RXL5Ed/Q==
 
-"@smartlyio/oats-runtime@2.11.0":
-  version "2.11.0"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-2.11.0.tgz#facd3cb26be3d96d60ed2838dea0e5e17f905ae0"
-  integrity sha512-wlvuh8khysG6nHuVYrwf2pESM0szUmpYujT4IG+wxM2nALHHB+m+3SFEK0hBeq/XYInfTv2xSPg7MLYN1ykhTA==
+"@smartlyio/oats-runtime@2.11.1":
+  version "2.11.1"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-2.11.1.tgz#6c5ff2589e492dae97d8e795456c589c6d0e6a23"
+  integrity sha512-rAaw31RUiYCvWMuE7KyI56zIc0zD4juL9nRkc9AmlkDi1ZcijoufXDmRBNIACHoiIzPxtOSiJ5JInJnNMK12oA==
   dependencies:
     "@smartlyio/safe-navigation" "^5.0.1"
     lodash "^4.17.20"
