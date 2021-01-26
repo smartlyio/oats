@@ -147,10 +147,31 @@ describe('makeAny', () => {
   });
 });
 
+describe('makeNumber', () => {
+  it('enforces minimum if passed', () => {
+    const fun = make.makeNumber(3);
+    expect(fun(2).errors[0].error).toMatch('expected a number greater or equal to');
+  });
+  it('enforces maximum if passed', () => {
+    const fun = make.makeNumber(undefined, 3);
+    expect(fun(4).errors[0].error).toMatch('expected a number smaller or equal to');
+  });
+});
+
 describe('makeArray', () => {
   it('keeps the order', () => {
     const fun = make.makeArray(make.makeString());
     expect(fun(['a', 'b']).success()).toEqual(['a', 'b']);
+  });
+  it('enforces min size if passed', () => {
+    const fun = make.makeArray(make.makeString(), 3);
+    expect(fun(['a', 'b']).errors[0].error).toMatch('expected an array of minimum length');
+  });
+  it('enforces max size if passed', () => {
+    const fun = make.makeArray(make.makeString(), undefined, 3);
+    expect(fun(['a', 'b', 'c', 'd']).errors[0].error).toMatch(
+      'expected an array of maximum length'
+    );
   });
 });
 

@@ -1,6 +1,6 @@
 import * as server from '../src/server';
 import * as oar from '../src/runtime';
-import { makeNumber, makeObject, Maker, makeString, makeVoid } from '../src/make';
+import { makeNumber, makeObject, Maker, makeString, makeVoid, makeEnum } from '../src/make';
 
 describe('safe', () => {
   it('validates request and response', async () => {
@@ -10,7 +10,7 @@ describe('safe', () => {
       makeObject({ param: makeNumber() }) as Maker<any, any>,
       makeVoid(),
       makeObject({
-        status: makeNumber(200),
+        status: makeEnum(200),
         value: makeObject({
           contentType: makeString(),
           value: makeString()
