@@ -970,11 +970,21 @@ export function run(options: Options) {
             )
           ]
         : [];
-
-      return ts.createObjectLiteral(
-        [ts.createPropertyAssignment('type', ts.createStringLiteral('number')), ...enumValues],
-        true
-      );
+      const properties = [
+        ts.createPropertyAssignment('type', ts.createStringLiteral('number')),
+        ...enumValues
+      ];
+      if (schema.minimum != null) {
+        properties.push(
+          ts.createPropertyAssignment('minimum', ts.createNumericLiteral(schema.minimum + ''))
+        );
+      }
+      if (schema.maximum != null) {
+        properties.push(
+          ts.createPropertyAssignment('maximum', ts.createNumericLiteral(schema.maximum + ''))
+        );
+      }
+      return ts.createObjectLiteral(properties, true);
     }
     if (schema.type === 'integer') {
       const enumValues = schema.enum
@@ -985,11 +995,22 @@ export function run(options: Options) {
             )
           ]
         : [];
+      const properties = [
+        ts.createPropertyAssignment('type', ts.createStringLiteral('integer')),
+        ...enumValues
+      ];
+      if (schema.minimum != null) {
+        properties.push(
+          ts.createPropertyAssignment('minimum', ts.createNumericLiteral(schema.minimum + ''))
+        );
+      }
+      if (schema.maximum != null) {
+        properties.push(
+          ts.createPropertyAssignment('maximum', ts.createNumericLiteral(schema.maximum + ''))
+        );
+      }
 
-      return ts.createObjectLiteral(
-        [ts.createPropertyAssignment('type', ts.createStringLiteral('integer')), ...enumValues],
-        true
-      );
+      return ts.createObjectLiteral(properties, true);
     }
     if (schema.type === 'boolean') {
       const enumValues = schema.enum
