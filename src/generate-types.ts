@@ -1014,13 +1014,21 @@ export function run(options: Options) {
       );
     }
     if (schema.type === 'array') {
-      return ts.createObjectLiteral(
-        [
-          ts.createPropertyAssignment('type', ts.createStringLiteral('array')),
-          ts.createPropertyAssignment('items', generateReflectionType(schema.items || {}))
-        ],
-        true
-      );
+      const properties = [
+        ts.createPropertyAssignment('type', ts.createStringLiteral('array')),
+        ts.createPropertyAssignment('items', generateReflectionType(schema.items || {}))
+      ];
+      if (schema.minItems != null) {
+        properties.push(
+          ts.createPropertyAssignment('minItems', ts.createNumericLiteral(schema.minItems + ''))
+        );
+      }
+      if (schema.maxItems != null) {
+        properties.push(
+          ts.createPropertyAssignment('maxItems', ts.createNumericLiteral(schema.maxItems + ''))
+        );
+      }
+      return ts.createObjectLiteral(properties, true);
     }
     if (schema.type === 'object') {
       return generateObjectReflectionType(schema);
