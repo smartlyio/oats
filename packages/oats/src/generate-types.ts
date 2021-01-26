@@ -815,7 +815,11 @@ export function run(options: Options) {
 
     if (schema.type === 'array') {
       if (schema.items) {
-        return makeCall('makeArray', [generateMakerExpression(schema.items)]);
+        return makeCall('makeArray', [
+          generateMakerExpression(schema.items),
+          litOrUndefined(schema.minItems),
+          litOrUndefined(schema.maxItems)
+        ]);
       } else {
         return makeCall('makeArray', []);
       }
@@ -829,7 +833,10 @@ export function run(options: Options) {
       return generateMakeString(schema.format, schema.pattern);
     }
     if (schema.type === 'integer' || schema.type === 'number') {
-      return makeCall('makeNumber', []);
+      return makeCall('makeNumber', [
+        litOrUndefined(schema.minimum),
+        litOrUndefined(schema.maximum)
+      ]);
     }
     if (schema.type === 'boolean') {
       return makeCall('makeBoolean', []);
@@ -843,11 +850,13 @@ export function run(options: Options) {
     return assert.fail('unknown schema type: ' + schema.type);
   }
 
-  function litOrUndefined(value: string | undefined) {
+  function litOrUndefined(value: string | number | undefined) {
     if (value === undefined) {
       return ts.createIdentifier('undefined');
     }
-    return ts.createStringLiteral(value);
+    return typeof value === 'string'
+      ? ts.createStringLiteral(value)
+      : ts.createNumericLiteral('' + value);
   }
 
   function generateMakeString(format: string | undefined, pattern: string | undefined) {
@@ -961,11 +970,21 @@ export function run(options: Options) {
             )
           ]
         : [];
-
-      return ts.createObjectLiteral(
-        [ts.createPropertyAssignment('type', ts.createStringLiteral('number')), ...enumValues],
-        true
-      );
+      const properties = [
+        ts.createPropertyAssignment('type', ts.createStringLiteral('number')),
+        ...enumValues
+      ];
+      if (schema.minimum != null) {
+        properties.push(
+          ts.createPropertyAssignment('minimum', ts.createNumericLiteral(schema.minimum + ''))
+        );
+      }
+      if (schema.maximum != null) {
+        properties.push(
+          ts.createPropertyAssignment('maximum', ts.createNumericLiteral(schema.maximum + ''))
+        );
+      }
+      return ts.createObjectLiteral(properties, true);
     }
     if (schema.type === 'integer') {
       const enumValues = schema.enum
@@ -976,11 +995,22 @@ export function run(options: Options) {
             )
           ]
         : [];
+      const properties = [
+        ts.createPropertyAssignment('type', ts.createStringLiteral('integer')),
+        ...enumValues
+      ];
+      if (schema.minimum != null) {
+        properties.push(
+          ts.createPropertyAssignment('minimum', ts.createNumericLiteral(schema.minimum + ''))
+        );
+      }
+      if (schema.maximum != null) {
+        properties.push(
+          ts.createPropertyAssignment('maximum', ts.createNumericLiteral(schema.maximum + ''))
+        );
+      }
 
-      return ts.createObjectLiteral(
-        [ts.createPropertyAssignment('type', ts.createStringLiteral('integer')), ...enumValues],
-        true
-      );
+      return ts.createObjectLiteral(properties, true);
     }
     if (schema.type === 'boolean') {
       const enumValues = schema.enum
@@ -1005,13 +1035,21 @@ export function run(options: Options) {
       );
     }
     if (schema.type === 'array') {
-      return ts.createObjectLiteral(
-        [
-          ts.createPropertyAssignment('type', ts.createStringLiteral('array')),
-          ts.createPropertyAssignment('items', generateReflectionType(schema.items || {}))
-        ],
-        true
-      );
+      const properties = [
+        ts.createPropertyAssignment('type', ts.createStringLiteral('array')),
+        ts.createPropertyAssignment('items', generateReflectionType(schema.items || {}))
+      ];
+      if (schema.minItems != null) {
+        properties.push(
+          ts.createPropertyAssignment('minItems', ts.createNumericLiteral(schema.minItems + ''))
+        );
+      }
+      if (schema.maxItems != null) {
+        properties.push(
+          ts.createPropertyAssignment('maxItems', ts.createNumericLiteral(schema.maxItems + ''))
+        );
+      }
+      return ts.createObjectLiteral(properties, true);
     }
     if (schema.type === 'object') {
       return generateObjectReflectionType(schema);
@@ -1404,14 +1442,14 @@ export function run(options: Options) {
       const m = line.match(new RegExp('\\[\\s*' + valueClassIndexSignatureKey));
       if (m) {
         if (!/\b(unknown|any)\b/.test(line)) {
-          result.push('// @ts-ignore tsc does not like the branding type in index signatures');
+          result.push('    // @ts-ignore tsc does not like the branding type in index signatures');
           result.push(line);
           return;
         }
       }
       const brandMatch = line.match(new RegExp('\\s*private readonly ' + oatsBrandFieldName));
       if (brandMatch) {
-        result.push('// @ts-ignore tsc does not like unused privates');
+        result.push('    // @ts-ignore tsc does not like unused privates');
         result.push(line);
         return;
       }
