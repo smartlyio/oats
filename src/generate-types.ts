@@ -833,7 +833,10 @@ export function run(options: Options) {
       return generateMakeString(schema.format, schema.pattern);
     }
     if (schema.type === 'integer' || schema.type === 'number') {
-      return makeCall('makeNumber', []);
+      return makeCall('makeNumber', [
+        litOrUndefined(schema.minimum),
+        litOrUndefined(schema.maximum)
+      ]);
     }
     if (schema.type === 'boolean') {
       return makeCall('makeBoolean', []);
