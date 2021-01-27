@@ -1341,28 +1341,6 @@ export function run(options: Options) {
     let isA: ts.ArrowFunction | undefined = undefined;
     if (schema.oneOf) {
       isA = generateIsAForOneOf(schema.oneOf);
-    } else if (schema.items) {
-      return [
-        ts.createClassDeclaration(
-          undefined,
-          [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
-          oautil.typenamify(key),
-          [],
-          [
-            ts.createHeritageClause(ts.SyntaxKind.ExtendsKeyword, [
-              ts.createExpressionWithTypeArguments(
-                [generateType(schema.items)],
-                ts.createIdentifier('Array')
-              )
-            ])
-          ],
-          [generateOatsBandProperty(), ...generateClassBuiltindMembers(key)]
-        ),
-        generateTypeShape(key),
-        generateTopLevelClassBuilder(key, schema),
-        generateTopLevelClassMaker(key, oautil.typenamify(key)),
-        generateNamedTypeDefinitionAssignment(key, schema, generateIsA(oautil.typenamify(key)))
-      ];
     }
 
     return [
@@ -1420,13 +1398,11 @@ export function run(options: Options) {
     const calls = oneOf.map(obj => {
       if (oautil.isReferenceObject(obj)) {
         return generateIsACall('type' + resolveRefToTypeName(obj.$ref).member, param);
-      } else if (obj.items) {
-        const arrayIsA = getExpressionsForArrayIsA(obj.items);
-        return arrayIsA ? ts.createParen(arrayIsA) : undefined;
       }
+      return;
     });
 
-    // TODO support non-ref options in oneOf
+    // TODO support non-ref and array options in oneOf
     if (calls.some(call => !call)) return;
     assert(calls.length > 0, 'empty oneOf should not be possible');
 
@@ -1438,47 +1414,6 @@ export function run(options: Options) {
             (acc, memo) => ts.createBinary(acc, ts.SyntaxKind.BarBarToken, memo!),
             ts.createBinary(calls[0]!, ts.SyntaxKind.BarBarToken, calls[1]!)
           );
-  }
-
-  function getExpressionsForArrayIsA(
-    items: oas.SchemaObject | oas.ReferenceObject
-  ): ts.Expression | undefined {
-    let call: ts.Expression | undefined = undefined;
-    if (oautil.isReferenceObject(items)) {
-      call = generateIsACall('type' + resolveRefToTypeName(items.$ref).member, 'element');
-    } else if (items.oneOf) {
-      call = getExpressionsForOneOfIsA(items.oneOf, 'element');
-    }
-
-    // TODO support non-ref options in array
-    if (!call) return;
-
-    return ts.createBinary(
-      ts.createCall(ts.createPropertyAccess(ts.createIdentifier('Array'), 'isArray'), undefined, [
-        ts.createIdentifier('value')
-      ]),
-      ts.SyntaxKind.AmpersandAmpersandToken,
-      ts.createCall(ts.createPropertyAccess(ts.createIdentifier('value'), 'every'), undefined, [
-        ts.createArrowFunction(
-          undefined,
-          undefined,
-          [
-            ts.createParameter(
-              undefined,
-              undefined,
-              undefined,
-              ts.createIdentifier('element'),
-              undefined,
-              undefined,
-              undefined
-            )
-          ],
-          undefined,
-          ts.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
-          call
-        )
-      ])
-    );
   }
 
   function generateIsACall(typeName: string, param = 'value') {
