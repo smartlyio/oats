@@ -151,10 +151,12 @@ describe('makeNumber', () => {
   it('enforces minimum if passed', () => {
     const fun = make.makeNumber(3);
     expect(fun(2).errors[0].error).toMatch('expected a number greater or equal to');
+    expect(fun(3).isSuccess()).toBeTruthy();
   });
   it('enforces maximum if passed', () => {
     const fun = make.makeNumber(undefined, 3);
     expect(fun(4).errors[0].error).toMatch('expected a number smaller or equal to');
+    expect(fun(3).isSuccess()).toBeTruthy();
   });
 });
 
@@ -166,12 +168,14 @@ describe('makeArray', () => {
   it('enforces min size if passed', () => {
     const fun = make.makeArray(make.makeString(), 3);
     expect(fun(['a', 'b']).errors[0].error).toMatch('expected an array of minimum length');
+    expect(fun(['a', 'b', 'c']).isSuccess()).toBeTruthy();
   });
   it('enforces max size if passed', () => {
     const fun = make.makeArray(make.makeString(), undefined, 3);
     expect(fun(['a', 'b', 'c', 'd']).errors[0].error).toMatch(
       'expected an array of maximum length'
     );
+    expect(fun(['a', 'b', 'c']).isSuccess()).toBeTruthy();
   });
 });
 

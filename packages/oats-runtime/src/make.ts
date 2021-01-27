@@ -186,10 +186,10 @@ export function makeNumber(min?: number, max?: number): Maker<number, number> {
     if (typeof value !== 'number') {
       return getErrorWithValueMsg('expected a number', value);
     }
-    if (min != null && value <= min) {
+    if (min != null && value < min) {
       return getErrorWithValueMsg('expected a number greater or equal to ' + min, value);
     }
-    if (max != null && value >= max) {
+    if (max != null && value > max) {
       return getErrorWithValueMsg('expected a number smaller or equal to ' + max, value);
     }
     return Make.ok(value);
@@ -245,10 +245,10 @@ export function makeArray(maker: any, minSize?: number, maxSize?: number) {
     if (!Array.isArray(value)) {
       return getErrorWithValueMsg('expected an array', value);
     }
-    if (minSize != null && value.length <= minSize) {
+    if (minSize != null && value.length < minSize) {
       return getErrorWithValueMsg(`expected an array of minimum length ${minSize}`, value);
     }
-    if (maxSize != null && value.length >= maxSize) {
+    if (maxSize != null && value.length > maxSize) {
       return getErrorWithValueMsg(`expected an array of maximum length ${maxSize}`, value);
     }
     const result = [];
