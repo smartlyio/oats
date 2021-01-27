@@ -1338,11 +1338,6 @@ export function run(options: Options) {
       ];
     }
 
-    let isA: ts.ArrowFunction | undefined = undefined;
-    if (schema.oneOf) {
-      isA = generateIsAForOneOf(schema.oneOf);
-    }
-
     return [
       ts.createTypeAliasDeclaration(
         undefined,
@@ -1353,7 +1348,7 @@ export function run(options: Options) {
       ),
       generateTypeShape(key),
       generateTopLevelMaker(key, schema),
-      generateNamedTypeDefinitionAssignment(key, schema, isA)
+      generateNamedTypeDefinitionAssignment(key, schema)
     ];
   }
 
@@ -1374,53 +1369,6 @@ export function run(options: Options) {
         undefined,
         []
       )
-    );
-  }
-
-  function generateIsAForOneOf(oneOf: (oas.SchemaObject | oas.ReferenceObject)[]) {
-    const expression = getExpressionsForOneOfIsA(oneOf);
-    if (!expression) return;
-
-    return ts.createArrowFunction(
-      undefined,
-      undefined,
-      [makeAnyProperty('value')],
-      undefined,
-      ts.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
-      expression
-    );
-  }
-
-  function getExpressionsForOneOfIsA(
-    oneOf: (oas.SchemaObject | oas.ReferenceObject)[],
-    param = 'value'
-  ) {
-    const calls = oneOf.map(obj => {
-      if (oautil.isReferenceObject(obj)) {
-        return generateIsACall('type' + resolveRefToTypeName(obj.$ref).member, param);
-      }
-      return;
-    });
-
-    // TODO support non-ref and array options in oneOf
-    if (calls.some(call => !call)) return;
-    assert(calls.length > 0, 'empty oneOf should not be possible');
-
-    return calls.length === 1
-      ? calls[0]
-      : calls
-          .slice(2)
-          .reduce(
-            (acc, memo) => ts.createBinary(acc, ts.SyntaxKind.BarBarToken, memo!),
-            ts.createBinary(calls[0]!, ts.SyntaxKind.BarBarToken, calls[1]!)
-          );
-  }
-
-  function generateIsACall(typeName: string, param = 'value') {
-    return ts.createCall(
-      ts.createNonNullExpression(ts.createPropertyAccess(ts.createIdentifier(typeName), 'isA')),
-      undefined,
-      [ts.createIdentifier(param)]
     );
   }
 
