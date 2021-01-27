@@ -1,6 +1,6 @@
 {
   "name": "@smartlyio/oats",
-  "version": "2.10.0",
+  "version": "2.11.0",
   "license": "MIT",
   "description": "Openapi3 based generator for typescript aware servers and clients",
   "private": false,
