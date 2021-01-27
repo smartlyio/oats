@@ -149,7 +149,7 @@ export function run(options: Options) {
   const finished = addIndexSignatureIgnores(src);
   return finished;
 
-  function generateOatsBandProperty() {
+  function generateOatsBrandProperty() {
     return ts.createProperty(
       undefined,
       [ts.createToken(ts.SyntaxKind.PrivateKeyword), ts.createToken(ts.SyntaxKind.ReadonlyKeyword)],
@@ -178,7 +178,7 @@ export function run(options: Options) {
       );
     });
 
-    proptypes.push(generateOatsBandProperty());
+    proptypes.push(generateOatsBrandProperty());
 
     if (additional !== false) {
       const type =
