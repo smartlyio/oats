@@ -39,10 +39,10 @@
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-0.14.0.tgz#9fb3a3cf3132328151f353de4632e01e52102bea"
   integrity sha512-9NET910DNaIPngYnLLPeg+Ogzqsi9uM4mSboU5y6p8S5DzMTVEsJZrawi+BoDNUVBa2DhJqQYUFvMDfgU062LQ==
 
-"@smartlyio/oats-runtime@2.10.0":
-  version "2.10.0"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-2.10.0.tgz#67ef79c3a7c2fff0625e7ff21ebe2dae947cd4db"
-  integrity sha512-KuYYpvExxied9rrZPUaA5ggJV/Fl9DqvuzWeXKXRZkI9L2h5PkHXAg0Ka4Q4GslXfdLisDIcRvHv81u0dXUlUA==
+"@smartlyio/oats-runtime@2.11.2":
+  version "2.11.2"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-2.11.2.tgz#314ca65ae94c27da28aeb3028bfaaba51f082ed4"
+  integrity sha512-GrDMOFKp3XlFzuUghbu9IrxfWQaEiSA7ENl4BIgaISPvq7bGed6cl6mG2hW3XFJe/GKSzC6NwR9Bg/GKKliXJg==
   dependencies:
     "@smartlyio/safe-navigation" "^5.0.1"
     lodash "^4.17.20"
@@ -176,10 +176,10 @@
     "@types/koa-compose" "*"
     "@types/node" "*"
 
-"@types/koa@2.11.6":
-  version "2.11.6"
-  resolved "https://registry.yarnpkg.com/@types/koa/-/koa-2.11.6.tgz#b7030caa6b44af801c2aea13ba77d74aff7484d5"
-  integrity sha512-BhyrMj06eQkk04C97fovEDQMpLpd2IxCB4ecitaXwOKGq78Wi2tooaDOWOFGajPk8IkQOAtMppApgSVkYe1F/A==
+"@types/koa@2.11.7":
+  version "2.11.7"
+  resolved "https://registry.yarnpkg.com/@types/koa/-/koa-2.11.7.tgz#3b38f3b9faa66315a84890a771d166fb36463100"
+  integrity sha512-1iXJZZWCePoMe9LGSIPWsu5k5RI4ooXijW78c+nljMn3YbUts8PXoEESu1OeFmrazLPl1l97vTxzwvmH32TWVQ==
   dependencies:
     "@types/accepts" "*"
     "@types/content-disposition" "*"
@@ -863,10 +863,10 @@ eslint-visitor-keys@^2.0.0:
   resolved "https://registry.yarnpkg.com/eslint-visitor-keys/-/eslint-visitor-keys-2.0.0.tgz#21fdc8fbcd9c795cc0321f0563702095751511a8"
   integrity sha512-QudtT6av5WXels9WjIM7qz1XD1cWGvX4gGXvp/zBn9nXG02D0utdU3Em2m/QjTnrsk6bBjmCygl3rmj118msQQ==
 
-eslint@7.18.0:
-  version "7.18.0"
-  resolved "https://registry.yarnpkg.com/eslint/-/eslint-7.18.0.tgz#7fdcd2f3715a41fe6295a16234bd69aed2c75e67"
-  integrity sha512-fbgTiE8BfUJZuBeq2Yi7J3RB3WGUQ9PNuNbmgi6jt9Iv8qrkxfy19Ds3OpL1Pm7zg3BtTVhvcUZbIRQ0wmSjAQ==
+eslint@7.19.0:
+  version "7.19.0"
+  resolved "https://registry.yarnpkg.com/eslint/-/eslint-7.19.0.tgz#6719621b196b5fad72e43387981314e5d0dc3f41"
+  integrity sha512-CGlMgJY56JZ9ZSYhJuhow61lMPPjUzWmChFya71Z/jilVos7mR/jPgaEfVGgMBY5DshbKdG8Ezb8FDCHcoMEMg==
   dependencies:
     "@babel/code-frame" "^7.0.0"
     "@eslint/eslintrc" "^0.3.0"
