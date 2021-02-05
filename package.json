@@ -43,11 +43,7 @@
   ],
   "devDependencies": {
     "@smartlyio/oats-axios-adapter": "2.3.0",
-<<<<<<< HEAD
     "@smartlyio/oats-koa-adapter": "2.2.0",
-=======
-    "@smartlyio/oats-koa-adapter": "2.1.0",
->>>>>>> Bump oats-runtime to a non-broken version
     "@smartlyio/oats-runtime": "2.11.2",
     "@types/jest": "26.0.20",
     "@types/js-yaml": "3.12.5",
