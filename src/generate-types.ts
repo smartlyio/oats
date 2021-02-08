@@ -4,8 +4,10 @@ import safe from '@smartlyio/safe-navigation';
 import * as _ from 'lodash';
 import * as assert from 'assert';
 import * as oautil from './util';
-import { UnsupportedFeatureBehaviour } from './util';
+import { SchemaObject, UnsupportedFeatureBehaviour } from './util';
 import * as path from 'path';
+import { ReferenceObject } from 'openapi3-ts';
+
 const valueClassIndexSignatureKey = 'instanceIndexSignatureKey';
 
 interface ImportDefinition {
@@ -791,6 +793,53 @@ export function run(options: Options) {
     return ts.createIdentifier(prop);
   }
 
+  function generateDiscriminatorMapping(
+    discriminatorField: string,
+    schemas: readonly SchemaObject[]
+  ): [ts.Expression, (ts.Identifier | ts.PropertyAccessExpression)[]] {
+    const [refs, internals] = _.partition(
+      schemas,
+      (schema): schema is ReferenceObject => '$ref' in schema
+    );
+    const properties = _.flatMap(internals, schema => {
+      if (schema.type !== 'object') {
+        throw new Error('schemas in oneOf with discriminator need to be objects');
+      }
+      let discriminatorFieldSchema;
+      if (
+        !schema.properties ||
+        !(discriminatorFieldSchema = schema.properties[discriminatorField])
+      ) {
+        throw new Error(`field ${discriminatorField} not defined, required by discriminator`);
+      }
+      if (!('type' in discriminatorFieldSchema) || discriminatorFieldSchema.type !== 'string') {
+        throw new Error('Only string type supported type supported');
+      }
+      if (!('enum' in discriminatorFieldSchema) || !discriminatorFieldSchema.enum) {
+        throw new Error('Must have enum');
+      }
+      return discriminatorFieldSchema.enum.map((e: string) =>
+        ts.createPropertyAssignment(e, generateMakerExpression(schema))
+      );
+    });
+    const types = refs.map(schema => {
+      const resolved = resolveRefToTypeName(schema.$ref);
+      return resolved.qualified
+        ? ts.createPropertyAccess(resolved.qualified, 'type' + oautil.typenamify(resolved.member))
+        : ts.createIdentifier('type' + oautil.typenamify(resolved.member));
+    });
+
+    return [ts.createObjectLiteral(properties), types];
+  }
+
+  function buildDiscriminatorMapping(mapping: { [p: string]: string }) {
+    return ts.createObjectLiteral(
+      _.map(mapping, (value, key) =>
+        ts.createPropertyAssignment(key, generateMakerExpression({ $ref: value }))
+      )
+    );
+  }
+
   function generateMakerExpression(schema: oas.ReferenceObject | oas.SchemaObject): ts.Expression {
     if (oautil.isReferenceObject(schema)) {
       const resolved = resolveRefToTypeName(schema.$ref);
@@ -801,7 +850,27 @@ export function run(options: Options) {
       }
     }
     if (schema.oneOf) {
-      return makeCall('makeOneOf', schema.oneOf.map(generateMakerExpression));
+      if (schema.discriminator) {
+        if (schema.discriminator.mapping) {
+          const mapping = buildDiscriminatorMapping(schema.discriminator.mapping);
+          return makeCall('makeOneOfWithDiscriminator', [
+            ts.createStringLiteral(schema.discriminator.propertyName) as ts.Expression,
+            mapping
+          ]);
+        } else {
+          const [mapping, types] = generateDiscriminatorMapping(
+            schema.discriminator.propertyName,
+            schema.oneOf
+          );
+          return makeCall('makeOneOfWithDiscriminator', [
+            ts.createStringLiteral(schema.discriminator.propertyName) as ts.Expression,
+            mapping,
+            ts.createArrayLiteral(types)
+          ]);
+        }
+      } else {
+        return makeCall('makeOneOf', schema.oneOf.map(generateMakerExpression));
+      }
     }
 
     if (schema.allOf) {

@@ -101,3 +101,41 @@ components:
         - message
         - messageIndex
 
+    ChoiceWithExternalRef:
+      oneOf:
+        - type: object
+          additionalProperties: false
+          required:
+            - type
+          properties:
+            type:
+              type: string
+              enum: ['choice1']
+            field:
+              type: string
+        - $ref: "common.yaml#/components/schemas/ChoiceItem3"
+      discriminator:
+        propertyName: type
+
+    ChoiceItem4:
+      type: object
+      additionalProperties: false
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          enum: ['choice4']
+        field4:
+          type: string
+
+    ChoiceWithExplicitMapping:
+      oneOf:
+        - $ref: "common.yaml#/components/schemas/ChoiceItem3"
+        - $ref: "#/components/schemas/ChoiceItem4"
+      discriminator:
+        propertyName: type
+        mapping:
+          choice3: "common.yaml#/components/schemas/ChoiceItem3"
+          choice4: "#/components/schemas/ChoiceItem4"
+
