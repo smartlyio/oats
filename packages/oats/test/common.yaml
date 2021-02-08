@@ -31,6 +31,42 @@ components:
           type: boolean
         nullableField:
           $ref: '#/components/schemas/Nullable'
+    ChoiceItem3:
+      type: object
+      additionalProperties: false
+      required: 
+        - type
+      properties:
+        type:
+          type: string
+          enum: ['choice3']
+        field3: 
+          type: string
+    Choice:
+      oneOf:
+        - type: object
+          additionalProperties: false
+          required: 
+            - type
+          properties:
+            type:
+              type: string
+              enum: ['choice1']
+            field: 
+              type: string
+        - type: object
+          additionalProperties: false
+          required: 
+            - type
+          properties:
+            type:
+              type: string
+              enum: ['choice2']
+            field2: 
+              type: string
+        - $ref: "#/components/schemas/ChoiceItem3"
+      discriminator:
+        propertyName: type
     Guard:
       type: boolean
       enum:
