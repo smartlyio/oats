@@ -176,6 +176,23 @@ export function generate(driver: Driver) {
   }
 }
 
+export function resolveModuleRef(dependencies: string[]): Resolve {
+  return (ref: string) => {
+    for (const dependency of dependencies) {
+      if (ref.startsWith(dependency)) {
+        const packageNamePath = dependency.split('/');
+        return {
+          importAs: packageNamePath[packageNamePath.length - 1]
+            .toLowerCase()
+            .replace(/-(.)/g, (m, group) => group.toUpperCase()),
+          importFrom: dependency,
+          name: ref.split('#')[1]
+        };
+      }
+    }
+  };
+}
+
 // Re-exporting to expose a more unified  API via the 'driver' module.
 //  People are free to import straight out of 'util' but that's up to them.
 export { UnsupportedFeatureBehaviour };

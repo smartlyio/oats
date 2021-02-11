@@ -12,6 +12,7 @@
     "typeRoots": ["./src/types", "./node_modules/@types"],
     "baseUrl": ".",
     "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
     "outDir": "dist",
     "paths": {
       "@smartlyio/oats": ["index"]
