@@ -1,5 +1,8 @@
 import * as fs from 'fs';
 import * as yaml from 'js-yaml';
+import * as runtime from '@smartlyio/oats-runtime';
+import * as glob from 'fast-glob';
+import * as _ from 'lodash';
 import * as types from './generate-types';
 import * as server from './generate-server';
 import * as path from 'path';
@@ -42,6 +45,12 @@ export interface Driver {
     security?: UnsupportedFeatureBehaviour;
   };
   forceGenerateTypes?: boolean; // output the type file even if it would have been already generated
+}
+
+export interface GenerateNPMRelativePatsOptions {
+  refScheme: string;
+  openapiDir: string;
+  outputFormat?: 'json' | 'yaml';
 }
 
 function emitAllStatusCodes() {
@@ -176,21 +185,81 @@ export function generate(driver: Driver) {
   }
 }
 
-export function resolveModuleRef(dependencies: string[]): Resolve {
+export function resolveModuleRef(dependencyPackages: string[], scheme = 'npm://'): Resolve {
   return (ref: string) => {
-    for (const dependency of dependencies) {
-      if (ref.startsWith(dependency)) {
+    if (!ref.startsWith(scheme)) {
+      return;
+    }
+    const cleanRef = ref.replace(scheme, '');
+    for (let i = 0; i < dependencyPackages.length; i++) {
+      const dependency = dependencyPackages[i];
+      if (cleanRef.startsWith(dependency)) {
         const packageNamePath = dependency.split('/');
         return {
-          importAs: packageNamePath[packageNamePath.length - 1]
+          importAs: packageNamePath
+            .pop()!
             .toLowerCase()
-            .replace(/-(.)/g, (m, group) => group.toUpperCase()),
+            .replace(/-(.)/g, (value, group) => group.toUpperCase()),
           importFrom: dependency,
-          name: ref.split('#')[1]
+          name: cleanRef.split('#').pop()!
         };
       }
     }
   };
+}
+
+export function generateNPMRelativePaths(
+  baseFile: string,
+  dependencies: { [key: string]: string },
+  outputFile: string,
+  opts: GenerateNPMRelativePatsOptions = {
+    refScheme: 'npm://',
+    openapiDir: 'openapi',
+    outputFormat: 'yaml'
+  }
+) {
+  const openAPIYamlString = fs.readFileSync(baseFile).toString();
+  let openAPIData = yaml.load(openAPIYamlString);
+  if (!openAPIData) return;
+  openAPIData = runtime.map(openAPIData, _.isString, (npmReference, traversalPath) => {
+    if (
+      traversalPath[traversalPath.length - 1] !== '$ref' ||
+      !npmReference.startsWith(opts.refScheme)
+    ) {
+      return npmReference;
+    }
+    const [packageName, schemaName] = npmReference.replace(opts.refScheme, '').split('#');
+    if (!dependencies[packageName]) {
+      throw new Error(`NPM package reference ${packageName} not found in project dependencies!`);
+    }
+    const packageOpenAPIDirectory = path.join('node_modules', packageName, opts.openapiDir);
+    const cleanLibName = packageName.split('/').pop();
+    const targetOpenAPIDirectory = path.join(opts.openapiDir, cleanLibName!);
+    let schemaOpenApiFile: string | undefined;
+    const globPath = path.join(packageOpenAPIDirectory, '**', '*.{yml,yaml}');
+    glob.sync([globPath]).map((filePath: string) => {
+      const targetFilePath = filePath.replace(packageOpenAPIDirectory, targetOpenAPIDirectory);
+      if (!fs.existsSync(path.dirname(targetFilePath))) {
+        fs.mkdirSync(path.dirname(targetFilePath), { recursive: true });
+      }
+      fs.copyFileSync(filePath, targetFilePath);
+      const ymlData = yaml.load(fs.readFileSync(targetFilePath).toString());
+      if (_.has(ymlData, ['components', 'schemas', schemaName])) {
+        schemaOpenApiFile = targetFilePath;
+      }
+    });
+
+    if (!schemaOpenApiFile) {
+      throw new Error(`Referenced ${schemaName} wasn't found inside ${packageName}/openapi files`);
+    }
+
+    return `${path.relative('openapi', schemaOpenApiFile)}#/components/schemas/${schemaName}`;
+  });
+  const outputText =
+    opts.outputFormat === 'json'
+      ? JSON.stringify(openAPIData, null, 2)
+      : yaml.dump(openAPIData, { indent: 2 });
+  fs.writeFileSync(outputFile, outputText);
 }
 
 // Re-exporting to expose a more unified  API via the 'driver' module.

@@ -1,6 +1,6 @@
 // yarn ts-node examples/driver.ts
 import { driver, util } from '../index';
-import { UnsupportedFeatureBehaviour } from '../src/driver';
+import { generateNPMRelativePaths, UnsupportedFeatureBehaviour } from '../src/driver';
 import { devDependencies } from '../package.json';
 
 // generate server from the shared openapi spec
@@ -20,6 +20,14 @@ driver.generate({
     security: UnsupportedFeatureBehaviour.ignore
   }
 });
+
+// Generating valid OpenAPI specs file with relative path references for
+// $ref: 'npm://<npm package name>#<type name>'
+generateNPMRelativePaths(
+  './test/example-with-security-nodes.yaml',
+  devDependencies,
+  './test/example-with-security-nodes.gen.yml'
+);
 
 // generate client from the shared openapi spec
 driver.generate({
