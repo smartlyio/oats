@@ -39,10 +39,10 @@
   ],
   "devDependencies": {
     "@smartlyio/oats-runtime": "2.11.2",
-    "@types/koa": "2.11.8",
+    "@types/koa": "2.13.0",
     "@types/koa-router": "7.4.1",
     "@types/lodash": "4.14.168",
-    "@types/node": "11.15.45",
+    "@types/node": "11.15.47",
     "@typescript-eslint/eslint-plugin": "3.10.1",
     "@typescript-eslint/parser": "3.10.1",
     "eslint": "7.20.0",
