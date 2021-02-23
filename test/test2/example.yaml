@@ -117,8 +117,17 @@ components:
       discriminator:
         propertyName: type
 
-    ChoiceItem4:
-      $ref: './test2/example.yaml#/components/schemas/ChoiceItem45'
+    ChoiceItem45:
+      type: object
+      additionalProperties: false
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          enum: ['choice4']
+        field4:
+          type: string
 
     ChoiceWithExplicitMapping:
       oneOf:
