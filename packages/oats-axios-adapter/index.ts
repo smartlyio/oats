@@ -1,7 +1,7 @@
 import * as runtime from '@smartlyio/oats-runtime';
 import * as FormData from 'form-data';
 import * as assert from 'assert';
-import axios, { AxiosResponse } from 'axios';
+import globalAxios, { AxiosInstance, AxiosResponse } from 'axios';
 
 function toRequestData(data: runtime.server.RequestBody<any> | undefined) {
   if (data == null) {
@@ -32,35 +32,39 @@ function axiosToJson(data: any) {
   return data;
 }
 
-export const bind: runtime.client.ClientAdapter = async (
-  arg: runtime.server.EndpointArg<any, any, any, any>
-): Promise<runtime.server.Response<any, any, any, Record<string, any>>> => {
-  if (arg.servers.length !== 1) {
-    return assert.fail('cannot decide which server to use from ' + arg.servers.join(', '));
-  }
-  const server = arg.servers[0];
-  const params = axiosToJson(arg.query);
-  const data = toRequestData(arg.body);
-  const url = server + arg.path;
-  const headers = { ...arg.headers, ...(data instanceof FormData ? data.getHeaders() : {}) };
-  const response = await axios.request({
-    method: arg.method,
-    headers,
-    url,
-    params,
-    data,
-    validateStatus: () => true
-  });
-  const contentType = getContentType(response);
-  return {
-    status: response.status,
-    value: {
-      contentType,
-      value: getResponseData(contentType, response)
-    },
-    headers: response.headers ?? {}
+export const bind: runtime.client.ClientAdapter = withAxios(globalAxios);
+
+export function withAxios(axiosInstance: AxiosInstance): runtime.client.ClientAdapter {
+  return async (
+    arg: runtime.server.EndpointArg<any, any, any, any>
+  ): Promise<runtime.server.Response<any, any, any, Record<string, any>>> => {
+    if (arg.servers.length !== 1) {
+      return assert.fail('cannot decide which server to use from ' + arg.servers.join(', '));
+    }
+    const server = arg.servers[0];
+    const params = axiosToJson(arg.query);
+    const data = toRequestData(arg.body);
+    const url = server + arg.path;
+    const headers = { ...arg.headers, ...(data instanceof FormData ? data.getHeaders() : {}) };
+    const response = await axiosInstance.request({
+      method: arg.method,
+      headers,
+      url,
+      params,
+      data,
+      validateStatus: () => true
+    });
+    const contentType = getContentType(response);
+    return {
+      status: response.status,
+      value: {
+        contentType,
+        value: getResponseData(contentType, response)
+      },
+      headers: response.headers ?? {}
+    };
   };
-};
+}
 
 function getContentType(response: AxiosResponse<any>) {
   const type = response.headers['content-type'];
