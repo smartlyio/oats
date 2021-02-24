@@ -42,7 +42,10 @@ export interface Driver {
     security?: UnsupportedFeatureBehaviour;
   };
   forceGenerateTypes?: boolean; // output the type file even if it would have been already generated
-  preserveRefPathStructure?: boolean;
+}
+
+interface GenerateFileOptions {
+  preservePathStructure?: boolean;
 }
 
 function emitAllStatusCodes() {
@@ -84,7 +87,8 @@ function makeModuleName(filename: string, keepDirectoryName = false): string {
   ].join('');
 }
 
-export function generateFile(): types.Resolve {
+export function generateFile(opts?: GenerateFileOptions): types.Resolve {
+  const preservePathStructure = opts && opts.preservePathStructure;
   return (ref: string, options: types.Options) => {
     if (ref[0] === '#') {
       return;
@@ -92,11 +96,11 @@ export function generateFile(): types.Resolve {
     const localName = ref.replace(/^[^#]+/, '');
     const fileName = ref.replace(/#.+$/, '');
     const ymlFile = path.resolve(path.dirname(options.sourceFile), fileName);
-    const generatedFilePath = options.preserveRefPathStructure ? fileName : path.basename(ymlFile);
+    const generatedFilePath = preservePathStructure ? fileName : path.basename(ymlFile);
     const generatedFileName = `${generatedFilePath.replace(/\.[^.]*$/, '')}.types.generated`;
-    const moduleName = makeModuleName(fileName, options.preserveRefPathStructure);
+    const moduleName = makeModuleName(fileName, preservePathStructure);
     const generatedFile = './' + path.dirname(options.targetFile) + '/' + generatedFileName;
-    if (options.preserveRefPathStructure) {
+    if (preservePathStructure) {
       fs.mkdirSync(path.dirname(generatedFile), { recursive: true });
     }
     return {
@@ -113,8 +117,7 @@ export function generateFile(): types.Resolve {
           externalOpenApiSpecs: options.externalOpenApiSpecs,
           externalOpenApiImports: options.externalOpenApiImports,
           emitStatusCode: options.emitStatusCode,
-          unsupportedFeatures: options.unsupportedFeatures,
-          preserveRefPathStructure: options.preserveRefPathStructure
+          unsupportedFeatures: options.unsupportedFeatures
         });
       }
     };
@@ -144,8 +147,7 @@ export function generate(driver: Driver) {
     externalOpenApiSpecs: driver.externalOpenApiSpecs,
     oas: spec,
     runtimeModule: modulePath(driver.generatedValueClassFile, driver.runtimeFilePath),
-    emitStatusCode: driver.emitStatusCode || emitAllStatusCodes,
-    preserveRefPathStructure: driver.preserveRefPathStructure
+    emitStatusCode: driver.emitStatusCode || emitAllStatusCodes
   });
   if (typeSource) {
     fs.writeFileSync(driver.generatedValueClassFile, header + typeSource);
