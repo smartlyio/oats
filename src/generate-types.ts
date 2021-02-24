@@ -42,6 +42,7 @@ export interface Options {
   unsupportedFeatures?: {
     security?: UnsupportedFeatureBehaviour;
   };
+  preserveRefPathStructure?: boolean;
 }
 
 export function info(message: string) {

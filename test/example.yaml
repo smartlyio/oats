@@ -118,7 +118,7 @@ components:
         propertyName: type
 
     ChoiceItem4:
-      $ref: './test2/example.yaml#/components/schemas/ChoiceItem45'
+      $ref: './nested-test/example.yaml#/components/schemas/ChoiceItem45'
 
     ChoiceWithExplicitMapping:
       oneOf:
