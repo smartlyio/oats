@@ -657,7 +657,13 @@ export function run(options: Options) {
           undefined,
           'opts',
           ts.createToken(ts.SyntaxKind.QuestionToken),
-          ts.createTypeReferenceNode(fromLib('make', 'MakeOptions'), [])
+          ts.createUnionTypeNode([
+            ts.createTypeReferenceNode(fromLib('make', 'MakeOptions'), []),
+            ts.createTypeReferenceNode(
+              ts.createIdentifier('InternalUnsafeConstructorOption'),
+              undefined
+            )
+          ])
         )
       ],
       undefined,
@@ -668,17 +674,30 @@ export function run(options: Options) {
             ts.createPropertyAccess(ts.createIdentifier('Object'), 'assign'),
             [],
             [
-              ts.createIdentifier('this'),
-              ts.createCall(
-                ts.createPropertyAccess(
-                  ts.createCall(ts.createIdentifier('build' + oautil.typenamify(key)), undefined, [
-                    ts.createIdentifier('value'),
+              ts.createThis(),
+              ts.createConditional(
+                ts.createBinary(
+                  ts.createIdentifier('opts'),
+                  ts.createToken(ts.SyntaxKind.AmpersandAmpersandToken),
+                  ts.createBinary(
+                    ts.createStringLiteral('unSafeSet'),
+                    ts.createToken(ts.SyntaxKind.InKeyword),
                     ts.createIdentifier('opts')
-                  ]),
-                  ts.createIdentifier('success')
+                  )
                 ),
-                undefined,
-                []
+                ts.createIdentifier('value'),
+                ts.createCall(
+                  ts.createPropertyAccess(
+                    ts.createCall(
+                      ts.createIdentifier('build' + oautil.typenamify(key)),
+                      undefined,
+                      [ts.createIdentifier('value'), ts.createIdentifier('opts')]
+                    ),
+                    ts.createIdentifier('success')
+                  ),
+                  undefined,
+                  []
+                )
               )
             ]
           )
@@ -717,11 +736,60 @@ export function run(options: Options) {
         ts.createTypeReferenceNode(oautil.typenamify(key), [])
       ]),
       ts.createBlock([
+        ts.createVariableStatement(
+          [],
+          ts.createVariableDeclarationList(
+            [
+              ts.createVariableDeclaration(
+                'make',
+                undefined,
+                ts.createCall(ts.createIdentifier('build' + oautil.typenamify(key)), undefined, [
+                  ts.createIdentifier('value'),
+                  ts.createIdentifier('opts')
+                ])
+              )
+            ],
+            ts.NodeFlags.Const
+          )
+        ),
         ts.createReturn(
-          ts.createCall(ts.createIdentifier('make' + oautil.typenamify(key)), undefined, [
-            ts.createIdentifier('value'),
-            ts.createIdentifier('opts')
-          ])
+          ts.createConditional(
+            ts.createCall(
+              ts.createPropertyAccess(ts.createIdentifier('make'), ts.createIdentifier('isError')),
+              [],
+              []
+            ),
+            ts.createCall(
+              ts.createPropertyAccess(
+                ts.createPropertyAccess(ts.createPropertyAccess(runtimeLibrary, 'make'), 'Make'),
+                'error'
+              ),
+              undefined,
+              [ts.createPropertyAccess(ts.createIdentifier('make'), 'errors')]
+            ),
+            ts.createCall(
+              ts.createPropertyAccess(
+                ts.createPropertyAccess(ts.createPropertyAccess(runtimeLibrary, 'make'), 'Make'),
+                'ok'
+              ),
+              undefined,
+              [
+                ts.createCall(ts.createIdentifier('new ' + oautil.typenamify(key)), undefined, [
+                  ts.createCall(
+                    ts.createPropertyAccess(
+                      ts.createIdentifier('make'),
+                      ts.createIdentifier('success')
+                    ),
+                    undefined,
+                    undefined
+                  ),
+                  ts.createObjectLiteral([
+                    ts.createPropertyAssignment('unSafeSet', ts.createTrue())
+                  ])
+                ])
+              ]
+            )
+          )
         )
       ])
     );
@@ -1262,8 +1330,7 @@ export function run(options: Options) {
     );
   }
 
-  function generateTopLevelClassMaker(key: string, constructor: string) {
-    const makerFun = 'createMakerWith';
+  function generateTopLevelClassMaker(key: string) {
     const shape = 'ShapeOf' + oautil.typenamify(key);
     return ts.createVariableStatement(
       [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
@@ -1275,7 +1342,7 @@ export function run(options: Options) {
               ts.createTypeReferenceNode(shape, []),
               ts.createTypeReferenceNode(oautil.typenamify(key), [])
             ]),
-            makeCall(makerFun, [ts.createIdentifier(constructor)])
+            ts.createPropertyAccess(ts.createIdentifier(oautil.typenamify(key)), 'make')
           )
         ],
         ts.NodeFlags.Const
@@ -1360,7 +1427,7 @@ export function run(options: Options) {
       generateBrand(key),
       generateValueClass(key, schema),
       generateTopLevelClassBuilder(key, schema),
-      generateTopLevelClassMaker(key, oautil.typenamify(key)),
+      generateTopLevelClassMaker(key),
       generateNamedTypeDefinitionAssignment(key, schema, generateIsA(oautil.typenamify(key)))
     ];
   }
@@ -1537,6 +1604,21 @@ export function run(options: Options) {
         undefined,
         ts.createImportClause(undefined, ts.createNamespaceImport(runtimeLibrary)),
         ts.createStringLiteral(options.runtimeModule)
+      ),
+      ts.createTypeAliasDeclaration(
+        undefined,
+        undefined,
+        'InternalUnsafeConstructorOption',
+        undefined,
+        ts.createTypeLiteralNode([
+          ts.createPropertySignature(
+            undefined,
+            ts.createIdentifier('unSafeSet'),
+            undefined,
+            ts.createTrue(),
+            undefined
+          )
+        ])
       )
     ]);
   }
