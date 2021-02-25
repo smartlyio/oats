@@ -634,18 +634,74 @@ export function run(options: Options) {
     );
   }
 
-  function generateClassConstructor() {
+  function generateClassConstructor(key: string) {
     return ts.createMethod(
       undefined,
-      [ts.createModifier(ts.SyntaxKind.PrivateKeyword)],
+      [ts.createModifier(ts.SyntaxKind.PublicKeyword)],
       undefined,
       'constructor',
       undefined,
       undefined,
-      [],
+      [
+        ts.createParameter(
+          undefined,
+          undefined,
+          undefined,
+          'value',
+          undefined,
+          ts.createTypeReferenceNode('ShapeOf' + oautil.typenamify(key), [])
+        ),
+        ts.createParameter(
+          undefined,
+          undefined,
+          undefined,
+          'opts',
+          ts.createToken(ts.SyntaxKind.QuestionToken),
+          ts.createUnionTypeNode([
+            ts.createTypeReferenceNode(fromLib('make', 'MakeOptions'), []),
+            ts.createTypeReferenceNode(
+              ts.createIdentifier('InternalUnsafeConstructorOption'),
+              undefined
+            )
+          ])
+        )
+      ],
       undefined,
       ts.createBlock([
-        ts.createExpressionStatement(ts.createCall(ts.createIdentifier('super'), [], []))
+        ts.createExpressionStatement(ts.createCall(ts.createIdentifier('super'), [], [])),
+        ts.createExpressionStatement(
+          ts.createCall(
+            ts.createPropertyAccess(ts.createIdentifier('Object'), 'assign'),
+            [],
+            [
+              ts.createThis(),
+              ts.createConditional(
+                ts.createBinary(
+                  ts.createIdentifier('opts'),
+                  ts.createToken(ts.SyntaxKind.AmpersandAmpersandToken),
+                  ts.createBinary(
+                    ts.createStringLiteral('unSafeSet'),
+                    ts.createToken(ts.SyntaxKind.InKeyword),
+                    ts.createIdentifier('opts')
+                  )
+                ),
+                ts.createIdentifier('value'),
+                ts.createCall(
+                  ts.createPropertyAccess(
+                    ts.createCall(
+                      ts.createIdentifier('build' + oautil.typenamify(key)),
+                      undefined,
+                      [ts.createIdentifier('value'), ts.createIdentifier('opts')]
+                    ),
+                    ts.createIdentifier('success')
+                  ),
+                  undefined,
+                  []
+                )
+              )
+            ]
+          )
+        )
       ])
     );
   }
@@ -718,25 +774,19 @@ export function run(options: Options) {
               ),
               undefined,
               [
-                ts.createCall(
-                  ts.createPropertyAccess(ts.createIdentifier('Object'), 'assign'),
-                  [],
-                  [
-                    ts.createCall(
-                      ts.createIdentifier('new ' + oautil.typenamify(key)),
-                      undefined,
-                      []
+                ts.createCall(ts.createIdentifier('new ' + oautil.typenamify(key)), undefined, [
+                  ts.createCall(
+                    ts.createPropertyAccess(
+                      ts.createIdentifier('make'),
+                      ts.createIdentifier('success')
                     ),
-                    ts.createCall(
-                      ts.createPropertyAccess(
-                        ts.createIdentifier('make'),
-                        ts.createIdentifier('success')
-                      ),
-                      undefined,
-                      []
-                    )
-                  ]
-                )
+                    undefined,
+                    undefined
+                  ),
+                  ts.createObjectLiteral([
+                    ts.createPropertyAssignment('unSafeSet', ts.createTrue())
+                  ])
+                ])
               ]
             )
           )
@@ -747,7 +797,7 @@ export function run(options: Options) {
 
   function generateClassBuiltindMembers(key: string) {
     return [
-      generateClassConstructor(),
+      generateClassConstructor(key),
       generateReflectionProperty(key),
       generateClassMakeMethod(key)
     ];
@@ -1554,6 +1604,21 @@ export function run(options: Options) {
         undefined,
         ts.createImportClause(undefined, ts.createNamespaceImport(runtimeLibrary)),
         ts.createStringLiteral(options.runtimeModule)
+      ),
+      ts.createTypeAliasDeclaration(
+        undefined,
+        undefined,
+        'InternalUnsafeConstructorOption',
+        undefined,
+        ts.createTypeLiteralNode([
+          ts.createPropertySignature(
+            undefined,
+            ts.createIdentifier('unSafeSet'),
+            undefined,
+            ts.createTrue(),
+            undefined
+          )
+        ])
       )
     ]);
   }
