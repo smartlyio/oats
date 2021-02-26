@@ -361,7 +361,9 @@ export function makeOneOfWithDiscriminator(
       !(discriminatorField in value) ||
       typeof (discriminatorValue = value[discriminatorField]) !== 'string'
     ) {
-      return error(`value for discriminator field ${discriminatorField} must be a string`);
+      return error(
+        `value for discriminator field "${discriminatorField}" must be a string but value was "${discriminatorValue}" instead`
+      );
     }
     const maker = fullMapping[discriminatorValue];
     if (!maker) {
