@@ -561,7 +561,7 @@ export function run(options: Options) {
     if (schema.nullable) {
       return ts.createUnionTypeNode([
         generateType({ ...schema, nullable: false }, typeMapper),
-        ts.createNull()
+        ts.factory.createLiteralTypeNode(ts.factory.createNull())
       ]);
     }
 
@@ -603,7 +603,7 @@ export function run(options: Options) {
       return ts.createKeywordTypeNode(ts.SyntaxKind.VoidKeyword);
     }
     if (schema.type === 'null') {
-      return ts.createKeywordTypeNode(ts.SyntaxKind.NullKeyword);
+      return ts.factory.createLiteralTypeNode(ts.factory.createNull());
     }
     if (!schema.type) {
       return ts.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword);
@@ -1102,7 +1102,7 @@ export function run(options: Options) {
         ? [
             ts.createPropertyAssignment(
               'enum',
-              ts.createArrayLiteral(schema.enum.map(ts.createStringLiteral))
+              ts.createArrayLiteral(schema.enum.map(value => ts.factory.createStringLiteral(value)))
             )
           ]
         : [];
@@ -1615,7 +1615,7 @@ export function run(options: Options) {
             undefined,
             ts.createIdentifier('unSafeSet'),
             undefined,
-            ts.createTrue(),
+            ts.createLiteralTypeNode(ts.createTrue()),
             undefined
           )
         ])
