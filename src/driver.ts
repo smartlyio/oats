@@ -126,7 +126,7 @@ export function generateFile(opts?: GenerateFileOptions): types.Resolve {
 
 export function generate(driver: Driver) {
   const file = fs.readFileSync(driver.openapiFilePath, 'utf8');
-  const spec: oas.OpenAPIObject = yaml.load(file);
+  const spec: oas.OpenAPIObject = yaml.load(file) as any;
   const header = driver.header ? driver.header + '\n' : '';
 
   types.deprecated(
