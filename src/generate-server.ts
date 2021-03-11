@@ -299,7 +299,7 @@ function generateMaker(
       ts.createPropertyAssignment('method', ts.createStringLiteral(method)),
       ts.createPropertyAssignment(
         'servers',
-        ts.createArrayLiteral(servers.map(ts.createStringLiteral))
+        ts.createArrayLiteral(servers.map(value => ts.factory.createStringLiteral(value)))
       ),
       ts.createPropertyAssignment('headers', headers),
       ts.createPropertyAssignment('query', query),
