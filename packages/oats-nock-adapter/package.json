@@ -21,7 +21,7 @@
     "url": "https://github.com/smartlyio/oats-nock-adapter.git"
   },
   "peerDependencies": {
-    "typescript": "^3.6.3"
+    "typescript": "^3.6.3 || ^4.0.0"
   },
   "dependencies": {
     "@smartlyio/safe-navigation": "^5.0.2",
