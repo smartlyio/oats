@@ -2,9 +2,14 @@ import * as runtime from "@smartlyio/oats-runtime";
 import * as mirageAdapter from "@smartlyio/oats-mirage-adapter"
 import * as api from "./server.generated"
 
+// the implementation for the endpoints from example.yml
 const spec: api.Endpoints = {
   '/example/{id}': {
     get: async (ctx) => {
+
+      // @ts-expect-error
+      void ctx.params.nonExisting // <- ctx is a typesafe object containing the request
+
       return runtime.json(200, { message: 'get '  + ctx.params.id + ' ' + ctx.query.foo });
     },
     post: async (ctx) => {

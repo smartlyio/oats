@@ -1,10 +1,12 @@
 # Oats Mirage Adapter
 
-Oats Mirage Adapter is a library that [Oats](https://github.com/smartlyio/oats) to [Mirage.js](https://github.com/miragejs/miragejs) fake Servers.
+Typesafe Typescript OpenaApi3 support for [Mirage.js](https://github.com/miragejs/miragejs) mock http servers
+using [Oats](https://github.com/smartlyio/oats).
 
 ## What is Oats?
 
-[Oats](https://github.com/smartlyio/oats) is a library that parses OpenAPI specifications and generates client and server code in TypeScript.
+[Oats](https://github.com/smartlyio/oats) is a library that parses OpenAPI specifications and 
+generates client and server definitions in TypeScript.
 
 ## Installation
 
