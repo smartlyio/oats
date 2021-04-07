@@ -10,19 +10,18 @@
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "clean": "rm -rf ./dist && rm -f ./tmp/*.ts",
-    "build": "yarn clean && yarn lint && yarn tsc",
+    "build": "yarn clean && yarn lint && yarn render && yarn tsc",
     "prepublish": "yarn build",
-    "render": "ts-node render-docs.ts",
-    "render:watch": "nodemon -w \"examples/\" -w \"README.template.md\" render-docs.ts"
+    "render": "ts-node render-docs.ts"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/smartlyio/oats.git"
   },
   "peerDependencies": {
-    "@smartlyio/oats-runtime": "^2.8.0",
-    "koa": "^2.3.0",
-    "typescript": "^4.0.0"
+    "@smartlyio/oats-runtime": "^2.12.1",
+    "typescript": "^4.0.0",
+    "miragejs": "^0.1.41"
   },
   "keywords": [
     "oats",
@@ -46,7 +45,6 @@
     "eslint-plugin-jest": "23.20.0",
     "eslint-plugin-prettier": "3.3.0",
     "miragejs": "^0.1.41",
-    "nodemon": "2.0.6",
     "prettier": "2.2.1",
     "ts-node": "9.1.1",
     "typescript": "^4.2.3"
