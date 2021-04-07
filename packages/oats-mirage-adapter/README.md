@@ -20,7 +20,6 @@ Oats Mirage Adapter exports a single `bind` function that creates a Mirage fake 
 
 
 ```ts
- import * as mirage from "miragejs";
 import * as runtime from "@smartlyio/oats-runtime";
 import * as mirageAdapter from "@smartlyio/oats-mirage-adapter"
 import * as api from "./server.generated"
