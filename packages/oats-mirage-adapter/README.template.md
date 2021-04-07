@@ -23,4 +23,4 @@ Oats Mirage Adapter exports a single `bind` function that creates a Mirage fake 
 >>test-app/src/fake-server.ts
 ```
 
-For a working example see `test-app` which contains a standard create-react-app using the generated mirage mock.
+For a working example see [test-app](https://github.com/smartlyio/oats-mirage-adapter/tree/master/test-app) which contains a standard create-react-app using the generated mirage mock.
