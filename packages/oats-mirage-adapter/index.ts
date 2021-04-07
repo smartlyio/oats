@@ -1,8 +1,12 @@
 import * as runtime from '@smartlyio/oats-runtime';
+import * as mirage from 'miragejs';
+import * as mirageTypes from 'miragejs/-types';
+import Schema from 'miragejs/orm/schema';
+import { ServerConfig } from 'miragejs/server';
 
-function adapter<StateT, CustomT, RequestContext>(
-  router: Router<StateT, CustomT>,
-  requestContextCreator: (ctx: ParameterizedContext<StateT, CustomT>) => RequestContext
+function adapter<Registry extends mirageTypes.AnyRegistry, RequestContext>(
+  mirageServer: mirage.Server<Registry>,
+  requestContextCreator: (schema: Schema<Registry>, request: mirage.Request) => RequestContext
 ): runtime.server.ServerAdapter {
   return (
     path: string,
@@ -10,52 +14,57 @@ function adapter<StateT, CustomT, RequestContext>(
     method: runtime.server.Methods,
     handler: runtime.server.SafeEndpoint
   ) => {
-    const koaPath = path.replace(/{([^}]+)}/g, (m, param) => ':' + param);
-    (router as any)[method](koaPath, async (ctx: ParameterizedContext<StateT, CustomT>) => {
-      const files = (ctx as any).request.files;
-      let fileFields = {};
-      if (files) {
-        fileFields = Object.keys(files).reduce((memo: any, name) => {
-          memo[name] = new runtime.make.File(files[name].path, files[name].size);
-          return memo;
-        }, {});
-      }
-      const contentType = ctx.request.type;
-      const requestBody = (ctx.request as any).body;
-      const value = Array.isArray(requestBody) ? requestBody : { ...requestBody, ...fileFields };
+    const miragePath = path.replace(/{([^}]+)}/g, (m, param) => ':' + param);
+    const mirageHandler: typeof mirageServer.get = (mirageServer as any)[method];
+    mirageHandler(miragePath, async (schema, request) => {
+      const contentType = request.requestHeaders['content-type'];
+      const value = contentType.match(/application\/json/)
+        ? JSON.parse(request.requestBody)
+        : request.requestBody;
       const body = Object.keys(value).length > 0 ? { value, contentType } : undefined;
       const result = await handler({
         path,
-        method: runtime.server.assertMethod(ctx.method.toLowerCase()),
+        method: runtime.server.assertMethod('get'),
         servers: [],
         op,
-        headers: ctx.request.headers,
-        params: (ctx as any).params,
-        query: ctx.query,
+        headers: request.requestHeaders,
+        params: request.params,
+        query: request.queryParams,
         body,
-        requestContext: requestContextCreator(ctx)
+        requestContext: requestContextCreator(schema, request)
       });
-      ctx.status = result.status;
-      ctx.body = result.value.value;
-      ctx.set(result.headers);
+      return new mirage.Response(
+        result.status,
+        { ...result.headers, contentType: result.value.contentType },
+        result.value.contentType.match(/application\/json/)
+          ? JSON.stringify(value.value)
+          : value.value
+      );
     });
   };
 }
 
 /**
  * Bind provided handlers for the OpenAPI routes
- *
- * Koa's default StateT and CustomT values are selected as defaults
- * @param handler
- * @param spec
- * @param requestContextCreator
  */
-export function bind<Spec, RequestContext = void, StateT = any, CustomT = Record<string, unknown>>(
+export function bind<
+  Spec,
+  Models extends mirageTypes.AnyModels,
+  Factories extends mirageTypes.AnyFactories,
+  RequestContext = void
+>(
   handler: runtime.server.HandlerFactory<Spec>,
   spec: Spec,
-  requestContextCreator?: (ctx: ParameterizedContext<StateT, CustomT>) => RequestContext
-): Router<StateT, CustomT> {
-  const router = new Router<StateT, CustomT>();
-  handler(adapter(router, requestContextCreator || (() => ({}))))(spec);
-  return router;
+  config: ServerConfig<Models, Factories>,
+  requestContextCreator?: (
+    schema: Schema<mirageTypes.Registry<Models, Factories>>,
+    request: mirage.Request
+  ) => RequestContext
+): mirage.Server<mirage.Registry<Models, Factories>> {
+  return mirage.createServer({
+    ...config,
+    routes() {
+      handler(adapter(this, requestContextCreator || (() => ({}))))(spec);
+    }
+  });
 }
