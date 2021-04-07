@@ -44,11 +44,11 @@ const spec: api.Endpoints = {
 
 export function fake() {
   return mirageAdapter.bind({
-    // a mock service without namespacing
-    service: mirageAdapter.service(runtime.server.createHandlerFactory<api.Endpoints>(
-      api.endpointHandlers
-      ),
-      spec),
+      // a mock service without namespacing
+      service: mirageAdapter.service(runtime.server.createHandlerFactory<api.Endpoints>(
+        api.endpointHandlers
+        ),
+        spec),
       // two services under namespaces api and api2
       namespaces: {
         api: mirageAdapter.service(runtime.server.createHandlerFactory<api.Endpoints>(
@@ -60,8 +60,8 @@ export function fake() {
           ),
           spec)
       },
-    // rest of the mirage createServer configuration
-    config: {}
+      // rest of the mirage createServer configuration
+      config: {}
     }
   );
 }
