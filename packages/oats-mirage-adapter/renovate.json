@@ -1,0 +1,41 @@
+{
+  "extends": [
+    "config:js-lib"
+  ],
+  "timezone": "Europe/Helsinki",
+  "prHourlyLimit": 5,
+  "labels": ["patch"],
+  "packageRules": [
+    {
+      "groupName": "Smartly packages",
+      "packagePatterns": [
+        "^@smartly\/"
+      ],
+      "excludePackagePatterns": [
+        "^@smartly\/asset-"
+      ],
+      "schedule": "at any time"
+    },
+    {
+      "groupName": "Smartly Asset Library Components",
+      "packagePatterns": [
+        "^@smartly\/asset-"
+      ],
+      "schedule": "at any time"
+    },
+    {
+      "groupName": "Smartly Oats",
+      "packagePatterns": [
+        "^@smartlyio\/oats"
+      ],
+      "schedule": "at any time"
+    },
+    {
+      "depTypeList": ["devDependencies"],
+      "schedule" : "before 8am on monday",
+      "groupName": "devDependencies",
+      "automerge": true,
+      "labels": ["dependencies", "no release"]
+    }
+  ]
+}
