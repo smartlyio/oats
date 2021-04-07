@@ -14,15 +14,25 @@ const spec: api.Endpoints = {
 }
 
 export function fake() {
-  return mirageAdapter.bind<api.Endpoints>({
-      handler: runtime.server.createHandlerFactory<api.Endpoints>(
-        api.endpointHandlers
+  return mirageAdapter.bind({
+    // a mock service without namespacing
+    service: mirageAdapter.service(runtime.server.createHandlerFactory<api.Endpoints>(
+      api.endpointHandlers
       ),
-      spec,
-      namespace: 'api',
-      config:{ }
+      spec),
+      // two services under namespaces api and api2
+      namespaces: {
+        api: mirageAdapter.service(runtime.server.createHandlerFactory<api.Endpoints>(
+          api.endpointHandlers
+          ),
+          spec),
+        api2: mirageAdapter.service(runtime.server.createHandlerFactory<api.Endpoints>(
+          api.endpointHandlers
+          ),
+          spec)
+      },
+    // rest of the mirage createServer configuration
+    config: {}
     }
   );
 }
-
-fake();

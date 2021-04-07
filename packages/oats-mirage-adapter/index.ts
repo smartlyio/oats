@@ -3,6 +3,7 @@ import * as mirage from 'miragejs';
 import * as mirageTypes from 'miragejs/-types';
 import Schema from 'miragejs/orm/schema';
 import { ServerConfig } from 'miragejs/server';
+import { Registry } from 'miragejs/-types';
 
 function adapter<Registry extends mirageTypes.AnyRegistry, RequestContext>(
   mirageServer: mirage.Server<Registry>,
@@ -47,31 +48,50 @@ function adapter<Registry extends mirageTypes.AnyRegistry, RequestContext>(
   };
 }
 
+enum ServiceBrand {}
+type Service<
+  Models extends mirageTypes.AnyModels = never,
+  Factories extends mirageTypes.AnyFactories = never
+> = {
+  handler: runtime.server.HandlerFactory<unknown>;
+  spec: unknown;
+} & { _brand: ServiceBrand };
+
+export function service<
+  Spec,
+  Models extends mirageTypes.AnyModels = never,
+  Factories extends mirageTypes.AnyFactories = never
+>(handler: runtime.server.HandlerFactory<Spec>, spec: Spec): Service<Models, Factories> {
+  return { handler, spec } as any;
+}
+
 /**
  * Bind provided handlers for the OpenAPI routes
  */
 export function bind<
-  Spec,
   Models extends mirageTypes.AnyModels = never,
   Factories extends mirageTypes.AnyFactories = never,
   RequestContext = void
 >(opts: {
-  handler: runtime.server.HandlerFactory<Spec>;
-  spec: Spec;
+  namespaces: { [namespace: string]: Service<Models, Factories> };
+  service?: Service<Models, Factories>;
+  requestContextCreator?: (schema: Schema<Registry<Models, Factories>>) => RequestContext;
   config: ServerConfig<Models, Factories>;
-  namespace?: string;
-  requestContextCreator?: (
-    schema: Schema<mirageTypes.Registry<Models, Factories>>,
-    request: mirage.Request
-  ) => RequestContext;
 }): mirage.Server<mirage.Registry<Models, Factories>> {
   return mirage.createServer({
     ...opts.config,
     routes() {
-      if (opts.namespace != null) {
-        this.namespace = opts.namespace;
+      if (opts.service) {
+        opts.service.handler(adapter(this, opts.requestContextCreator || (() => ({}))))(
+          opts.service.spec
+        );
       }
-      opts.handler(adapter(this, opts.requestContextCreator || (() => ({}))))(opts.spec);
+      Object.keys(opts.namespaces).forEach(namespace => {
+        this.namespace = namespace;
+        opts.namespaces[namespace].handler(
+          adapter(this, opts.requestContextCreator || (() => ({})))
+        )(opts.namespaces[namespace].spec);
+      });
     }
   });
 }
