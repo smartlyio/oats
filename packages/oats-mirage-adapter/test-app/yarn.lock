@@ -1479,6 +1479,23 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
+"@smartlyio/oats@^2.15.0":
+  version "2.15.0"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats/-/oats-2.15.0.tgz#84a48697f6ad13e36976e39c43b153b16472e210"
+  integrity sha512-vzylCmhUNBkD/3xn2ljhLZrH7FdgqeOl4mZQLWt1Pz/moM4zFKxg4s/uBnTaKP82HyQNEEOBIEWKfPMBVLO4uA==
+  dependencies:
+    "@smartlyio/safe-navigation" "^5.0.1"
+    js-yaml "^4.0.0"
+    lodash "^4.17.20"
+    openapi3-ts "^2.0.0"
+
+"@smartlyio/safe-navigation@^5.0.1":
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/@smartlyio/safe-navigation/-/safe-navigation-5.0.2.tgz#fd2b3583dff4b25f077000a785bc25a7bc39751d"
+  integrity sha512-Y7HZ7RL/AOKZwzwOpU8jlcys7m7ArWW372Fidi1PdCBKNODEfRpm5lyNGw05ClEQ7h/byiCX+lrNcDw9WFt8uA==
+  dependencies:
+    lodash "^4.17.19"
+
 "@surma/rollup-plugin-off-main-thread@^1.1.1":
   version "1.4.2"
   resolved "https://registry.yarnpkg.com/@surma/rollup-plugin-off-main-thread/-/rollup-plugin-off-main-thread-1.4.2.tgz#e6786b6af5799f82f7ab3a82e53f6182d2b91a58"
@@ -2318,6 +2335,11 @@ argparse@^1.0.7:
   integrity sha512-o5Roy6tNG4SL/FOkCAN6RzjiakZS25RLYFrcMttJqbdd8BWrnA+fGz57iN5Pb06pvBGvl5gQ0B48dJlslXvoTg==
   dependencies:
     sprintf-js "~1.0.2"
+
+argparse@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/argparse/-/argparse-2.0.1.tgz#246f50f3ca78a3240f6c997e8a9bd1eac49e4b38"
+  integrity sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==
 
 aria-query@^4.2.2:
   version "4.2.2"
@@ -6617,6 +6639,13 @@ js-yaml@^3.13.1:
     argparse "^1.0.7"
     esprima "^4.0.0"
 
+js-yaml@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-4.0.0.tgz#f426bc0ff4b4051926cd588c71113183409a121f"
+  integrity sha512-pqon0s+4ScYUvX30wxQi3PogGFAlUyH0awepWvwkj4jD4v+ova3RiYw8bmA6x2rDrEaj8i/oWKoRxpVNW+Re8Q==
+  dependencies:
+    argparse "^2.0.1"
+
 jsbn@~0.1.0:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/jsbn/-/jsbn-0.1.1.tgz#a5e654c2e5a2deb5f201d96cefbca80c0ef2f513"
@@ -7641,6 +7670,13 @@ open@^7.0.2:
   dependencies:
     is-docker "^2.0.0"
     is-wsl "^2.1.1"
+
+openapi3-ts@^2.0.0:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/openapi3-ts/-/openapi3-ts-2.0.1.tgz#b270aecea09e924f1886bc02a72608fca5a98d85"
+  integrity sha512-v6X3iwddhi276siej96jHGIqTx3wzVfMTmpGJEQDt7GPI7pI6sywItURLzpEci21SBRpPN/aOWSF5mVfFVNmcg==
+  dependencies:
+    yaml "^1.10.0"
 
 opn@^5.5.0:
   version "5.5.0"

@@ -17,11 +17,12 @@ function adapter<Registry extends mirageTypes.AnyRegistry, RequestContext>(
     const miragePath = path.replace(/{([^}]+)}/g, (m, param) => ':' + param);
     const mirageHandler: typeof mirageServer.get = (mirageServer as any)[method];
     mirageHandler(miragePath, async (schema, request) => {
-      const contentType = request.requestHeaders['content-type'];
-      const value = contentType.match(/application\/json/)
-        ? JSON.parse(request.requestBody)
-        : request.requestBody;
-      const body = Object.keys(value).length > 0 ? { value, contentType } : undefined;
+      const contentType = request.requestHeaders['content-type'] || 'text/html';
+      const value =
+        contentType.match(/application\/json/) && request.requestBody
+          ? JSON.parse(request.requestBody)
+          : request.requestBody;
+      const body = value != null ? { value, contentType } : undefined;
       const result = await handler({
         path,
         method: runtime.server.assertMethod('get'),
@@ -33,12 +34,14 @@ function adapter<Registry extends mirageTypes.AnyRegistry, RequestContext>(
         body,
         requestContext: requestContextCreator(schema, request)
       });
+      // eslint-disable-next-line no-console
+      console.log(result);
       return new mirage.Response(
         result.status,
-        { ...result.headers, contentType: result.value.contentType },
+        { ...result.headers, 'content-type': result.value.contentType },
         result.value.contentType.match(/application\/json/)
-          ? JSON.stringify(value.value)
-          : value.value
+          ? JSON.stringify(result.value.value)
+          : result.value.value
       );
     });
   };
@@ -49,8 +52,8 @@ function adapter<Registry extends mirageTypes.AnyRegistry, RequestContext>(
  */
 export function bind<
   Spec,
-  Models extends mirageTypes.AnyModels,
-  Factories extends mirageTypes.AnyFactories,
+  Models extends mirageTypes.AnyModels = never,
+  Factories extends mirageTypes.AnyFactories = never,
   RequestContext = void
 >(
   handler: runtime.server.HandlerFactory<Spec>,
@@ -64,6 +67,7 @@ export function bind<
   return mirage.createServer({
     ...config,
     routes() {
+      this.namespace = 'api';
       handler(adapter(this, requestContextCreator || (() => ({}))))(spec);
     }
   });

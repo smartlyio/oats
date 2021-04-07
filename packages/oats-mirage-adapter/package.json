@@ -10,7 +10,7 @@
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "clean": "rm -rf ./dist && rm -f ./tmp/*.ts",
-    "build": "yarn clean && yarn lint && yarn tsc && yarn test",
+    "build": "yarn clean && yarn lint && yarn tsc",
     "prepublish": "yarn build",
     "render": "ts-node render-docs.ts",
     "render:watch": "nodemon -w \"examples/\" -w \"README.template.md\" render-docs.ts"
@@ -35,7 +35,7 @@
     "client"
   ],
   "devDependencies": {
-    "@smartlyio/oats-runtime": "2.8.0",
+    "@smartlyio/oats-runtime": "^2.12.1",
     "@types/lodash": "4.14.165",
     "@types/node": "^14.14.37",
     "@typescript-eslint/eslint-plugin": "3.9.1",
