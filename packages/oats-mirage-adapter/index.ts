@@ -55,20 +55,23 @@ export function bind<
   Models extends mirageTypes.AnyModels = never,
   Factories extends mirageTypes.AnyFactories = never,
   RequestContext = void
->(
-  handler: runtime.server.HandlerFactory<Spec>,
-  spec: Spec,
-  config: ServerConfig<Models, Factories>,
+>(opts: {
+  handler: runtime.server.HandlerFactory<Spec>;
+  spec: Spec;
+  config: ServerConfig<Models, Factories>;
+  namespace?: string;
   requestContextCreator?: (
     schema: Schema<mirageTypes.Registry<Models, Factories>>,
     request: mirage.Request
-  ) => RequestContext
-): mirage.Server<mirage.Registry<Models, Factories>> {
+  ) => RequestContext;
+}): mirage.Server<mirage.Registry<Models, Factories>> {
   return mirage.createServer({
-    ...config,
+    ...opts.config,
     routes() {
-      this.namespace = 'api';
-      handler(adapter(this, requestContextCreator || (() => ({}))))(spec);
+      if (opts.namespace != null) {
+        this.namespace = opts.namespace;
+      }
+      opts.handler(adapter(this, opts.requestContextCreator || (() => ({}))))(opts.spec);
     }
   });
 }

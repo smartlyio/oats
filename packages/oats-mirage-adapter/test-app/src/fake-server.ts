@@ -15,12 +15,14 @@ const spec: api.Endpoints = {
 }
 
 export function fake() {
-  return mirageAdapter.bind<api.Endpoints>(
-    runtime.server.createHandlerFactory<api.Endpoints>(
-      api.endpointHandlers
-    ),
-    spec,
-    {}
+  return mirageAdapter.bind<api.Endpoints>({
+      handler: runtime.server.createHandlerFactory<api.Endpoints>(
+        api.endpointHandlers
+      ),
+      spec,
+      namespace: 'api',
+      config:{ }
+    }
   );
 }
 
