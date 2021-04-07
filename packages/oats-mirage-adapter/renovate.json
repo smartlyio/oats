@@ -7,23 +7,6 @@
   "labels": ["patch"],
   "packageRules": [
     {
-      "groupName": "Smartly packages",
-      "packagePatterns": [
-        "^@smartly\/"
-      ],
-      "excludePackagePatterns": [
-        "^@smartly\/asset-"
-      ],
-      "schedule": "at any time"
-    },
-    {
-      "groupName": "Smartly Asset Library Components",
-      "packagePatterns": [
-        "^@smartly\/asset-"
-      ],
-      "schedule": "at any time"
-    },
-    {
       "groupName": "Smartly Oats",
       "packagePatterns": [
         "^@smartlyio\/oats"
