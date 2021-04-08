@@ -18,7 +18,8 @@ npm install oats-mirage-adapter
 
 ## Usage
 
-Oats Mirage Adapter exports a single `bind` function that creates a Mirage fake server from the passed in endpoint definitions.
+Oats Mirage Adapter exports a single `bind` function that can be used to 
+bind the routes defined in an openapi spec to the mirage routes.
 
 
 ```ts
