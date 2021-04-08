@@ -12,17 +12,12 @@ function App() {
           Test app.
         </p>
       <button onClick={async () => {
-        const data = await fetch("/example/123?foo=no-namespaces");
-        const json = await data.json();
-        setData(JSON.stringify(json, null, 4));
-      }}>GET without namespaces</button>
-      <button onClick={async () => {
           const data = await fetch("/api/example/123?foo=bar");
           const json = await data.json();
           setData(JSON.stringify(json, null, 4));
         }}>GET</button>
       <button onClick={async () => {
-        const data = await fetch("/api2/example/123", {
+        const data = await fetch("/api/example/123", {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: 'ping' })

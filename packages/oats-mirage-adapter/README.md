@@ -25,6 +25,7 @@ Oats Mirage Adapter exports a single `bind` function that creates a Mirage fake 
 import * as runtime from "@smartlyio/oats-runtime";
 import * as mirageAdapter from "@smartlyio/oats-mirage-adapter"
 import * as api from "./server.generated"
+import * as mirage from "miragejs";
 
 // the implementation for the endpoints from example.yml
 const spec: api.Endpoints = {
@@ -43,27 +44,20 @@ const spec: api.Endpoints = {
 }
 
 export function fake() {
-  return mirageAdapter.bind({
-      // a mock service without namespacing
-      service: mirageAdapter.service(runtime.server.createHandlerFactory<api.Endpoints>(
-        api.endpointHandlers
+  return mirage.createServer({
+    routes() {
+      this.get("/non-openapi-route", );
+
+      this.namespace = "api";
+      // bind example.yml endpoints under namespace "api"
+      mirageAdapter.bind({
+        server: this,
+        handler: runtime.server.createHandlerFactory<api.Endpoints>(
+          api.endpointHandlers
         ),
-        spec),
-      // two services under namespaces api and api2
-      namespaces: {
-        api: mirageAdapter.service(runtime.server.createHandlerFactory<api.Endpoints>(
-          api.endpointHandlers
-          ),
-          spec),
-        api2: mirageAdapter.service(runtime.server.createHandlerFactory<api.Endpoints>(
-          api.endpointHandlers
-          ),
-          spec)
-      },
-      // rest of the mirage createServer configuration
-      config: {}
+        spec})
     }
-  );
+  });
 }
 
 ```

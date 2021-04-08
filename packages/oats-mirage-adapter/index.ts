@@ -2,8 +2,8 @@ import * as runtime from '@smartlyio/oats-runtime';
 import * as mirage from 'miragejs';
 import * as mirageTypes from 'miragejs/-types';
 import Schema from 'miragejs/orm/schema';
-import { ServerConfig } from 'miragejs/server';
-import { Registry } from 'miragejs/-types';
+import { Server } from 'miragejs/server';
+import { Registry as MirageRegistry, Registry } from 'miragejs/-types';
 
 function adapter<Registry extends mirageTypes.AnyRegistry, RequestContext>(
   mirageServer: mirage.Server<Registry>,
@@ -48,50 +48,19 @@ function adapter<Registry extends mirageTypes.AnyRegistry, RequestContext>(
   };
 }
 
-enum ServiceBrand {}
-type Service<
-  Models extends mirageTypes.AnyModels = never,
-  Factories extends mirageTypes.AnyFactories = never
-> = {
-  handler: runtime.server.HandlerFactory<unknown>;
-  spec: unknown;
-} & { _brand: ServiceBrand };
-
-export function service<
-  Spec,
-  Models extends mirageTypes.AnyModels = never,
-  Factories extends mirageTypes.AnyFactories = never
->(handler: runtime.server.HandlerFactory<Spec>, spec: Spec): Service<Models, Factories> {
-  return { handler, spec } as any;
-}
-
 /**
  * Bind provided handlers for the OpenAPI routes
  */
 export function bind<
+  Spec,
   Models extends mirageTypes.AnyModels = never,
   Factories extends mirageTypes.AnyFactories = never,
   RequestContext = void
 >(opts: {
-  namespaces: { [namespace: string]: Service<Models, Factories> };
-  service?: Service<Models, Factories>;
+  server: Server<MirageRegistry<Models, Factories>>;
+  handler: runtime.server.HandlerFactory<Spec>;
+  spec: Spec;
   requestContextCreator?: (schema: Schema<Registry<Models, Factories>>) => RequestContext;
-  config: ServerConfig<Models, Factories>;
-}): mirage.Server<mirage.Registry<Models, Factories>> {
-  return mirage.createServer({
-    ...opts.config,
-    routes() {
-      if (opts.service) {
-        opts.service.handler(adapter(this, opts.requestContextCreator || (() => ({}))))(
-          opts.service.spec
-        );
-      }
-      Object.keys(opts.namespaces).forEach(namespace => {
-        this.namespace = namespace;
-        opts.namespaces[namespace].handler(
-          adapter(this, opts.requestContextCreator || (() => ({})))
-        )(opts.namespaces[namespace].spec);
-      });
-    }
-  });
+}): void {
+  opts.handler(adapter(opts.server, opts.requestContextCreator || (() => ({}))))(opts.spec);
 }
