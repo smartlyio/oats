@@ -4,5 +4,7 @@ docker-compose.yml
 node_modules/
 yarn-error.log
 dist/
+.yalc/
+yalc.*
 *.iml
 
