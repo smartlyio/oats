@@ -18,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/smartlyio/oats.git"
+    "url": "https://github.com/smartlyio/oats-mirage-adapter.git"
   },
   "peerDependencies": {
     "@smartlyio/oats-runtime": "^2.12.1",
