@@ -6,6 +6,9 @@ import { Server } from 'miragejs/server';
 import { Registry as MirageRegistry, Registry } from 'miragejs/-types';
 
 function guessContentType(contentTypeHeader: string | undefined, value: any): string {
+  if (contentTypeHeader?.includes('application/json')) {
+    return 'application/json';
+  }
   if (contentTypeHeader) {
     return contentTypeHeader;
   }
@@ -53,10 +56,16 @@ function adapter<Registry extends mirageTypes.AnyRegistry, RequestContext>(
     const miragePath = path.replace(/{([^}]+)}/g, (m, param) => ':' + param);
     const mirageHandler: typeof mirageServer.get = (mirageServer as any)[method];
     mirageHandler(miragePath, async (schema, request) => {
-      const contentType = guessContentType(
-        request.requestHeaders['content-type'],
-        request.requestBody
+      const headers = Object.keys(request.requestHeaders).reduce<Record<string, string>>(
+        (lowerCaseHeaders, key) => {
+          lowerCaseHeaders[key.toLowerCase()] = request.requestHeaders[key];
+
+          return lowerCaseHeaders;
+        },
+        {}
       );
+
+      const contentType = guessContentType(headers['content-type'], request.requestBody);
       const value = await guessValue(contentType, request.requestBody);
       const body = value != null ? { value, contentType } : undefined;
       const ctx = {
@@ -64,7 +73,7 @@ function adapter<Registry extends mirageTypes.AnyRegistry, RequestContext>(
         method,
         servers: [],
         op,
-        headers: request.requestHeaders,
+        headers,
         params: request.params,
         query: request.queryParams,
         body,
