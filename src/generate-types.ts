@@ -811,7 +811,6 @@ export function run(options: Options) {
     );
     const brand = ts.createExpressionWithTypeArguments(
       [
-        ts.createTypeReferenceNode(ts.createIdentifier('never'), []),
         ts.createTypeReferenceNode(ts.createIdentifier('BrandOf' + oautil.typenamify(key)), [])
       ],
       ts.createPropertyAccess(runtimeLibrary, 'valueClass.ValueClass')
