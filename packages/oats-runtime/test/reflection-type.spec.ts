@@ -11,7 +11,7 @@ type Maker<A, R> = runtime.make.Maker<A, R>;
 
 describe('reflection-type', () => {
   describe('Traversal', () => {
-    class ArrayTestClass extends ValueClass<TestClass, 1> {
+    class ArrayTestClass extends ValueClass {
       static make(v: any): Make<ArrayTestClass> {
         return makeArrayTestClass(v);
       }
@@ -31,7 +31,7 @@ describe('reflection-type', () => {
       ArrayTestClass
     );
 
-    class TestClass extends ValueClass<TestClass, 1> {
+    class TestClass extends ValueClass {
       static make(v: any): Make<TestClass> {
         return makeTestClass(v);
       }

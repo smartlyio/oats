@@ -87,13 +87,13 @@ export function text<Status extends number, Value>(
 
 export function set<Cls>(
   to: Cls,
-  set: Cls extends valueClass.ValueClass<any, any> ? Partial<ShapeOf<Cls>> : never
+  set: Cls extends valueClass.ValueClass ? Partial<ShapeOf<Cls>> : never
 ): make.Make<Cls> {
   return (to as any).constructor.make({ ...to, ...set });
 }
 
 type ValueType =
-  | valueClass.ValueClass<any, any>
+  | valueClass.ValueClass
   | { [key: string]: any }
   | readonly any[]
   | string
@@ -207,7 +207,7 @@ function selectRecord<T extends { [key: string]: unknown }>(original: T, newReco
     return original;
   }
   if (original instanceof valueClass.ValueClass) {
-    return set<valueClass.ValueClass<any, any>>(original, newRecord).success();
+    return set<valueClass.ValueClass>(original, newRecord).success() as T;
   }
   return newRecord;
 }

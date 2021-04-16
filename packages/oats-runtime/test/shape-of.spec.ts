@@ -21,13 +21,13 @@ function assignableTo<T>(_t: T) {
   return;
 }
 
-enum EnumTag {}
-class BrandedClass extends runtime.valueClass.ValueClass<never, EnumTag> {
+class BrandedClass extends runtime.valueClass.ValueClass {
+  private readonly brand = null;
   a = 'a';
 }
 
-enum EnumTag2 {}
-class BrandedClass2 extends runtime.valueClass.ValueClass<never, EnumTag2> {
+class BrandedClass2 extends runtime.valueClass.ValueClass {
+  private readonly brand = null;
   a = 'a';
 }
 

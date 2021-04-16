@@ -1,6 +1,6 @@
 {
   "name": "@smartlyio/oats-runtime",
-  "version": "2.12.1",
+  "version": "2.13.0",
   "license": "MIT",
   "description": "Runtime for Oats a Openapi3 based generator for typescript aware servers and clients",
   "private": false,
@@ -38,7 +38,7 @@
     "client"
   ],
   "devDependencies": {
-    "@smartlyio/oats": "2.15.0",
+    "@smartlyio/oats": "2.15.1",
     "@smartlyio/oats-fast-check": "0.1.1",
     "@types/jest": "26.0.22",
     "@types/lodash": "4.14.168",

@@ -528,10 +528,10 @@
     lodash "^4.17.20"
     randexp "^0.5.3"
 
-"@smartlyio/oats@2.15.0":
-  version "2.15.0"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats/-/oats-2.15.0.tgz#84a48697f6ad13e36976e39c43b153b16472e210"
-  integrity sha512-vzylCmhUNBkD/3xn2ljhLZrH7FdgqeOl4mZQLWt1Pz/moM4zFKxg4s/uBnTaKP82HyQNEEOBIEWKfPMBVLO4uA==
+"@smartlyio/oats@2.15.1":
+  version "2.15.1"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats/-/oats-2.15.1.tgz#160d7c8ca041ce6778d9516b42debb3a246cb4ae"
+  integrity sha512-xfvoqRkjilOGNObp7VgZMfgH3/oS7R606QzQgNgQmVS0y4JU5PWAgmJ2HG5hKUwOAAcAkIY8hQqQApBFJGqXwQ==
   dependencies:
     "@smartlyio/safe-navigation" "^5.0.1"
     js-yaml "^4.0.0"
