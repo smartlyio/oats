@@ -810,10 +810,7 @@ export function run(options: Options) {
       schema.additionalProperties
     );
     const brand = ts.createExpressionWithTypeArguments(
-      [
-        ts.createTypeReferenceNode(ts.createIdentifier('never'), []),
-        ts.createTypeReferenceNode(ts.createIdentifier('BrandOf' + oautil.typenamify(key)), [])
-      ],
+      [],
       ts.createPropertyAccess(runtimeLibrary, 'valueClass.ValueClass')
     );
     return ts.createClassDeclaration(
@@ -1424,7 +1421,6 @@ export function run(options: Options) {
     }
     return [
       generateTypeShape(key),
-      generateBrand(key),
       generateValueClass(key, schema),
       generateTopLevelClassBuilder(key, schema),
       generateTopLevelClassMaker(key),
