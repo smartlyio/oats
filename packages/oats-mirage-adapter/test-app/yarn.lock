@@ -1479,10 +1479,10 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@smartlyio/oats@2.15.0":
-  version "2.15.0"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats/-/oats-2.15.0.tgz#84a48697f6ad13e36976e39c43b153b16472e210"
-  integrity sha512-vzylCmhUNBkD/3xn2ljhLZrH7FdgqeOl4mZQLWt1Pz/moM4zFKxg4s/uBnTaKP82HyQNEEOBIEWKfPMBVLO4uA==
+"@smartlyio/oats@2.16.0":
+  version "2.16.0"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats/-/oats-2.16.0.tgz#97455b369ecb85f2e00e4cf3877760f3dc8d5cc9"
+  integrity sha512-lcvPVP23Qzrzs8HC9rEskVX8dKhgQMvw1ahmT6aLmmy9ito3h8ocKOJLiv4I7krstcaaRHte5LyR40I0s3yrDg==
   dependencies:
     "@smartlyio/safe-navigation" "^5.0.1"
     js-yaml "^4.0.0"
