@@ -43,10 +43,10 @@
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-0.14.0.tgz#9fb3a3cf3132328151f353de4632e01e52102bea"
   integrity sha512-9NET910DNaIPngYnLLPeg+Ogzqsi9uM4mSboU5y6p8S5DzMTVEsJZrawi+BoDNUVBa2DhJqQYUFvMDfgU062LQ==
 
-"@smartlyio/oats-runtime@2.12.1":
-  version "2.12.1"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-2.12.1.tgz#e68d5c3d1061cd590df20fbefd8374948dabe5eb"
-  integrity sha512-byruQTtkh/FCJRnMuuKM3polw5hN1rO7hYwHla7zhjorootoMLgIZlf7vSdhXxt40aNJYHoePW9L3Ia2XoB2yw==
+"@smartlyio/oats-runtime@2.13.0":
+  version "2.13.0"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-2.13.0.tgz#3d1aaf469f463ad9cd59307ceda3a3852a25c2e4"
+  integrity sha512-Q2NHz/KrHbcfVmX5hLI3IhW/EQ2fCuMfF6z9V/cqUWYNmnlAB91LCSa4Zf2pMxpHtrZPD/2q7MnJXN1TfowJyw==
   dependencies:
     "@smartlyio/safe-navigation" "^5.0.1"
     lodash "^4.17.20"
@@ -161,10 +161,10 @@
   dependencies:
     "@types/koa" "*"
 
-"@types/koa-router@7.4.1":
-  version "7.4.1"
-  resolved "https://registry.yarnpkg.com/@types/koa-router/-/koa-router-7.4.1.tgz#3702a4cabe4558cc4eec70d5574acc04beecff7c"
-  integrity sha512-Hg78TXz78QYfEgdq3nTeRmQFEwJKZljsXb/DhtexmyrpRDRnl59oMglh9uPj3/WgKor0woANrYTnxA8gaWGK2A==
+"@types/koa-router@7.4.2":
+  version "7.4.2"
+  resolved "https://registry.yarnpkg.com/@types/koa-router/-/koa-router-7.4.2.tgz#b12d7095e844f4d0081b32742691a4d2e5a8046a"
+  integrity sha512-A9fTLdSHeLQpmtAPUKvvmG+xHHH5Yclqhlmz1bd5BTfdvNo37H8hzNaNpO2mgUri8Wk8fRH9NLpFRHW0wqraAw==
   dependencies:
     "@types/koa" "*"
 
@@ -209,10 +209,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-12.7.9.tgz#da0210f91096aa67138cf5afd04c4d629f8a406a"
   integrity sha512-P57oKTJ/vYivL2BCfxCC5tQjlS8qW31pbOL6qt99Yrjm95YdHgNZwjrTTjMBh+C2/y6PXIX4oz253+jUzxKKfQ==
 
-"@types/node@11.15.50":
-  version "11.15.50"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-11.15.50.tgz#a8c76622a20320d4a04adf2002b04737c510ef11"
-  integrity sha512-kG/ZmA/uD1L1gVD7vVXQB6v+ICZlJgvakrodHiltT3Zq0YjXq5H9tfgop8MsdMGCwrcLJg9QCQDRP4DZsn9T/g==
+"@types/node@11.15.52":
+  version "11.15.52"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-11.15.52.tgz#5579c11b77e08c72720c46f7c379df8ff7fad73a"
+  integrity sha512-fLxyEL5bGfxKJVlnA03LIhNF9Mjcc5h1m/98vCxJYEfhG+qrlKet7u57NKGqws6rZLQHVlWNDJJyouC7HNHWPQ==
 
 "@types/range-parser@*":
   version "1.2.3"
@@ -822,10 +822,10 @@ eslint-plugin-jest@23.20.0:
   dependencies:
     "@typescript-eslint/experimental-utils" "^2.5.0"
 
-eslint-plugin-prettier@3.3.1:
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-prettier/-/eslint-plugin-prettier-3.3.1.tgz#7079cfa2497078905011e6f82e8dd8453d1371b7"
-  integrity sha512-Rq3jkcFY8RYeQLgk2cCwuc0P7SEFwDravPhsJZOQ5N4YI4DSg50NyqJ/9gdZHzQlHf8MvafSesbNJCcP/FF6pQ==
+eslint-plugin-prettier@3.4.0:
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-prettier/-/eslint-plugin-prettier-3.4.0.tgz#cdbad3bf1dbd2b177e9825737fe63b476a08f0c7"
+  integrity sha512-UDK6rJT6INSfcOo545jiaOwB701uAIt2/dR7WnFQoGCVl1/EMqdANBmwUaqqQ45aXprsTGzSa39LI1PyuRBxxw==
   dependencies:
     prettier-linter-helpers "^1.0.0"
 
