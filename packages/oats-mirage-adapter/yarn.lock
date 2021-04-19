@@ -48,7 +48,7 @@
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-0.14.0.tgz#9fb3a3cf3132328151f353de4632e01e52102bea"
   integrity sha512-9NET910DNaIPngYnLLPeg+Ogzqsi9uM4mSboU5y6p8S5DzMTVEsJZrawi+BoDNUVBa2DhJqQYUFvMDfgU062LQ==
 
-"@smartlyio/oats-runtime@2.13.0":
+"@smartlyio/oats-runtime@^2.13.0":
   version "2.13.0"
   resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-2.13.0.tgz#3d1aaf469f463ad9cd59307ceda3a3852a25c2e4"
   integrity sha512-Q2NHz/KrHbcfVmX5hLI3IhW/EQ2fCuMfF6z9V/cqUWYNmnlAB91LCSa4Zf2pMxpHtrZPD/2q7MnJXN1TfowJyw==
