@@ -1,6 +1,6 @@
 {
   "name": "@smartlyio/oats-nock-adapter",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "license": "MIT",
   "description": "nock server adapter for smartlyio/oats s",
   "private": false,
@@ -21,7 +21,7 @@
     "url": "https://github.com/smartlyio/oats-nock-adapter.git"
   },
   "peerDependencies": {
-    "typescript": "^3.6.3 || ^4.0.0"
+    "typescript": "^4.2.0"
   },
   "dependencies": {
     "@smartlyio/safe-navigation": "^5.0.2",
