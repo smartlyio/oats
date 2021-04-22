@@ -3,8 +3,7 @@
   "root": true,
   "env": {
     "es6": true,
-    "node": true,
-    "jest/globals": true
+    "node": true
   },
   "parserOptions": {
     "project": "./tsconfig.json"
@@ -12,13 +11,11 @@
   "plugins": [
     "@typescript-eslint",
     "prettier",
-    "jest",
     "import"
   ],
   "extends": [
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
-    "plugin:jest/recommended",
     "prettier"
   ],
   "settings": {
@@ -35,6 +32,7 @@
     "no-constant-condition": "off",
     "no-prototype-builtins": "off",
     "no-unreachable": "error",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-var-requires": "error",
     "@typescript-eslint/no-floating-promises": "error",
     "@typescript-eslint/no-unused-vars": [2, { "ignoreRestSiblings": true, "argsIgnorePattern": "^_" }],
@@ -44,12 +42,6 @@
     "@typescript-eslint/no-use-before-define": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/ban-ts-ignore": "off",
-    "jest/valid-expect-in-promise": "off",
-    "jest/no-identical-title": "off",
-    "jest/no-try-expect": "off",
-    "jest/expect-expect": "off",
-    "jest/no-standalone-expect": "off",
-    "jest/valid-describe": "off",
     "import/no-cycle": "error",
     "import/no-useless-path-segments": "error",
     "import/no-self-import": "error",
