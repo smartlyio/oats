@@ -1479,7 +1479,7 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@smartlyio/oats@^2.16.0":
+"@smartlyio/oats@2.16.0":
   version "2.16.0"
   resolved "https://registry.yarnpkg.com/@smartlyio/oats/-/oats-2.16.0.tgz#97455b369ecb85f2e00e4cf3877760f3dc8d5cc9"
   integrity sha512-lcvPVP23Qzrzs8HC9rEskVX8dKhgQMvw1ahmT6aLmmy9ito3h8ocKOJLiv4I7krstcaaRHte5LyR40I0s3yrDg==
