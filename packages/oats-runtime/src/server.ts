@@ -120,6 +120,9 @@ function voidify(value: object | undefined | null) {
   if (value && Object.keys(value).length > 0) {
     return value;
   }
+  if (value && Array.isArray(value)) {
+    return value;
+  }
   return null;
 }
 
