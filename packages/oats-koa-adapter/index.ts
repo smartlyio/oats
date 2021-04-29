@@ -24,8 +24,18 @@ function adapter<StateT, CustomT, RequestContext>(
       }
       const contentType = ctx.request.type;
       const requestBody = (ctx.request as any).body;
-      const value = Array.isArray(requestBody) ? requestBody : { ...requestBody, ...fileFields };
-      const body = Object.keys(value).length > 0 ? { value, contentType } : undefined;
+      let body;
+
+      if (Array.isArray(requestBody)) {
+        body = { value: requestBody, contentType };
+      } else if (typeof requestBody === 'object') {
+        const bodyWithFileFields = { ...requestBody, ...fileFields };
+        body =
+          Object.keys(bodyWithFileFields).length > 0
+            ? { value: bodyWithFileFields, contentType }
+            : undefined;
+      }
+
       const result = await handler({
         path,
         method: runtime.server.assertMethod(ctx.method.toLowerCase()),
