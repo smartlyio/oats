@@ -38,11 +38,11 @@
     "client"
   ],
   "devDependencies": {
-    "@smartlyio/oats-runtime": "2.13.0",
+    "@smartlyio/oats-runtime": "2.13.1",
     "@types/koa": "2.13.1",
     "@types/koa-router": "7.4.2",
     "@types/lodash": "4.14.168",
-    "@types/node": "11.15.52",
+    "@types/node": "11.15.53",
     "@typescript-eslint/eslint-plugin": "4.22.0",
     "@typescript-eslint/parser": "4.22.0",
     "eslint": "7.25.0",
