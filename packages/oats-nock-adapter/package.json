@@ -37,12 +37,12 @@
     "client"
   ],
   "devDependencies": {
-    "@smartlyio/oats": "2.16.0",
+    "@smartlyio/oats": "2.16.1",
     "@smartlyio/oats-axios-adapter": "2.4.0",
-    "@smartlyio/oats-runtime": "2.13.0",
-    "@types/jest": "26.0.22",
+    "@smartlyio/oats-runtime": "2.13.1",
+    "@types/jest": "26.0.23",
     "@types/lodash": "4.14.168",
-    "@types/node": "13.13.50",
+    "@types/node": "13.13.51",
     "@typescript-eslint/eslint-plugin": "4.22.0",
     "@typescript-eslint/parser": "4.22.0",
     "axios": "0.21.1",
