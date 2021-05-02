@@ -669,10 +669,10 @@
   dependencies:
     form-data "^4.0.0"
 
-"@smartlyio/oats-koa-adapter@2.3.0":
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats-koa-adapter/-/oats-koa-adapter-2.3.0.tgz#8ac0ac713a5b438ef9929e5d5ff2527d6a2c20fb"
-  integrity sha512-rWLAz1OE2oGzIWN+h3+w5moGtIywgZYeQdABvTU5t4gXH9L1vNl1wlVjd09BTsM3YVfiOokMXf/myJZL+OhxRw==
+"@smartlyio/oats-koa-adapter@2.3.1":
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats-koa-adapter/-/oats-koa-adapter-2.3.1.tgz#dd26d4ad7e45e90277812220846088f1bb9610ea"
+  integrity sha512-iG8O/H6RoPSeggYmrgqnQ7MYE7Ob40edPzo4NeSfuSd2mAi3/s8RPOr0V8d824DvUhax56qrsONtxnQw/uHhtQ==
 
 "@smartlyio/oats-runtime@2.13.1":
   version "2.13.1"
@@ -845,10 +845,10 @@
   dependencies:
     "@types/istanbul-lib-report" "*"
 
-"@types/jest@26.0.22":
-  version "26.0.22"
-  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-26.0.22.tgz#8308a1debdf1b807aa47be2838acdcd91e88fbe6"
-  integrity sha512-eeWwWjlqxvBxc4oQdkueW5OF/gtfSceKk4OnOAGlUSwS/liBRtZppbJuz1YkgbrbfGOoeBHun9fOvXnjNwrSOw==
+"@types/jest@26.0.23":
+  version "26.0.23"
+  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-26.0.23.tgz#a1b7eab3c503b80451d019efb588ec63522ee4e7"
+  integrity sha512-ZHLmWMJ9jJ9PTiT58juykZpL7KjwJywFN3Rr2pTSkyQfydf/rk22yS7W8p5DaVUMQ2BQC7oYiU3FjbTM/mYrOA==
   dependencies:
     jest-diff "^26.0.0"
     pretty-format "^26.0.0"
@@ -934,10 +934,10 @@
   version "11.11.5"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-11.11.5.tgz#0c57e12eb44d44e5b6735593925286553ee7cebf"
 
-"@types/node@11.15.52":
-  version "11.15.52"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-11.15.52.tgz#5579c11b77e08c72720c46f7c379df8ff7fad73a"
-  integrity sha512-fLxyEL5bGfxKJVlnA03LIhNF9Mjcc5h1m/98vCxJYEfhG+qrlKet7u57NKGqws6rZLQHVlWNDJJyouC7HNHWPQ==
+"@types/node@11.15.53":
+  version "11.15.53"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-11.15.53.tgz#24b35ba006338dc60b133f9a637995e1c5a4e069"
+  integrity sha512-X4K0pwvbFZ7+x5wyJUSROj4TJvyXxL0MY4OaxyphfEfgw+0DdYDltyqTX14LiYTIQdY49sDA/MabdtYc973yFg==
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.0"
