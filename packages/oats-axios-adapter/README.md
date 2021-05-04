@@ -4,8 +4,8 @@ See [smartlyio/oats](https://github.com/smartlyio/oats)
 
 This adapter provides two ways to bind the generated client definitions
 
-```
-import * as adapter from '@smartlyio/oats-axios-adapter
+```ts
+import * as adapter from '@smartlyio/oats-axios-adapter';
 
 // bind the default axios instance
 adapter.bind(definitions);
