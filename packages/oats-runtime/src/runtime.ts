@@ -13,7 +13,7 @@ type Scalar = number | string | boolean;
 const typeWitnessKey = Symbol();
 const tagKey = Symbol();
 
-type ScalarWithoutBrand<V> = V extends ShapedClass<infer S> ? S : V;
+type ScalarWithoutBrand<V> = V extends ShapedClass<infer S> ? ScalarWithoutBrand<S> : V;
 
 export type ShapeOf<A> = A extends Scalar
   ? ScalarWithoutBrand<A>

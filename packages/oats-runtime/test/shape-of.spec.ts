@@ -5,6 +5,13 @@ type Value = runtime.BrandedScalar<string, typeof tag>;
 const tag2 = Symbol();
 type Value2 = runtime.BrandedScalar<string, typeof tag2>;
 
+enum BrandOfUnionValue1 {}
+type UnionValue1 = runtime.BrandedScalar<'a' | 'b', BrandOfUnionValue1>;
+enum BrandOfUnionValue2 {}
+type UnionValue2 = runtime.BrandedScalar<'c' | 'd', BrandOfUnionValue2>;
+enum BrandOfNestedValue {}
+type NestedValue = runtime.BrandedScalar<UnionValue1 | UnionValue2, BrandOfNestedValue>;
+
 const tagNum = Symbol();
 type ValueNum = runtime.BrandedScalar<number, typeof tagNum>;
 const tagBool = Symbol();
@@ -60,6 +67,13 @@ describe('ShapeOf', () => {
     assignableTo<runtime.ShapeOf<ValueNullOrString>>('aa');
     // @ts-expect-error prevent assign to wrong value
     assignableTo<runtime.ShapeOf<ValueNullOrString>>(1);
+  });
+
+  it('works with nested branded types', () => {
+    assignableTo<runtime.ShapeOf<NestedValue>>('a');
+    assignableTo<runtime.ShapeOf<NestedValue>>('b');
+    assignableTo<runtime.ShapeOf<NestedValue>>('c');
+    assignableTo<runtime.ShapeOf<NestedValue>>('d');
   });
 
   it('Shapes Arrays', () => {
