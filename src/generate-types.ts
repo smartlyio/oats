@@ -7,6 +7,7 @@ import * as oautil from './util';
 import { SchemaObject, UnsupportedFeatureBehaviour } from './util';
 import * as path from 'path';
 import { ReferenceObject } from 'openapi3-ts';
+import { resolvedStatusCodes } from './status-codes';
 
 const valueClassIndexSignatureKey = 'instanceIndexSignatureKey';
 
@@ -59,40 +60,6 @@ const oatsBrandFieldName = '__oats_value_class_brand_tag';
 const makeTypeTypeName = 'Make';
 const runtimeLibrary = ts.createIdentifier('oar');
 const readonly = [ts.createModifier(ts.SyntaxKind.ReadonlyKeyword)];
-const statusCodes = [
-  100,
-  200,
-  201,
-  202,
-  204,
-  206,
-  301,
-  302,
-  303,
-  304,
-  307,
-  308,
-  400,
-  401,
-  403,
-  404,
-  406,
-  407,
-  408,
-  410,
-  412,
-  416,
-  418,
-  425,
-  429,
-  451,
-  500,
-  501,
-  502,
-  503,
-  504
-];
-
 // list of files for which we have an action to generate it already
 // to prevent calling an action to generate it again and causing maybe some race conditions
 const generatedFiles: Set<string> = new Set();
@@ -394,35 +361,15 @@ export function run(options: Options) {
     });
   }
 
-  function expandedWildcardCode(code: string): number[] {
-    if (code === 'default') {
-      return [];
-    }
-    const wildcard = new RegExp(code.replace(/X/g, '.'));
-    return statusCodes.filter(code => wildcard.test('' + code));
-  }
-
   function generateResponseType(opt: Options, op: string, responses: oas.ResponsesObject) {
     if (!responses) {
       return assert.fail('missing responses');
     }
-    const allSpecifiedStatuses: number[] = [];
-    Object.keys(responses)
-      .map(expandedWildcardCode)
-      .map(codes =>
-        codes.map(code => {
-          assert(allSpecifiedStatuses.indexOf(code) < 0, 'duplicate status code ' + code);
-          allSpecifiedStatuses.push(code);
-        })
-      );
-    const defaultStatuses = statusCodes.filter(code => allSpecifiedStatuses.indexOf(code) < 0);
+    const statusesByCode = resolvedStatusCodes(Object.keys(responses));
     const responseSchemas: oas.SchemaObject[] = [];
     Object.keys(responses).map(status => {
       const response: oas.ReferenceObject | oas.ResponseObject = responses[status];
-      const statuses = (status === 'default'
-        ? defaultStatuses
-        : expandedWildcardCode(status)
-      ).filter(opt.emitStatusCode);
+      const statuses = (statusesByCode.get(status) || []).filter(opt.emitStatusCode);
       if (statuses.length > 0) {
         const schema: oas.SchemaObject = {
           type: 'object',

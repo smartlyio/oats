@@ -75,6 +75,10 @@ paths:
             application/json:
               schema:
                 $ref: "common.yaml#/components/schemas/Item"
+        404:
+          description: not found
+        4XX:
+          description: some error
         default:
           description: error
           content:
