@@ -3,6 +3,10 @@ import * as assert from 'assert';
 export function resolvedStatusCodes(codes: string[]): Map<string, number[]> {
   const seen = new Set();
   codes.forEach(code => {
+    assert(
+      typeof code === 'string',
+      `HTTP status codes must be strings, got ${code} with type ${typeof code}`
+    );
     assert(!seen.has(code), `Duplicate status code ${code}`);
     assert(
       /^\dXX$/.test(code) || /^default$/.test(code) || /^\d\d\d$/.test(code),
