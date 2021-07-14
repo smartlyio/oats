@@ -9,7 +9,10 @@ export function resolvedStatusCodes(codes: string[]): Map<string, number[]> {
     );
     assert(!seen.has(code), `Duplicate status code ${code}`);
     assert(
-      /^\dXX$/.test(code) || /^default$/.test(code) || /^\d\d\d$/.test(code),
+      /^\dXX$/.test(code) ||
+        /^default$/.test(code) ||
+        /^success$/.test(code) ||
+        /^\d\d\d$/.test(code),
       `Malformed http status code ${code}`
     );
     seen.add(code);
@@ -18,6 +21,9 @@ export function resolvedStatusCodes(codes: string[]): Map<string, number[]> {
   const matchers: RegExp[] = codes.sort().map(c => {
     if (c === 'default') {
       return /.*/;
+    }
+    if (c === 'success') {
+      return /(200|304)/;
     }
     return new RegExp(c.replace(/XX$/, '..'));
   });

@@ -23,6 +23,11 @@ describe('statusCodes', () => {
       expect(statusCodes.resolvedStatusCodes(['200', '2XX', 'default'])).toEqual(result);
     });
 
+    it('resolves a "success" status code, meaning 200 or 304', () => {
+      const expected = new Map([['success', [200, 304]]]);
+      expect(statusCodes.resolvedStatusCodes(['success'])).toEqual(expected);
+    });
+
     it('prevents incorrect status codes', () => {
       expect(() => statusCodes.resolvedStatusCodes(['20X'])).toThrow();
       expect(() => statusCodes.resolvedStatusCodes([200 as any])).toThrow();
