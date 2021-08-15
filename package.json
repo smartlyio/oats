@@ -45,7 +45,7 @@
     "@smartlyio/oats-axios-adapter": "2.4.0",
     "@smartlyio/oats-koa-adapter": "2.3.1",
     "@smartlyio/oats-runtime": "2.13.1",
-    "@types/jest": "26.0.23",
+    "@types/jest": "27.0.1",
     "@types/js-yaml": "4.0.1",
     "@types/koa": "2.13.1",
     "@types/koa-mount": "4.0.0",
