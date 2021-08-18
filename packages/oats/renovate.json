@@ -1,5 +1,7 @@
 {
   "extends": [
+    "github>smartlyio/renovate-config:security-base",
+    "github>smartlyio/renovate-config:github-actions",
     "config:js-lib"
   ],
   "timezone": "Europe/Helsinki",
