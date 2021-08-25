@@ -8,11 +8,9 @@
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "scripts": {
-    "test": "yarn ts-node examples/driver.ts && yarn jest && yarn render",
-    "lint": "eslint . --ext .ts",
-    "lint:fix": "eslint . --ext .ts --fix",
     "clean": "rm -rf ./dist && rm -f ./tmp/*.ts",
-    "build": "yarn clean && yarn lint && yarn test && yarn tsc",
+    "build": "yarn lint && yarn test && yarn tsc",
+    "prebuild": "yarn clean && yarn render",
     "prepublish": "yarn build",
     "render": "yarn ts-node render.ts"
   },
@@ -57,18 +55,5 @@
     "ts-jest": "27.0.4",
     "ts-node": "10.2.0",
     "typescript": "4.3.5"
-  },
-  "jest": {
-    "testEnvironment": "node",
-    "testRegex": "(examples|test)/.*\\.spec.ts$",
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "jsx",
-      "ts",
-      "tsx"
-    ],
-    "preset": "ts-jest",
-    "testMatch": null
   }
 }

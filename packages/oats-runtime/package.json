@@ -8,13 +8,11 @@
   "main": "dist/src/runtime.js",
   "types": "dist/src/runtime.d.ts",
   "scripts": {
-    "test": "yarn jest",
     "oas": "yarn ts-node -r tsconfig-paths/register test/runtime-driver.ts",
-    "lint": "eslint . --ext .ts",
-    "lint:fix": "eslint . --ext .ts --fix",
     "clean": "yarn clean:dist && rm -f ./tmp/*.ts",
     "clean:dist": "rm -rf ./dist",
-    "build": "yarn clean && yarn oas && yarn tsc && yarn lint && yarn test",
+    "prebuild": "yarn clean && yarn oas",
+    "build": "yarn tsc && yarn lint && yarn test",
     "prepublish": "yarn build"
   },
   "repository": {
@@ -58,18 +56,5 @@
     "ts-node": "9.1.1",
     "tsconfig-paths": "3.9.0",
     "typescript": "4.2.4"
-  },
-  "jest": {
-    "testEnvironment": "node",
-    "testRegex": "test/.*\\.spec.ts$",
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "jsx",
-      "ts",
-      "tsx"
-    ],
-    "preset": "ts-jest",
-    "testMatch": null
   }
 }

@@ -19,8 +19,9 @@
     "lint": "yarn run eslint && yarn run tsc",
     "build": "lerna exec --no-private --concurrency 4 -- yarn build",
     "ci:install": "yarn install --frozen-lockfile --link-duplicates --silent",
+    "preci:test": "yarn ci:build",
+    "ci:test": "yarn test",
     "ci:build": "yarn run --silent build",
-    "ci:publish": "lerna publish --loglevel verbose --registry=https://smartly.af/artifactory/api/npm/npm/ --yes $VERSION"  },
   "repository": {
     "type": "git",
     "url": "https://github.com/smartlyio/oats.git"

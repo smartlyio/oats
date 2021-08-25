@@ -9,14 +9,12 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "generate:test": "find test -name driver.ts -exec yarn ts-node -r tsconfig-paths/register --project tsconfig.json {} \\;",
-    "test": "yarn generate:test && yarn generate:render && yarn jest",
     "generate:render": "yarn ts-node examples/driver.ts",
     "render": "yarn generate:render && yarn ts-node render.ts",
     "clean": "rm -rf ./dist/* && rm -rf ./tmp && find test -name '*generated.ts' -exec rm {} \\;",
-    "build": "yarn clean && yarn test && yarn lint && yarn tsc",
-    "prepublish": "yarn build",
-    "lint": "eslint . --ext .ts",
-    "lint:fix": "eslint . --ext .ts --fix"
+    "prebuild": "yarn clean && yarn render",
+    "build": "yarn test && yarn lint && yarn tsc",
+    "prepublish": "yarn build"
   },
   "repository": {
     "type": "git",
@@ -72,18 +70,5 @@
     "ts-jest": "27.0.1",
     "ts-node": "10.0.0",
     "typescript": "4.2.4"
-  },
-  "jest": {
-    "testEnvironment": "node",
-    "testRegex": "test/.*\\.spec.ts$",
-    "moduleFileExtensions": [
-      "js",
-      "jsx",
-      "json",
-      "ts",
-      "tsx"
-    ],
-    "preset": "ts-jest",
-    "testMatch": null
   }
 }

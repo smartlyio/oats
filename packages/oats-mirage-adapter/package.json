@@ -8,13 +8,11 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "lint": "eslint . --ext .ts",
-    "lint:fix": "eslint . --ext .ts --fix",
     "clean": "rm -rf ./dist && rm -f ./tmp/*.ts",
-    "build": "yarn clean && yarn lint && yarn render && yarn tsc",
+    "build": "yarn lint && yarn render && yarn tsc",
+    "prebuild": "yarn clean && yarn render",
     "prepublish": "yarn build",
-    "render": "ts-node render-docs.ts",
-    "watch": "nodemon --ignore dist/ -e .ts,.json -x yarn build"
+    "render": "ts-node render-docs.ts"
   },
   "repository": {
     "type": "git",
