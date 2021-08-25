@@ -18,7 +18,7 @@
     "prelint": "yarn build",
     "lint": "lerna run lint",
     "render": "lerna exec --no-private --concurrency 4 -- yarn render",
-    "build": "lerna exec --no-private --concurrency 4 -- yarn build",
+    "build": "lerna run build",
     "ci:install": "yarn install --frozen-lockfile --link-duplicates --silent",
     "preci:test": "yarn ci:build",
     "ci:test": "yarn test",
