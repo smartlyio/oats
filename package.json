@@ -20,7 +20,11 @@
     "ci:install": "yarn install --frozen-lockfile --link-duplicates --silent",
     "ci:lint": "yarn lint",
     "ci:test": "yarn test",
-    "ci:build": "yarn run --silent build"
+    "ci:build": "yarn run --silent build",
+    "publish:canary": "yarn lerna publish --canary --no-private",
+    "publish:patch": "yarn lerna publish patch --no-private",
+    "publish:minor": "yarn lerna publish minor --no-private",
+    "publish:major": "yarn lerna publish major --no-private"
   },
   "repository": {
     "type": "git",
