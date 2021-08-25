@@ -3,7 +3,7 @@
   "version": "2.17.0",
   "license": "MIT",
   "description": "Openapi3 based generator for typescript aware servers and clients",
-  "private": false,
+  "private": true,
   "author": "Smartly.io",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
