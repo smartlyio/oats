@@ -35,6 +35,7 @@
     "client"
   ],
   "devDependencies": {
+    "@smartlyio/oats-runtime": "2.17.0",
     "@types/form-data": "2.5.0",
     "@types/node": "14.17.9",
     "axios": "0.21.1",
