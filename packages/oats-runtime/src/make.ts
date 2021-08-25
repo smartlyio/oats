@@ -271,9 +271,9 @@ export function makeArray(maker: any, minSize?: number, maxSize?: number) {
  *
  * Throw error if there are duplicate koys
  */
-export function mergeMappings(
-  ...mappings: readonly { [key: string]: Maker<any, any> }[]
-): { [key: string]: Maker<any, any> } {
+export function mergeMappings(...mappings: readonly { [key: string]: Maker<any, any> }[]): {
+  [key: string]: Maker<any, any>;
+} {
   return mappings.reduce((memo, current) => {
     _.forEach(current, (maker: Maker<any, any>, key: string) => {
       if (memo[key]) {

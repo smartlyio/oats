@@ -221,6 +221,6 @@ export function createClientFactory<Spec>(handlers: server.Handler[]): ClientFac
     const tree: OpTree<server.Handler> = handlers.reduce((memo, handler) => {
       return addPath(memo, handler.path, handler.method, handler);
     }, emptyTree<server.Handler>());
-    return (fromTree(adapter, tree, []) as unknown) as Spec;
+    return fromTree(adapter, tree, []) as unknown as Spec;
   };
 }
