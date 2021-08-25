@@ -1,0 +1,40 @@
+{
+  "name": "@smartlyio/oats",
+  "version": "2.17.0",
+  "license": "MIT",
+  "description": "Openapi3 based generator for typescript aware servers and clients",
+  "private": false,
+  "author": "Smartly.io",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/smartlyio/oats.git"
+  },
+  "keywords": [
+    "oats",
+    "openapi3",
+    "rest",
+    "generator",
+    "typescript",
+    "server",
+    "client"
+  ],
+  "devDependencies": {
+    "lerna": "^4.0.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testRegex": "test/.*\\.spec.ts$",
+    "moduleFileExtensions": [
+      "js",
+      "jsx",
+      "json",
+      "ts",
+      "tsx"
+    ],
+    "preset": "ts-jest",
+    "testMatch": null
+  }
+}
