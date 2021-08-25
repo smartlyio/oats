@@ -9,7 +9,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "clean": "rm -rf ./dist && rm -f ./tmp/*.ts",
-    "build": "yarn clean && yarn lint && yarn tsc",
+    "build": "yarn clean && yarn tsc",
     "prepublish": "yarn build"
   },
   "repository": {

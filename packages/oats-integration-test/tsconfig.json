@@ -3,7 +3,7 @@
     "strict": true,
     "declaration": true,
     "target": "es2017",
-    "lib": ["es6", "es2019", "dom", "esnext.asynciterable"],
+    "lib": ["es6", "es2017", "dom", "esnext.asynciterable"],
     "module": "commonjs",
     "moduleResolution": "node",
     "sourceMap": true,
@@ -11,11 +11,11 @@
     "alwaysStrict": true,
     "typeRoots": ["./src/types", "./node_modules/@types"],
     "baseUrl": ".",
-    "paths": {
-      "@smartlyio/oats-runtime": ["src/runtime"]
-    },
     "forceConsistentCasingInFileNames": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "paths": {
+      "@smartlyio/oats": ["index"]
+    }
   },
-  "exclude": ["node_modules/*", "*/**/dist/*", "dist/*", "test/"],
+  "exclude": ["examples/"]
 }

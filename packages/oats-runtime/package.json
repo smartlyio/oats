@@ -12,7 +12,7 @@
     "clean": "yarn clean:dist && rm -f ./tmp/*.ts",
     "clean:dist": "rm -rf ./dist",
     "prebuild": "yarn clean && yarn oas",
-    "build": "yarn tsc && yarn lint && yarn test",
+    "build": "yarn tsc",
     "prepublish": "yarn build"
   },
   "repository": {
@@ -36,8 +36,6 @@
     "client"
   ],
   "devDependencies": {
-    "@smartlyio/oats": "2.17.0",
-    "@smartlyio/oats-fast-check": "2.17.0",
     "@types/jest": "26.0.23",
     "@types/lodash": "4.14.168",
     "@types/node": "13.13.51",

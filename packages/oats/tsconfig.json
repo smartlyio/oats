@@ -17,5 +17,5 @@
       "@smartlyio/oats": ["index"]
     }
   },
-  "exclude": ["examples/"]
+  "exclude": ["examples/", "test/"]
 }

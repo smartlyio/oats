@@ -9,8 +9,8 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "clean": "rm -rf ./dist && rm -f ./tmp/*.ts",
-    "build": "yarn lint && yarn render && yarn tsc",
-    "prebuild": "yarn clean && yarn render",
+    "build": "yarn tsc",
+    "prebuild": "yarn clean",
     "prepublish": "yarn build",
     "render": "ts-node render-docs.ts"
   },

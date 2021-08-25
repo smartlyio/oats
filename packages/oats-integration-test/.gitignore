@@ -1,0 +1,12 @@
+Dockerfile
+docker-compose.yml
+.idea
+node_modules/
+tmp/
+yarn-error.log
+dist/
+*.iml
+.DS_Store
+*.tgz
+.yalc
+yalc.lock
