@@ -12,6 +12,7 @@
     "build": "yarn tsc",
     "prebuild": "yarn clean",
     "prepublish": "yarn build",
+    "pretest": "yarn render",
     "render": "ts-node render-docs.ts"
   },
   "repository": {

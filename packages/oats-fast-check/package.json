@@ -13,6 +13,7 @@
     "prebuild": "yarn clean",
     "prepublish": "yarn build",
     "prerender": "yarn ts-node examples/driver.ts",
+    "pretest": "yarn render",
     "render": "yarn ts-node render.ts"
   },
   "repository": {

@@ -8,6 +8,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
+    "pretest": "yarn render",
     "render": "yarn ts-node examples/driver.ts && yarn ts-node render.ts",
     "clean": "rm -rf ./dist/* && rm -rf ./tmp && find test -name '*generated.ts' -exec rm {} \\;",
     "prebuild": "yarn clean",

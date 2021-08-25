@@ -14,8 +14,7 @@
     "prebuild": "yarn clean && yarn oas",
     "build": "yarn tsc",
     "prepublish": "yarn build",
-    "pretest": "yarn oas",
-    "render": "echo 'nothing to render'"
+    "pretest": "yarn oas"
   },
   "repository": {
     "type": "git",

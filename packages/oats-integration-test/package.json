@@ -10,8 +10,8 @@
   "scripts": {
     "generate:test": "find test -name driver.ts -exec yarn ts-node -r tsconfig-paths/register --project tsconfig.json {} \\;",
     "generate:render": "yarn ts-node examples/driver.ts",
-    "pretest": "yarn generate:render && yarn generate:test",
-    "render": "yarn generate:render && yarn ts-node render.ts",
+    "pretest": "yarn render",
+    "render": "yarn generate:render && yarn generate:test && yarn ts-node render.ts",
     "clean": "rm -rf ./tmp && find test -name '*generated.ts' -exec rm {} \\;",
     "build": "echo 'nothing to build'"
   },
