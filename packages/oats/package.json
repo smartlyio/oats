@@ -13,7 +13,8 @@
     "clean": "rm -rf ./dist/* && rm -rf ./tmp && find test -name '*generated.ts' -exec rm {} \\;",
     "prebuild": "yarn clean",
     "build": "yarn tsc",
-    "prepublish": "yarn build"
+    "prepublish": "yarn build",
+    "lint": "eslint --max-warnings=0 --ext .ts src test"
   },
   "repository": {
     "type": "git",

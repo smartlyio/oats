@@ -16,7 +16,7 @@
     "test:watch": "jest --watch",
     "eslint": "eslint --max-warnings=0 --ext .js,.jsx,.ts,.tsx '**/*.{ts,js,tsx,jsx}'",
     "prelint": "yarn build",
-    "lint": "yarn run eslint && yarn run tsc",
+    "lint": "lerna run lint",
     "render": "lerna exec --no-private --concurrency 4 -- yarn render",
     "build": "lerna exec --no-private --concurrency 4 -- yarn build",
     "ci:install": "yarn install --frozen-lockfile --link-duplicates --silent",
@@ -44,6 +44,14 @@
   "dependencies": {
     "jest": "27",
     "ts-jest": "27.0.5",
-    "typescript": "4.3.5"
+    "typescript": "4.3.5",
+    "eslint": "7.32.0",
+    "eslint-config-prettier": "8.3.0",
+    "eslint-plugin-import": "2.24.0",
+    "eslint-plugin-jest": "24.4.0",
+    "eslint-plugin-prettier": "3.4.0",
+    "@typescript-eslint/parser": "4.29.1",
+    "@typescript-eslint/eslint-plugin": "4.29.1",
+    "prettier": "2.3.2"
   }
 }

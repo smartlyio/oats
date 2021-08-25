@@ -14,7 +14,8 @@
     "prebuild": "yarn clean && yarn oas",
     "build": "yarn tsc",
     "prepublish": "yarn build",
-    "pretest": "yarn oas"
+    "pretest": "yarn oas",
+    "lint": "eslint --max-warnings=0 --ext .ts src test"
   },
   "repository": {
     "type": "git",

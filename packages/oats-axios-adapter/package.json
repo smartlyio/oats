@@ -11,7 +11,8 @@
     "clean": "rm -rf ./dist && rm -f ./tmp/*.ts",
     "build": "yarn clean && yarn tsc",
     "prepublish": "yarn build",
-    "render": "echo 'nothing to render'"
+    "render": "echo 'nothing to render'",
+    "lint": "eslint --max-warnings=0 --ext .ts ."
   },
   "repository": {
     "type": "git",

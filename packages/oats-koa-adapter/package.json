@@ -13,7 +13,8 @@
     "prebuild": "yarn clean",
     "prepublish": "yarn build",
     "pretest": "yarn render",
-    "render": "ts-node render-docs.ts"
+    "render": "ts-node render-docs.ts",
+    "lint": "eslint --max-warnings=0 --ext .ts ."
   },
   "repository": {
     "type": "git",

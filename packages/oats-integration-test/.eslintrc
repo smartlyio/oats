@@ -7,7 +7,7 @@
     "jest/globals": true
   },
   "parserOptions": {
-    "project": "./tsconfig.json"
+    "project": "./tsconfig.test.json"
   },
   "plugins": [
     "@typescript-eslint",
