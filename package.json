@@ -7,7 +7,20 @@
   "author": "Smartly.io",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "scripts": {},
+  "scripts": {
+    "reinstall": "rm -rf node_modules && yarn",
+    "clean": "lerna exec --no-private --concurrency 4 -- yarn clean",
+    "tsc": "tsc",
+    "pretest": "yarn build",
+    "test": "jest --coverage --forceExit",
+    "test:watch": "jest --watch",
+    "eslint": "eslint --max-warnings=0 --ext .js,.jsx,.ts,.tsx '**/*.{ts,js,tsx,jsx}'",
+    "prelint": "yarn build",
+    "lint": "yarn run eslint && yarn run tsc",
+    "build": "lerna exec --no-private --concurrency 4 -- yarn build",
+    "ci:install": "yarn install --frozen-lockfile --link-duplicates --silent",
+    "ci:build": "yarn run --silent build",
+    "ci:publish": "lerna publish --loglevel verbose --registry=https://smartly.af/artifactory/api/npm/npm/ --yes $VERSION"  },
   "repository": {
     "type": "git",
     "url": "https://github.com/smartlyio/oats.git"
