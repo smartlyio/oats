@@ -1,5 +1,5 @@
-import * as runtime from '@smartlyio/oats-runtime';
-import { reflection as reflectionType } from '@smartlyio/oats-runtime';
+import * as runtime from '../src/runtime';
+import { reflection as reflectionType } from '../src/runtime';
 import * as fc from 'fast-check';
 import { generator as gen } from '@smartlyio/oats-fast-check';
 import * as testType from '../tmp/fixture.types.generated';

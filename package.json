@@ -11,7 +11,7 @@
     "reinstall": "rm -rf node_modules && yarn",
     "clean": "lerna exec --no-private --concurrency 4 -- yarn clean",
     "tsc": "tsc",
-    "pretest": "yarn build",
+    "pretest": "lerna run pretest",
     "test": "jest --coverage --forceExit",
     "test:watch": "jest --watch",
     "eslint": "eslint --max-warnings=0 --ext .js,.jsx,.ts,.tsx '**/*.{ts,js,tsx,jsx}'",
@@ -41,17 +41,9 @@
     "lerna": "^4.0.0",
     "ts-node": "10.2.1"
   },
-  "jest": {
-    "testEnvironment": "node",
-    "testRegex": "test/.*\\.spec.ts$",
-    "moduleFileExtensions": [
-      "js",
-      "jsx",
-      "json",
-      "ts",
-      "tsx"
-    ],
-    "preset": "ts-jest",
-    "testMatch": null
+  "dependencies": {
+    "jest": "27",
+    "ts-jest": "27.0.5",
+    "typescript": "4.3.5"
   }
 }

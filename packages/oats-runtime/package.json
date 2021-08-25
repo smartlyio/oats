@@ -13,7 +13,9 @@
     "clean:dist": "rm -rf ./dist",
     "prebuild": "yarn clean && yarn oas",
     "build": "yarn tsc",
-    "prepublish": "yarn build"
+    "prepublish": "yarn build",
+    "pretest": "yarn oas",
+    "render": "echo 'nothing to render'"
   },
   "repository": {
     "type": "git",

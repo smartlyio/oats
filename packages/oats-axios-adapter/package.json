@@ -10,7 +10,8 @@
   "scripts": {
     "clean": "rm -rf ./dist && rm -f ./tmp/*.ts",
     "build": "yarn clean && yarn tsc",
-    "prepublish": "yarn build"
+    "prepublish": "yarn build",
+    "render": "echo 'nothing to render'"
   },
   "repository": {
     "type": "git",
