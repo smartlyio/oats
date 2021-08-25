@@ -240,11 +240,14 @@ class OptRecord extends fc.Arbitrary<any> {
 // note: key is the identity of the definition object so should be unique
 const namedGeneratorCache: Map<reflection.NamedTypeDefinition<any>, fc.Arbitrary<any>> = new Map();
 
-export function override<A>(name: reflection.NamedTypeDefinition<A>, override: fc.Arbitrary<A>) {
+export function override<A>(
+  name: reflection.NamedTypeDefinition<A>,
+  override: fc.Arbitrary<A>
+): void {
   namedGeneratorCache.set(name, override);
 }
 
-export function clear(name: reflection.NamedTypeDefinition<any>) {
+export function clear(name: reflection.NamedTypeDefinition<any>): void {
   namedGeneratorCache.delete(name);
 }
 

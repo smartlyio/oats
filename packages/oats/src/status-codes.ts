@@ -1,6 +1,5 @@
 import * as assert from 'assert';
 
-
 export function resolvedStatusCodes(codes: string[]): Map<string, number[]> {
   const seen = new Set();
   codes.forEach(code => {
@@ -40,35 +39,6 @@ export function resolvedStatusCodes(codes: string[]): Map<string, number[]> {
 }
 
 const statusCodes = [
-  100,
-  200,
-  201,
-  202,
-  204,
-  206,
-  301,
-  302,
-  303,
-  304,
-  307,
-  308,
-  400,
-  401,
-  403,
-  404,
-  406,
-  407,
-  408,
-  410,
-  412,
-  416,
-  418,
-  425,
-  429,
-  451,
-  500,
-  501,
-  502,
-  503,
-  504
+  100, 200, 201, 202, 204, 206, 301, 302, 303, 304, 307, 308, 400, 401, 403, 404, 406, 407, 408,
+  410, 412, 416, 418, 425, 429, 451, 500, 501, 502, 503, 504
 ];

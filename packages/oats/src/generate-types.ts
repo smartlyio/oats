@@ -1625,8 +1625,9 @@ export function run(options: Options) {
       const name = options.externalOpenApiSpecs(ref);
       if (name) {
         const [qualified, member] = name.split('.');
-        const file = options.externalOpenApiImports.find(def => def.importAs === qualified)
-          ?.importFile;
+        const file = options.externalOpenApiImports.find(
+          def => def.importAs === qualified
+        )?.importFile;
         addToImports(qualified, file);
         return { member, qualified: ts.createIdentifier(qualified) };
       }

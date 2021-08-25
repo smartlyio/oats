@@ -14,13 +14,11 @@
     "pretest": "lerna run pretest",
     "test": "jest --coverage --forceExit",
     "test:watch": "jest --watch",
-    "eslint": "eslint --max-warnings=0 --ext .js,.jsx,.ts,.tsx '**/*.{ts,js,tsx,jsx}'",
-    "prelint": "yarn build",
     "lint": "lerna run lint",
     "render": "lerna run render",
     "build": "lerna run build",
     "ci:install": "yarn install --frozen-lockfile --link-duplicates --silent",
-    "preci:test": "yarn ci:build",
+    "ci:lint": "yarn lint",
     "ci:test": "yarn test",
     "ci:build": "yarn run --silent build"
   },
@@ -52,6 +50,7 @@
     "eslint-plugin-prettier": "3.4.0",
     "@typescript-eslint/parser": "4.29.1",
     "@typescript-eslint/eslint-plugin": "4.29.1",
-    "prettier": "2.3.2"
+    "prettier": "2.3.2",
+    "fast-check": "2.17.0"
   }
 }

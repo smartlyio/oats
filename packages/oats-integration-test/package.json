@@ -10,10 +10,9 @@
   "scripts": {
     "generate:test": "find test -name driver.ts -exec yarn ts-node -r tsconfig-paths/register --project tsconfig.json {} \\;",
     "generate:render": "yarn ts-node examples/driver.ts",
-    "pretest": "yarn render",
-    "render": "yarn generate:render && yarn generate:test && yarn ts-node render.ts",
+    "pretest": "yarn generate:render && yarn generate:test ",
     "clean": "rm -rf ./tmp && find test -name '*generated.ts' -exec rm {} \\;",
-    "lint": "eslint --max-warnings=0 --ext .ts src test"
+    "lint": "eslint --max-warnings=0 --ext .ts test"
   },
   "repository": {
     "type": "git",
@@ -51,7 +50,6 @@
     "@types/lodash": "4.14.168",
     "@types/node": "14.17.0",
     "axios": "0.21.1",
-    "fast-check": "2.14.0",
     "form-data": "4.0.0",
     "jest": "27.0.3",
     "jsverify": "0.8.4",

@@ -27,9 +27,8 @@ describe('reflection-type', () => {
       }
     }
 
-    const makeArrayTestClass: runtime.make.Maker<any, ArrayTestClass> = createMakerWith(
-      ArrayTestClass
-    );
+    const makeArrayTestClass: runtime.make.Maker<any, ArrayTestClass> =
+      createMakerWith(ArrayTestClass);
 
     class TestClass extends ValueClass {
       static make(v: any): Make<TestClass> {
