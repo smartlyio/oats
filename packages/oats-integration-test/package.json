@@ -13,7 +13,6 @@
     "pretest": "yarn render",
     "render": "yarn generate:render && yarn generate:test && yarn ts-node render.ts",
     "clean": "rm -rf ./tmp && find test -name '*generated.ts' -exec rm {} \\;",
-    "build": "echo 'nothing to build'",
     "lint": "eslint --max-warnings=0 --ext .ts src test"
   },
   "repository": {
@@ -43,6 +42,7 @@
     "@smartlyio/oats-axios-adapter": "2.17.0",
     "@smartlyio/oats-koa-adapter": "2.17.0",
     "@smartlyio/oats-runtime": "2.17.0",
+    "@smartlyio/oats-fast-check": "2.17.0",
     "@types/jest": "27.0.1",
     "@types/js-yaml": "4.0.1",
     "@types/koa": "2.13.1",

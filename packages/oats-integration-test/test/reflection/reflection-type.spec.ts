@@ -1,8 +1,8 @@
-import * as runtime from '../src/runtime';
-import { reflection as reflectionType } from '../src/runtime';
+import * as runtime from '@smartlyio/oats-runtime';
+import { reflection as reflectionType } from '@smartlyio/oats-runtime';
 import * as fc from 'fast-check';
 import { generator as gen } from '@smartlyio/oats-fast-check';
-import * as testType from '../tmp/fixture.types.generated';
+import * as testType from './tmp/fixture.types.generated';
 import safe from '@smartlyio/safe-navigation';
 const { createMakerWith, makeArray, makeObject, makeString } = runtime.make;
 const ValueClass = runtime.valueClass.ValueClass;

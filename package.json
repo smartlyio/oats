@@ -17,7 +17,7 @@
     "eslint": "eslint --max-warnings=0 --ext .js,.jsx,.ts,.tsx '**/*.{ts,js,tsx,jsx}'",
     "prelint": "yarn build",
     "lint": "lerna run lint",
-    "render": "lerna exec --no-private --concurrency 4 -- yarn render",
+    "render": "lerna run render",
     "build": "lerna run build",
     "ci:install": "yarn install --frozen-lockfile --link-duplicates --silent",
     "preci:test": "yarn ci:build",

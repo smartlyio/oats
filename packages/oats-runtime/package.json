@@ -8,12 +8,10 @@
   "main": "dist/runtime.js",
   "types": "dist/runtime.d.ts",
   "scripts": {
-    "oas": "yarn ts-node -r tsconfig-paths/register test/runtime-driver.ts",
     "clean": "yarn clean:dist && rm -f ./tmp/*.ts",
     "clean:dist": "rm -rf ./dist",
     "prebuild": "yarn clean",
     "build": "yarn tsc",
-    "pretest": "yarn oas",
     "lint": "eslint --max-warnings=0 --ext .ts src test"
   },
   "repository": {
