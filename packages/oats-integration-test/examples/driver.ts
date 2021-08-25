@@ -1,6 +1,5 @@
 // yarn ts-node examples/driver.ts
-import { driver, util } from '../index';
-import { UnsupportedFeatureBehaviour } from '../src/driver';
+import { driver, util } from '@smartlyio/oats';
 
 // generate server from the shared openapi spec
 // This example uses a specification file that contains compliant but unsupported nodes,
@@ -12,7 +11,7 @@ driver.generate({
   openapiFilePath: './test/example-with-security-nodes.yaml',
   resolve: driver.compose(driver.generateFile(), driver.localResolve),
   unsupportedFeatures: {
-    security: UnsupportedFeatureBehaviour.ignore
+    security: driver.UnsupportedFeatureBehaviour.ignore
   }
 });
 
