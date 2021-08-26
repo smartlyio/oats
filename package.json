@@ -26,10 +26,10 @@
     "ci:lint": "yarn lint",
     "ci:test": "yarn test",
     "ci:build": "yarn run --silent build",
-    "publish:canary": "yarn lerna publish --canary --no-private",
-    "publish:patch": "yarn lerna publish patch --no-private",
-    "publish:minor": "yarn lerna publish minor --no-private",
-    "publish:major": "yarn lerna publish major --no-private"
+    "publish:canary": "lerna publish --canary --no-private",
+    "publish:patch": "lerna publish patch --no-private",
+    "publish:minor": "lerna publish minor --no-private",
+    "publish:major": "lerna publish major --no-private"
   },
   "repository": {
     "type": "git",
