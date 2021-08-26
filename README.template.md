@@ -31,7 +31,7 @@ javascript class `NamedComponent`
  For `type: object` schemas that are `nullable: true` the type is split to a `type NamedComponent = null | NonNullableNamedComponent` 
  where `NonNullableNamedComponent` is the actual class as class instances really cannot be `null`.
  
- See [runtime](https://github.com/smartlyio/oats-runtime) for details on working with the types.
+ See [runtime](https://github.com/smartlyio/oats/tree/master/packages/oats-runtime) for details on working with the types.
  
  The rest of the generated type definitions consist of the apis for clients and servers for actually 
  implementing or interacting with the service.
@@ -58,7 +58,7 @@ There are two builtin helpers for resolution which are used in the above code ex
 ## Server usage
 
 The generated server definition can be adapted to http servers backends for node. 
-See for example the [koa adapter](https://github.com/smartlyio/oats-koa-adapter). 
+See for example the [koa adapter](https://github.com/smartlyio/oats/tree/master/packages/oats-koa-adapter). 
 
 For each Openapi3 definition `get: /path/subpath` the generated server requires the user to provide a 
 value of type
@@ -78,7 +78,7 @@ defined paths.
 ## Client usage
 
 Oats generates also client side definitions that can be adapted to http client backends for node.
-See for example the [axios adapter](https://github.com/smartlyio/oats-axios-adapter). The 
+See for example the [axios adapter](https://github.com/smartlyio/oats/tree/master/packages/oats-axios-adapter). The 
 generated client provides a fluent interface so that for each Openapi3 definition 
 `get: /path/subpath/{pathParameter}` the 
 generated  api client can be called with `api.path.subpath(pathParameter).get()`. The generated 
@@ -92,4 +92,4 @@ client will enforce *strict* data validation for both input and output of the ca
 
 We support also property based testing and test data generation with 
 [fast-check](https://github.com/dubzzz/fast-check) through 
-[oats-fast-check](https://github.com/smartlyio/oats-fast-check)
+[oats-fast-check](https://github.com/smartlyio/oats/tree/master/packages/oats-fast-check)
