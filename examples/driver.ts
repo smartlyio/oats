@@ -1,5 +1,5 @@
 // yarn ts-node -r tsconfig-paths/register examples/driver.ts
-import { driver, util } from '@smartlyio/oats';
+import { driver } from '@smartlyio/oats';
 
 // generate server from the shared openapi spec
 // This example uses a specification file that contains compliant but unsupported nodes,
@@ -21,7 +21,10 @@ driver.generate({
   generatedClientFile: './tmp/client/generated.ts',
   header: '/* tslint:disable variable-name only-arrow-functions*/',
   openapiFilePath: './test/example.yaml',
-  resolve: driver.compose(driver.generateFile({ preservePathStructure: true }), driver.localResolve),
+  resolve: driver.compose(
+    driver.generateFile({ preservePathStructure: true }),
+    driver.localResolve
+  ),
   // Omit error responses  from the client response types
   emitStatusCode: (code: number) => [200, 201, 204].indexOf(code) >= 0
 });

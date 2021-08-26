@@ -20,5 +20,5 @@
       "@smartlyio/oats-koa-adapter": ["packages/oats-koa-adapter/index.ts"]
     }
   },
-  "exclude": ["examples/", "test/"]
+  "exclude": ["packages"]
 }
