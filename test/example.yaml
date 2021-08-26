@@ -1,0 +1,136 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: example service
+servers:
+  - url: http://localhost:12000
+paths:
+  /item:
+    post:
+      description: create an item
+      parameters:
+        - in: header
+          description: Bearer Auth
+          name: Authorization
+          required: true
+          schema:
+            type: string
+      requestBody:
+        $ref: "#/components/requestBodies/PostBody"
+      responses:
+        '201':
+          description: created
+          headers:
+            location:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: 'common.yaml#/components/schemas/Item'
+        default:
+          description: error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /item/{id}:
+    head:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: 'common.yaml#/components/schemas/ItemId'
+      responses:
+        '200':
+          description: item found
+        default:
+          description: error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: 'common.yaml#/components/schemas/ItemId'
+      responses:
+        '204':
+          description: deleted
+    get:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: 'common.yaml#/components/schemas/ItemId'
+      responses:
+        '200':
+          description: item found
+          content:
+            application/json:
+              schema:
+                $ref: "common.yaml#/components/schemas/Item"
+        404:
+          description: not found
+        4XX:
+          description: some error
+        default:
+          description: error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  requestBodies:
+    PostBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: 'common.yaml#/components/schemas/Item'
+  schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        messageIndex:
+          type: number
+      required:
+        - message
+        - messageIndex
+
+    ChoiceWithExternalRef:
+      oneOf:
+        - type: object
+          additionalProperties: false
+          required:
+            - type
+          properties:
+            type:
+              type: string
+              enum: ['choice1']
+            field:
+              type: string
+        - $ref: "common.yaml#/components/schemas/ChoiceItem3"
+      discriminator:
+        propertyName: type
+
+    ChoiceItem4:
+      $ref: './nested-test/example.yaml#/components/schemas/ChoiceItem45'
+
+    ChoiceWithExplicitMapping:
+      oneOf:
+        - $ref: "common.yaml#/components/schemas/ChoiceItem3"
+        - $ref: "#/components/schemas/ChoiceItem4"
+      discriminator:
+        propertyName: type
+        mapping:
+          choice3: "common.yaml#/components/schemas/ChoiceItem3"
+          choice4: "#/components/schemas/ChoiceItem4"
+
