@@ -6,8 +6,10 @@ For some more context on why Oats came to be, and a more descriptive way of how 
 https://medium.com/smartly-io/oats-how-we-learned-to-stop-worrying-and-love-types-aa0041aaa9cc
 
 This package provides the tooling for generating the type definitions. A separate package provides 
-the [runtime](https://github.com/smartlyio/oats-runtime) that contains the code and base types 
+the [runtime](https://github.com/smartlyio/oats/tree/master/packages/oats-runtime) that contains the code and base types 
 needed for actually using the generated definitions.
+
+see [packages](https://github.com/smartlyio/oats/tree/master/packages) for tooling and adapters for koa, axios etc.
 
 ## Generating type definitions
 
