@@ -1,9 +1,8 @@
 import * as assert from 'assert';
 import safe from '@smartlyio/safe-navigation';
 import * as _ from 'lodash';
-import { isEqual, uniq } from 'lodash';
 import { ValueClass } from './value-class';
-import { NamedTypeDefinition, ObjectType, Type } from './reflection-type';
+import { ObjectType, Type } from './reflection-type';
 
 export class MakeError extends Error {
   constructor(public readonly errors: ValidationError[]) {

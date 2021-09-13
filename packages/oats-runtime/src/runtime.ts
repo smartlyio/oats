@@ -1,7 +1,7 @@
 import * as server from './server';
 import * as client from './client';
 import * as make from './make';
-import { fromReflection }from './make';
+import { fromReflection } from './make';
 import * as valueClass from './value-class';
 import * as reflection from './reflection-type';
 
