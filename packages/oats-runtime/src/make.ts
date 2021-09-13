@@ -285,98 +285,6 @@ export function mergeMappings(...mappings: readonly { [key: string]: Maker<any, 
   }, {});
 }
 
-export function extractDiscriminatorKeys(
-  discriminatorField: string,
-  typeObjectRef: Type
-): string[] {
-  const typeObject =
-    typeObjectRef.type === 'named' ? typeObjectRef.reference.definition : typeObjectRef;
-
-  if (typeObject.type === 'union') {
-    const keys = typeObject.options.map(type => extractDiscriminatorKeys(discriminatorField, type));
-    if (!isEqual(keys[0], uniq(keys.flat(1)))) {
-      throw new Error('All values from union need to have same discriminator keys');
-    }
-    return keys[0];
-  }
-
-  if (typeObject.type !== 'object') {
-    throw new Error(
-      'Invalid type used for discriminator: type is not an object' + JSON.stringify(typeObject)
-    );
-  }
-  const fieldSchemaRef = typeObject.properties[discriminatorField].value;
-  const fieldSchema =
-    fieldSchemaRef.type === 'named' ? fieldSchemaRef.reference.definition : fieldSchemaRef;
-
-  if (fieldSchema.type === 'union') {
-    return extractDiscriminatorKeys(discriminatorField, fieldSchemaRef);
-  }
-  if (fieldSchema.type !== 'string') {
-    throw new Error(
-      'Invalid type used for discriminator: no value defined ' + JSON.stringify(typeObject)
-    );
-  }
-  return fieldSchema.enum || [];
-}
-
-export function extractDiscriminatorValueMap(
-  discriminatorField: string,
-  typeObject: NamedTypeDefinition<any>
-): { [key: string]: Maker<any, any> } {
-  const keys = extractDiscriminatorKeys(discriminatorField, typeObject.definition);
-  return keys.reduce(
-    (memo: { [key: string]: Maker<any, any> }, e: string) => ({ ...memo, [e]: typeObject.maker }),
-    {}
-  );
-}
-
-/**
- * Make oneOf with the discriminator support
- *
- * Will use given mapping to find correct maker. If optional importedTypes are provided, will extract
- * extra mapping keys from them.
- *
- * @param discriminatorField Field to use as discriminator
- * @param mapping Mappings that we should use to determine target makers
- * @param importedTypes Optional types where we should extract enum values for makers
- */
-export function makeOneOfWithDiscriminator(
-  discriminatorField: string,
-  mapping: { [key: string]: Maker<any, any> },
-  importedTypes?: readonly any[]
-) {
-  const fullMapping = mergeMappings(
-    mapping,
-    ...(importedTypes ?? []).map((type: NamedTypeDefinition<any>) =>
-      extractDiscriminatorValueMap(discriminatorField, type)
-    )
-  );
-  return (value: any, opts?: MakeOptions) => {
-    if (typeof value !== 'object') {
-      return error('value for oneOf with discriminator needs to be an object');
-    }
-    let discriminatorValue;
-    if (
-      !(discriminatorField in value) ||
-      typeof (discriminatorValue = value[discriminatorField]) !== 'string'
-    ) {
-      return error(
-        `value for discriminator field "${discriminatorField}" must be a string but value was "${discriminatorValue}" instead`
-      );
-    }
-    const maker = fullMapping[discriminatorValue];
-    if (!maker) {
-      return error(
-        `unexpected value ${JSON.stringify(
-          discriminatorValue
-        )} in field "${discriminatorField}" which is used as discriminator`
-      );
-    }
-    return maker(value, opts);
-  };
-}
-
 export function makeOneOf(...options: any[]) {
   return (value: any, opts?: MakeOptions) => {
     let errors = [];
@@ -560,11 +468,18 @@ function isEnum(type: Type) {
 }
 
 function priority(v: ObjectType['properties'][0]) {
+  // check scalars first to avoid constructing trees unnecessarily
   if (isScalar(v.value)) {
     if (isEnum(v.value)) {
+      // high chance this is a union type tag
+      if ((v.value as any).enum?.length === 1) {
+        return 4;
+      }
+      // enum matches less things than non enum
       return 3;
     }
     if (v.value.type === 'string') {
+      // a pattern matches less things than a non pattern so lets try this first
       if (v.value.pattern) {
         return 3;
       }
