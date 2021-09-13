@@ -461,6 +461,7 @@ export function makeObject<
         continue;
       }
       if (!additionalProp) {
+        console.log({additionalProp, opts})
         if (safe(opts).unknownField.$ === 'drop') {
           continue;
         }
@@ -531,6 +532,54 @@ export function makeNullable(maker: any) {
     }
     return maker(value, opts);
   };
+}
+
+export function fromReflection(type: Type): Maker<any, any> {
+  if ((type as any).enum) {
+    return makeEnum(...(type as any).enum);
+  }
+  switch (type.type) {
+    case 'integer':
+    case 'number':
+      return makeNumber(type.minimum, type.maximum);
+    case 'string':
+      return makeString(type.format, type.pattern);
+    case 'boolean':
+      return makeBoolean();
+    case 'array':
+      return makeArray(fromReflection(type.items), type.minItems, type.maxItems);
+    case 'object':
+      return makeObject(
+        Object.entries(type.properties).reduce(
+          (memo, [key, prop]) => ({
+            ...memo,
+            [key]: prop.required
+              ? fromReflection(prop.value)
+              : { optional: fromReflection(prop.value) }
+          }),
+          {}
+        ),
+        type.additionalProperties
+          ? type.additionalProperties === true
+            ? makeAny()
+            : fromReflection(type.additionalProperties)
+          : undefined
+      );
+    case 'void':
+      return makeVoid();
+    case 'null':
+      return makeEnum(null);
+    case 'union':
+      return makeOneOf(...type.options.map(option => fromReflection(option)));
+    case 'intersection':
+      return makeAllOf(...type.options.map(req => fromReflection(req)));
+    case 'named':
+      return type.reference.maker;
+    case 'unknown':
+      return makeAny();
+    case 'binary':
+      return makeBinary();
+  }
 }
 
 export function createMaker<Shape, Type>(fun: () => any) {

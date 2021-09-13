@@ -4,6 +4,7 @@ import safe from '@smartlyio/safe-navigation';
 import * as runtime from './runtime';
 
 export type Type =
+  | BinaryType
   | UnknownType
   | VoidType
   | BooleanType
@@ -22,6 +23,10 @@ export interface NamedTypeDefinition<A, Shape = any> {
   readonly definition: Type;
   readonly maker: Maker<Shape, A>;
   readonly isA: null | ((value: any) => value is A);
+}
+
+export interface BinaryType {
+  readonly type: 'binary';
 }
 
 export interface UnknownType {
