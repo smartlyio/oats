@@ -881,6 +881,14 @@ export function run(options: Options) {
             )
           ]
         : [];
+      if (schema.format === 'binary')  {
+        return ts.createObjectLiteral(
+          [
+            ts.createPropertyAssignment('type', ts.createStringLiteral('binary')),
+          ],
+          true
+        );
+      }
       const format = schema.format
         ? [ts.createPropertyAssignment('format', ts.createStringLiteral(schema.format))]
         : [];
