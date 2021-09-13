@@ -4,9 +4,8 @@ import safe from '@smartlyio/safe-navigation';
 import * as _ from 'lodash';
 import * as assert from 'assert';
 import * as oautil from './util';
-import { SchemaObject, UnsupportedFeatureBehaviour } from './util';
+import { UnsupportedFeatureBehaviour } from './util';
 import * as path from 'path';
-import { ReferenceObject } from 'openapi3-ts';
 import { resolvedStatusCodes } from './status-codes';
 
 const valueClassIndexSignatureKey = 'instanceIndexSignatureKey';
@@ -796,14 +795,16 @@ export function run(options: Options) {
   function generateReflectionMaker(key: string): ts.Expression {
     return ts.factory.createCallExpression(
       ts.factory.createPropertyAccessExpression(
-        ts.factory.createIdentifier("oar"),
-        ts.factory.createIdentifier("fromReflection")
+        ts.factory.createIdentifier('oar'),
+        ts.factory.createIdentifier('fromReflection')
       ),
       undefined,
-      [ts.factory.createPropertyAccessExpression(
-        ts.factory.createIdentifier(`type${oautil.typenamify(key)}`),
-        ts.factory.createIdentifier("definition")
-      )]
+      [
+        ts.factory.createPropertyAccessExpression(
+          ts.factory.createIdentifier(`type${oautil.typenamify(key)}`),
+          ts.factory.createIdentifier('definition')
+        )
+      ]
     );
   }
 
@@ -881,11 +882,9 @@ export function run(options: Options) {
             )
           ]
         : [];
-      if (schema.format === 'binary')  {
+      if (schema.format === 'binary') {
         return ts.createObjectLiteral(
-          [
-            ts.createPropertyAssignment('type', ts.createStringLiteral('binary')),
-          ],
+          [ts.createPropertyAssignment('type', ts.createStringLiteral('binary'))],
           true
         );
       }
@@ -1013,9 +1012,11 @@ export function run(options: Options) {
     if (props === false) {
       return ts.factory.createFalse();
     }
-    if (props === true ||
+    if (
+      props === true ||
       !props ||
-      props && typeof props === 'object' && Object.keys(props).length === 0) {
+      (props && typeof props === 'object' && Object.keys(props).length === 0)
+    ) {
       return ts.factory.createTrue();
     }
     return generateReflectionType(props);
@@ -1472,8 +1473,9 @@ export function run(options: Options) {
       const name = options.externalOpenApiSpecs(ref);
       if (name) {
         const [qualified, member] = name.split('.');
-        const file = options.externalOpenApiImports.find(def => def.importAs === qualified)
-          ?.importFile;
+        const file = options.externalOpenApiImports.find(
+          def => def.importAs === qualified
+        )?.importFile;
         addToImports(qualified, file);
         return { member, qualified: ts.createIdentifier(qualified) };
       }
