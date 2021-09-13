@@ -3,7 +3,7 @@ import safe from '@smartlyio/safe-navigation';
 import * as _ from 'lodash';
 import { isEqual, uniq } from 'lodash';
 import { ValueClass } from './value-class';
-import { NamedTypeDefinition, Type } from './reflection-type';
+import { NamedTypeDefinition, ObjectType, Type } from './reflection-type';
 
 export class MakeError extends Error {
   constructor(public readonly errors: ValidationError[]) {
@@ -430,17 +430,21 @@ function isMagic(field: string) {
 
 export function makeObject<
   P extends { [key: string]: Maker<any, any> | { optional: Maker<any, any> } }
->(props: P, additionalProp?: any) {
+>(props: P, additionalProp?: any, comparisorOrder?: string[]) {
   return (value: any, opts?: MakeOptions) => {
     if (typeof value !== 'object' || value == null || Array.isArray(value)) {
       return getErrorWithValueMsg('expected an object', value);
     }
+    comparisorOrder ||= Object.keys(props);
     const result: { [key: string]: any } = {};
-    for (const index of Object.keys(props)) {
+    for (const index of comparisorOrder) {
       if (isMagic(index)) {
         return error(`Using ${index} as field of an object is not allowed`);
       }
       let maker: any = props[index];
+      if (!maker) {
+        return error(`Prop maker not found for key ${index}. This is likely a bug in oats`);
+      }
       if (maker.optional) {
         if (!(index in value) || value[index] === undefined) {
           continue;
@@ -533,6 +537,73 @@ export function makeNullable(maker: any) {
   };
 }
 
+function isScalar(type: Type): boolean {
+  if (type.type === 'named') {
+    return isScalar(type.reference.definition);
+  }
+  return ['array', 'object', 'union', 'intersection', 'unknown'].indexOf(type.type) < -1;
+}
+
+function isEnum(type: Type) {
+  if (type.type === 'null') {
+    return true;
+  }
+  if (
+    type.type === 'string' ||
+    type.type === 'boolean' ||
+    type.type === 'number' ||
+    type.type === 'integer'
+  ) {
+    return !!type.enum;
+  }
+  return false;
+}
+
+function priority(v: ObjectType['properties'][0]) {
+  if (isScalar(v.value)) {
+    if (isEnum(v.value)) {
+      return 3;
+    }
+    if (v.value.type === 'string') {
+      if (v.value.pattern) {
+        return 3;
+      }
+    }
+    if (v.required) {
+      return 2;
+    }
+    return 1;
+  }
+  return 0;
+}
+
+function fromObjectReflection(type: ObjectType): Maker<any, any> {
+  const comparisonOrder = Object.keys(type.properties).sort((aKey, bKey) => {
+    const a = type.properties[aKey]!;
+    const b = type.properties[bKey]!;
+    return priority(b) - priority(a);
+  });
+  return makeObject(
+    Object.entries(type.properties).reduce(
+      (memo, [key, prop]) => ({
+        ...memo,
+        [key]: prop.required ? fromReflection(prop.value) : { optional: fromReflection(prop.value) }
+      }),
+      {}
+    ),
+    type.additionalProperties
+      ? type.additionalProperties === true
+        ? makeAny()
+        : fromReflection(type.additionalProperties)
+      : undefined,
+    comparisonOrder
+  );
+}
+
+function fromUnionReflection(types: Type[]): Maker<any, any> {
+  return makeOneOf(...types.map(option => fromReflection(option)));
+}
+
 export function fromReflection(type: Type): Maker<any, any> {
   if ((type as any).enum) {
     return makeEnum(...(type as any).enum);
@@ -548,28 +619,13 @@ export function fromReflection(type: Type): Maker<any, any> {
     case 'array':
       return makeArray(fromReflection(type.items), type.minItems, type.maxItems);
     case 'object':
-      return makeObject(
-        Object.entries(type.properties).reduce(
-          (memo, [key, prop]) => ({
-            ...memo,
-            [key]: prop.required
-              ? fromReflection(prop.value)
-              : { optional: fromReflection(prop.value) }
-          }),
-          {}
-        ),
-        type.additionalProperties
-          ? type.additionalProperties === true
-            ? makeAny()
-            : fromReflection(type.additionalProperties)
-          : undefined
-      );
+      return fromObjectReflection(type);
     case 'void':
       return makeVoid();
     case 'null':
       return makeEnum(null);
     case 'union':
-      return makeOneOf(...type.options.map(option => fromReflection(option)));
+      return fromUnionReflection(type.options);
     case 'intersection':
       return makeAllOf(...type.options.map(req => fromReflection(req)));
     case 'named':
