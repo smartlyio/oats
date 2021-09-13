@@ -461,7 +461,6 @@ export function makeObject<
         continue;
       }
       if (!additionalProp) {
-        console.log({additionalProp, opts})
         if (safe(opts).unknownField.$ === 'drop') {
           continue;
         }

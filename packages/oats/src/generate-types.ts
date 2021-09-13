@@ -1001,12 +1001,20 @@ export function run(options: Options) {
     throw new Error();
   }
 
+  function generateAdditionalPropsReflectionType(props: oas.SchemaObject['additionalProperties']) {
+    if (props === false) {
+      return ts.factory.createFalse();
+    }
+    if (props === true ||
+      !props ||
+      props && typeof props === 'object' && Object.keys(props).length === 0) {
+      return ts.factory.createTrue();
+    }
+    return generateReflectionType(props);
+  }
+
   function generateObjectReflectionType(schema: oas.SchemaObject) {
-    const additionalProps = schema.additionalProperties
-      ? schema.additionalProperties === true
-        ? ts.createTrue()
-        : generateReflectionType(schema.additionalProperties)
-      : ts.createFalse();
+    const additionalProps = generateAdditionalPropsReflectionType(schema.additionalProperties);
     return ts.createObjectLiteral(
       [
         ts.createPropertyAssignment('type', ts.createStringLiteral('object')),
