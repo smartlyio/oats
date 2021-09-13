@@ -1,5 +1,4 @@
 import * as common from '../tmp/client/common.types.generated';
-import * as types from '../tmp/client/types.generated';
 
 describe('codegen', () => {
   it('splits nullable types', () => {
