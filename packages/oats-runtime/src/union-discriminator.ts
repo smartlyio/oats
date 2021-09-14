@@ -119,7 +119,10 @@ export function differentator(types: TypeTags[]): Differentator | null {
 }
 
 export interface UnionDiscriminator {
-  /** map from type tag prop values to types */
+  /** map from type tag prop values to types
+   * if there is no best discriminator property return null
+   * and return all types in the undiscriminated list
+   * */
   discriminator: Differentator | null;
   /** non discriminated types */
   undiscriminated: Type[];
@@ -130,5 +133,8 @@ export function discriminateUnion(types: Type[]): UnionDiscriminator {
   const withTag = tagged.filter(tags => tags.tags.size > 0);
   const undiscriminated = tagged.filter(tags => tags.tags.size === 0);
   const discriminator = differentator(withTag);
+  if (!discriminator) {
+    return { discriminator: null, undiscriminated: types };
+  }
   return { discriminator, undiscriminated: undiscriminated.map(u => u.type) };
 }
