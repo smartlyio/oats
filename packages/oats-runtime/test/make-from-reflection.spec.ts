@@ -3,6 +3,105 @@ import * as jsc from 'jsverify';
 import { TestClass } from './test-class';
 import { Type } from '../src/reflection-type';
 
+describe('union differentation', () => {
+  it('uses discriminator to build values allowing unions as children', () => {
+    const atype: Type = {
+      type: 'union',
+      options: [
+        {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            unionTag: {
+              value: {
+                type: 'string',
+                enum: ['b']
+              },
+              required: true
+            },
+            tag: {
+              value: {
+                type: 'string',
+                enum: ['b']
+              },
+              required: true
+            }
+          }
+        },
+        {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            unionTag: {
+              value: {
+                type: 'string',
+                enum: ['b']
+              },
+              required: true
+            },
+            tag: {
+              value: {
+                type: 'string',
+                enum: ['a']
+              },
+              required: true
+            }
+          }
+        }
+      ]
+    };
+    const fun = make.fromReflection({ type: 'union', options: [atype] });
+    expect(fun({ tag: 'a', unionTag: 'b' }).success()).toEqual({ unionTag: 'b', tag: 'a' });
+  });
+
+  it('uses discriminator to build values', () => {
+    const atype: Type = {
+      type: 'object',
+      additionalProperties: false,
+      properties: {
+        tag: {
+          value: {
+            type: 'named',
+            reference: {
+              name: 'a',
+              isA: 1 as any,
+              maker: 1 as any,
+              definition: {
+                type: 'string',
+                enum: ['a']
+              }
+            }
+          },
+          required: true
+        }
+      }
+    };
+    const btype: Type = {
+      type: 'named',
+      reference: {
+        maker: make.fromReflection({
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            tag: { value: { type: 'string', enum: ['b'] }, required: true }
+          }
+        }),
+        isA: 1 as any,
+        name: 'aa',
+        definition: {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            tag: { value: { type: 'string', enum: ['b'] }, required: true }
+          }
+        }
+      }
+    };
+    const fun = make.fromReflection({ type: 'union', options: [atype, btype] });
+    expect(fun({ tag: 'b' }).success()).toEqual({ tag: 'b' });
+  });
+});
+
 describe('named', () => {
   it('uses the maker from name', () => {
     const type: Type = {
