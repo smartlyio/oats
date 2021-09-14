@@ -470,6 +470,15 @@ function enumOptions(type: Type): number | null {
   return null;
 }
 
+enum Priority {
+  Tag = 0,
+  Enum = 1,
+  Pattern = 2,
+  Required = 3,
+  Scalar,
+  NonScalar
+}
+
 function priority(v: ObjectType['properties'][string]) {
   // check scalars first to avoid constructing trees unnecessarily
   if (isScalar(v.value)) {
@@ -477,30 +486,30 @@ function priority(v: ObjectType['properties'][string]) {
     if (enums !== null) {
       // high chance this is a union type tag
       if (enums === 1) {
-        return 4;
+        return Priority.Tag;
       }
       // enum matches less things than non enum
-      return 3;
+      return Priority.Enum;
     }
     if (v.value.type === 'string') {
       // a pattern matches less things than a non pattern so lets try this first
       if (v.value.pattern) {
-        return 3;
+        return Priority.Pattern;
       }
     }
     if (v.required) {
-      return 2;
+      return Priority.Required;
     }
-    return 1;
+    return Priority.Scalar;
   }
-  return 0;
+  return Priority.NonScalar;
 }
 
 function fromObjectReflection(type: ObjectType): Maker<any, any> {
   const comparisonOrder = Object.keys(type.properties).sort((aKey, bKey) => {
     const a = type.properties[aKey]!;
     const b = type.properties[bKey]!;
-    return priority(b) - priority(a);
+    return priority(a) - priority(b);
   });
   return makeObject(
     Object.entries(type.properties).reduce(
