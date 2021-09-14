@@ -65,14 +65,14 @@ export interface BooleanType {
 
 export interface NumberType {
   readonly type: 'number';
-  readonly enum: number[];
+  readonly enum?: number[];
   readonly minimum?: number;
   readonly maximum?: number;
 }
 
 export interface IntegerType {
   readonly type: 'integer';
-  readonly enum: number[];
+  readonly enum?: number[];
   readonly minimum?: number;
   readonly maximum?: number;
 }
