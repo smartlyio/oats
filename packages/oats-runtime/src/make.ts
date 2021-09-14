@@ -532,7 +532,6 @@ function fromUnionReflection(types: Type[]): Maker<any, any> {
   const discriminatedMakers = new Map();
   for (const [key, t] of discriminator.map) {
     // note that we need to check the undiscriminated values also as those *might* match also
-    // due to additionalProps or non enum props
     discriminatedMakers.set(key, makeOneOf(...[...untaggedMaker, fromReflection(t)]));
   }
   return (value: any, opts?: MakeOptions) => {
