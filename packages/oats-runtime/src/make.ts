@@ -3,6 +3,7 @@ import safe from '@smartlyio/safe-navigation';
 import * as _ from 'lodash';
 import { ValueClass } from './value-class';
 import { ObjectType, Type } from './reflection-type';
+import { discriminateUnion } from './union-discriminator';
 
 export class MakeError extends Error {
   constructor(public readonly errors: ValidationError[]) {
@@ -518,139 +519,33 @@ function fromObjectReflection(type: ObjectType): Maker<any, any> {
   );
 }
 
-function typeTag(v: Type): unknown[] {
-  if (v.type === 'named') {
-    return typeTag(v.reference.definition);
-  }
-  if (v.type === 'string' || v.type === 'boolean' || v.type === 'number' || v.type === 'integer') {
-    if (v.enum) {
-      return v.enum;
-    }
-  }
-  return [];
-}
-
-function rootType(type: Type): Type {
-  if (type.type === 'named') {
-    return rootType(type.reference.definition);
-  }
-  return type;
-}
-
-function discriminators(
-  candidates: Map<string, Map<unknown, Maker<any, any>>>,
-  type: { type: Type; tags: Map<string, any> }
-): Map<string, Map<unknown, Maker<any, any>>> {
-  const invalid = new Set<string>();
-  for (const [key, tags] of candidates) {
-    const tagValues = type.tags.get(key);
-    if (tagValues && tagValues.length > 0) {
-      for (const tagValue of tagValues) {
-        if (!tags.has(tagValue)) {
-          tags.set(tagValue, fromReflection(type.type));
-        } else {
-          invalid.add(key);
-          break;
-        }
-      }
-    } else {
-      invalid.add(key);
-    }
-  }
-  for (const key of invalid.keys()) {
-    candidates.delete(key);
-  }
-  return candidates;
-}
-
-export function differentator(
-  types: { type: Type; tags: Map<string, unknown[]> }[]
-): { key: string; map: Map<unknown, Maker<any, any>> } | null {
-  const fst = types[0];
-  if (!fst) {
-    return null;
-  }
-  const init = new Map([...fst.tags.keys()].map(key => [key, new Map()]));
-  const discs = types.reduce((memo, type) => discriminators(memo, type), init);
-  const [found] = discs.entries();
-  if (!found || found[1].size === 0) {
-    return null;
-  }
-  return { key: found[0], map: found[1] };
-}
-
-function getTags(type: Type): Map<string, unknown[]> {
-  const root = rootType(type);
-  if (root.type === 'object') {
-    const values: [string, any][] = Object.entries(root.properties).flatMap(([key, prop]) => {
-      if (prop.required) {
-        const tags = typeTag(rootType(prop.value));
-        if (tags.length) {
-          return [[key, tags.sort()]];
-        }
-      }
-      return [];
-    });
-    return new Map(values);
-  }
-  if (root.type === 'union') {
-    const [fst, ...rest] = root.options.map(getTags);
-    if (!fst) {
-      return new Map();
-    }
-    return rest.reduce((memo, r) => intersectMap(memo, r), fst);
-  }
-  return new Map();
-}
-
-function arrayEq(a: unknown[], b: unknown[]): boolean {
-  if (a.length !== b.length) {
-    return false;
-  }
-  for(let i = 0; i < a.length; i++) {
-    if (a[i] !== b[i]) {
-      return false;
-    }
-  }
-  return true;
-}
-
-function intersectMap(a: Map<string, any>, b: Map<string, any>): Map<string, any> {
-  const result = new Map();
-  for (const [key, values] of a) {
-    const gots = b.get(key);
-    if (arrayEq(gots, values)) {
-      result.set(key, values);
-    }
-  }
-  return result;
-}
-
 function fromUnionReflection(types: Type[]): Maker<any, any> {
-  const tagged = types.map(type => ({ tags: getTags(type), type }));
-  const withTag = tagged.filter(tags => tags.tags.size > 0);
-  const withoutTag = tagged.filter(tags => tags.tags.size === 0);
-  if (withTag.length === 0) {
-    return makeOneOf(...types.map(type => fromReflection(type)));
-  }
-  const discriminator = differentator(withTag);
+  const { discriminator, undiscriminated } = discriminateUnion(types);
+  const untaggedMaker =
+    undiscriminated.length > 0
+      ? [makeOneOf(...undiscriminated.map(type => fromReflection(type)))]
+      : [];
+
   if (!discriminator) {
     return makeOneOf(...types.map(type => fromReflection(type)));
   }
-
-  const untaggedMaker =
-    withoutTag.length > 0 && makeOneOf(withoutTag.map(type => fromReflection(type.type)));
-
+  const discriminatedMakers = new Map();
+  for (const [key, t] of discriminator.map) {
+    // note that we need to check the undiscriminated values also as those *might* match also
+    // due to additionalProps or non enum props
+    discriminatedMakers.set(key, makeOneOf(...[...untaggedMaker, fromReflection(t)]));
+  }
   return (value: any, opts?: MakeOptions) => {
-    const result = untaggedMaker ? untaggedMaker(value, opts) : null;
-    if (result?.isSuccess()) {
-      return result;
-    }
     if (value && typeof value === 'object' && !Array.isArray(value) && value[discriminator.key]) {
-      const discriminatedType = discriminator.map.get(value[discriminator.key]);
+      const discriminatedType = discriminatedMakers.get(value[discriminator.key]);
       if (discriminatedType) {
         return discriminatedType(value, opts);
       }
+    }
+    // we know that none of the discriminated types can match as the tag value did not match
+    // so its enough to check the non discriminated types
+    if (untaggedMaker[0]) {
+      return untaggedMaker[0](value, opts);
     }
     return error(`No value matching discriminator key ${discriminator.key}`);
   };
