@@ -470,7 +470,7 @@ function enumOptions(type: Type): number | null {
   return null;
 }
 
-function priority(v: ObjectType['properties'][0]) {
+function priority(v: ObjectType['properties'][string]) {
   // check scalars first to avoid constructing trees unnecessarily
   if (isScalar(v.value)) {
     const enums = enumOptions(v.value);
