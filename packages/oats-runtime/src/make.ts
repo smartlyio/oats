@@ -448,12 +448,15 @@ function isScalar(type: Type): boolean {
   if (type.type === 'named') {
     return isScalar(type.reference.definition);
   }
-  return ['array', 'object', 'union', 'intersection', 'unknown'].indexOf(type.type) < -1;
+  return ['array', 'object', 'union', 'intersection', 'unknown'].indexOf(type.type) < 0;
 }
 
-function isEnum(type: Type) {
+function enumOptions(type: Type): number | null {
   if (type.type === 'null') {
-    return true;
+    return 1;
+  }
+  if (type.type === 'named') {
+    return enumOptions(type.reference.definition);
   }
   if (
     type.type === 'string' ||
@@ -461,17 +464,18 @@ function isEnum(type: Type) {
     type.type === 'number' ||
     type.type === 'integer'
   ) {
-    return !!type.enum;
+    return type.enum?.length || null;
   }
-  return false;
+  return null;
 }
 
 function priority(v: ObjectType['properties'][0]) {
   // check scalars first to avoid constructing trees unnecessarily
   if (isScalar(v.value)) {
-    if (isEnum(v.value)) {
+    const enums = enumOptions(v.value);
+    if (enums !== null) {
       // high chance this is a union type tag
-      if ((v.value as any).enum?.length === 1) {
+      if (enums === 1) {
         return 4;
       }
       // enum matches less things than non enum
