@@ -743,25 +743,25 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@smartlyio/oats-axios-adapter@2.4.0":
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats-axios-adapter/-/oats-axios-adapter-2.4.0.tgz#64e41237eb3f35ae9c780aed4259e8a05e0ed9fc"
-  integrity sha512-KwrebMGyJDwyypI8qFhnVKb5ra24JtuA9iXiFDFXcgBR16CNScIwteInsOeDaVR7Mnzhxk5sdLPuTE/KS1Ld0A==
+"@smartlyio/oats-axios-adapter@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats-axios-adapter/-/oats-axios-adapter-3.0.0.tgz#fb4b4ecdf436845d2a7768162d1adadd022fa6ab"
+  integrity sha512-y9S6iTZx0WxjqkM5GpaNHwDmtP57WR44WUDZ8tgAwHxeP0dr8ThZr+/mDYOkJ8fdqlpOz0ImY2Zklejqo6cidg==
   dependencies:
     form-data "^4.0.0"
 
-"@smartlyio/oats-runtime@2.13.2":
-  version "2.13.2"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-2.13.2.tgz#0c228f145e8cd3596489db79394c1e20f5fab9a2"
-  integrity sha512-v9TEohL/5BA0ek6aQoMoMV5nvBpnGUpkUqzKzCEJjXBTyLYqdDXrmqlWGSuaRFyJ8Hs4Yk8VWZ9oqO0RzDOxUw==
+"@smartlyio/oats-runtime@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-3.0.0.tgz#d11a769d2442d7521d0e56f1f545e9fa8a3a838c"
+  integrity sha512-7rUTlmZAK1FR5WNJHdFDkcTO1A8Wd1VR3ycr/6Lmqe5rQCSVyy4y7+6S3KTa/w4O4FqQhwT0A1VWoYPg3vDbxQ==
   dependencies:
     "@smartlyio/safe-navigation" "^5.0.1"
     lodash "^4.17.20"
 
-"@smartlyio/oats@2.16.2":
-  version "2.16.2"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats/-/oats-2.16.2.tgz#408ce02bef07a9033f5fbdb0fd15dfbd096a7f01"
-  integrity sha512-/4CDpd9A08qMbg7jBYqpZLGcLH9tGwswyGTSqBN3Bp5F+s1DVbYhujwS04LrLrIetstkpj9ZdlYhIXrUCdxqSQ==
+"@smartlyio/oats@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats/-/oats-3.0.0.tgz#3bc09490b67bf9119d7d43efe734be9a22e311ab"
+  integrity sha512-XoDske22PwzypKse7aA67nV818iYwfWwe8sWJp95FZ5Xk4p/aMqX/2oDXjNSiU1lHi9NW4yyAMNW3WjAIE5OUg==
   dependencies:
     "@smartlyio/safe-navigation" "^5.0.1"
     js-yaml "^4.0.0"
@@ -3144,22 +3144,7 @@ lodash.truncate@^4.4.2:
   resolved "https://registry.yarnpkg.com/lodash.truncate/-/lodash.truncate-4.4.2.tgz#5a350da0b1113b837ecfffd5812cbe58d6eae193"
   integrity sha1-WjUNoLERO4N+z//VgSy+WNbq4ZM=
 
-lodash@4.x, lodash@^4.17.20:
-  version "4.17.20"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.20.tgz#b44a9b6297bcb698f1c51a3545a2b3b368d59c52"
-  integrity sha512-PlhdFcillOINfeV7Ni6oF1TAEayyZBoZ8bcshTHqOYJYlrqzRK5hagpagky5o4HfCzzd1TRkXPMFq6cKk9rGmA==
-
-lodash@^4.17.13, lodash@^4.17.15:
-  version "4.17.15"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
-  integrity sha512-8xOcRHvCjnocdS5cpwXQXVzmmh5e5+saE2QGoeQmbKmRS6J3VQppPOIt0MnmE+4xlZoumy0GPG0D0MVIQbNA1A==
-
-lodash@^4.17.19:
-  version "4.17.19"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.19.tgz#e48ddedbe30b3321783c5b4301fbd353bc1e4a4b"
-  integrity sha512-JNvd8XER9GQX0v2qJgsaN/mzFCNA5BRe/j8JN9d+tWyGLSodKQHKFicdwNYzWwI3wjRnaKPsGj1XkBjx/F96DQ==
-
-lodash@^4.7.0:
+lodash@4.x, lodash@^4.17.13, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.17.20, lodash@^4.7.0:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
