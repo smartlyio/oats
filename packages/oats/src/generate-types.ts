@@ -4,9 +4,8 @@ import safe from '@smartlyio/safe-navigation';
 import * as _ from 'lodash';
 import * as assert from 'assert';
 import * as oautil from './util';
-import { SchemaObject, UnsupportedFeatureBehaviour } from './util';
+import { UnsupportedFeatureBehaviour } from './util';
 import * as path from 'path';
-import { ReferenceObject } from 'openapi3-ts';
 import { resolvedStatusCodes } from './status-codes';
 
 const valueClassIndexSignatureKey = 'instanceIndexSignatureKey';
@@ -786,18 +785,6 @@ export function run(options: Options) {
     );
   }
 
-  function generateAdditionalPropertiesMaker(
-    schema: oas.ReferenceObject | oas.SchemaObject | boolean | undefined
-  ) {
-    if (schema === false) {
-      return [];
-    }
-    if (schema === true || schema == null) {
-      return [makeCall('makeAny', [])];
-    }
-    return [generateMakerExpression(schema)];
-  }
-
   function quotedProp(prop: string) {
     if (/\W/.test(prop)) {
       return ts.createStringLiteral(prop);
@@ -805,175 +792,20 @@ export function run(options: Options) {
     return ts.createIdentifier(prop);
   }
 
-  function generateDiscriminatorMapping(
-    discriminatorField: string,
-    schemas: readonly SchemaObject[]
-  ): [ts.Expression, (ts.Identifier | ts.PropertyAccessExpression)[]] {
-    const [refs, internals] = _.partition(
-      schemas,
-      (schema): schema is ReferenceObject => '$ref' in schema
+  function generateReflectionMaker(key: string): ts.Expression {
+    return ts.factory.createCallExpression(
+      ts.factory.createPropertyAccessExpression(
+        ts.factory.createIdentifier('oar'),
+        ts.factory.createIdentifier('fromReflection')
+      ),
+      undefined,
+      [
+        ts.factory.createPropertyAccessExpression(
+          ts.factory.createIdentifier(`type${oautil.typenamify(key)}`),
+          ts.factory.createIdentifier('definition')
+        )
+      ]
     );
-    const properties = _.flatMap(internals, schema => {
-      if (schema.type !== 'object') {
-        throw new Error('schemas in oneOf with discriminator need to be objects');
-      }
-      let discriminatorFieldSchema;
-      if (
-        !schema.properties ||
-        !(discriminatorFieldSchema = schema.properties[discriminatorField])
-      ) {
-        throw new Error(`field ${discriminatorField} not defined, required by discriminator`);
-      }
-      if (!('type' in discriminatorFieldSchema) || discriminatorFieldSchema.type !== 'string') {
-        throw new Error('Only string type supported type supported');
-      }
-      if (!('enum' in discriminatorFieldSchema) || !discriminatorFieldSchema.enum) {
-        throw new Error('Must have enum');
-      }
-      return discriminatorFieldSchema.enum.map((e: string) =>
-        ts.createPropertyAssignment(e, generateMakerExpression(schema))
-      );
-    });
-    const types = refs.map(schema => {
-      const resolved = resolveRefToTypeName(schema.$ref);
-      return resolved.qualified
-        ? ts.createPropertyAccess(resolved.qualified, 'type' + oautil.typenamify(resolved.member))
-        : ts.createIdentifier('type' + oautil.typenamify(resolved.member));
-    });
-
-    return [ts.createObjectLiteral(properties), types];
-  }
-
-  function buildDiscriminatorMapping(mapping: { [p: string]: string }) {
-    return ts.createObjectLiteral(
-      _.map(mapping, (value, key) =>
-        ts.createPropertyAssignment(key, generateMakerExpression({ $ref: value }))
-      )
-    );
-  }
-
-  function generateMakerExpression(schema: oas.ReferenceObject | oas.SchemaObject): ts.Expression {
-    if (oautil.isReferenceObject(schema)) {
-      const resolved = resolveRefToTypeName(schema.$ref);
-      if (resolved.qualified) {
-        return ts.createPropertyAccess(resolved.qualified, generateMakerReference(resolved.member));
-      } else {
-        return generateMakerReference(resolved.member);
-      }
-    }
-    if (schema.oneOf) {
-      if (schema.discriminator) {
-        if (schema.discriminator.mapping) {
-          const mapping = buildDiscriminatorMapping(schema.discriminator.mapping);
-          return makeCall('makeOneOfWithDiscriminator', [
-            ts.createStringLiteral(schema.discriminator.propertyName) as ts.Expression,
-            mapping
-          ]);
-        } else {
-          const [mapping, types] = generateDiscriminatorMapping(
-            schema.discriminator.propertyName,
-            schema.oneOf
-          );
-          return makeCall('makeOneOfWithDiscriminator', [
-            ts.createStringLiteral(schema.discriminator.propertyName) as ts.Expression,
-            mapping,
-            ts.createArrayLiteral(types)
-          ]);
-        }
-      } else {
-        return makeCall('makeOneOf', schema.oneOf.map(generateMakerExpression));
-      }
-    }
-
-    if (schema.allOf) {
-      return makeCall('makeAllOf', schema.allOf.map(generateMakerExpression));
-    }
-
-    assert(!schema.anyOf, 'anyOf is not supported');
-
-    if (schema.nullable) {
-      return makeCall('makeNullable', [generateMakerExpression({ ...schema, nullable: false })]);
-    }
-
-    if (schema.type === 'object') {
-      const props = ts.createObjectLiteral(
-        _.map(schema.properties, (propSchema, prop) => {
-          const propMaker =
-            schema.required && schema.required.indexOf(prop) >= 0
-              ? generateMakerExpression(propSchema)
-              : makeCall('makeOptional', [generateMakerExpression(propSchema)]);
-          return ts.createPropertyAssignment(quotedProp(prop), propMaker);
-        }),
-        true
-      );
-      return makeCall('makeObject', [
-        props,
-        ...generateAdditionalPropertiesMaker(schema.additionalProperties)
-      ]);
-    }
-
-    if (schema.enum) {
-      return makeCall(
-        'makeEnum',
-        schema.enum.map(value => ts.createLiteral(value))
-      );
-    }
-
-    if (schema.type === 'array') {
-      if (schema.items) {
-        return makeCall('makeArray', [
-          generateMakerExpression(schema.items),
-          litOrUndefined(schema.minItems),
-          litOrUndefined(schema.maxItems)
-        ]);
-      } else {
-        return makeCall('makeArray', []);
-      }
-    }
-
-    // @ts-expect-error schemas really do not have void type. but we do
-    if (schema.type === 'void') {
-      return makeCall('makeVoid', []);
-    }
-    if (schema.type === 'string') {
-      return generateMakeString(schema.format, schema.pattern);
-    }
-    if (schema.type === 'integer' || schema.type === 'number') {
-      return makeCall('makeNumber', [
-        litOrUndefined(schema.minimum),
-        litOrUndefined(schema.maximum)
-      ]);
-    }
-    if (schema.type === 'boolean') {
-      return makeCall('makeBoolean', []);
-    }
-    if (schema.type === 'null') {
-      return makeCall('makeEnum', [ts.createNull()]);
-    }
-    if (!schema.type) {
-      return makeCall('makeAny', []);
-    }
-    return assert.fail('unknown schema type: ' + schema.type);
-  }
-
-  function litOrUndefined(value: string | number | undefined) {
-    if (value === undefined) {
-      return ts.createIdentifier('undefined');
-    }
-    return typeof value === 'string'
-      ? ts.createStringLiteral(value)
-      : ts.createNumericLiteral('' + value);
-  }
-
-  function generateMakeString(format: string | undefined, pattern: string | undefined) {
-    if (format === 'binary') {
-      return makeCall('makeBinary', []);
-    }
-    return makeCall('makeString', [litOrUndefined(format), litOrUndefined(pattern)]);
-  }
-
-  function generateMakerReference(key: string) {
-    return ts.createIdentifier('make' + oautil.typenamify(key));
   }
 
   function generateTopLevelClassBuilder(key: string, schema: oas.SchemaObject) {
@@ -1050,6 +882,12 @@ export function run(options: Options) {
             )
           ]
         : [];
+      if (schema.format === 'binary') {
+        return ts.createObjectLiteral(
+          [ts.createPropertyAssignment('type', ts.createStringLiteral('binary'))],
+          true
+        );
+      }
       const format = schema.format
         ? [ts.createPropertyAssignment('format', ts.createStringLiteral(schema.format))]
         : [];
@@ -1170,12 +1008,22 @@ export function run(options: Options) {
     throw new Error();
   }
 
+  function generateAdditionalPropsReflectionType(props: oas.SchemaObject['additionalProperties']) {
+    if (props === false) {
+      return ts.factory.createFalse();
+    }
+    if (
+      props === true ||
+      !props ||
+      (props && typeof props === 'object' && Object.keys(props).length === 0)
+    ) {
+      return ts.factory.createTrue();
+    }
+    return generateReflectionType(props);
+  }
+
   function generateObjectReflectionType(schema: oas.SchemaObject) {
-    const additionalProps = schema.additionalProperties
-      ? schema.additionalProperties === true
-        ? ts.createTrue()
-        : generateReflectionType(schema.additionalProperties)
-      : ts.createFalse();
+    const additionalProps = generateAdditionalPropsReflectionType(schema.additionalProperties);
     return ts.createObjectLiteral(
       [
         ts.createPropertyAssignment('type', ts.createStringLiteral('object')),
@@ -1321,7 +1169,7 @@ export function run(options: Options) {
                 undefined,
                 [],
                 undefined,
-                ts.createBlock([ts.createReturn(generateMakerExpression(schema))])
+                ts.createBlock([ts.createReturn(generateReflectionMaker(key))])
               )
             ])
           )
