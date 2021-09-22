@@ -743,25 +743,25 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@smartlyio/oats-axios-adapter@2.4.0":
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats-axios-adapter/-/oats-axios-adapter-2.4.0.tgz#64e41237eb3f35ae9c780aed4259e8a05e0ed9fc"
-  integrity sha512-KwrebMGyJDwyypI8qFhnVKb5ra24JtuA9iXiFDFXcgBR16CNScIwteInsOeDaVR7Mnzhxk5sdLPuTE/KS1Ld0A==
+"@smartlyio/oats-axios-adapter@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats-axios-adapter/-/oats-axios-adapter-3.0.0.tgz#fb4b4ecdf436845d2a7768162d1adadd022fa6ab"
+  integrity sha512-y9S6iTZx0WxjqkM5GpaNHwDmtP57WR44WUDZ8tgAwHxeP0dr8ThZr+/mDYOkJ8fdqlpOz0ImY2Zklejqo6cidg==
   dependencies:
     form-data "^4.0.0"
 
-"@smartlyio/oats-runtime@2.13.2":
-  version "2.13.2"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-2.13.2.tgz#0c228f145e8cd3596489db79394c1e20f5fab9a2"
-  integrity sha512-v9TEohL/5BA0ek6aQoMoMV5nvBpnGUpkUqzKzCEJjXBTyLYqdDXrmqlWGSuaRFyJ8Hs4Yk8VWZ9oqO0RzDOxUw==
+"@smartlyio/oats-runtime@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats-runtime/-/oats-runtime-3.0.0.tgz#d11a769d2442d7521d0e56f1f545e9fa8a3a838c"
+  integrity sha512-7rUTlmZAK1FR5WNJHdFDkcTO1A8Wd1VR3ycr/6Lmqe5rQCSVyy4y7+6S3KTa/w4O4FqQhwT0A1VWoYPg3vDbxQ==
   dependencies:
     "@smartlyio/safe-navigation" "^5.0.1"
     lodash "^4.17.20"
 
-"@smartlyio/oats@2.16.2":
-  version "2.16.2"
-  resolved "https://registry.yarnpkg.com/@smartlyio/oats/-/oats-2.16.2.tgz#408ce02bef07a9033f5fbdb0fd15dfbd096a7f01"
-  integrity sha512-/4CDpd9A08qMbg7jBYqpZLGcLH9tGwswyGTSqBN3Bp5F+s1DVbYhujwS04LrLrIetstkpj9ZdlYhIXrUCdxqSQ==
+"@smartlyio/oats@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@smartlyio/oats/-/oats-3.0.0.tgz#3bc09490b67bf9119d7d43efe734be9a22e311ab"
+  integrity sha512-XoDske22PwzypKse7aA67nV818iYwfWwe8sWJp95FZ5Xk4p/aMqX/2oDXjNSiU1lHi9NW4yyAMNW3WjAIE5OUg==
   dependencies:
     "@smartlyio/safe-navigation" "^5.0.1"
     js-yaml "^4.0.0"
@@ -3966,9 +3966,9 @@ throat@^6.0.1:
   integrity sha512-8hmiGIJMDlwjg7dlJ4yKGLK8EsYqKgPWbG3b4wjJddKNwc7N7Dpn08Df4szr/sZdMVeOstrdYSsqzX6BYbcB+w==
 
 tmpl@1.0.x:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/tmpl/-/tmpl-1.0.4.tgz#23640dd7b42d00433911140820e5cf440e521dd1"
-  integrity sha1-I2QN17QtAEM5ERQIIOXPRA5SHdE=
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/tmpl/-/tmpl-1.0.5.tgz#8683e0b902bb9c20c4f726e3c0b69f36518c07cc"
+  integrity sha512-3f0uOEAQwIqGuWW2MVzYg8fV/QNnc/IpuJNG837rLuczAaLVHslWHZQj4IGiEl5Hs3kkbhwL9Ab7Hrsmuj+Smw==
 
 to-fast-properties@^2.0.0:
   version "2.0.0"
