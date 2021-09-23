@@ -8,4 +8,4 @@ dist/
 yalc.*
 *.iml
 *.generated.ts
-
+yarn.lock

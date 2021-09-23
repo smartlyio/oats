@@ -10,3 +10,4 @@ dist/
 *.tgz
 .yalc
 yalc.lock
+yarn.lock
