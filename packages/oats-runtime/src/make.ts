@@ -163,7 +163,9 @@ function getPatterner(pattern: string | undefined): Maker<any, void> {
 
 export function makeString(
   format: string | undefined = undefined,
-  pattern: string | undefined = undefined
+  pattern: string | undefined = undefined,
+  minLength: number | undefined = undefined,
+  maxLength: number | undefined = undefined
 ): Maker<any, string> {
   const formatter = getFormatter(format);
   const patterner = getPatterner(pattern);
@@ -171,6 +173,12 @@ export function makeString(
   return (value: any) => {
     if (typeof value !== 'string') {
       return getErrorWithValueMsg('expected a string', value);
+    }
+    if (minLength != null && value.length < minLength) {
+      return getErrorWithValueMsg('expected a string with length greater than ' + minLength, value);
+    }
+    if (maxLength != null && value.length > maxLength) {
+      return getErrorWithValueMsg('expected a string with length smaller than ' + maxLength, value);
     }
     const formatted = formatter(value);
     if (formatted.isError()) {
@@ -190,10 +198,10 @@ export function makeNumber(min?: number, max?: number): Maker<number, number> {
       return getErrorWithValueMsg('expected a number', value);
     }
     if (min != null && value < min) {
-      return getErrorWithValueMsg('expected a number greater or equal to ' + min, value);
+      return getErrorWithValueMsg('expected a number greater than ' + min, value);
     }
     if (max != null && value > max) {
-      return getErrorWithValueMsg('expected a number smaller or equal to ' + max, value);
+      return getErrorWithValueMsg('expected a number smaller than ' + max, value);
     }
     return Make.ok(value);
   };
@@ -550,7 +558,7 @@ export function fromReflection(type: Type): Maker<any, any> {
     case 'number':
       return makeNumber(type.minimum, type.maximum);
     case 'string':
-      return makeString(type.format, type.pattern);
+      return makeString(type.format, type.pattern, type.minLength, type.maxLength);
     case 'boolean':
       return makeBoolean();
     case 'array':

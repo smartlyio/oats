@@ -55,6 +55,8 @@ export interface StringType {
   readonly type: 'string';
   readonly format?: string;
   readonly pattern?: string;
+  readonly minLength?: number;
+  readonly maxLength?: number;
   readonly enum?: string[];
 }
 
