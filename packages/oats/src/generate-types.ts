@@ -894,13 +894,23 @@ export function run(options: Options) {
       const pattern = schema.pattern
         ? [ts.createPropertyAssignment('pattern', ts.createStringLiteral(schema.pattern))]
         : [];
+      const minLength =
+        schema.minLength != null
+          ? [ts.createPropertyAssignment('minLength', ts.createNumericLiteral(schema.minLength))]
+          : [];
+      const maxLength =
+        schema.maxLength != null
+          ? [ts.createPropertyAssignment('maxLength', ts.createNumericLiteral(schema.maxLength))]
+          : [];
 
       return ts.createObjectLiteral(
         [
           ts.createPropertyAssignment('type', ts.createStringLiteral('string')),
           ...enumValues,
           ...format,
-          ...pattern
+          ...pattern,
+          ...minLength,
+          ...maxLength
         ],
         true
       );
