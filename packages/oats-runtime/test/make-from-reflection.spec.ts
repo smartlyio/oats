@@ -215,13 +215,13 @@ describe('union', () => {
 describe('string', () => {
   it('enforces minimum length if passed', () => {
     const fun = make.fromReflection({ type: 'string', minLength: 3 });
-    expect(fun('a').errors[0].error).toMatch('expected a string with length greater than');
+    expect(fun('a').errors[0].error).toMatch('expected a string with a length of at least');
     expect(fun('abcd').isSuccess()).toBeTruthy();
   });
 
   it('enforces maximum length if passed', () => {
     const fun = make.fromReflection({ type: 'string', maxLength: 3 });
-    expect(fun('abcd').errors[0].error).toMatch('expected a string with length smaller than');
+    expect(fun('abcd').errors[0].error).toMatch('expected a string with a length of at maximum');
     expect(fun('a').isSuccess()).toBeTruthy();
   });
 

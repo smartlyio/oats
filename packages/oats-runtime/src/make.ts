@@ -174,11 +174,11 @@ export function makeString(
     if (typeof value !== 'string') {
       return getErrorWithValueMsg('expected a string', value);
     }
-    if (minLength != null && value.length < minLength) {
-      return getErrorWithValueMsg('expected a string with length greater than ' + minLength, value);
+    if (minLength != null && value.length <= minLength) {
+      return getErrorWithValueMsg('expected a string with a length of at least ' + minLength, value);
     }
-    if (maxLength != null && value.length > maxLength) {
-      return getErrorWithValueMsg('expected a string with length smaller than ' + maxLength, value);
+    if (maxLength != null && value.length >= maxLength) {
+      return getErrorWithValueMsg('expected a string with a length of at maximum ' + maxLength, value);
     }
     const formatted = formatter(value);
     if (formatted.isError()) {
