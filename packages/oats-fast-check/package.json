@@ -1,6 +1,6 @@
 {
   "name": "@smartlyio/oats-fast-check",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "license": "MIT",
   "description": "fast-check value generator for smartlyio/oats types",
   "private": false,
@@ -39,8 +39,8 @@
     "client"
   ],
   "devDependencies": {
-    "@smartlyio/oats": "^3.1.0",
-    "@smartlyio/oats-runtime": "^3.1.0",
+    "@smartlyio/oats": "^3.1.1",
+    "@smartlyio/oats-runtime": "^3.1.1",
     "@types/jest": "27.0.1",
     "@types/lodash": "4.14.172",
     "@types/node": "14.17.9",
