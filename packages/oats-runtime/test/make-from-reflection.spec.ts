@@ -289,13 +289,12 @@ describe('string', () => {
     );
   });
 
-  it('accepts if format is not defined', () => {
+  it('rejects if format is not defined', () => {
     const type: Type = {
       type: 'string',
       format: 'some-format'
     };
-    const fun = make.fromReflection(type);
-    fun('b').success();
+    expect(() => make.fromReflection(type)).toThrow('format "some-format" is not registered.');
   });
 
   it('rejects if format rejects', () => {
@@ -365,6 +364,22 @@ describe('number', () => {
     expect(fun(4).errors[0].error).toMatch('expected a number smaller than');
     expect(fun(3).isSuccess()).toBeTruthy();
   });
+  it('requires number to be integer', () => {
+    const fun = make.fromReflection({ type: 'integer', minimum: 1 });
+    expect(fun(1.5).errors[0].error).toMatch('expected an integer');
+    expect(fun(123).success()).toBe(123);
+  });
+  it('converts string to integer', () => {
+    const fun1 = make.fromReflection({ type: 'integer' });
+    expect(fun1('123', { defaultConvert: true }).success()).toBe(123);
+    expect(fun1('123').isError()).toBe(true);
+
+    const fun2 = make.fromReflection({ type: 'number', convert: false });
+    expect(fun2('12345', { defaultConvert: true }).isError()).toBe(true);
+
+    const fun3 = make.fromReflection({ type: 'number', convert: true });
+    expect(fun3('12345', { defaultConvert: false }).success()).toBe(12345);
+  });
 });
 
 describe('array', () => {
@@ -408,7 +423,7 @@ describe('object', () => {
         properties: {},
         additionalProperties: { type: 'unknown' }
       });
-      expect(fun([]).errors[0].error).toEqual('expected an object, but got "[]" instead.');
+      expect(fun([]).errors[0].error).toEqual('expected an object, but got `[]` instead.');
     });
 
     it('disallows constructor', () => {

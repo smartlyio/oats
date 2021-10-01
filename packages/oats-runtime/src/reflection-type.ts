@@ -70,6 +70,7 @@ export interface NumberType {
   readonly enum?: number[];
   readonly minimum?: number;
   readonly maximum?: number;
+  readonly convert?: boolean;
 }
 
 export interface IntegerType {
@@ -77,6 +78,7 @@ export interface IntegerType {
   readonly enum?: number[];
   readonly minimum?: number;
   readonly maximum?: number;
+  readonly convert?: boolean;
 }
 
 export interface ArrayType {

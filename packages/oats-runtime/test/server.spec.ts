@@ -15,7 +15,7 @@ describe('safe', () => {
     const endpoint = server.safe<any, any, any, any, any, any>(
       makeVoid(),
       makeVoid(),
-      makeObject({ param: makeNumber() }) as Maker<any, any>,
+      makeObject({ param: makeNumber(false) }) as Maker<any, any>,
       makeVoid(),
       makeObject({
         status: makeEnum(200),
@@ -49,7 +49,7 @@ describe('safe', () => {
     const endpoint = server.safe<any, any, any, any, any, any>(
       makeVoid(),
       makeVoid(),
-      makeObject({ param: makeNumber() }) as Maker<any, any>,
+      makeObject({ param: makeNumber(false) }) as Maker<any, any>,
       makeArray(makeString()),
       makeObject({
         status: makeEnum(200),

@@ -44,7 +44,7 @@ describe('makeOneOf', () => {
     expect(result.errors.length).toEqual(1);
     const expected = `root: no option of oneOf matched
     - option 1
-        a: expected a string, but got "undefined" instead.
+        a: expected a string, but got \`undefined\` instead.
     - option 2
         foo: unexpected property`;
     expect(validationErrorPrinter(result.errors[0])).toEqual(expected);
