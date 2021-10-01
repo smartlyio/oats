@@ -915,7 +915,7 @@ export function run(options: Options) {
         true
       );
     }
-    if (schema.type === 'number') {
+    if (schema.type === 'number' || schema.type === 'integer') {
       const enumValues = schema.enum
         ? [
             ts.createPropertyAssignment(
@@ -925,7 +925,7 @@ export function run(options: Options) {
           ]
         : [];
       const properties = [
-        ts.createPropertyAssignment('type', ts.createStringLiteral('number')),
+        ts.createPropertyAssignment('type', ts.createStringLiteral(schema.type)),
         ...enumValues
       ];
       if (schema.minimum != null) {
@@ -938,32 +938,12 @@ export function run(options: Options) {
           ts.createPropertyAssignment('maximum', ts.createNumericLiteral(schema.maximum + ''))
         );
       }
-      return ts.createObjectLiteral(properties, true);
-    }
-    if (schema.type === 'integer') {
-      const enumValues = schema.enum
-        ? [
-            ts.createPropertyAssignment(
-              'enum',
-              ts.createArrayLiteral(schema.enum.map(i => ts.createNumericLiteral('' + i)))
-            )
-          ]
-        : [];
-      const properties = [
-        ts.createPropertyAssignment('type', ts.createStringLiteral('integer')),
-        ...enumValues
-      ];
-      if (schema.minimum != null) {
+      if (schema.convert != null) {
+        assert(typeof schema.convert === 'boolean', '"convert" must be a boolean');
         properties.push(
-          ts.createPropertyAssignment('minimum', ts.createNumericLiteral(schema.minimum + ''))
+          ts.createPropertyAssignment('convert', schema.convert ? ts.createTrue() : ts.createFalse())
         );
       }
-      if (schema.maximum != null) {
-        properties.push(
-          ts.createPropertyAssignment('maximum', ts.createNumericLiteral(schema.maximum + ''))
-        );
-      }
-
       return ts.createObjectLiteral(properties, true);
     }
     if (schema.type === 'boolean') {

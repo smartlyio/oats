@@ -7,7 +7,7 @@ import { discriminateUnion } from './union-discriminator';
 import { isEqual, uniq } from 'lodash';
 
 export class MakeError extends Error {
-  constructor(public readonly errors: ValidationError[]) {
+  constructor(readonly errors: ValidationError[]) {
     super(
       'tried to get success value from error: ' + errors.map(validationErrorPrinter).join('\n')
     );
@@ -63,32 +63,29 @@ export class Make<V> {
     this.errors = errors;
   }
 
-  public isError() {
+  isError() {
     return this.errors.length > 0;
   }
 
-  public isSuccess() {
+  isSuccess() {
     return !this.isError();
   }
 
-  public success(handler?: (e: this) => V): V {
-    if (!this.isSuccess()) {
-      if (handler) {
-        return handler(this);
-      }
+  success(handler?: (e: this) => V): V {
+    if (this.isSuccess()) {
+      return this.value as V;
     }
-    if (!this.isSuccess()) {
-      throw new MakeError(this.errors);
+    if (handler) {
+      return handler(this);
     }
-    assert(this.isSuccess());
-    return this.value as V;
+    throw new MakeError(this.errors);
   }
 
-  public group(groupMessage: string) {
+  group(groupMessage: string) {
     return new Make(null, [{ path: [], error: { groupMessage, errors: this.errors } }]);
   }
 
-  public errorPath(path: string) {
+  errorPath(path: string) {
     return new Make(
       null,
       this.errors.map(error => ({
@@ -98,7 +95,7 @@ export class Make<V> {
     );
   }
 
-  public map<R>(fn: (value: V) => R): Make<R> {
+  map<R>(fn: (value: V) => R): Make<R> {
     if (this.isError()) {
       return Make.error(this.errors);
     }
@@ -111,12 +108,15 @@ export class Make<V> {
 
 export interface MakeOptions {
   unknownField?: 'drop' | 'fail';
+  defaultConvert?: boolean;
 }
 
 export type Maker<Shape, V> = (value: Shape, opts?: MakeOptions) => Make<V>;
 
 function getErrorWithValueMsg<T>(msg: string, value: T): Make<T> {
-  return error(`${msg}, but got "${JSON.stringify(value)}" instead.`);
+  const stringified =
+    typeof value === 'object' || typeof value === 'string' ? JSON.stringify(value) : String(value);
+  return error(`${msg}, but got \`${stringified}\` instead.`);
 }
 
 function error<T>(error: string): Make<T> {
@@ -135,9 +135,7 @@ function getFormatter(format: string | undefined): Maker<any, undefined> {
     return () => Make.ok(undefined);
   }
   const formatter = formats[format];
-  if (!formatter) {
-    return () => Make.ok(undefined);
-  }
+  assert(formatter, `format "${format}" is not registered.`);
   return formatter;
 }
 
@@ -162,10 +160,10 @@ function getPatterner(pattern: string | undefined): Maker<any, void> {
 }
 
 export function makeString(
-  format: string | undefined = undefined,
-  pattern: string | undefined = undefined,
-  minLength: number | undefined = undefined,
-  maxLength: number | undefined = undefined
+  format?: string,
+  pattern?: string,
+  minLength?: number,
+  maxLength?: number
 ): Maker<any, string> {
   const formatter = getFormatter(format);
   const patterner = getPatterner(pattern);
@@ -198,10 +196,26 @@ export function makeString(
   };
 }
 
-export function makeNumber(min?: number, max?: number): Maker<number, number> {
-  return (value: any) => {
-    if (typeof value !== 'number') {
-      return getErrorWithValueMsg('expected a number', value);
+export function makeNumber(
+  isInteger: boolean,
+  min?: number,
+  max?: number,
+  convert?: boolean
+): Maker<unknown, number> {
+  return (x, { defaultConvert = false } = {}) => {
+    let value: number;
+    if (typeof x === 'number') {
+      value = x;
+    } else if (typeof x === 'string' && (convert ?? defaultConvert)) {
+      value = parseFloat(x);
+      if (!Number.isFinite(value)) {
+        return getErrorWithValueMsg('expected a number', x as any);
+      }
+    } else {
+      return getErrorWithValueMsg('expected a number', x as number);
+    }
+    if (isInteger && !Number.isInteger(value)) {
+      return getErrorWithValueMsg('expected an integer', x);
     }
     if (min != null && value < min) {
       return getErrorWithValueMsg('expected a number greater than ' + min, value);
@@ -392,10 +406,7 @@ interface FormDataArguments {
 export type Binary = File | Buffer | FormBinary;
 
 export class FormBinary {
-  constructor(
-    public readonly binary: Binary,
-    public readonly options?: FormDataArguments['options']
-  ) {}
+  constructor(readonly binary: Binary, readonly options?: FormDataArguments['options']) {}
 }
 
 enum FileBrand {}
@@ -404,11 +415,7 @@ export class File {
   // @ts-ignore
   private brand: FileBrand;
 
-  constructor(
-    public readonly path: string,
-    public readonly size: number,
-    public readonly name?: string
-  ) {}
+  constructor(readonly path: string, readonly size: number, readonly name?: string) {}
 }
 
 function checkBinary(value: any) {
@@ -559,10 +566,12 @@ export function fromReflection(type: Type): Maker<any, any> {
   if ((type as any).enum) {
     return makeEnum(...(type as any).enum);
   }
+  let isInteger = false;
   switch (type.type) {
     case 'integer':
+      isInteger = true;
     case 'number':
-      return makeNumber(type.minimum, type.maximum);
+      return makeNumber(isInteger, type.minimum, type.maximum, type.convert);
     case 'string':
       return makeString(type.format, type.pattern, type.minLength, type.maxLength);
     case 'boolean':
@@ -622,7 +631,9 @@ export function createMakerWith<Shape, Type>(
  * Throw error if there are duplicate koys
  * @deprecated
  */
-export function mergeMappings(...mappings: readonly { [key: string]: Maker<any, any> }[]): {
+export function mergeMappings(
+  ...mappings: readonly { [key: string]: Maker<any, any> }[]
+): {
   [key: string]: Maker<any, any>;
 } {
   return mappings.reduce((memo, current) => {
