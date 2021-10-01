@@ -631,9 +631,7 @@ export function createMakerWith<Shape, Type>(
  * Throw error if there are duplicate koys
  * @deprecated
  */
-export function mergeMappings(
-  ...mappings: readonly { [key: string]: Maker<any, any> }[]
-): {
+export function mergeMappings(...mappings: readonly { [key: string]: Maker<any, any> }[]): {
   [key: string]: Maker<any, any>;
 } {
   return mappings.reduce((memo, current) => {
