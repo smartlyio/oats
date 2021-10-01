@@ -3,11 +3,7 @@ module.exports = {
 
   testRegex: '.*\\.spec.(jsx?|tsx?)$',
 
-  collectCoverageFrom: [
-    'packages/*/src/**/*.{ts,tsx,js,jsx}',
-    '!packages/*/src/**/*.story.*',
-    '!packages/workspaces-media-selector/src/**/*.{ts,tsx,js,jsx}',
-  ],
+  collectCoverageFrom: ['packages/*/src/**/*.{ts,tsx,js,jsx}', '!packages/*/src/**/*.story.*'],
 
   coverageThreshold: {
     global: {
