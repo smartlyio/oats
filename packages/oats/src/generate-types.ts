@@ -938,15 +938,6 @@ export function run(options: Options) {
           ts.createPropertyAssignment('maximum', ts.createNumericLiteral(schema.maximum + ''))
         );
       }
-      if (schema.convert != null) {
-        assert(typeof schema.convert === 'boolean', '"convert" must be a boolean');
-        properties.push(
-          ts.createPropertyAssignment(
-            'convert',
-            schema.convert ? ts.createTrue() : ts.createFalse()
-          )
-        );
-      }
       return ts.createObjectLiteral(properties, true);
     }
     if (schema.type === 'boolean') {

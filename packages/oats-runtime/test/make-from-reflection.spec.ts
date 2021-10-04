@@ -333,16 +333,10 @@ describe('number', () => {
     expect(fun(1.5).errors[0].error).toMatch('expected an integer');
     expect(fun(123).success()).toBe(123);
   });
-  it('converts string to integer', () => {
-    const fun1 = make.fromReflection({ type: 'integer' });
-    expect(fun1('123', { defaultConvert: true }).success()).toBe(123);
+  it('converts string to number', () => {
+    const fun1 = make.fromReflection({ type: 'number' });
+    expect(fun1('123', { parseNumberStrings: true }).success()).toBe(123);
     expect(fun1('123').isError()).toBe(true);
-
-    const fun2 = make.fromReflection({ type: 'number', convert: false });
-    expect(fun2('12345', { defaultConvert: true }).isError()).toBe(true);
-
-    const fun3 = make.fromReflection({ type: 'number', convert: true });
-    expect(fun3('12345', { defaultConvert: false }).success()).toBe(12345);
   });
 });
 
