@@ -108,7 +108,8 @@ export class Make<V> {
 
 export interface MakeOptions {
   unknownField?: 'drop' | 'fail';
-  defaultConvert?: boolean;
+  parseNumberStrings?: boolean;
+  parseBooleanStrings?: boolean;
 }
 
 export type Maker<Shape, V> = (value: Shape, opts?: MakeOptions) => Make<V>;
@@ -196,17 +197,22 @@ export function makeString(
   };
 }
 
-export function makeNumber(
+export function makeNumber(min?: number, max?: number) {
+  return makeFloatOrInteger(false, min, max);
+}
+export function makeInteger(min?: number, max?: number) {
+  return makeFloatOrInteger(true, min, max);
+}
+function makeFloatOrInteger(
   isInteger: boolean,
   min?: number,
-  max?: number,
-  convert?: boolean
+  max?: number
 ): Maker<unknown, number> {
-  return (x, { defaultConvert = false } = {}) => {
+  return (x, { parseNumberStrings = false } = {}) => {
     let value: number;
     if (typeof x === 'number') {
       value = x;
-    } else if (typeof x === 'string' && (convert ?? defaultConvert)) {
+    } else if (typeof x === 'string' && parseNumberStrings) {
       value = parseFloat(x);
       if (!Number.isFinite(value)) {
         return getErrorWithValueMsg('expected a number', x as any);
@@ -260,15 +266,20 @@ export function makeOptional(maker: any) {
   return { optional: maker };
 }
 
-function checkBoolean(value: any) {
-  if (typeof value !== 'boolean') {
-    return getErrorWithValueMsg('expected a boolean', value);
-  }
-  return Make.ok(value);
-}
-
-export function makeBoolean() {
-  return checkBoolean;
+export function makeBoolean(): Maker<unknown, boolean> {
+  return (x: unknown, { parseBooleanStrings = false } = {}) => {
+    let value: boolean;
+    if (typeof x === 'boolean') {
+      value = x;
+    } else if (parseBooleanStrings && x === 'true') {
+      value = true;
+    } else if (parseBooleanStrings && x === 'false') {
+      value = false;
+    } else {
+      return getErrorWithValueMsg('expected a boolean', x as boolean);
+    }
+    return Make.ok(value);
+  };
 }
 
 export function makeArray(maker: any, minSize?: number, maxSize?: number) {
@@ -566,12 +577,11 @@ export function fromReflection(type: Type): Maker<any, any> {
   if ((type as any).enum) {
     return makeEnum(...(type as any).enum);
   }
-  let isInteger = false;
   switch (type.type) {
     case 'integer':
-      isInteger = true;
+      return makeInteger(type.minimum, type.maximum);
     case 'number':
-      return makeNumber(isInteger, type.minimum, type.maximum, type.convert);
+      return makeNumber(type.minimum, type.maximum);
     case 'string':
       return makeString(type.format, type.pattern, type.minLength, type.maxLength);
     case 'boolean':
