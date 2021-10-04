@@ -390,11 +390,11 @@ describe('number', () => {
   });
   it('converts a string to a number', () => {
     const fun1 = make.fromReflection({ type: 'number' });
-    expect(fun1('123.5', { parseNumberStrings: true }).success()).toBe(123.5);
+    expect(fun1('123.5', { parseNumericStrings: true }).success()).toBe(123.5);
     expect(fun1('123.5').isError()).toBe(true);
 
     const fun2 = make.fromReflection({ type: 'integer' });
-    expect(fun2('123', { parseNumberStrings: true }).success()).toBe(123);
+    expect(fun2('123', { parseNumericStrings: true }).success()).toBe(123);
     expect(fun2('123').isError()).toBe(true);
   });
 });
