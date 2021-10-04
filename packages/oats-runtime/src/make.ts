@@ -136,7 +136,13 @@ function getFormatter(format: string | undefined): Maker<any, undefined> {
     return () => Make.ok(undefined);
   }
   const formatter = formats[format];
-  assert(formatter, `format "${format}" is not registered.`);
+  assert(
+    formatter,
+    `format "${format}" is not registered. ` +
+      `Register format with \`runtime.make.registerFormat("${format}", ` +
+      `(value) => {/* implementation of the validation here */})\` ` +
+      `or remove it from schema.`
+  );
   return formatter;
 }
 
