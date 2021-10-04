@@ -108,8 +108,19 @@ export class Make<V> {
 
 export interface MakeOptions {
   unknownField?: 'drop' | 'fail';
-  parseNumberStrings?: boolean;
+  /**
+   * If enabled, `makeNumber()` and `makeInteger()` will accept strings and try to parse them.
+   */
+  parseNumericStrings?: boolean;
+  /**
+   * If enabled, `makeBoolean()` will accept strings and try to parse them.
+   */
   parseBooleanStrings?: boolean;
+  /**
+   * If enabled, `makeArray()` will convert any non-array value to an array with a single element.
+   * Useful for supporting arrays in query parameters.
+   */
+  allowConvertForArrayType?: boolean;
 }
 
 export type Maker<Shape, V> = (value: Shape, opts?: MakeOptions) => Make<V>;
@@ -210,11 +221,11 @@ function makeFloatOrInteger(
   min?: number,
   max?: number
 ): Maker<unknown, number> {
-  return (x, { parseNumberStrings = false } = {}) => {
+  return (x, { parseNumericStrings = false } = {}) => {
     let value: number;
     if (typeof x === 'number') {
       value = x;
-    } else if (typeof x === 'string' && parseNumberStrings) {
+    } else if (typeof x === 'string' && parseNumericStrings) {
       value = parseFloat(x);
       if (!Number.isFinite(value)) {
         return getErrorWithValueMsg('expected a number', x as any);
@@ -284,10 +295,19 @@ export function makeBoolean(): Maker<unknown, boolean> {
   };
 }
 
-export function makeArray(maker: any, minSize?: number, maxSize?: number) {
-  return (value: any, opts?: MakeOptions) => {
-    if (!Array.isArray(value)) {
-      return getErrorWithValueMsg('expected an array', value);
+export function makeArray(
+  maker: any,
+  minSize?: number,
+  maxSize?: number
+): Maker<unknown, unknown[]> {
+  return (x, opts) => {
+    let value: unknown[];
+    if (Array.isArray(x)) {
+      value = x;
+    } else if (opts?.allowConvertForArrayType) {
+      value = [x];
+    } else {
+      return getErrorWithValueMsg('expected an array', x as unknown[]);
     }
     if (minSize != null && value.length < minSize) {
       return getErrorWithValueMsg(`expected an array of minimum length ${minSize}`, value);
@@ -300,7 +320,7 @@ export function makeArray(maker: any, minSize?: number, maxSize?: number) {
       const item = value[index];
       const mapped: Make<any> = maker(item, opts);
       if (mapped.isError()) {
-        return mapped.errorPath('[' + index + ']');
+        return mapped.errorPath('[' + index + ']') as Make<any>;
       }
       result.push(mapped.success());
     }

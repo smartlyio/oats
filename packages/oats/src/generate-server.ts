@@ -184,7 +184,10 @@ function generateClientTree(
             undefined,
             tree.param.name,
             undefined,
-            ts.createKeywordTypeNode(ts.SyntaxKind.StringKeyword)
+            ts.createUnionTypeNode([
+              ts.createKeywordTypeNode(ts.SyntaxKind.StringKeyword),
+              ts.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword)
+            ])
           )
         ],
         generateClientSpecType(opts, tree.param.tree)

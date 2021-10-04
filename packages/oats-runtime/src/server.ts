@@ -166,12 +166,13 @@ export function safe<
       servers: ctx.servers,
       op: ctx.op,
       headers: cleanHeaders(headers, ctx.headers),
-      params: params(voidify(ctx.params), { parseNumberStrings: true }).success(
+      params: params(voidify(ctx.params), { parseNumericStrings: true }).success(
         throwRequestValidationError.bind(null, 'params')
       ),
       query: query(ctx.query || {}, {
-        parseNumberStrings: true,
-        parseBooleanStrings: true
+        parseNumericStrings: true,
+        parseBooleanStrings: true,
+        allowConvertForArrayType: true
       }).success(throwRequestValidationError.bind(null, 'query')),
       body: body(voidify(ctx.body)).success(throwRequestValidationError.bind(null, 'body')),
       requestContext: ctx.requestContext as any
