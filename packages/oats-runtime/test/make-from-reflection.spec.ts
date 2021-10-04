@@ -317,6 +317,24 @@ describe('unknown', () => {
   });
 });
 
+describe('boolean', () => {
+  it('validates value is a boolean', () => {
+    const fun = make.fromReflection({ type: 'boolean' });
+    for (const nonBoolean of [undefined, null, 0, 1, NaN, {}]) {
+      expect(fun(nonBoolean).errors[0].error).toMatch('expected a boolean');
+    }
+    expect(fun(true).success()).toBe(true);
+    expect(fun(false).success()).toBe(false);
+  });
+  it('converts a string to a boolean', () => {
+    const fun = make.fromReflection({ type: 'boolean' });
+    for (const value of [false, true]) {
+      expect(fun(String(value)).isError()).toBe(true);
+      expect(fun(String(value), { parseBooleanStrings: true }).success()).toBe(value);
+    }
+  });
+});
+
 describe('number', () => {
   it('enforces minimum if passed', () => {
     const fun = make.fromReflection({ type: 'number', minimum: 3 });
@@ -333,10 +351,14 @@ describe('number', () => {
     expect(fun(1.5).errors[0].error).toMatch('expected an integer');
     expect(fun(123).success()).toBe(123);
   });
-  it('converts string to number', () => {
+  it('converts a string to a number', () => {
     const fun1 = make.fromReflection({ type: 'number' });
-    expect(fun1('123', { parseNumberStrings: true }).success()).toBe(123);
-    expect(fun1('123').isError()).toBe(true);
+    expect(fun1('123.5', { parseNumberStrings: true }).success()).toBe(123.5);
+    expect(fun1('123.5').isError()).toBe(true);
+
+    const fun2 = make.fromReflection({ type: 'integer' });
+    expect(fun2('123', { parseNumberStrings: true }).success()).toBe(123);
+    expect(fun2('123').isError()).toBe(true);
   });
 });
 
