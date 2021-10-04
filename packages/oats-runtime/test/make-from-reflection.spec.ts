@@ -253,12 +253,13 @@ describe('string', () => {
     );
   });
 
-  it('rejects if format is not defined', () => {
+  it('accepts if format is not defined', () => {
     const type: Type = {
       type: 'string',
       format: 'some-format'
     };
-    expect(() => make.fromReflection(type)).toThrow('format "some-format" is not registered.');
+    const fun = make.fromReflection(type);
+    fun('b').success();
   });
 
   it('rejects if format rejects', () => {

@@ -5,8 +5,6 @@ import * as runtime from '@smartlyio/oats-runtime';
 import * as app from './server';
 import * as assert from 'assert';
 
-runtime.make.registerFormat('name-format', value => runtime.make.Make.ok(value));
-
 // 'api.client' is the abstract implementation of the client which is then
 // mapped to axios requests using 'axiosAdapter'
 const apiClient = api.client(axiosAdapter.bind);
