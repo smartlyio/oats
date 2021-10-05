@@ -2,6 +2,7 @@ import * as runtime from '@smartlyio/oats-runtime';
 import * as FormData from 'form-data';
 import * as assert from 'assert';
 import globalAxios, { AxiosInstance, AxiosResponse } from 'axios';
+import { urlSearchParamsSerializer } from './src/utils';
 
 function toRequestData(data: runtime.server.RequestBody<any> | undefined) {
   if (data == null) {
@@ -65,31 +66,6 @@ export function withAxios(axiosInstance: AxiosInstance): runtime.client.ClientAd
       headers: response.headers ?? {}
     };
   };
-}
-
-/**
- * Use `URLSearchParams` instead of passing raw data to axios.
- * Otherwise axios will suffix array query parameters with "[]".
- * @see https://github.com/axios/axios/issues/2840
- */
-function urlSearchParamsSerializer(params: unknown) {
-  if (typeof params !== 'object') {
-    return String(params);
-  }
-  if (params === null) {
-    return '';
-  }
-  if (params instanceof URLSearchParams) {
-    return params.toString();
-  }
-  const queryParams = new URLSearchParams();
-  Object.keys(params).forEach(key => {
-    const value = (params as Record<string, unknown>)[key];
-    for (const item of ([] as unknown[]).concat(value)) {
-      queryParams.append(key, String(item));
-    }
-  });
-  return queryParams.toString();
 }
 
 function getContentType(response: AxiosResponse<any>) {
