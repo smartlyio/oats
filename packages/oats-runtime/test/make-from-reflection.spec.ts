@@ -396,6 +396,11 @@ describe('number', () => {
     const fun2 = make.fromReflection({ type: 'integer' });
     expect(fun2('123', { parseNumericStrings: true }).success()).toBe(123);
     expect(fun2('123').isError()).toBe(true);
+
+    for (const invalid of ['1x', 'NaN', 'Infinity', '', ' \t\r\n']) {
+      expect(fun1(invalid).isError()).toBe(true);
+      expect(fun2(invalid).isError()).toBe(true);
+    }
   });
 });
 

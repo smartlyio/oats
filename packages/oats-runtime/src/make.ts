@@ -227,7 +227,7 @@ function makeFloatOrInteger(
     if (typeof x === 'number') {
       value = x;
     } else if (typeof x === 'string' && parseNumericStrings) {
-      value = parseFloat(x);
+      value = x.trim() === '' ? NaN : Number(x);
       if (!Number.isFinite(value)) {
         return getErrorWithValueMsg('expected a number', x as any);
       }
