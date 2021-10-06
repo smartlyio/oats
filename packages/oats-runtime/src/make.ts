@@ -109,16 +109,17 @@ export class Make<V> {
 export interface MakeOptions {
   unknownField?: 'drop' | 'fail';
   /**
-   * If enabled, `makeNumber()` and `makeInteger()` will accept strings and try to parse them.
+   * If enabled, "number" ans "integer" schemas will accept strings and try to parse them.
    */
   parseNumericStrings?: boolean;
   /**
-   * If enabled, `makeBoolean()` will accept strings and try to parse them.
+   * If enabled, "boolean" schemas will accept strings and try to parse them.
    */
   parseBooleanStrings?: boolean;
   /**
-   * If enabled, `makeArray()` will convert any non-array value to an array with a single element.
-   * Useful for supporting arrays in query parameters.
+   * If enabled, "array" schema will convert any non-array value to an array with a single element.
+   * Useful for supporting arrays in query parameters
+   * (if query parameter is not repeated, it will not be an array on server side).
    */
   allowConvertForArrayType?: boolean;
 }

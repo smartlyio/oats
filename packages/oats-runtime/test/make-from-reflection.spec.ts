@@ -416,10 +416,28 @@ describe('array', () => {
     );
     expect(fun(['a', 'b', 'c']).isSuccess()).toBeTruthy();
   });
-  it('supports allowConvertForArrayType', () => {
+  it('supports `allowConvertForArrayType`', () => {
     const fun = make.fromReflection({ type: 'array', items: { type: 'integer' } });
     expect(fun(123).errors[0].error).toMatch('expected an array, but got `123` instead.');
     expect(fun(123, { allowConvertForArrayType: true }).success()).toEqual([123]);
+  });
+  it('works for "string | array" type with `allowConvertForArrayType`', () => {
+    const fun1 = make.fromReflection({
+      type: 'union',
+      options: [
+        {
+          type: 'string'
+        },
+        {
+          type: 'array',
+          items: { type: 'string' }
+        }
+      ]
+    });
+    expect(fun1(['abc'], { allowConvertForArrayType: true }).success()).toEqual(['abc']);
+    expect(fun1('abc', { allowConvertForArrayType: true }).errors[0].error).toMatch(
+      'multiple options match'
+    );
   });
 });
 
