@@ -8,9 +8,9 @@ This adapter provides two ways to bind the generated client definitions
 import * as adapter from '@smartlyio/oats-axios-adapter';
 
 // bind the default axios instance
-adapter.bind(definitions);
+adapter.create()(definitions);
 
 // provide your own axios instance
-adapter.withAxios(someAxiosInstance)(definitions);
+adapter.create({axiosInstance: someAxiosInstance})(definitions);
 ```
 

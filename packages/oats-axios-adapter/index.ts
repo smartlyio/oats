@@ -33,12 +33,50 @@ function axiosToJson(data: any) {
   return data;
 }
 
-export const bind: runtime.client.ClientAdapter = withAxios(globalAxios);
+/**
+ * @deprecated By default axios suffixes query array parameter names with "[]".
+ * This is likely to break oats request validation.
+ * See https://github.com/axios/axios/issues/2840.
+ * Use `create()` instead.
+ */
+export const bind: runtime.client.ClientAdapter = createAxiosAdapter({
+  axiosInstance: globalAxios,
+  preserveQueryArrayParamNames: false
+});
 
+/**
+ * @deprecated By default axios suffixes query array parameter names with "[]".
+ * This is likely to break oats request validation.
+ * See https://github.com/axios/axios/issues/2840.
+ * Use `create()` instead.
+ */
 export function withAxios(axiosInstance: AxiosInstance): runtime.client.ClientAdapter {
-  return async (
-    arg: runtime.server.EndpointArg<any, any, any, any>
-  ): Promise<runtime.server.Response<any, any, any, Record<string, any>>> => {
+  return createAxiosAdapter({ axiosInstance, preserveQueryArrayParamNames: false });
+}
+
+export interface AxiosAdapterOptions {
+  axiosInstance: AxiosInstance;
+  /**
+   * Whether to preserve query array param names and do not suffix them with "[]".
+   * By default axios will append "[]" suffix which is likely to break oats request validation.
+   * See https://github.com/axios/axios/issues/2840.
+   * @default true
+   */
+  preserveQueryArrayParamNames: boolean;
+}
+
+/**
+ * @returns oats runtime client adapter.
+ */
+export function create({ axiosInstance = globalAxios }: { axiosInstance?: AxiosInstance } = {}) {
+  return createAxiosAdapter({ axiosInstance, preserveQueryArrayParamNames: true });
+}
+
+function createAxiosAdapter({
+  axiosInstance,
+  preserveQueryArrayParamNames
+}: AxiosAdapterOptions): runtime.client.ClientAdapter {
+  return async arg => {
     if (arg.servers.length !== 1) {
       return assert.fail('cannot decide which server to use from ' + arg.servers.join(', '));
     }
@@ -52,7 +90,7 @@ export function withAxios(axiosInstance: AxiosInstance): runtime.client.ClientAd
       headers,
       url,
       params,
-      paramsSerializer: urlSearchParamsSerializer,
+      paramsSerializer: preserveQueryArrayParamNames ? undefined : urlSearchParamsSerializer,
       data,
       validateStatus: () => true
     });

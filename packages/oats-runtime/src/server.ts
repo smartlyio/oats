@@ -151,7 +151,7 @@ export function safe<
   body: Maker<any, Body>,
   response: Maker<any, R>,
   endpoint: Endpoint<H, P, Q, Body, R, RC>,
-  opts?: HandlerOptions
+  { makeOptions = {} }: HandlerOptions = {}
 ): Endpoint<
   Headers,
   Params,
@@ -167,10 +167,10 @@ export function safe<
       servers: ctx.servers,
       op: ctx.op,
       headers: cleanHeaders(headers, ctx.headers),
-      params: params(voidify(ctx.params), opts?.param).success(
+      params: params(voidify(ctx.params), makeOptions.params).success(
         throwRequestValidationError.bind(null, 'params')
       ),
-      query: query(ctx.query || {}, opts?.query).success(
+      query: query(ctx.query || {}, makeOptions.query).success(
         throwRequestValidationError.bind(null, 'query')
       ),
       body: body(voidify(ctx.body)).success(throwRequestValidationError.bind(null, 'body')),
@@ -258,10 +258,15 @@ export type ServerAdapter = (
   servers: string[]
 ) => void;
 
-export type HandlerOptions = {
-  query: MakeOptions;
-  param: MakeOptions;
-};
+export interface HandlerOptions {
+  /**
+   * Options for request schema validation.
+   */
+  makeOptions?: {
+    query?: MakeOptions;
+    params?: MakeOptions;
+  };
+}
 
 export function createHandlerFactory<Spec>(
   handlers: Handler[],
