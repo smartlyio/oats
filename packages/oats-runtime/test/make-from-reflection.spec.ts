@@ -4,6 +4,40 @@ import { TestClass } from './test-class';
 import { Type } from '../src/reflection-type';
 
 describe('union differentation', () => {
+  it('handles cases where union children are missing the tag', () => {
+    const atype: Type = {
+      type: 'union',
+      options: [
+        {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            tag: {
+              value: {
+                type: 'string',
+                enum: ['b']
+              },
+              required: true
+            }
+          }
+        },
+        {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            val: {
+              value: { type: 'string' },
+              required: true
+            }
+          }
+        }
+      ]
+    };
+    const fun = make.fromReflection({ type: 'union', options: [atype] });
+    expect(fun({ tag: 'b' }).success()).toEqual({ tag: 'b' });
+    expect(fun({ val: 'something' }).success()).toEqual({ val: 'something' });
+  });
+
   it('uses discriminator to build values allowing unions as children', () => {
     const atype: Type = {
       type: 'union',
