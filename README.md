@@ -166,15 +166,11 @@ const spec: api.EndpointsWithContext<RequestContext> = {
 
 let index = 0;
 
-// 'koaAdapter.bind'  binds the endpoint implemantion in'spec' to
+// 'koaAdapter.bind' binds the endpoint implemantion in 'spec' to
 // koa-router routes using a koa adapter
-const routes = koaAdapter.bind<api.EndpointsWithContext<RequestContext>, RequestContext>(
-  runtime.server.createHandlerFactory<api.EndpointsWithContext<RequestContext>>(
-    api.endpointHandlers
-  ),
-  spec,
-  () => ({ messageIndex: index++ })
-);
+const routes = koaAdapter.bind(api.createRouter<RequestContext>(), spec, () => ({
+  messageIndex: index++
+}));
 
 // finally we can create a Koa app from the routes
 export function createApp() {

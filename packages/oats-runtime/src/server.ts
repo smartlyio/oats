@@ -151,7 +151,7 @@ export function safe<
   body: Maker<any, Body>,
   response: Maker<any, R>,
   endpoint: Endpoint<H, P, Q, Body, R, RC>,
-  { makeOptions = {} }: HandlerOptions = {}
+  { validationOptions = {} }: HandlerOptions = {}
 ): Endpoint<
   Headers,
   Params,
@@ -167,10 +167,10 @@ export function safe<
       servers: ctx.servers,
       op: ctx.op,
       headers: cleanHeaders(headers, ctx.headers),
-      params: params(voidify(ctx.params), makeOptions.params).success(
+      params: params(voidify(ctx.params), validationOptions.params).success(
         throwRequestValidationError.bind(null, 'params')
       ),
-      query: query(ctx.query || {}, makeOptions.query).success(
+      query: query(ctx.query || {}, validationOptions.query).success(
         throwRequestValidationError.bind(null, 'query')
       ),
       body: body(voidify(ctx.body)).success(throwRequestValidationError.bind(null, 'body')),
@@ -262,7 +262,7 @@ export interface HandlerOptions {
   /**
    * Options for request schema validation.
    */
-  makeOptions?: {
+  validationOptions?: {
     query?: MakeOptions;
     params?: MakeOptions;
   };

@@ -11,19 +11,21 @@ All of the mocked routes are persisted so any number of requests are served.
 ```ts
 // yarn ts-node examples/example.ts
 import * as nockAdapter from '../src/nock';
-import * as api from '../tmp/client.types.generated'
+import * as api from '../tmp/client.types.generated';
 import * as types from '../tmp/openapi.types.generated';
 import * as runtime from '@smartlyio/oats-runtime';
 
-nockAdapter.bind(api.router, {
+nockAdapter.bind(api.createRouter(), {
   '/item': {
     post: async ctx => {
       return runtime.json(
         201,
-        types.typeItem.maker({
-          id: ctx.body.value.id + ' response',
-          name: ctx.body.value.name
-        }).success()
+        types.typeItem
+          .maker({
+            id: ctx.body.value.id + ' response',
+            name: ctx.body.value.name
+          })
+          .success()
       );
     }
   }
@@ -38,17 +40,14 @@ If the overlaying mock throws `Next` the previous mock for the route is called i
 ```ts
 // yarn ts-node examples/server.ts
 import * as nockAdapter from '../src/nock';
-import * as api from '../tmp/client.types.generated'
+import * as api from '../tmp/client.types.generated';
 import * as types from '../tmp/openapi.types.generated';
 import * as runtime from '@smartlyio/oats-runtime';
 
-const server = nockAdapter.bind(api.router, {
+const server = nockAdapter.bind(api.createRouter(), {
   '/item': {
     post: async ctx => {
-      return runtime.json(
-        201,
-        types.typeItem.maker(ctx.body.value).success()
-      );
+      return runtime.json(201, types.typeItem.maker(ctx.body.value).success());
     }
   }
 });

@@ -18,7 +18,7 @@ describe('server', () => {
   beforeEach(() => nock.cleanAll());
 
   it('allows extending routes', async () => {
-    const server = nockAdapter.bind(api.router);
+    const server = nockAdapter.bind(api.createRouter());
     server.mock({
       '/item': {
         post: async ctx => {
@@ -43,7 +43,7 @@ describe('server', () => {
 
   describe('overlaying routes', () => {
     it('allows overlaying routes', async () => {
-      const server = nockAdapter.bind(api.router);
+      const server = nockAdapter.bind(api.createRouter());
       server.mock({
         '/item': {
           post: async ctx => {
@@ -80,7 +80,7 @@ describe('server', () => {
     });
 
     it('allows skipping to next handler  by throwing Next', async () => {
-      const server = nockAdapter.bind(api.router);
+      const server = nockAdapter.bind(api.createRouter());
       server.mock({
         '/item': {
           post: async ctx => {
@@ -112,7 +112,7 @@ describe('server', () => {
   });
 
   it('binds routes', async () => {
-    nockAdapter.bind(api.router, {
+    nockAdapter.bind(api.createRouter(), {
       '/item': {
         post: async ctx => {
           return runtime.json(
@@ -135,7 +135,7 @@ describe('server', () => {
   });
 
   it('binds routes with wonky path params', async () => {
-    nockAdapter.bind(api.router, {
+    nockAdapter.bind(api.createRouter(), {
       '/item/something_{id}': {
         get: async ctx => {
           return runtime.json(
@@ -152,7 +152,7 @@ describe('server', () => {
   });
 
   it('persists routes', async () => {
-    nockAdapter.bind(api.router, {
+    nockAdapter.bind(api.createRouter(), {
       '/item': {
         post: async ctx => {
           return runtime.json(
@@ -181,7 +181,7 @@ describe('server', () => {
   });
 
   it('distinguishes between mock servers', async () => {
-    nockAdapter.bind(api.router, {
+    nockAdapter.bind(api.createRouter(), {
       '/item': {
         post: async ctx => {
           return runtime.json(
@@ -194,7 +194,7 @@ describe('server', () => {
         }
       }
     });
-    nockAdapter.bind(api2.router, {
+    nockAdapter.bind(api2.createRouter(), {
       '/item': {
         post: async ctx => {
           return runtime.json(
@@ -226,7 +226,7 @@ describe('server', () => {
   describe('content types handling', () => {
     describe('form-data', () => {
       it('handles multiple string', async () => {
-        nockAdapter.bind(api.router, {
+        nockAdapter.bind(api.createRouter(), {
           '/item/formdata': {
             post: async ctx => {
               return runtime.json(
@@ -249,7 +249,7 @@ describe('server', () => {
       });
 
       it('handles string values', async () => {
-        nockAdapter.bind(api.router, {
+        nockAdapter.bind(api.createRouter(), {
           '/item/formdata': {
             post: async ctx => {
               return runtime.json(
@@ -269,7 +269,7 @@ describe('server', () => {
       });
 
       it('handles files', async () => {
-        nockAdapter.bind(api.router, {
+        nockAdapter.bind(api.createRouter(), {
           '/item/formdata': {
             post: async ctx => {
               const binary = ctx.body.value.blob;
