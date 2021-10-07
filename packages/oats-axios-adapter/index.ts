@@ -68,8 +68,11 @@ export interface AxiosAdapterOptions {
 /**
  * @returns oats runtime client adapter.
  */
-export function create({ axiosInstance = globalAxios }: { axiosInstance?: AxiosInstance } = {}) {
-  return createAxiosAdapter({ axiosInstance, preserveQueryArrayParamNames: true });
+export function create({
+  axiosInstance = globalAxios,
+  preserveQueryArrayParamNames = true
+}: Partial<AxiosAdapterOptions> = {}): runtime.client.ClientAdapter {
+  return createAxiosAdapter({ axiosInstance, preserveQueryArrayParamNames });
 }
 
 function createAxiosAdapter({
@@ -90,7 +93,7 @@ function createAxiosAdapter({
       headers,
       url,
       params,
-      paramsSerializer: preserveQueryArrayParamNames ? undefined : urlSearchParamsSerializer,
+      paramsSerializer: preserveQueryArrayParamNames ? urlSearchParamsSerializer : undefined,
       data,
       validateStatus: () => true
     });
