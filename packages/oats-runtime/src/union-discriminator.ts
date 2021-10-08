@@ -4,7 +4,7 @@ export function intersectMap(a: Map<string, any>, b: Map<string, any>): Map<stri
   const result = new Map();
   for (const [key, values] of a) {
     const gots = b.get(key);
-    if (arrayEq(gots, values)) {
+    if (gots && values && arrayEq(gots, values)) {
       result.set(key, values);
     }
   }
