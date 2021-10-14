@@ -289,7 +289,7 @@ function generateMaker(
   if (object.servers) {
     servers = object.servers.map(server => server.url);
   }
-  const { nominalTypeSuffix } = oautil.resolveTypePrefixAndSuffix(opts.enableTypeManipulation);
+  const { nominalTypeSuffix } = oautil.resolveTypeAffixes(opts.enableTypeManipulation);
   const headers = makeMaker(oautil.endpointTypeName(object, path, method, 'headers') + nominalTypeSuffix);
   const params = makeMaker(oautil.endpointTypeName(object, path, method, 'parameters') + nominalTypeSuffix);
   const query = makeMaker(oautil.endpointTypeName(object, path, method, 'query') + nominalTypeSuffix);

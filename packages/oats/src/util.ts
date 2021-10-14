@@ -110,7 +110,7 @@ function resolve(key: string, schema: oas.OpenAPIObject): oas.SchemaObject | und
   return hit;
 }
 
-export function resolveTypePrefixAndSuffix(enableTypeManipulation: boolean | undefined) {
+export function resolveTypeAffixes(enableTypeManipulation: boolean | undefined) {
   return {
     structuralTypePrefix: enableTypeManipulation ? '' : 'ShapeOf',
     nominalTypeSuffix: enableTypeManipulation ? 'WithBrand' : ''
