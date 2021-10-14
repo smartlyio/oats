@@ -110,10 +110,8 @@ function resolve(key: string, schema: oas.OpenAPIObject): oas.SchemaObject | und
   return hit;
 }
 
-export function resolveTypePrefixAndSuffix(opts: types.Options) {
-  const enableTypeManipulation: boolean = opts.enableTypeManipulation ?? false;
+export function resolveTypePrefixAndSuffix(enableTypeManipulation: boolean | undefined) {
   return {
-    enableTypeManipulation,
     structuralTypePrefix: enableTypeManipulation ? '' : 'ShapeOf',
     nominalTypeSuffix: enableTypeManipulation ? 'WithBrand' : ''
   }

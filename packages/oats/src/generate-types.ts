@@ -573,7 +573,7 @@ export function run(options: Options) {
   }
 
   function generateReflectionProperty(key: string, opt: Options) {
-    const { nominalTypeSuffix } = oautil.resolveTypePrefixAndSuffix(opt);
+    const { nominalTypeSuffix } = oautil.resolveTypePrefixAndSuffix(opt.enableTypeManipulation);
     return ts.createProperty(
       undefined,
       [
@@ -590,7 +590,7 @@ export function run(options: Options) {
   }
 
   function generateClassConstructor(key: string, opt: Options) {
-    const { structuralTypePrefix, nominalTypeSuffix } = oautil.resolveTypePrefixAndSuffix(opt);
+    const { structuralTypePrefix, nominalTypeSuffix } = oautil.resolveTypePrefixAndSuffix(opt.enableTypeManipulation);
     return ts.createMethod(
       undefined,
       [ts.createModifier(ts.SyntaxKind.PublicKeyword)],
@@ -663,7 +663,7 @@ export function run(options: Options) {
   }
 
   function generateClassMakeMethod(key: string, opt: Options) {
-    const { structuralTypePrefix, nominalTypeSuffix } = oautil.resolveTypePrefixAndSuffix(opt);
+    const { structuralTypePrefix, nominalTypeSuffix } = oautil.resolveTypePrefixAndSuffix(opt.enableTypeManipulation);
     return ts.createMethod(
       undefined,
       [ts.createModifier(ts.SyntaxKind.StaticKeyword)],
@@ -772,7 +772,7 @@ export function run(options: Options) {
       [],
       ts.createPropertyAccess(runtimeLibrary, 'valueClass.ValueClass')
     );
-    const { nominalTypeSuffix } = oautil.resolveTypePrefixAndSuffix(opt)
+    const { nominalTypeSuffix } = oautil.resolveTypePrefixAndSuffix(opt.enableTypeManipulation)
     return ts.createClassDeclaration(
       undefined,
       [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
@@ -807,7 +807,7 @@ export function run(options: Options) {
   }
 
   function generateReflectionMaker(key: string, opt: Options): ts.Expression {
-    const { nominalTypeSuffix } = oautil.resolveTypePrefixAndSuffix(opt);
+    const { nominalTypeSuffix } = oautil.resolveTypePrefixAndSuffix(opt.enableTypeManipulation);
     return ts.factory.createCallExpression(
       ts.factory.createPropertyAccessExpression(
         ts.factory.createIdentifier('oar'),
@@ -824,7 +824,7 @@ export function run(options: Options) {
   }
 
   function generateTopLevelClassBuilder(key: string, opt: Options, schema: oas.SchemaObject) {
-    const { structuralTypePrefix } = oautil.resolveTypePrefixAndSuffix(opt);
+    const { structuralTypePrefix } = oautil.resolveTypePrefixAndSuffix(opt.enableTypeManipulation);
     return generateTopLevelMaker(key, opt, schema, 'build', oautil.typenamify(key, structuralTypePrefix));
   }
 
@@ -832,7 +832,7 @@ export function run(options: Options) {
     opt: Options,
     schema: oas.SchemaObject | oas.ReferenceObject
   ): ts.ObjectLiteralExpression {
-    const { nominalTypeSuffix } = oautil.resolveTypePrefixAndSuffix(opt);
+    const { nominalTypeSuffix } = oautil.resolveTypePrefixAndSuffix(opt.enableTypeManipulation);
     if (oautil.isReferenceObject(schema)) {
       const resolved = resolveRefToTypeName(schema.$ref);
       const typeName = 'type' + resolved.member + nominalTypeSuffix;
@@ -1089,7 +1089,7 @@ export function run(options: Options) {
   }
 
   function generateNamedTypeDefinitionDeclaration(key: string, opt: Options) {
-    const { structuralTypePrefix, nominalTypeSuffix } = oautil.resolveTypePrefixAndSuffix(opt);
+    const { structuralTypePrefix, nominalTypeSuffix } = oautil.resolveTypePrefixAndSuffix(opt.enableTypeManipulation);
     return ts.createVariableStatement(
       [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
       ts.createVariableDeclarationList(
@@ -1132,7 +1132,7 @@ export function run(options: Options) {
     schema: oas.SchemaObject,
     isA?: ts.ArrowFunction
   ) {
-    const { nominalTypeSuffix } = oautil.resolveTypePrefixAndSuffix(opt);
+    const { nominalTypeSuffix } = oautil.resolveTypePrefixAndSuffix(opt.enableTypeManipulation);
     return ts.createCall(
       ts.createPropertyAccess(ts.createIdentifier('Object'), 'assign'),
       undefined,
@@ -1155,7 +1155,7 @@ export function run(options: Options) {
   }
 
   function generateTopLevelClassMaker(key: string, opt: Options) {
-    const { structuralTypePrefix, nominalTypeSuffix } = oautil.resolveTypePrefixAndSuffix(opt);
+    const { structuralTypePrefix, nominalTypeSuffix } = oautil.resolveTypePrefixAndSuffix(opt.enableTypeManipulation);
     const shape = oautil.typenamify(key,structuralTypePrefix);
     return ts.createVariableStatement(
       [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
@@ -1182,7 +1182,7 @@ export function run(options: Options) {
     name = 'make',
     resultType?: string
   ) {
-    const { structuralTypePrefix, nominalTypeSuffix } = oautil.resolveTypePrefixAndSuffix(opt);
+    const { structuralTypePrefix, nominalTypeSuffix } = oautil.resolveTypePrefixAndSuffix(opt.enableTypeManipulation);
     const makerFun = 'createMaker';
     const shape = oautil.typenamify(key, structuralTypePrefix);
     resultType = resultType || oautil.typenamify(key, undefined, nominalTypeSuffix);
@@ -1223,7 +1223,7 @@ export function run(options: Options) {
   }
 
   function generateTypeShape(key: string, opt: Options) {
-    const {structuralTypePrefix, nominalTypeSuffix} = oautil.resolveTypePrefixAndSuffix(opt);
+    const {structuralTypePrefix, nominalTypeSuffix} = oautil.resolveTypePrefixAndSuffix(opt.enableTypeManipulation);
     return ts.createTypeAliasDeclaration(
       undefined,
       [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
@@ -1236,7 +1236,7 @@ export function run(options: Options) {
   }
 
   function generateTopLevelClass(key: string, opt: Options, schema: oas.SchemaObject): readonly ts.Node[] {
-    const { nominalTypeSuffix } = oautil.resolveTypePrefixAndSuffix(opt);
+    const { nominalTypeSuffix } = oautil.resolveTypePrefixAndSuffix(opt.enableTypeManipulation);
     if (schema.nullable) {
       const classKey = oautil.nonNullableClass(key);
       const proxy = generateTopLevelType(key, opt, {
@@ -1265,7 +1265,7 @@ export function run(options: Options) {
     opt: Options,
     schema: oas.SchemaObject | oas.ReferenceObject
   ): readonly ts.Node[] {
-    const { nominalTypeSuffix } = oautil.resolveTypePrefixAndSuffix(opt);
+    const { nominalTypeSuffix } = oautil.resolveTypePrefixAndSuffix(opt.enableTypeManipulation);
     if (oautil.isReferenceObject(schema)) {
       const resolved = resolveRefToTypeName(schema.$ref);
       const type = resolved.qualified
