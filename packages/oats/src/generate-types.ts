@@ -154,9 +154,9 @@ export function run(options: Options) {
         additional === true || additional == null
           ? ts.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword)
           : ts.createUnionTypeNode([
-              generateType(additional),
-              ts.createKeywordTypeNode(ts.SyntaxKind.UndefinedKeyword)
-            ]);
+            generateType(additional),
+            ts.createKeywordTypeNode(ts.SyntaxKind.UndefinedKeyword)
+          ]);
       proptypes.push(
         ts.createIndexSignature(
           undefined,
@@ -202,9 +202,9 @@ export function run(options: Options) {
         additional === true || additional == null
           ? ts.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword)
           : ts.createUnionTypeNode([
-              generateType(additional, typeMapper),
-              ts.createKeywordTypeNode(ts.SyntaxKind.UndefinedKeyword)
-            ]);
+            generateType(additional, typeMapper),
+            ts.createKeywordTypeNode(ts.SyntaxKind.UndefinedKeyword)
+          ]);
       proptypes.push(
         ts.createIndexSignature(
           undefined,
@@ -384,14 +384,14 @@ export function run(options: Options) {
             value: oautil.isReferenceObject(response)
               ? { $ref: response.$ref }
               : generateContentSchemaType(
-                  response.content || {
-                    oatsNoContent: {
-                      schema: {
-                        type: 'null'
-                      }
+                response.content || {
+                  oatsNoContent: {
+                    schema: {
+                      type: 'null'
                     }
                   }
-                ),
+                }
+              ),
             headers: { type: 'object' }
           },
           required: ['status', 'value', 'headers'],
@@ -420,7 +420,7 @@ export function run(options: Options) {
         oautil.errorTag(`in ${method.toUpperCase()} ${path} query`, () =>
           response.push(
             generateNamedTypeDefinitionDeclaration(
-              oautil.endpointTypeName(endpoint, path, method, 'query'), 
+              oautil.endpointTypeName(endpoint, path, method, 'query'),
               opts
             ),
             ...generateQueryType(
@@ -450,7 +450,7 @@ export function run(options: Options) {
         oautil.errorTag(`in ${method.toUpperCase()} ${path} parameters`, () =>
           response.push(
             generateNamedTypeDefinitionDeclaration(
-              oautil.endpointTypeName(endpoint, path, method, 'parameters'), 
+              oautil.endpointTypeName(endpoint, path, method, 'parameters'),
               opts
             ),
             ...generateParameterType(
@@ -465,7 +465,7 @@ export function run(options: Options) {
         oautil.errorTag(`in ${method.toUpperCase()} ${path} requestBody`, () =>
           response.push(
             generateNamedTypeDefinitionDeclaration(
-              oautil.endpointTypeName(endpoint, path, method, 'requestBody'), 
+              oautil.endpointTypeName(endpoint, path, method, 'requestBody'),
               opts
             ),
             ...generateRequestBodyType(
@@ -478,7 +478,7 @@ export function run(options: Options) {
         oautil.errorTag(`in ${method.toUpperCase()} ${path} response`, () =>
           response.push(
             generateNamedTypeDefinitionDeclaration(
-              oautil.endpointTypeName(endpoint, path, method, 'response'), 
+              oautil.endpointTypeName(endpoint, path, method, 'response'),
               opts
             ),
             ...generateResponseType(
@@ -900,11 +900,11 @@ export function run(options: Options) {
     if (schema.type === 'string') {
       const enumValues = schema.enum
         ? [
-            ts.createPropertyAssignment(
-              'enum',
-              ts.createArrayLiteral(schema.enum.map(value => ts.factory.createStringLiteral(value)))
-            )
-          ]
+          ts.createPropertyAssignment(
+            'enum',
+            ts.createArrayLiteral(schema.enum.map(value => ts.factory.createStringLiteral(value)))
+          )
+        ]
         : [];
       if (schema.format === 'binary') {
         return ts.createObjectLiteral(
@@ -942,11 +942,11 @@ export function run(options: Options) {
     if (schema.type === 'number') {
       const enumValues = schema.enum
         ? [
-            ts.createPropertyAssignment(
-              'enum',
-              ts.createArrayLiteral(schema.enum.map(i => ts.createNumericLiteral('' + i)))
-            )
-          ]
+          ts.createPropertyAssignment(
+            'enum',
+            ts.createArrayLiteral(schema.enum.map(i => ts.createNumericLiteral('' + i)))
+          )
+        ]
         : [];
       const properties = [
         ts.createPropertyAssignment('type', ts.createStringLiteral('number')),
@@ -967,11 +967,11 @@ export function run(options: Options) {
     if (schema.type === 'integer') {
       const enumValues = schema.enum
         ? [
-            ts.createPropertyAssignment(
-              'enum',
-              ts.createArrayLiteral(schema.enum.map(i => ts.createNumericLiteral('' + i)))
-            )
-          ]
+          ts.createPropertyAssignment(
+            'enum',
+            ts.createArrayLiteral(schema.enum.map(i => ts.createNumericLiteral('' + i)))
+          )
+        ]
         : [];
       const properties = [
         ts.createPropertyAssignment('type', ts.createStringLiteral('integer')),
@@ -993,19 +993,19 @@ export function run(options: Options) {
     if (schema.type === 'boolean') {
       const enumValues = schema.enum
         ? [
-            ts.createPropertyAssignment(
-              'enum',
-              ts.createArrayLiteral(
-                schema.enum.map(i =>
-                  i === true
-                    ? ts.createTrue()
-                    : i === false
+          ts.createPropertyAssignment(
+            'enum',
+            ts.createArrayLiteral(
+              schema.enum.map(i =>
+                i === true
+                  ? ts.createTrue()
+                  : i === false
                     ? ts.createFalse()
                     : assert.fail('unknown enum ' + i)
-                )
               )
             )
-          ]
+          )
+        ]
         : [];
       return ts.createObjectLiteral(
         [ts.createPropertyAssignment('type', ts.createStringLiteral('boolean')), ...enumValues],
@@ -1161,7 +1161,7 @@ export function run(options: Options) {
 
   function generateTopLevelClassMaker(key: string, opts: Options) {
     const { structuralTypePrefix, nominalTypeSuffix } = oautil.resolveTypeAffixes(opts.enableTypeManipulation);
-    const shape = oautil.typenamify(key,structuralTypePrefix);
+    const shape = oautil.typenamify(key, structuralTypePrefix);
     return ts.createVariableStatement(
       [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
       ts.createVariableDeclarationList(
@@ -1228,7 +1228,7 @@ export function run(options: Options) {
   }
 
   function generateTypeShape(key: string, opts: Options) {
-    const { structuralTypePrefix, nominalTypeSuffix} = oautil.resolveTypeAffixes(opts.enableTypeManipulation);
+    const { structuralTypePrefix, nominalTypeSuffix } = oautil.resolveTypeAffixes(opts.enableTypeManipulation);
     return ts.createTypeAliasDeclaration(
       undefined,
       [ts.createModifier(ts.SyntaxKind.ExportKeyword)],

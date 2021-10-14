@@ -54,35 +54,35 @@ function generateMethod<S extends oas.OperationObject>(
   const headers = ts.createTypeReferenceNode(
     fromTypes(
       (opts.shapesAsRequests && !opts.enableTypeManipulation ? 'ShapeOf' : '') +
-        oautil.typenamify(oautil.endpointTypeName(schema, path, method, 'headers'))
+      oautil.typenamify(oautil.endpointTypeName(schema, path, method, 'headers'))
     ),
     []
   );
   const params = ts.createTypeReferenceNode(
     fromTypes(
       (opts.shapesAsRequests && !opts.enableTypeManipulation ? 'ShapeOf' : '') +
-        oautil.typenamify(oautil.endpointTypeName(schema, path, method, 'parameters'))
+      oautil.typenamify(oautil.endpointTypeName(schema, path, method, 'parameters'))
     ),
     []
   );
   const query = ts.createTypeReferenceNode(
     fromTypes(
       (opts.shapesAsRequests && !opts.enableTypeManipulation ? 'ShapeOf' : '') +
-        oautil.typenamify(oautil.endpointTypeName(schema, path, method, 'query'))
+      oautil.typenamify(oautil.endpointTypeName(schema, path, method, 'query'))
     ),
     []
   );
   const body = ts.createTypeReferenceNode(
     fromTypes(
       (opts.shapesAsRequests && !opts.enableTypeManipulation ? 'ShapeOf' : '') +
-        oautil.typenamify(oautil.endpointTypeName(schema, path, method, 'requestBody'))
+      oautil.typenamify(oautil.endpointTypeName(schema, path, method, 'requestBody'))
     ),
     []
   );
   const response = ts.createTypeReferenceNode(
     fromTypes(
       (opts.shapesAsResponses && !opts.enableTypeManipulation ? 'ShapeOf' : '') +
-        oautil.typenamify(oautil.endpointTypeName(schema, path, method, 'response'))
+      oautil.typenamify(oautil.endpointTypeName(schema, path, method, 'response'))
     ),
     []
   );
@@ -135,28 +135,28 @@ function generateClientMethod(
   const headers = ts.createTypeReferenceNode(
     fromTypes(
       (opts.shapesAsRequests && !opts.enableTypeManipulation ? 'ShapeOf' : '') +
-        oautil.typenamify(oautil.endpointTypeName(op, path, method, 'headers'))
+      oautil.typenamify(oautil.endpointTypeName(op, path, method, 'headers'))
     ),
     []
   );
   const query = ts.createTypeReferenceNode(
     fromTypes(
       (opts.shapesAsRequests && !opts.enableTypeManipulation ? 'ShapeOf' : '') +
-        oautil.typenamify(oautil.endpointTypeName(op, path, method, 'query'))
+      oautil.typenamify(oautil.endpointTypeName(op, path, method, 'query'))
     ),
     []
   );
   const body = ts.createTypeReferenceNode(
     fromTypes(
       (opts.shapesAsRequests && !opts.enableTypeManipulation ? 'ShapeOf' : '') +
-        oautil.typenamify(oautil.endpointTypeName(op, path, method, 'requestBody'))
+      oautil.typenamify(oautil.endpointTypeName(op, path, method, 'requestBody'))
     ),
     []
   );
   const response = ts.createTypeReferenceNode(
     fromTypes(
       (opts.shapesAsResponses && !opts.enableTypeManipulation ? 'ShapeOf' : '') +
-        oautil.typenamify(oautil.endpointTypeName(op, path, method, 'response'))
+      oautil.typenamify(oautil.endpointTypeName(op, path, method, 'response'))
     ),
     []
   );

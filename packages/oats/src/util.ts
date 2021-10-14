@@ -2,7 +2,6 @@ import * as oas from 'openapi3-ts';
 import safe from '@smartlyio/safe-navigation';
 import * as assert from 'assert';
 import * as _ from 'lodash';
-import * as types from './generate-types';
 
 export type SchemaObject = oas.ReferenceObject | oas.SchemaObject;
 
@@ -22,9 +21,9 @@ export function typenamify(name: string, prefix?: string, suffix?: string) {
   if (name.match(/^[^a-zA-Z]/)) {
     name = 'Type' + name;
   }
-  if(prefix) {
+  if (prefix) {
     return capitalize(prefix) + capitalize(name);
-  } else if(suffix){
+  } else if (suffix) {
     return capitalize(name + suffix);
   } else {
     return capitalize(name);
@@ -114,5 +113,5 @@ export function resolveTypeAffixes(enableTypeManipulation: boolean | undefined) 
   return {
     structuralTypePrefix: enableTypeManipulation ? '' : 'ShapeOf',
     nominalTypeSuffix: enableTypeManipulation ? 'WithBrand' : ''
-  }
+  };
 }
