@@ -168,7 +168,8 @@ export function generate(driver: Driver) {
           shapesAsRequests: true,
           unsupportedFeatures: {
             security: driver.unsupportedFeatures?.security ?? UnsupportedFeatureBehaviour.reject
-          }
+          },
+          enableTypeManipulation: driver.enableTypeManipulation
         })
     );
   }
@@ -185,7 +186,8 @@ export function generate(driver: Driver) {
           shapesAsResponses: true,
           unsupportedFeatures: {
             security: driver.unsupportedFeatures?.security ?? UnsupportedFeatureBehaviour.reject
-          }
+          },
+          enableTypeManipulation: driver.enableTypeManipulation
         })
     );
   }
