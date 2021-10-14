@@ -23,7 +23,7 @@ export function typenamify(name: string, prefix?: string, suffix?: string) {
     name = 'Type' + name;
   }
   if(prefix) {
-    return capitalize(prefix + name);
+    return capitalize(prefix) + capitalize(name);
   } else if(suffix){
     return capitalize(name + suffix);
   } else {
