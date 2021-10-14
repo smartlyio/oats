@@ -2,6 +2,7 @@ import * as oas from 'openapi3-ts';
 import safe from '@smartlyio/safe-navigation';
 import * as assert from 'assert';
 import * as _ from 'lodash';
+import * as types from './generate-types';
 
 export type SchemaObject = oas.ReferenceObject | oas.SchemaObject;
 
@@ -101,4 +102,13 @@ function resolve(key: string, schema: oas.OpenAPIObject): oas.SchemaObject | und
     return resolveRef(hit.$ref, schema);
   }
   return hit;
+}
+
+export function resolveTypePrefixAndSuffix(opts: types.Options) {
+  const enableTypeManipulation: boolean = opts.enableTypeManipulation ?? false;
+  return {
+    enableTypeManipulation,
+    structuralTypePrefix: enableTypeManipulation ? '' : 'ShapeOf',
+    nominalTypeSuffix: enableTypeManipulation ? 'WithBrand' : ''
+  }
 }

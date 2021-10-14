@@ -42,6 +42,7 @@ export interface Options {
   unsupportedFeatures?: {
     security?: UnsupportedFeatureBehaviour;
   };
+  enableTypeManipulation?: boolean;
 }
 
 export function info(message: string) {
@@ -227,24 +228,25 @@ export function run(options: Options) {
 
   function generateQueryType(
     op: string,
+    opt: Options,
     paramSchema: undefined | ReadonlyArray<oas.ParameterObject | oas.ReferenceObject>,
     oasSchema: oas.OpenAPIObject
   ) {
     const noQueryParams = { type: 'object' as const, additionalProperties: false };
     if (!paramSchema) {
-      return generateTopLevelType(op, noQueryParams);
+      return generateTopLevelType(op, opt, noQueryParams);
     }
     const schema = oautil.deref(paramSchema, oasSchema);
     const queryParams = schema
       .map(schema => oautil.deref(schema, oasSchema))
       .filter(schema => schema.in === 'query');
     if (queryParams.length === 0) {
-      return generateTopLevelType(op, noQueryParams);
+      return generateTopLevelType(op, opt, noQueryParams);
     }
     if (queryParams.some(param => !!param.explode)) {
       assert(queryParams.length === 1, 'only one explode: true parameter is supported');
       const param = queryParams[0];
-      return generateTopLevelType(op, param.schema || {});
+      return generateTopLevelType(op, opt, param.schema || {});
     }
     const jointSchema: oas.SchemaObject = {
       type: 'object',
@@ -255,17 +257,18 @@ export function run(options: Options) {
         return memo;
       }, {})
     };
-    return generateTopLevelType(op, jointSchema);
+    return generateTopLevelType(op, opt, jointSchema);
   }
 
   function generateParameterType(
     type: 'path' | 'header',
     op: string,
+    opt: Options,
     paramSchema: undefined | ReadonlyArray<oas.ParameterObject | oas.ReferenceObject>,
     oasSchema: oas.OpenAPIObject,
     normalize = (name: string) => name
   ) {
-    const empty = generateTopLevelType(op, voidSchema);
+    const empty = generateTopLevelType(op, opt, voidSchema);
     if (!paramSchema) {
       return empty;
     }
@@ -292,7 +295,7 @@ export function run(options: Options) {
         return memo;
       }, {})
     };
-    return generateTopLevelType(op, jointSchema);
+    return generateTopLevelType(op, opt, jointSchema);
   }
 
   function generateContentSchemaType(content: oas.ContentObject) {
@@ -343,19 +346,20 @@ export function run(options: Options) {
 
   function generateRequestBodyType(
     op: string,
+    opt: Options,
     requestBody: undefined | oas.ReferenceObject | oas.RequestBodyObject
   ) {
     if (requestBody == null) {
-      return generateTopLevelType(op, voidSchema);
+      return generateTopLevelType(op, opt, voidSchema);
     }
     if (oautil.isReferenceObject(requestBody)) {
-      return generateTopLevelType(op, { $ref: requestBody.$ref });
+      return generateTopLevelType(op, opt, { $ref: requestBody.$ref });
     }
     // requestBody is not required by default https://swagger.io/docs/specification/describing-request-body/
     if (requestBody.required === true) {
-      return generateTopLevelType(op, generateContentSchemaType(requestBody.content));
+      return generateTopLevelType(op, opt, generateContentSchemaType(requestBody.content));
     }
-    return generateTopLevelType(op, {
+    return generateTopLevelType(op, opt, {
       oneOf: [generateContentSchemaType(requestBody.content), voidSchema]
     });
   }
@@ -400,9 +404,9 @@ export function run(options: Options) {
       }
     });
     if (responseSchemas.length === 0) {
-      return generateTopLevelType(op, voidSchema);
+      return generateTopLevelType(op, opt, voidSchema);
     }
-    return generateTopLevelType(op, {
+    return generateTopLevelType(op, opt, {
       oneOf: responseSchemas
     });
   }
@@ -416,10 +420,11 @@ export function run(options: Options) {
         oautil.errorTag(`in ${method.toUpperCase()} ${path} query`, () =>
           response.push(
             generateNamedTypeDefinitionDeclaration(
-              oautil.endpointTypeName(endpoint, path, method, 'query')
+              oautil.endpointTypeName(endpoint, path, method, 'query'), opt
             ),
             ...generateQueryType(
               oautil.endpointTypeName(endpoint, path, method, 'query'),
+              opt,
               endpoint.parameters,
               schema
             )
@@ -428,11 +433,12 @@ export function run(options: Options) {
         oautil.errorTag(`in ${method.toUpperCase()} ${path} header`, () =>
           response.push(
             generateNamedTypeDefinitionDeclaration(
-              oautil.endpointTypeName(endpoint, path, method, 'headers')
+              oautil.endpointTypeName(endpoint, path, method, 'headers'), opt
             ),
             ...generateParameterType(
               'header',
               oautil.endpointTypeName(endpoint, path, method, 'headers'),
+              opt,
               endpoint.parameters,
               schema,
               name => name.toLowerCase()
@@ -442,11 +448,12 @@ export function run(options: Options) {
         oautil.errorTag(`in ${method.toUpperCase()} ${path} parameters`, () =>
           response.push(
             generateNamedTypeDefinitionDeclaration(
-              oautil.endpointTypeName(endpoint, path, method, 'parameters')
+              oautil.endpointTypeName(endpoint, path, method, 'parameters'), opt
             ),
             ...generateParameterType(
               'path',
               oautil.endpointTypeName(endpoint, path, method, 'parameters'),
+              opt,
               endpoint.parameters,
               schema
             )
@@ -455,10 +462,11 @@ export function run(options: Options) {
         oautil.errorTag(`in ${method.toUpperCase()} ${path} requestBody`, () =>
           response.push(
             generateNamedTypeDefinitionDeclaration(
-              oautil.endpointTypeName(endpoint, path, method, 'requestBody')
+              oautil.endpointTypeName(endpoint, path, method, 'requestBody'), opt
             ),
             ...generateRequestBodyType(
               oautil.endpointTypeName(endpoint, path, method, 'requestBody'),
+              opt,
               endpoint.requestBody
             )
           )
@@ -466,7 +474,7 @@ export function run(options: Options) {
         oautil.errorTag(`in ${method.toUpperCase()} ${path} response`, () =>
           response.push(
             generateNamedTypeDefinitionDeclaration(
-              oautil.endpointTypeName(endpoint, path, method, 'response')
+              oautil.endpointTypeName(endpoint, path, method, 'response'), opt
             ),
             ...generateResponseType(
               opt,
@@ -564,7 +572,8 @@ export function run(options: Options) {
     return ts.createKeywordTypeNode(ts.SyntaxKind.StringKeyword);
   }
 
-  function generateReflectionProperty(key: string) {
+  function generateReflectionProperty(key: string, opt: Options) {
+    const { nominalTypeSuffix } = oautil.resolveTypePrefixAndSuffix(opt);
     return ts.createProperty(
       undefined,
       [
@@ -574,13 +583,14 @@ export function run(options: Options) {
       ts.createIdentifier('reflection'),
       undefined,
       ts.createTypeReferenceNode(fromLib('reflection', 'NamedTypeDefinition'), [
-        ts.createTypeReferenceNode(ts.createIdentifier(oautil.typenamify(key)), [])
+        ts.createTypeReferenceNode(ts.createIdentifier(oautil.typenamify(key) + nominalTypeSuffix), [])
       ]),
-      ts.createIdentifier('type' + oautil.typenamify(key))
+      ts.createIdentifier('type' + oautil.typenamify(key) + nominalTypeSuffix)
     );
   }
 
-  function generateClassConstructor(key: string) {
+  function generateClassConstructor(key: string, opt: Options) {
+    const { structuralTypePrefix, nominalTypeSuffix } = oautil.resolveTypePrefixAndSuffix(opt);
     return ts.createMethod(
       undefined,
       [ts.createModifier(ts.SyntaxKind.PublicKeyword)],
@@ -595,7 +605,7 @@ export function run(options: Options) {
           undefined,
           'value',
           undefined,
-          ts.createTypeReferenceNode('ShapeOf' + oautil.typenamify(key), [])
+          ts.createTypeReferenceNode(structuralTypePrefix + oautil.typenamify(key), [])
         ),
         ts.createParameter(
           undefined,
@@ -635,7 +645,7 @@ export function run(options: Options) {
                 ts.createCall(
                   ts.createPropertyAccess(
                     ts.createCall(
-                      ts.createIdentifier('build' + oautil.typenamify(key)),
+                      ts.createIdentifier('build' + oautil.typenamify(key) + nominalTypeSuffix),
                       undefined,
                       [ts.createIdentifier('value'), ts.createIdentifier('opts')]
                     ),
@@ -652,7 +662,8 @@ export function run(options: Options) {
     );
   }
 
-  function generateClassMakeMethod(key: string) {
+  function generateClassMakeMethod(key: string, opt: Options) {
+    const { structuralTypePrefix, nominalTypeSuffix } = oautil.resolveTypePrefixAndSuffix(opt);
     return ts.createMethod(
       undefined,
       [ts.createModifier(ts.SyntaxKind.StaticKeyword)],
@@ -667,7 +678,7 @@ export function run(options: Options) {
           undefined,
           'value',
           undefined,
-          ts.createTypeReferenceNode('ShapeOf' + oautil.typenamify(key), [])
+          ts.createTypeReferenceNode(structuralTypePrefix + oautil.typenamify(key), [])
         ),
         ts.createParameter(
           undefined,
@@ -679,7 +690,7 @@ export function run(options: Options) {
         )
       ],
       ts.createTypeReferenceNode(fromLib('make', makeTypeTypeName), [
-        ts.createTypeReferenceNode(oautil.typenamify(key), [])
+        ts.createTypeReferenceNode(oautil.typenamify(key) + nominalTypeSuffix, [])
       ]),
       ts.createBlock([
         ts.createVariableStatement(
@@ -689,7 +700,7 @@ export function run(options: Options) {
               ts.createVariableDeclaration(
                 'make',
                 undefined,
-                ts.createCall(ts.createIdentifier('build' + oautil.typenamify(key)), undefined, [
+                ts.createCall(ts.createIdentifier('build' + oautil.typenamify(key) + nominalTypeSuffix), undefined, [
                   ts.createIdentifier('value'),
                   ts.createIdentifier('opts')
                 ])
@@ -720,7 +731,7 @@ export function run(options: Options) {
               ),
               undefined,
               [
-                ts.createCall(ts.createIdentifier('new ' + oautil.typenamify(key)), undefined, [
+                ts.createCall(ts.createIdentifier('new ' + oautil.typenamify(key) + nominalTypeSuffix), undefined, [
                   ts.createCall(
                     ts.createPropertyAccess(
                       ts.createIdentifier('make'),
@@ -741,15 +752,17 @@ export function run(options: Options) {
     );
   }
 
-  function generateClassBuiltindMembers(key: string) {
+
+
+  function generateClassBuiltindMembers(key: string, opt: Options) {
     return [
-      generateClassConstructor(key),
-      generateReflectionProperty(key),
-      generateClassMakeMethod(key)
+      generateClassConstructor(key, opt),
+      generateReflectionProperty(key, opt),
+      generateClassMakeMethod(key, opt)
     ];
   }
 
-  function generateValueClass(key: string, schema: oas.SchemaObject) {
+  function generateValueClass(key: string, opt: Options, schema: oas.SchemaObject) {
     const members = generateClassMembers(
       schema.properties,
       schema.required,
@@ -759,13 +772,14 @@ export function run(options: Options) {
       [],
       ts.createPropertyAccess(runtimeLibrary, 'valueClass.ValueClass')
     );
+    const { nominalTypeSuffix } = oautil.resolveTypePrefixAndSuffix(opt)
     return ts.createClassDeclaration(
       undefined,
       [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
-      oautil.typenamify(key),
+      oautil.typenamify(key) + nominalTypeSuffix,
       [],
       [ts.createHeritageClause(ts.SyntaxKind.ExtendsKeyword, [brand])],
-      [...members, ...generateClassBuiltindMembers(key)]
+      [...members, ...generateClassBuiltindMembers(key, opt)]
     );
   }
 
@@ -792,7 +806,8 @@ export function run(options: Options) {
     return ts.createIdentifier(prop);
   }
 
-  function generateReflectionMaker(key: string): ts.Expression {
+  function generateReflectionMaker(key: string, opt: Options): ts.Expression {
+    const { nominalTypeSuffix } = oautil.resolveTypePrefixAndSuffix(opt);
     return ts.factory.createCallExpression(
       ts.factory.createPropertyAccessExpression(
         ts.factory.createIdentifier('oar'),
@@ -801,25 +816,29 @@ export function run(options: Options) {
       undefined,
       [
         ts.factory.createPropertyAccessExpression(
-          ts.factory.createIdentifier(`type${oautil.typenamify(key)}`),
+          ts.factory.createIdentifier(`type${oautil.typenamify(key) + nominalTypeSuffix}`),
           ts.factory.createIdentifier('definition')
         )
       ]
     );
   }
 
-  function generateTopLevelClassBuilder(key: string, schema: oas.SchemaObject) {
-    return generateTopLevelMaker(key, schema, 'build', 'ShapeOf' + oautil.typenamify(key));
+  function generateTopLevelClassBuilder(key: string, opt: Options, schema: oas.SchemaObject) {
+    const { structuralTypePrefix } = oautil.resolveTypePrefixAndSuffix(opt);
+    return generateTopLevelMaker(key, opt, schema, 'build', structuralTypePrefix + oautil.typenamify(key));
   }
 
   function generateReflectionType(
+    opt: Options,
     schema: oas.SchemaObject | oas.ReferenceObject
   ): ts.ObjectLiteralExpression {
+    const { nominalTypeSuffix } = oautil.resolveTypePrefixAndSuffix(opt);
     if (oautil.isReferenceObject(schema)) {
       const resolved = resolveRefToTypeName(schema.$ref);
+      const typeName = 'type' + resolved.member + nominalTypeSuffix;
       const type: ts.Expression = resolved.qualified
-        ? ts.createPropertyAccess(resolved.qualified, 'type' + resolved.member)
-        : ts.createIdentifier('type' + resolved.member);
+        ? ts.createPropertyAccess(resolved.qualified, typeName)
+        : ts.createIdentifier(typeName);
       return ts.createObjectLiteral(
         [
           ts.createPropertyAssignment('type', ts.createStringLiteral('named')),
@@ -834,7 +853,7 @@ export function run(options: Options) {
           ts.createPropertyAssignment('type', ts.createStringLiteral('union')),
           ts.createPropertyAssignment(
             'options',
-            ts.createArrayLiteral(schema.oneOf.map(generateReflectionType), true)
+            ts.createArrayLiteral(schema.oneOf.map((schema) => generateReflectionType(opt, schema)), true)
           )
         ],
         true
@@ -846,7 +865,7 @@ export function run(options: Options) {
           ts.createPropertyAssignment('type', ts.createStringLiteral('intersection')),
           ts.createPropertyAssignment(
             'options',
-            ts.createArrayLiteral(schema.allOf.map(generateReflectionType), true)
+            ts.createArrayLiteral(schema.allOf.map((schema) => generateReflectionType(opt, schema)), true)
           )
         ],
         true
@@ -856,7 +875,7 @@ export function run(options: Options) {
     assert(!schema.anyOf, 'anyOf is not supported');
 
     if (schema.nullable) {
-      return generateReflectionType({ oneOf: [{ ...schema, nullable: false }, { type: 'null' }] });
+      return generateReflectionType(opt, { oneOf: [{ ...schema, nullable: false }, { type: 'null' }] });
     }
 
     // @ts-expect-error schemas really do not have void type. but we do
@@ -991,7 +1010,7 @@ export function run(options: Options) {
     if (schema.type === 'array') {
       const properties = [
         ts.createPropertyAssignment('type', ts.createStringLiteral('array')),
-        ts.createPropertyAssignment('items', generateReflectionType(schema.items || {}))
+        ts.createPropertyAssignment('items', generateReflectionType(opt, schema.items || {}))
       ];
       if (schema.minItems != null) {
         properties.push(
@@ -1006,7 +1025,7 @@ export function run(options: Options) {
       return ts.createObjectLiteral(properties, true);
     }
     if (schema.type === 'object') {
-      return generateObjectReflectionType(schema);
+      return generateObjectReflectionType(opt, schema);
     }
     if (!schema.type) {
       return ts.createObjectLiteral(
@@ -1018,7 +1037,7 @@ export function run(options: Options) {
     throw new Error();
   }
 
-  function generateAdditionalPropsReflectionType(props: oas.SchemaObject['additionalProperties']) {
+  function generateAdditionalPropsReflectionType(opt: Options, props: oas.SchemaObject['additionalProperties']) {
     if (props === false) {
       return ts.factory.createFalse();
     }
@@ -1029,11 +1048,11 @@ export function run(options: Options) {
     ) {
       return ts.factory.createTrue();
     }
-    return generateReflectionType(props);
+    return generateReflectionType(opt, props);
   }
 
-  function generateObjectReflectionType(schema: oas.SchemaObject) {
-    const additionalProps = generateAdditionalPropsReflectionType(schema.additionalProperties);
+  function generateObjectReflectionType(opt: Options, schema: oas.SchemaObject) {
+    const additionalProps = generateAdditionalPropsReflectionType(opt, schema.additionalProperties);
     return ts.createObjectLiteral(
       [
         ts.createPropertyAssignment('type', ts.createStringLiteral('object')),
@@ -1054,7 +1073,7 @@ export function run(options: Options) {
                     ),
                     ts.createPropertyAssignment(
                       'value',
-                      generateReflectionType((schema.properties as any)[propertyName])
+                      generateReflectionType(opt, (schema.properties as any)[propertyName])
                     )
                   ],
                   true
@@ -1069,16 +1088,17 @@ export function run(options: Options) {
     );
   }
 
-  function generateNamedTypeDefinitionDeclaration(key: string) {
+  function generateNamedTypeDefinitionDeclaration(key: string, opt: Options) {
+    const { structuralTypePrefix, nominalTypeSuffix } = oautil.resolveTypePrefixAndSuffix(opt);
     return ts.createVariableStatement(
       [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
       ts.createVariableDeclarationList(
         [
           ts.createVariableDeclaration(
-            'type' + oautil.typenamify(key),
+            'type' + oautil.typenamify(key) + nominalTypeSuffix,
             ts.createTypeReferenceNode(fromLib('reflection', 'NamedTypeDefinition'), [
-              ts.createTypeReferenceNode(oautil.typenamify(key), []),
-              ts.createTypeReferenceNode('ShapeOf' + oautil.typenamify(key), [])
+              ts.createTypeReferenceNode(oautil.typenamify(key) + nominalTypeSuffix, []),
+              ts.createTypeReferenceNode(structuralTypePrefix + oautil.typenamify(key), [])
             ]),
             ts.createAsExpression(
               ts.createObjectLiteral([], false),
@@ -1108,21 +1128,23 @@ export function run(options: Options) {
 
   function generateNamedTypeDefinitionAssignment(
     key: string,
+    opt: Options,
     schema: oas.SchemaObject,
     isA?: ts.ArrowFunction
   ) {
+    const { nominalTypeSuffix } = oautil.resolveTypePrefixAndSuffix(opt);
     return ts.createCall(
       ts.createPropertyAccess(ts.createIdentifier('Object'), 'assign'),
       undefined,
       [
-        ts.createIdentifier('type' + oautil.typenamify(key)),
+        ts.createIdentifier('type' + oautil.typenamify(key) + nominalTypeSuffix),
         ts.createObjectLiteral(
           [
-            ts.createPropertyAssignment('name', ts.createStringLiteral(oautil.typenamify(key))),
-            ts.createPropertyAssignment('definition', generateReflectionType(schema)),
+            ts.createPropertyAssignment('name', ts.createStringLiteral(oautil.typenamify(key) + nominalTypeSuffix)),
+            ts.createPropertyAssignment('definition', generateReflectionType(opt, schema)),
             ts.createPropertyAssignment(
               'maker',
-              ts.createIdentifier('make' + oautil.typenamify(key))
+              ts.createIdentifier('make' + oautil.typenamify(key) + nominalTypeSuffix)
             ),
             ts.createPropertyAssignment('isA', isA ?? ts.createNull())
           ],
@@ -1132,19 +1154,20 @@ export function run(options: Options) {
     );
   }
 
-  function generateTopLevelClassMaker(key: string) {
-    const shape = 'ShapeOf' + oautil.typenamify(key);
+  function generateTopLevelClassMaker(key: string, opt: Options) {
+    const { structuralTypePrefix, nominalTypeSuffix } = oautil.resolveTypePrefixAndSuffix(opt);
+    const shape = structuralTypePrefix + oautil.typenamify(key);
     return ts.createVariableStatement(
       [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
       ts.createVariableDeclarationList(
         [
           ts.createVariableDeclaration(
-            'make' + oautil.typenamify(key),
+            'make' + oautil.typenamify(key) + nominalTypeSuffix,
             ts.createTypeReferenceNode(fromLib('make', 'Maker'), [
               ts.createTypeReferenceNode(shape, []),
-              ts.createTypeReferenceNode(oautil.typenamify(key), [])
+              ts.createTypeReferenceNode(oautil.typenamify(key) + nominalTypeSuffix, [])
             ]),
-            ts.createPropertyAccess(ts.createIdentifier(oautil.typenamify(key)), 'make')
+            ts.createPropertyAccess(ts.createIdentifier(oautil.typenamify(key)+ nominalTypeSuffix), 'make')
           )
         ],
         ts.NodeFlags.Const
@@ -1154,19 +1177,21 @@ export function run(options: Options) {
 
   function generateTopLevelMaker(
     key: string,
+    opt: Options,
     schema: oas.SchemaObject,
     name = 'make',
     resultType?: string
   ) {
+    const { structuralTypePrefix, nominalTypeSuffix } = oautil.resolveTypePrefixAndSuffix(opt);
     const makerFun = 'createMaker';
-    const shape = 'ShapeOf' + oautil.typenamify(key);
-    resultType = resultType || oautil.typenamify(key);
+    const shape = structuralTypePrefix + oautil.typenamify(key);
+    resultType = resultType || oautil.typenamify(key) + nominalTypeSuffix;
     return ts.createVariableStatement(
       [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
       ts.createVariableDeclarationList(
         [
           ts.createVariableDeclaration(
-            name + oautil.typenamify(key),
+            name + oautil.typenamify(key) + nominalTypeSuffix,
             ts.createTypeReferenceNode(fromLib('make', 'Maker'), [
               ts.createTypeReferenceNode(shape, []),
               ts.createTypeReferenceNode(resultType, [])
@@ -1179,7 +1204,7 @@ export function run(options: Options) {
                 undefined,
                 [],
                 undefined,
-                ts.createBlock([ts.createReturn(generateReflectionMaker(key))])
+                ts.createBlock([ts.createReturn(generateReflectionMaker(key, opt))])
               )
             ])
           )
@@ -1197,22 +1222,24 @@ export function run(options: Options) {
     return ts.createEnumDeclaration(undefined, undefined, brandTypeName(key), []);
   }
 
-  function generateTypeShape(key: string) {
+  function generateTypeShape(key: string, opt: Options) {
+    const {structuralTypePrefix, nominalTypeSuffix} = oautil.resolveTypePrefixAndSuffix(opt);
     return ts.createTypeAliasDeclaration(
       undefined,
       [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
-      'ShapeOf' + oautil.typenamify(key),
+      structuralTypePrefix + oautil.typenamify(key),
       undefined,
       ts.createTypeReferenceNode(fromLib('ShapeOf'), [
-        ts.createTypeReferenceNode(oautil.typenamify(key), [])
+        ts.createTypeReferenceNode(oautil.typenamify(key) + nominalTypeSuffix, [])
       ])
     );
   }
 
-  function generateTopLevelClass(key: string, schema: oas.SchemaObject): readonly ts.Node[] {
+  function generateTopLevelClass(key: string, opt: Options, schema: oas.SchemaObject): readonly ts.Node[] {
+    const { nominalTypeSuffix } = oautil.resolveTypePrefixAndSuffix(opt);
     if (schema.nullable) {
       const classKey = oautil.nonNullableClass(key);
-      const proxy = generateTopLevelType(key, {
+      const proxy = generateTopLevelType(key, opt, {
         oneOf: [
           {
             type: 'null'
@@ -1222,21 +1249,23 @@ export function run(options: Options) {
           }
         ]
       });
-      return [...generateTopLevelClass(classKey, { ...schema, nullable: false }), ...proxy];
+      return [...generateTopLevelClass(classKey, opt, { ...schema, nullable: false }), ...proxy];
     }
     return [
-      generateTypeShape(key),
-      generateValueClass(key, schema),
-      generateTopLevelClassBuilder(key, schema),
-      generateTopLevelClassMaker(key),
-      generateNamedTypeDefinitionAssignment(key, schema, generateIsA(oautil.typenamify(key)))
+      generateTypeShape(key, opt),
+      generateValueClass(key, opt, schema),
+      generateTopLevelClassBuilder(key, opt, schema),
+      generateTopLevelClassMaker(key, opt),
+      generateNamedTypeDefinitionAssignment(key, opt, schema, generateIsA(oautil.typenamify(key) + nominalTypeSuffix))
     ];
   }
 
   function generateTopLevelType(
     key: string,
+    opt: Options,
     schema: oas.SchemaObject | oas.ReferenceObject
   ): readonly ts.Node[] {
+    const { nominalTypeSuffix } = oautil.resolveTypePrefixAndSuffix(opt);
     if (oautil.isReferenceObject(schema)) {
       const resolved = resolveRefToTypeName(schema.$ref);
       const type = resolved.qualified
@@ -1246,17 +1275,17 @@ export function run(options: Options) {
         ts.createTypeAliasDeclaration(
           undefined,
           [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
-          oautil.typenamify(key),
+          oautil.typenamify(key) + nominalTypeSuffix,
           undefined,
           ts.createTypeReferenceNode(type, undefined)
         ),
-        generateTypeShape(key),
-        generateTopLevelMaker(key, schema),
-        generateNamedTypeDefinitionAssignment(key, schema)
+        generateTypeShape(key, opt),
+        generateTopLevelMaker(key, opt, schema),
+        generateNamedTypeDefinitionAssignment(key, opt, schema)
       ];
     }
     if (schema.type === 'object') {
-      return generateTopLevelClass(key, schema);
+      return generateTopLevelClass(key, opt, schema);
     }
 
     if (isScalar(schema)) {
@@ -1265,13 +1294,13 @@ export function run(options: Options) {
         ts.createTypeAliasDeclaration(
           undefined,
           [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
-          oautil.typenamify(key),
+          oautil.typenamify(key) + nominalTypeSuffix,
           undefined,
           scalarTypeWithBrand(key, generateType(schema))
         ),
-        generateTypeShape(key),
-        generateTopLevelMaker(key, schema),
-        generateNamedTypeDefinitionAssignment(key, schema, generateIsAForScalar(key))
+        generateTypeShape(key, opt),
+        generateTopLevelMaker(key, opt, schema),
+        generateNamedTypeDefinitionAssignment(key, opt, schema, generateIsAForScalar(key))
       ];
     }
 
@@ -1279,13 +1308,13 @@ export function run(options: Options) {
       ts.createTypeAliasDeclaration(
         undefined,
         [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
-        oautil.typenamify(key),
+        oautil.typenamify(key) + nominalTypeSuffix,
         undefined,
         generateType(schema)
       ),
-      generateTypeShape(key),
-      generateTopLevelMaker(key, schema),
-      generateNamedTypeDefinitionAssignment(key, schema)
+      generateTypeShape(key, opt),
+      generateTopLevelMaker(key, opt, schema),
+      generateNamedTypeDefinitionAssignment(key, opt, schema)
     ];
   }
 
@@ -1330,30 +1359,31 @@ export function run(options: Options) {
     Object.keys(schemas).map(key => {
       const schema: oas.SchemaObject = schemas[key];
       if (schema.nullable && schema.type === 'object') {
-        nodes.push(generateNamedTypeDefinitionDeclaration(oautil.nonNullableClass(key)));
+        nodes.push(generateNamedTypeDefinitionDeclaration(oautil.nonNullableClass(key), opts));
       }
-      nodes.push(generateNamedTypeDefinitionDeclaration(key));
+      nodes.push(generateNamedTypeDefinitionDeclaration(key, opts));
     });
     Object.keys(schemas).map(key => {
       const schema = schemas[key];
-      const types = generateTopLevelType(key, schema);
+      const types = generateTopLevelType(key, opts, schema);
       types.map(t => nodes.push(t));
     });
     return nodes;
   }
 
-  function generateComponentRequestsAndResponses(components?: {
+  function generateComponentRequestsAndResponses(opts: Options, components?: {
     [key: string]: oas.ResponseObject | oas.RequestBodyObject | oas.ReferenceObject;
   }): ts.Node[] {
     const nodes: ts.Node[] = [];
     if (components) {
       Object.keys(components).map(key => {
-        nodes.push(generateNamedTypeDefinitionDeclaration(key));
+        nodes.push(generateNamedTypeDefinitionDeclaration(key, opts));
       });
       Object.keys(components).map(key => {
         const component = components[key];
         generateTopLevelType(
           key,
+          opts,
           oautil.isReferenceObject(component)
             ? { $ref: component.$ref }
             : generateContentSchemaType(component.content || assert.fail('missing content'))
@@ -1369,12 +1399,12 @@ export function run(options: Options) {
     nodes.push(...oautil.errorTag('in component.schemas', () => generateComponentSchemas(opts)));
     nodes.push(
       ...oautil.errorTag('in component.responses', () =>
-        generateComponentRequestsAndResponses(oas.components.responses.$)
+        generateComponentRequestsAndResponses(opts, oas.components.responses.$)
       )
     );
     nodes.push(
       ...oautil.errorTag('in component.requestBodies', () =>
-        generateComponentRequestsAndResponses(oas.components.requestBodies.$)
+        generateComponentRequestsAndResponses(opts, oas.components.requestBodies.$)
       )
     );
     return ts.createNodeArray(nodes);

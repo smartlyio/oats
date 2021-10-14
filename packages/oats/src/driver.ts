@@ -42,6 +42,7 @@ export interface Driver {
     security?: UnsupportedFeatureBehaviour;
   };
   forceGenerateTypes?: boolean; // output the type file even if it would have been already generated
+  enableTypeManipulation?: boolean; // manipulate generation of structural and nominal types
 }
 
 interface GenerateFileOptions {
@@ -147,7 +148,8 @@ export function generate(driver: Driver) {
     externalOpenApiSpecs: driver.externalOpenApiSpecs,
     oas: spec,
     runtimeModule: modulePath(driver.generatedValueClassFile, driver.runtimeFilePath),
-    emitStatusCode: driver.emitStatusCode || emitAllStatusCodes
+    emitStatusCode: driver.emitStatusCode || emitAllStatusCodes,
+    enableTypeManipulation: driver.enableTypeManipulation
   });
   if (typeSource) {
     fs.writeFileSync(driver.generatedValueClassFile, header + typeSource);
