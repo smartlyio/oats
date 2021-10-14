@@ -18,11 +18,17 @@ export function nonNullableClass(name: string) {
   return 'nonNullable' + typenamify(name);
 }
 
-export function typenamify(name: string) {
+export function typenamify(name: string, prefix?: string, suffix?: string) {
   if (name.match(/^[^a-zA-Z]/)) {
     name = 'Type' + name;
   }
-  return capitalize(name);
+  if(prefix) {
+    return capitalize(prefix + name);
+  } else if(suffix){
+    return capitalize(name + suffix);
+  } else {
+    return capitalize(name);
+  }
 }
 
 export function refToTypeName(ref: string) {
