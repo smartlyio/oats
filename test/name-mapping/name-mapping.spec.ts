@@ -8,7 +8,6 @@ import * as koaBody from 'koa-body';
 import * as axiosAdapter from '@smartlyio/oats-axios-adapter';
 import * as http from 'http';
 import * as types from './tmp/client/types.generated';
-import { buildItem } from './tmp/server/types.generated';
 
 // 'api.EndpointsWithContext' is the generated type of the server
 const spec: server.Endpoints = {
