@@ -8,7 +8,13 @@ driver.generate({
   header: '/* tslint:disable variable-name only-arrow-functions*/',
   openapiFilePath: './api.yml',
   resolve: driver.compose(driver.generateFile(), driver.localResolve),
-  enableTypeManipulation: true
+  nameMapper: (name: string, kind: string) => {
+    if (kind === 'value') {
+      return name + 'WithBrand';
+    } else {
+      return name;
+    }
+  }
 });
 
 driver.generate({
@@ -16,6 +22,5 @@ driver.generate({
   generatedServerFile: './tmp/server/generated.ts',
   header: '/* tslint:disable variable-name only-arrow-functions*/',
   openapiFilePath: './api.yml',
-  resolve: driver.compose(driver.generateFile(), driver.localResolve),
-  enableTypeManipulation: true
+  resolve: driver.compose(driver.generateFile(), driver.localResolve)
 });
