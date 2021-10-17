@@ -1,20 +1,21 @@
-import { driver } from '@smartlyio/oats';
+import { driver, util } from '@smartlyio/oats';
 import * as process from 'process';
 
 process.chdir(__dirname);
+const nameMapper = (name: string, kind: util.NameKind) => {
+  if (kind === 'value') {
+    return 'Mapped' + name;
+  } else {
+    return name;
+  }
+};
 driver.generate({
   generatedValueClassFile: './tmp/client/types.generated.ts',
   generatedClientFile: './tmp/client/generated.ts',
   header: '/* tslint:disable variable-name only-arrow-functions*/',
   openapiFilePath: './api.yml',
   resolve: driver.compose(driver.generateFile(), driver.localResolve),
-  nameMapper: (name: string, kind: string) => {
-    if (kind === 'value') {
-      return name + 'WithBrand';
-    } else {
-      return name;
-    }
-  }
+  nameMapper
 });
 
 driver.generate({
@@ -22,5 +23,6 @@ driver.generate({
   generatedServerFile: './tmp/server/generated.ts',
   header: '/* tslint:disable variable-name only-arrow-functions*/',
   openapiFilePath: './api.yml',
-  resolve: driver.compose(driver.generateFile(), driver.localResolve)
+  resolve: driver.compose(driver.generateFile(), driver.localResolve),
+  nameMapper
 });

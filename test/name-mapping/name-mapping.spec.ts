@@ -8,6 +8,7 @@ import * as koaBody from 'koa-body';
 import * as axiosAdapter from '@smartlyio/oats-axios-adapter';
 import * as http from 'http';
 import * as types from './tmp/client/types.generated';
+import { buildItem } from './tmp/server/types.generated';
 
 // 'api.EndpointsWithContext' is the generated type of the server
 const spec: server.Endpoints = {
@@ -49,7 +50,7 @@ function serverAddress(server: http.Server) {
   return `http://localhost:${addr.port}`;
 }
 
-describe('type manipulation', () => {
+describe('name mapping', () => {
   let apiClient: client.ClientSpec;
   let server: any;
 
@@ -68,11 +69,10 @@ describe('type manipulation', () => {
     });
   });
 
-  describe('enableTypeManipulation=true', () => {
-    it('returns with suffixed nominal type', async () => {
+  describe('of kind "value"', () => {
+    it('maps name of response value class correctly', async () => {
       const item = await apiClient.item.get();
-      expect(types.typeItemWithBrand.isA(item.value.value)).toBeTruthy();
-      expect(item.value.value).toBeInstanceOf(types.ItemWithBrand);
+      expect(item.value.value).toBeInstanceOf(types.MappedItem);
     });
   });
 });
