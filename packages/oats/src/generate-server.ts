@@ -53,31 +53,51 @@ function generateMethod<S extends oas.OperationObject>(
 
   const headers = ts.createTypeReferenceNode(
     fromTypes(
-      oautil.typenamify(oautil.endpointTypeName(schema, path, method, 'headers'), opts.shapesAsRequests ? 'shape' : 'value', opts.nameMapper)
+      oautil.typenamify(
+        oautil.endpointTypeName(schema, path, method, 'headers'),
+        opts.shapesAsRequests ? 'shape' : 'value',
+        opts.nameMapper
+      )
     ),
     []
   );
   const params = ts.createTypeReferenceNode(
     fromTypes(
-      oautil.typenamify(oautil.endpointTypeName(schema, path, method, 'parameters'), opts.shapesAsRequests ? 'shape' : 'value', opts.nameMapper)
+      oautil.typenamify(
+        oautil.endpointTypeName(schema, path, method, 'parameters'),
+        opts.shapesAsRequests ? 'shape' : 'value',
+        opts.nameMapper
+      )
     ),
     []
   );
   const query = ts.createTypeReferenceNode(
     fromTypes(
-      oautil.typenamify(oautil.endpointTypeName(schema, path, method, 'query'), opts.shapesAsRequests ? 'shape' : 'value', opts.nameMapper)
+      oautil.typenamify(
+        oautil.endpointTypeName(schema, path, method, 'query'),
+        opts.shapesAsRequests ? 'shape' : 'value',
+        opts.nameMapper
+      )
     ),
     []
   );
   const body = ts.createTypeReferenceNode(
     fromTypes(
-      oautil.typenamify(oautil.endpointTypeName(schema, path, method, 'requestBody'), opts.shapesAsRequests ? 'shape' : 'value', opts.nameMapper)
+      oautil.typenamify(
+        oautil.endpointTypeName(schema, path, method, 'requestBody'),
+        opts.shapesAsRequests ? 'shape' : 'value',
+        opts.nameMapper
+      )
     ),
     []
   );
   const response = ts.createTypeReferenceNode(
     fromTypes(
-      oautil.typenamify(oautil.endpointTypeName(schema, path, method, 'response'), opts.shapesAsResponses ? 'shape' : 'value', opts.nameMapper)
+      oautil.typenamify(
+        oautil.endpointTypeName(schema, path, method, 'response'),
+        opts.shapesAsResponses ? 'shape' : 'value',
+        opts.nameMapper
+      )
     ),
     []
   );
@@ -129,25 +149,41 @@ function generateClientMethod(
   }
   const headers = ts.createTypeReferenceNode(
     fromTypes(
-      oautil.typenamify(oautil.endpointTypeName(op, path, method, 'headers'), opts.shapesAsRequests ? 'shape' : 'value', opts.nameMapper)
+      oautil.typenamify(
+        oautil.endpointTypeName(op, path, method, 'headers'),
+        opts.shapesAsRequests ? 'shape' : 'value',
+        opts.nameMapper
+      )
     ),
     []
   );
   const query = ts.createTypeReferenceNode(
     fromTypes(
-      oautil.typenamify(oautil.endpointTypeName(op, path, method, 'query'), opts.shapesAsRequests ? 'shape' : 'value', opts.nameMapper)
+      oautil.typenamify(
+        oautil.endpointTypeName(op, path, method, 'query'),
+        opts.shapesAsRequests ? 'shape' : 'value',
+        opts.nameMapper
+      )
     ),
     []
   );
   const body = ts.createTypeReferenceNode(
     fromTypes(
-      oautil.typenamify(oautil.endpointTypeName(op, path, method, 'requestBody'), opts.shapesAsRequests ? 'shape' : 'value', opts.nameMapper)
+      oautil.typenamify(
+        oautil.endpointTypeName(op, path, method, 'requestBody'),
+        opts.shapesAsRequests ? 'shape' : 'value',
+        opts.nameMapper
+      )
     ),
     []
   );
   const response = ts.createTypeReferenceNode(
     fromTypes(
-      oautil.typenamify(oautil.endpointTypeName(op, path, method, 'response'), opts.shapesAsResponses ? 'shape' : 'value', opts.nameMapper)
+      oautil.typenamify(
+        oautil.endpointTypeName(op, path, method, 'response'),
+        opts.shapesAsResponses ? 'shape' : 'value',
+        opts.nameMapper
+      )
     ),
     []
   );
@@ -267,7 +303,10 @@ function generateEndpointsType(opts: Options) {
   ]);
 }
 function makeMaker(type: string, opts: Options): ts.Expression {
-  return ts.createPropertyAccess(ts.createIdentifier('types'), 'make' + oautil.typenamify(type, 'value', opts.nameMapper));
+  return ts.createPropertyAccess(
+    ts.createIdentifier('types'),
+    'make' + oautil.typenamify(type, 'value', opts.nameMapper)
+  );
 }
 
 function generateMaker(

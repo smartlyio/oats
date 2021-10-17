@@ -161,17 +161,17 @@ export function generate(driver: Driver) {
     fs.writeFileSync(
       driver.generatedClientFile,
       header +
-      server.run({
-        oas: spec,
-        runtimePath: modulePath(driver.generatedClientFile, driver.runtimeFilePath),
-        typePath: modulePath(driver.generatedClientFile, driver.generatedValueClassFile),
-        shapesAsResponses: false,
-        shapesAsRequests: true,
-        unsupportedFeatures: {
-          security: driver.unsupportedFeatures?.security ?? UnsupportedFeatureBehaviour.reject
-        },
-        nameMapper: driver.nameMapper
-      })
+        server.run({
+          oas: spec,
+          runtimePath: modulePath(driver.generatedClientFile, driver.runtimeFilePath),
+          typePath: modulePath(driver.generatedClientFile, driver.generatedValueClassFile),
+          shapesAsResponses: false,
+          shapesAsRequests: true,
+          unsupportedFeatures: {
+            security: driver.unsupportedFeatures?.security ?? UnsupportedFeatureBehaviour.reject
+          },
+          nameMapper: driver.nameMapper
+        })
     );
   }
   if (driver.generatedServerFile) {
@@ -179,17 +179,17 @@ export function generate(driver: Driver) {
     fs.writeFileSync(
       driver.generatedServerFile,
       header +
-      server.run({
-        oas: spec,
-        runtimePath: modulePath(driver.generatedServerFile, driver.runtimeFilePath),
-        typePath: modulePath(driver.generatedServerFile, driver.generatedValueClassFile),
-        shapesAsRequests: false,
-        shapesAsResponses: true,
-        unsupportedFeatures: {
-          security: driver.unsupportedFeatures?.security ?? UnsupportedFeatureBehaviour.reject
-        },
-        nameMapper: driver.nameMapper
-      })
+        server.run({
+          oas: spec,
+          runtimePath: modulePath(driver.generatedServerFile, driver.runtimeFilePath),
+          typePath: modulePath(driver.generatedServerFile, driver.generatedValueClassFile),
+          shapesAsRequests: false,
+          shapesAsResponses: true,
+          unsupportedFeatures: {
+            security: driver.unsupportedFeatures?.security ?? UnsupportedFeatureBehaviour.reject
+          },
+          nameMapper: driver.nameMapper
+        })
     );
   }
 }
