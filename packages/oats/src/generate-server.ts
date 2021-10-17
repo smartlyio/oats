@@ -4,7 +4,7 @@ import * as assert from 'assert';
 import * as oautil from './util';
 import { server, client } from '@smartlyio/oats-runtime';
 import safe from '@smartlyio/safe-navigation';
-import { UnsupportedFeatureBehaviour } from './util';
+import { NameMapper, UnsupportedFeatureBehaviour } from './util';
 
 function generateRuntimeImport(runtimeModule: string) {
   return ts.createNodeArray([
@@ -53,36 +53,31 @@ function generateMethod<S extends oas.OperationObject>(
 
   const headers = ts.createTypeReferenceNode(
     fromTypes(
-      (opts.shapesAsRequests && !opts.enableTypeManipulation ? 'ShapeOf' : '') +
-      oautil.typenamify(oautil.endpointTypeName(schema, path, method, 'headers'))
+      oautil.typenamify(oautil.endpointTypeName(schema, path, method, 'headers'), opts.shapesAsRequests ? 'shape' : undefined, opts.nameMapper)
     ),
     []
   );
   const params = ts.createTypeReferenceNode(
     fromTypes(
-      (opts.shapesAsRequests && !opts.enableTypeManipulation ? 'ShapeOf' : '') +
-      oautil.typenamify(oautil.endpointTypeName(schema, path, method, 'parameters'))
+      oautil.typenamify(oautil.endpointTypeName(schema, path, method, 'parameters'), opts.shapesAsRequests ? 'shape' : undefined, opts.nameMapper)
     ),
     []
   );
   const query = ts.createTypeReferenceNode(
     fromTypes(
-      (opts.shapesAsRequests && !opts.enableTypeManipulation ? 'ShapeOf' : '') +
-      oautil.typenamify(oautil.endpointTypeName(schema, path, method, 'query'))
+      oautil.typenamify(oautil.endpointTypeName(schema, path, method, 'query'), opts.shapesAsRequests ? 'shape' : undefined, opts.nameMapper)
     ),
     []
   );
   const body = ts.createTypeReferenceNode(
     fromTypes(
-      (opts.shapesAsRequests && !opts.enableTypeManipulation ? 'ShapeOf' : '') +
-      oautil.typenamify(oautil.endpointTypeName(schema, path, method, 'requestBody'))
+      oautil.typenamify(oautil.endpointTypeName(schema, path, method, 'requestBody'), opts.shapesAsRequests ? 'shape' : undefined, opts.nameMapper)
     ),
     []
   );
   const response = ts.createTypeReferenceNode(
     fromTypes(
-      (opts.shapesAsResponses && !opts.enableTypeManipulation ? 'ShapeOf' : '') +
-      oautil.typenamify(oautil.endpointTypeName(schema, path, method, 'response'))
+      oautil.typenamify(oautil.endpointTypeName(schema, path, method, 'response'), opts.shapesAsRequests ? 'shape' : undefined, opts.nameMapper)
     ),
     []
   );
@@ -134,29 +129,25 @@ function generateClientMethod(
   }
   const headers = ts.createTypeReferenceNode(
     fromTypes(
-      (opts.shapesAsRequests && !opts.enableTypeManipulation ? 'ShapeOf' : '') +
-      oautil.typenamify(oautil.endpointTypeName(op, path, method, 'headers'))
+      oautil.typenamify(oautil.endpointTypeName(op, path, method, 'headers'), opts.shapesAsRequests ? 'shape' : undefined, opts.nameMapper)
     ),
     []
   );
   const query = ts.createTypeReferenceNode(
     fromTypes(
-      (opts.shapesAsRequests && !opts.enableTypeManipulation ? 'ShapeOf' : '') +
-      oautil.typenamify(oautil.endpointTypeName(op, path, method, 'query'))
+      oautil.typenamify(oautil.endpointTypeName(op, path, method, 'query'), opts.shapesAsRequests ? 'shape' : undefined, opts.nameMapper)
     ),
     []
   );
   const body = ts.createTypeReferenceNode(
     fromTypes(
-      (opts.shapesAsRequests && !opts.enableTypeManipulation ? 'ShapeOf' : '') +
-      oautil.typenamify(oautil.endpointTypeName(op, path, method, 'requestBody'))
+      oautil.typenamify(oautil.endpointTypeName(op, path, method, 'requestBody'), opts.shapesAsRequests ? 'shape' : undefined, opts.nameMapper)
     ),
     []
   );
   const response = ts.createTypeReferenceNode(
     fromTypes(
-      (opts.shapesAsResponses && !opts.enableTypeManipulation ? 'ShapeOf' : '') +
-      oautil.typenamify(oautil.endpointTypeName(op, path, method, 'response'))
+      oautil.typenamify(oautil.endpointTypeName(op, path, method, 'response'), opts.shapesAsRequests ? 'shape' : undefined, opts.nameMapper)
     ),
     []
   );
@@ -275,8 +266,8 @@ function generateEndpointsType(opts: Options) {
     )
   ]);
 }
-function makeMaker(type: string): ts.Expression {
-  return ts.createPropertyAccess(ts.createIdentifier('types'), 'make' + oautil.typenamify(type));
+function makeMaker(type: string, opts: Options): ts.Expression {
+  return ts.createPropertyAccess(ts.createIdentifier('types'), 'make' + oautil.typenamify(type, 'value', opts.nameMapper));
 }
 
 function generateMaker(
@@ -289,12 +280,11 @@ function generateMaker(
   if (object.servers) {
     servers = object.servers.map(server => server.url);
   }
-  const { nominalTypeSuffix } = oautil.resolveTypeAffixes(opts.enableTypeManipulation);
-  const headers = makeMaker(oautil.endpointTypeName(object, path, method, 'headers') + nominalTypeSuffix);
-  const params = makeMaker(oautil.endpointTypeName(object, path, method, 'parameters') + nominalTypeSuffix);
-  const query = makeMaker(oautil.endpointTypeName(object, path, method, 'query') + nominalTypeSuffix);
-  const body = makeMaker(oautil.endpointTypeName(object, path, method, 'requestBody') + nominalTypeSuffix);
-  const response = makeMaker(oautil.endpointTypeName(object, path, method, 'response') + nominalTypeSuffix);
+  const headers = makeMaker(oautil.endpointTypeName(object, path, method, 'headers'), opts);
+  const params = makeMaker(oautil.endpointTypeName(object, path, method, 'parameters'), opts);
+  const query = makeMaker(oautil.endpointTypeName(object, path, method, 'query'), opts);
+  const body = makeMaker(oautil.endpointTypeName(object, path, method, 'requestBody'), opts);
+  const response = makeMaker(oautil.endpointTypeName(object, path, method, 'response'), opts);
   return ts.createObjectLiteral(
     [
       ts.createPropertyAssignment('path', ts.createStringLiteral(path)),
@@ -408,7 +398,7 @@ interface Options {
   unsupportedFeatures: {
     security?: UnsupportedFeatureBehaviour;
   };
-  enableTypeManipulation?: boolean;
+  nameMapper?: NameMapper;
 }
 
 export function run(opts: Options) {

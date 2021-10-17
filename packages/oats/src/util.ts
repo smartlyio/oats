@@ -17,16 +17,22 @@ export function nonNullableClass(name: string) {
   return 'nonNullable' + typenamify(name);
 }
 
-export function typenamify(name: string, prefix?: string, suffix?: string) {
+export type NameKind = 'shape' | 'value' | 'reflection';
+export type NameMapper = (name: string, kind: NameKind) => string;
+
+export function typenamify(name: string, nameKind?: NameKind, nameMapper?: NameMapper) {
   if (name.match(/^[^a-zA-Z]/)) {
     name = 'Type' + name;
   }
-  if (prefix) {
-    return capitalize(prefix) + capitalize(name);
-  } else if (suffix) {
-    return capitalize(name + suffix);
-  } else {
-    return capitalize(name);
+  const capitalizedName = capitalize(name);
+  switch (nameKind) {
+    case 'shape':
+      return nameMapper?.(capitalizedName, nameKind) ?? 'ShapeOf' + capitalize(name);
+    case 'value':
+      return nameMapper?.(capitalizedName, nameKind) ?? capitalizedName;
+    case 'reflection':
+    default:
+      return capitalizedName;
   }
 }
 

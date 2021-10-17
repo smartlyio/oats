@@ -4,7 +4,7 @@ import * as types from './generate-types';
 import * as server from './generate-server';
 import * as path from 'path';
 import * as oas from 'openapi3-ts';
-import { UnsupportedFeatureBehaviour, refToTypeName, capitalize } from './util';
+import { UnsupportedFeatureBehaviour, refToTypeName, capitalize, NameMapper } from './util';
 import { Resolve } from './generate-types';
 
 function modulePath(importer: string, module: string | undefined) {
@@ -42,7 +42,7 @@ export interface Driver {
     security?: UnsupportedFeatureBehaviour;
   };
   forceGenerateTypes?: boolean; // output the type file even if it would have been already generated
-  enableTypeManipulation?: boolean; // manipulate generation of structural and nominal types
+  nameMapper?: NameMapper; // mapping function to customize generated shape/value/reflect names
 }
 
 interface GenerateFileOptions {
@@ -57,9 +57,9 @@ function defaultResolve() {
   return undefined;
 }
 
-export function localResolve(ref: string) {
+export function localResolve(ref: string, options: types.Options) {
   if (ref[0] === '#') {
-    return { name: refToTypeName(ref) };
+    return { name: options.nameMapper?.(refToTypeName(ref), 'value') ?? refToTypeName(ref) };
   }
   return;
 }
@@ -107,7 +107,7 @@ export function generateFile(opts?: GenerateFileOptions): types.Resolve {
     return {
       importAs: moduleName,
       importFrom: generatedFile,
-      name: refToTypeName(localName),
+      name: options.nameMapper?.(refToTypeName(localName), 'value') ?? refToTypeName(localName),
       generate: () => {
         generate({
           forceGenerateTypes: true,
@@ -118,7 +118,8 @@ export function generateFile(opts?: GenerateFileOptions): types.Resolve {
           externalOpenApiSpecs: options.externalOpenApiSpecs,
           externalOpenApiImports: options.externalOpenApiImports,
           emitStatusCode: options.emitStatusCode,
-          unsupportedFeatures: options.unsupportedFeatures
+          unsupportedFeatures: options.unsupportedFeatures,
+          nameMapper: options.nameMapper
         });
       }
     };
@@ -149,7 +150,7 @@ export function generate(driver: Driver) {
     oas: spec,
     runtimeModule: modulePath(driver.generatedValueClassFile, driver.runtimeFilePath),
     emitStatusCode: driver.emitStatusCode || emitAllStatusCodes,
-    enableTypeManipulation: driver.enableTypeManipulation
+    nameMapper: driver.nameMapper
   });
   if (typeSource) {
     fs.writeFileSync(driver.generatedValueClassFile, header + typeSource);
@@ -160,17 +161,17 @@ export function generate(driver: Driver) {
     fs.writeFileSync(
       driver.generatedClientFile,
       header +
-        server.run({
-          oas: spec,
-          runtimePath: modulePath(driver.generatedClientFile, driver.runtimeFilePath),
-          typePath: modulePath(driver.generatedClientFile, driver.generatedValueClassFile),
-          shapesAsResponses: false,
-          shapesAsRequests: true,
-          unsupportedFeatures: {
-            security: driver.unsupportedFeatures?.security ?? UnsupportedFeatureBehaviour.reject
-          },
-          enableTypeManipulation: driver.enableTypeManipulation
-        })
+      server.run({
+        oas: spec,
+        runtimePath: modulePath(driver.generatedClientFile, driver.runtimeFilePath),
+        typePath: modulePath(driver.generatedClientFile, driver.generatedValueClassFile),
+        shapesAsResponses: false,
+        shapesAsRequests: true,
+        unsupportedFeatures: {
+          security: driver.unsupportedFeatures?.security ?? UnsupportedFeatureBehaviour.reject
+        },
+        nameMapper: driver.nameMapper
+      })
     );
   }
   if (driver.generatedServerFile) {
@@ -178,17 +179,17 @@ export function generate(driver: Driver) {
     fs.writeFileSync(
       driver.generatedServerFile,
       header +
-        server.run({
-          oas: spec,
-          runtimePath: modulePath(driver.generatedServerFile, driver.runtimeFilePath),
-          typePath: modulePath(driver.generatedServerFile, driver.generatedValueClassFile),
-          shapesAsRequests: false,
-          shapesAsResponses: true,
-          unsupportedFeatures: {
-            security: driver.unsupportedFeatures?.security ?? UnsupportedFeatureBehaviour.reject
-          },
-          enableTypeManipulation: driver.enableTypeManipulation
-        })
+      server.run({
+        oas: spec,
+        runtimePath: modulePath(driver.generatedServerFile, driver.runtimeFilePath),
+        typePath: modulePath(driver.generatedServerFile, driver.generatedValueClassFile),
+        shapesAsRequests: false,
+        shapesAsResponses: true,
+        unsupportedFeatures: {
+          security: driver.unsupportedFeatures?.security ?? UnsupportedFeatureBehaviour.reject
+        },
+        nameMapper: driver.nameMapper
+      })
     );
   }
 }
