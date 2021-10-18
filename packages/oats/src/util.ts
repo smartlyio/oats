@@ -20,20 +20,8 @@ export function nonNullableClass(name: string) {
 export type NameKind = 'shape' | 'value' | 'reflection';
 export type NameMapper = (name: string, kind: NameKind) => string;
 
-export function typenamify(name: string, nameKind?: NameKind, nameMapper?: NameMapper) {
-  if (name.match(/^[^a-zA-Z]/)) {
-    name = 'Type' + name;
-  }
-  const capitalizedName = capitalize(name);
-  switch (nameKind) {
-    case 'shape':
-      return nameMapper?.(capitalizedName, nameKind) ?? 'ShapeOf' + capitalize(name);
-    case 'value':
-      return nameMapper?.(capitalizedName, nameKind) ?? capitalizedName;
-    case 'reflection':
-    default:
-      return capitalizedName;
-  }
+export function typenamify(name: string) {
+  return capitalize(name);
 }
 
 export function refToTypeName(ref: string) {

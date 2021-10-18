@@ -76,6 +76,22 @@ export function compose(...fns: types.Resolve[]): types.Resolve {
   };
 }
 
+function localNameMapper (name: string, nameKind: NameKind) : string {
+  // name begins with non-alphabet is prefixed with 'Type' 
+  const sanitizedName = (name.match(/^[^a-zA-Z]/)) ? 'Type' + name : name;
+  const capitalizedName = capitalize(sanitizedName);
+  switch (nameKind) {
+    case 'shape':
+      return 'ShapeOf' + capitalizedName;
+    case 'value':
+      return capitalizedName;
+    case 'reflection':
+      return 'type' + capitalizedName;
+    default:
+      return capitalizedName;
+  }
+}
+
 function makeModuleName(filename: string, keepDirectoryName = false): string {
   const filePath = keepDirectoryName ? filename : path.basename(filename);
   const parts = filePath.replace(/\.[^.]*$/, '').split(/[^a-zA-Z0-9]/);
@@ -150,7 +166,7 @@ export function generate(driver: Driver) {
     oas: spec,
     runtimeModule: modulePath(driver.generatedValueClassFile, driver.runtimeFilePath),
     emitStatusCode: driver.emitStatusCode || emitAllStatusCodes,
-    nameMapper: driver.nameMapper
+    nameMapper: driver.nameMapper || localNameMapper
   });
   if (typeSource) {
     fs.writeFileSync(driver.generatedValueClassFile, header + typeSource);
@@ -170,7 +186,7 @@ export function generate(driver: Driver) {
           unsupportedFeatures: {
             security: driver.unsupportedFeatures?.security ?? UnsupportedFeatureBehaviour.reject
           },
-          nameMapper: driver.nameMapper
+          nameMapper: driver.nameMapper || localNameMapper
         })
     );
   }
@@ -188,7 +204,7 @@ export function generate(driver: Driver) {
           unsupportedFeatures: {
             security: driver.unsupportedFeatures?.security ?? UnsupportedFeatureBehaviour.reject
           },
-          nameMapper: driver.nameMapper
+          nameMapper: driver.nameMapper || localNameMapper
         })
     );
   }

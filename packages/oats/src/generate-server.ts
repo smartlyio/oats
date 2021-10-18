@@ -53,50 +53,43 @@ function generateMethod<S extends oas.OperationObject>(
 
   const headers = ts.createTypeReferenceNode(
     fromTypes(
-      oautil.typenamify(
-        oautil.endpointTypeName(schema, path, method, 'headers'),
-        opts.shapesAsRequests ? 'shape' : 'value',
-        opts.nameMapper
-      )
+      opts.nameMapper(oautil.endpointTypeName(schema, path, method, 'headers'),
+      opts.shapesAsRequests ? 'shape' : 'value')
     ),
     []
   );
   const params = ts.createTypeReferenceNode(
     fromTypes(
-      oautil.typenamify(
+      opts.nameMapper(
         oautil.endpointTypeName(schema, path, method, 'parameters'),
-        opts.shapesAsRequests ? 'shape' : 'value',
-        opts.nameMapper
+        opts.shapesAsRequests ? 'shape' : 'value'
       )
     ),
     []
   );
   const query = ts.createTypeReferenceNode(
     fromTypes(
-      oautil.typenamify(
+      opts.nameMapper(
         oautil.endpointTypeName(schema, path, method, 'query'),
-        opts.shapesAsRequests ? 'shape' : 'value',
-        opts.nameMapper
+        opts.shapesAsRequests ? 'shape' : 'value'
       )
     ),
     []
   );
   const body = ts.createTypeReferenceNode(
     fromTypes(
-      oautil.typenamify(
+      opts.nameMapper(
         oautil.endpointTypeName(schema, path, method, 'requestBody'),
-        opts.shapesAsRequests ? 'shape' : 'value',
-        opts.nameMapper
+        opts.shapesAsRequests ? 'shape' : 'value'
       )
     ),
     []
   );
   const response = ts.createTypeReferenceNode(
     fromTypes(
-      oautil.typenamify(
+      opts.nameMapper(
         oautil.endpointTypeName(schema, path, method, 'response'),
-        opts.shapesAsResponses ? 'shape' : 'value',
-        opts.nameMapper
+        opts.shapesAsResponses ? 'shape' : 'value'
       )
     ),
     []
@@ -149,40 +142,36 @@ function generateClientMethod(
   }
   const headers = ts.createTypeReferenceNode(
     fromTypes(
-      oautil.typenamify(
+      opts.nameMapper(
         oautil.endpointTypeName(op, path, method, 'headers'),
-        opts.shapesAsRequests ? 'shape' : 'value',
-        opts.nameMapper
+        opts.shapesAsRequests ? 'shape' : 'value'
       )
     ),
     []
   );
   const query = ts.createTypeReferenceNode(
     fromTypes(
-      oautil.typenamify(
+      opts.nameMapper(
         oautil.endpointTypeName(op, path, method, 'query'),
-        opts.shapesAsRequests ? 'shape' : 'value',
-        opts.nameMapper
+        opts.shapesAsRequests ? 'shape' : 'value'
       )
     ),
     []
   );
   const body = ts.createTypeReferenceNode(
     fromTypes(
-      oautil.typenamify(
+      opts.nameMapper(
         oautil.endpointTypeName(op, path, method, 'requestBody'),
-        opts.shapesAsRequests ? 'shape' : 'value',
-        opts.nameMapper
+        opts.shapesAsRequests ? 'shape' : 'value'
       )
     ),
     []
   );
   const response = ts.createTypeReferenceNode(
     fromTypes(
-      oautil.typenamify(
+      opts.nameMapper(
         oautil.endpointTypeName(op, path, method, 'response'),
-        opts.shapesAsResponses ? 'shape' : 'value',
-        opts.nameMapper
+        opts.shapesAsResponses ? 'shape' : 'value'
       )
     ),
     []
@@ -305,7 +294,7 @@ function generateEndpointsType(opts: Options) {
 function makeMaker(type: string, opts: Options): ts.Expression {
   return ts.createPropertyAccess(
     ts.createIdentifier('types'),
-    'make' + oautil.typenamify(type, 'value', opts.nameMapper)
+    'make' + opts.nameMapper(type, 'value')
   );
 }
 
@@ -437,7 +426,7 @@ interface Options {
   unsupportedFeatures: {
     security?: UnsupportedFeatureBehaviour;
   };
-  nameMapper?: NameMapper;
+  nameMapper: NameMapper;
 }
 
 export function run(opts: Options) {

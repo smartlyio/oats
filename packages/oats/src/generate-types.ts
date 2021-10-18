@@ -43,7 +43,7 @@ export interface Options {
   unsupportedFeatures?: {
     security?: UnsupportedFeatureBehaviour;
   };
-  nameMapper?: oautil.NameMapper;
+  nameMapper: oautil.NameMapper;
 }
 
 export function info(message: string) {
@@ -577,11 +577,11 @@ export function run(options: Options) {
       undefined,
       ts.createTypeReferenceNode(fromLib('reflection', 'NamedTypeDefinition'), [
         ts.createTypeReferenceNode(
-          ts.createIdentifier(oautil.typenamify(key, 'value', options.nameMapper)),
+          ts.createIdentifier(options.nameMapper(key, 'value')),
           []
         )
       ]),
-      ts.createIdentifier('type' + oautil.typenamify(key, 'value', options.nameMapper))
+      ts.createIdentifier('type' + options.nameMapper(key, 'value'))
     );
   }
 
@@ -600,7 +600,7 @@ export function run(options: Options) {
           undefined,
           'value',
           undefined,
-          ts.createTypeReferenceNode(oautil.typenamify(key, 'shape', options.nameMapper), [])
+          ts.createTypeReferenceNode(options.nameMapper(key, 'shape'), [])
         ),
         ts.createParameter(
           undefined,
@@ -641,7 +641,7 @@ export function run(options: Options) {
                   ts.createPropertyAccess(
                     ts.createCall(
                       ts.createIdentifier(
-                        'build' + oautil.typenamify(key, 'value', options.nameMapper)
+                        'build' + options.nameMapper(key, 'value')
                       ),
                       undefined,
                       [ts.createIdentifier('value'), ts.createIdentifier('opts')]
@@ -674,7 +674,7 @@ export function run(options: Options) {
           undefined,
           'value',
           undefined,
-          ts.createTypeReferenceNode(oautil.typenamify(key, 'shape', options.nameMapper), [])
+          ts.createTypeReferenceNode(options.nameMapper(key, 'shape'), [])
         ),
         ts.createParameter(
           undefined,
@@ -686,7 +686,7 @@ export function run(options: Options) {
         )
       ],
       ts.createTypeReferenceNode(fromLib('make', makeTypeTypeName), [
-        ts.createTypeReferenceNode(oautil.typenamify(key, 'value', options.nameMapper), [])
+        ts.createTypeReferenceNode(options.nameMapper(key, 'value'), [])
       ]),
       ts.createBlock([
         ts.createVariableStatement(
@@ -698,7 +698,7 @@ export function run(options: Options) {
                 undefined,
                 ts.createCall(
                   ts.createIdentifier(
-                    'build' + oautil.typenamify(key, 'value', options.nameMapper)
+                    'build' + options.nameMapper(key, 'value')
                   ),
                   undefined,
                   [ts.createIdentifier('value'), ts.createIdentifier('opts')]
@@ -731,7 +731,7 @@ export function run(options: Options) {
               undefined,
               [
                 ts.createCall(
-                  ts.createIdentifier('new ' + oautil.typenamify(key, 'value', options.nameMapper)),
+                  ts.createIdentifier('new ' + options.nameMapper(key, 'value')),
                   undefined,
                   [
                     ts.createCall(
@@ -815,7 +815,7 @@ export function run(options: Options) {
       undefined,
       [
         ts.factory.createPropertyAccessExpression(
-          ts.factory.createIdentifier(`type${oautil.typenamify(key, 'value', options.nameMapper)}`),
+          ts.factory.createIdentifier(`type${options.nameMapper(key, 'value')}`),
           ts.factory.createIdentifier('definition')
         )
       ]
@@ -1099,10 +1099,10 @@ export function run(options: Options) {
       ts.createVariableDeclarationList(
         [
           ts.createVariableDeclaration(
-            'type' + oautil.typenamify(key, 'value', options.nameMapper),
+            'type' + options.nameMapper(key, 'value'),
             ts.createTypeReferenceNode(fromLib('reflection', 'NamedTypeDefinition'), [
-              ts.createTypeReferenceNode(oautil.typenamify(key, 'value', options.nameMapper), []),
-              ts.createTypeReferenceNode(oautil.typenamify(key, 'shape', options.nameMapper), [])
+              ts.createTypeReferenceNode(options.nameMapper(key, 'value'), []),
+              ts.createTypeReferenceNode(options.nameMapper(key, 'shape'), [])
             ]),
             ts.createAsExpression(
               ts.createObjectLiteral([], false),
@@ -1155,7 +1155,7 @@ export function run(options: Options) {
   }
 
   function generateTopLevelClassMaker(key: string, valueIdentifier: string) {
-    const shape = oautil.typenamify(key, 'shape', options.nameMapper);
+    const shape = options.nameMapper(key, 'shape');
     return ts.createVariableStatement(
       [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
       ts.createVariableDeclarationList(
@@ -1181,14 +1181,14 @@ export function run(options: Options) {
     resultType?: string
   ) {
     const makerFun = 'createMaker';
-    const shape = oautil.typenamify(key, 'shape', options.nameMapper);
-    resultType = resultType || oautil.typenamify(key, 'value', options.nameMapper);
+    const shape = options.nameMapper(key, 'shape');
+    resultType = resultType || options.nameMapper(key, 'value');
     return ts.createVariableStatement(
       [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
       ts.createVariableDeclarationList(
         [
           ts.createVariableDeclaration(
-            name + oautil.typenamify(key, 'value', options.nameMapper),
+            name + options.nameMapper(key, 'value'),
             ts.createTypeReferenceNode(fromLib('make', 'Maker'), [
               ts.createTypeReferenceNode(shape, []),
               ts.createTypeReferenceNode(resultType, [])
@@ -1223,7 +1223,7 @@ export function run(options: Options) {
     return ts.createTypeAliasDeclaration(
       undefined,
       [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
-      oautil.typenamify(key, 'shape', options.nameMapper),
+      options.nameMapper(key, 'shape'),
       undefined,
       ts.createTypeReferenceNode(fromLib('ShapeOf'), [
         ts.createTypeReferenceNode(valueIdentifier, [])
@@ -1246,7 +1246,7 @@ export function run(options: Options) {
       });
       return [...generateTopLevelClass(classKey, { ...schema, nullable: false }), ...proxy];
     }
-    const valueIdentifier = oautil.typenamify(key, 'value', options.nameMapper);
+    const valueIdentifier = options.nameMapper(key, 'value');
     return [
       generateTypeShape(key, valueIdentifier),
       generateValueClass(key, valueIdentifier, schema),
@@ -1256,7 +1256,7 @@ export function run(options: Options) {
         key,
         valueIdentifier,
         schema,
-        generateIsA(oautil.typenamify(key, 'value', options.nameMapper))
+        generateIsA(options.nameMapper(key, 'value'))
       )
     ];
   }
@@ -1265,7 +1265,7 @@ export function run(options: Options) {
     key: string,
     schema: oas.SchemaObject | oas.ReferenceObject
   ): readonly ts.Node[] {
-    const valueIdentifier = oautil.typenamify(key, 'value', options.nameMapper);
+    const valueIdentifier = options.nameMapper(key, 'value');
     if (oautil.isReferenceObject(schema)) {
       const resolved = resolveRefToTypeName(schema.$ref);
       const type = resolved.qualified
@@ -1294,7 +1294,7 @@ export function run(options: Options) {
         ts.createTypeAliasDeclaration(
           undefined,
           [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
-          oautil.typenamify(key, 'value', options.nameMapper),
+          options.nameMapper(key, 'value'),
           undefined,
           scalarTypeWithBrand(key, generateType(schema))
         ),
@@ -1313,7 +1313,7 @@ export function run(options: Options) {
       ts.createTypeAliasDeclaration(
         undefined,
         [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
-        oautil.typenamify(key, 'value', options.nameMapper),
+        options.nameMapper(key, 'value'),
         undefined,
         generateType(schema)
       ),
