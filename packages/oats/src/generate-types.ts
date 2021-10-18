@@ -762,7 +762,7 @@ export function run(options: Options) {
     ];
   }
 
-  function generateValueClass(key: string, schema: oas.SchemaObject) {
+  function generateValueClass(key: string, valueIdentifier: string, schema: oas.SchemaObject) {
     const members = generateClassMembers(
       schema.properties,
       schema.required,
@@ -775,7 +775,7 @@ export function run(options: Options) {
     return ts.createClassDeclaration(
       undefined,
       [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
-      oautil.typenamify(key, 'value', options.nameMapper),
+      valueIdentifier,
       [],
       [ts.createHeritageClause(ts.SyntaxKind.ExtendsKeyword, [brand])],
       [...members, ...generateClassBuiltindMembers(key)]
@@ -821,12 +821,12 @@ export function run(options: Options) {
     );
   }
 
-  function generateTopLevelClassBuilder(key: string, schema: oas.SchemaObject) {
+  function generateTopLevelClassBuilder(key: string, valueIdentifier: string, schema: oas.SchemaObject) {
     return generateTopLevelMaker(
       key,
       schema,
       'build',
-      oautil.typenamify(key, 'shape', options.nameMapper)
+      valueIdentifier
     );
   }
 
@@ -1131,7 +1131,8 @@ export function run(options: Options) {
   }
 
   function generateNamedTypeDefinitionAssignment(
-    key: string,
+    key: string, 
+    valueIdentifier: string,
     schema: oas.SchemaObject,
     isA?: ts.ArrowFunction
   ) {
@@ -1139,17 +1140,17 @@ export function run(options: Options) {
       ts.createPropertyAccess(ts.createIdentifier('Object'), 'assign'),
       undefined,
       [
-        ts.createIdentifier('type' + oautil.typenamify(key, 'value', options.nameMapper)),
+        ts.createIdentifier('type' + valueIdentifier),
         ts.createObjectLiteral(
           [
             ts.createPropertyAssignment(
               'name',
-              ts.createStringLiteral(oautil.typenamify(key, 'value', options.nameMapper))
+              ts.createStringLiteral(valueIdentifier)
             ),
             ts.createPropertyAssignment('definition', generateReflectionType(schema)),
             ts.createPropertyAssignment(
               'maker',
-              ts.createIdentifier('make' + oautil.typenamify(key, 'value', options.nameMapper))
+              ts.createIdentifier('make' + valueIdentifier)
             ),
             ts.createPropertyAssignment('isA', isA ?? ts.createNull())
           ],
@@ -1159,20 +1160,20 @@ export function run(options: Options) {
     );
   }
 
-  function generateTopLevelClassMaker(key: string) {
+  function generateTopLevelClassMaker(key: string, valueIdentifier: string) {
     const shape = oautil.typenamify(key, 'shape', options.nameMapper);
     return ts.createVariableStatement(
       [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
       ts.createVariableDeclarationList(
         [
           ts.createVariableDeclaration(
-            'make' + oautil.typenamify(key, 'value', options.nameMapper),
+            'make' + valueIdentifier,
             ts.createTypeReferenceNode(fromLib('make', 'Maker'), [
               ts.createTypeReferenceNode(shape, []),
-              ts.createTypeReferenceNode(oautil.typenamify(key, 'value', options.nameMapper), [])
+              ts.createTypeReferenceNode(valueIdentifier, [])
             ]),
             ts.createPropertyAccess(
-              ts.createIdentifier(oautil.typenamify(key, 'value', options.nameMapper)),
+              ts.createIdentifier(valueIdentifier),
               'make'
             )
           )
@@ -1227,14 +1228,14 @@ export function run(options: Options) {
     return ts.createEnumDeclaration(undefined, undefined, brandTypeName(key), []);
   }
 
-  function generateTypeShape(key: string) {
+  function generateTypeShape(key: string, valueIdentifier: string) {
     return ts.createTypeAliasDeclaration(
       undefined,
       [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
       oautil.typenamify(key, 'shape', options.nameMapper),
       undefined,
       ts.createTypeReferenceNode(fromLib('ShapeOf'), [
-        ts.createTypeReferenceNode(oautil.typenamify(key, 'value', options.nameMapper), [])
+        ts.createTypeReferenceNode(valueIdentifier, [])
       ])
     );
   }
@@ -1254,13 +1255,15 @@ export function run(options: Options) {
       });
       return [...generateTopLevelClass(classKey, { ...schema, nullable: false }), ...proxy];
     }
+    const valueIdentifier = oautil.typenamify(key, 'value', options.nameMapper);
     return [
-      generateTypeShape(key),
-      generateValueClass(key, schema),
-      generateTopLevelClassBuilder(key, schema),
-      generateTopLevelClassMaker(key),
+      generateTypeShape(key, valueIdentifier),
+      generateValueClass(key, valueIdentifier, schema),
+      generateTopLevelClassBuilder(key, valueIdentifier, schema),
+      generateTopLevelClassMaker(key, valueIdentifier),
       generateNamedTypeDefinitionAssignment(
         key,
+        valueIdentifier,
         schema,
         generateIsA(oautil.typenamify(key, 'value', options.nameMapper))
       )
@@ -1271,6 +1274,7 @@ export function run(options: Options) {
     key: string,
     schema: oas.SchemaObject | oas.ReferenceObject
   ): readonly ts.Node[] {
+    const valueIdentifier = oautil.typenamify(key, 'value', options.nameMapper);
     if (oautil.isReferenceObject(schema)) {
       const resolved = resolveRefToTypeName(schema.$ref);
       const type = resolved.qualified
@@ -1280,13 +1284,13 @@ export function run(options: Options) {
         ts.createTypeAliasDeclaration(
           undefined,
           [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
-          oautil.typenamify(key, 'value', options.nameMapper),
+          valueIdentifier,
           undefined,
           ts.createTypeReferenceNode(type, undefined)
         ),
-        generateTypeShape(key),
+        generateTypeShape(key, valueIdentifier),
         generateTopLevelMaker(key, schema),
-        generateNamedTypeDefinitionAssignment(key, schema)
+        generateNamedTypeDefinitionAssignment(key, valueIdentifier, schema)
       ];
     }
     if (schema.type === 'object') {
@@ -1303,9 +1307,9 @@ export function run(options: Options) {
           undefined,
           scalarTypeWithBrand(key, generateType(schema))
         ),
-        generateTypeShape(key),
+        generateTypeShape(key, valueIdentifier),
         generateTopLevelMaker(key, schema),
-        generateNamedTypeDefinitionAssignment(key, schema, generateIsAForScalar(key))
+        generateNamedTypeDefinitionAssignment(key, valueIdentifier, schema, generateIsAForScalar(key))
       ];
     }
 
@@ -1317,9 +1321,9 @@ export function run(options: Options) {
         undefined,
         generateType(schema)
       ),
-      generateTypeShape(key),
+      generateTypeShape(key, valueIdentifier),
       generateTopLevelMaker(key, schema),
-      generateNamedTypeDefinitionAssignment(key, schema)
+      generateNamedTypeDefinitionAssignment(key, valueIdentifier, schema)
     ];
   }
 
