@@ -821,13 +821,12 @@ export function run(options: Options) {
     );
   }
 
-  function generateTopLevelClassBuilder(key: string, valueIdentifier: string, schema: oas.SchemaObject) {
-    return generateTopLevelMaker(
-      key,
-      schema,
-      'build',
-      valueIdentifier
-    );
+  function generateTopLevelClassBuilder(
+    key: string,
+    valueIdentifier: string,
+    schema: oas.SchemaObject
+  ) {
+    return generateTopLevelMaker(key, schema, 'build', valueIdentifier);
   }
 
   function generateReflectionType(
@@ -1131,7 +1130,7 @@ export function run(options: Options) {
   }
 
   function generateNamedTypeDefinitionAssignment(
-    key: string, 
+    key: string,
     valueIdentifier: string,
     schema: oas.SchemaObject,
     isA?: ts.ArrowFunction
@@ -1143,15 +1142,9 @@ export function run(options: Options) {
         ts.createIdentifier('type' + valueIdentifier),
         ts.createObjectLiteral(
           [
-            ts.createPropertyAssignment(
-              'name',
-              ts.createStringLiteral(valueIdentifier)
-            ),
+            ts.createPropertyAssignment('name', ts.createStringLiteral(valueIdentifier)),
             ts.createPropertyAssignment('definition', generateReflectionType(schema)),
-            ts.createPropertyAssignment(
-              'maker',
-              ts.createIdentifier('make' + valueIdentifier)
-            ),
+            ts.createPropertyAssignment('maker', ts.createIdentifier('make' + valueIdentifier)),
             ts.createPropertyAssignment('isA', isA ?? ts.createNull())
           ],
           true
@@ -1172,10 +1165,7 @@ export function run(options: Options) {
               ts.createTypeReferenceNode(shape, []),
               ts.createTypeReferenceNode(valueIdentifier, [])
             ]),
-            ts.createPropertyAccess(
-              ts.createIdentifier(valueIdentifier),
-              'make'
-            )
+            ts.createPropertyAccess(ts.createIdentifier(valueIdentifier), 'make')
           )
         ],
         ts.NodeFlags.Const
@@ -1309,7 +1299,12 @@ export function run(options: Options) {
         ),
         generateTypeShape(key, valueIdentifier),
         generateTopLevelMaker(key, schema),
-        generateNamedTypeDefinitionAssignment(key, valueIdentifier, schema, generateIsAForScalar(key))
+        generateNamedTypeDefinitionAssignment(
+          key,
+          valueIdentifier,
+          schema,
+          generateIsAForScalar(key)
+        )
       ];
     }
 
