@@ -114,4 +114,3 @@ function resolve(key: string, schema: oas.OpenAPIObject): oas.SchemaObject | und
   }
   return hit;
 }
-
