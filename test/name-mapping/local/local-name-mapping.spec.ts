@@ -49,7 +49,7 @@ function serverAddress(server: http.Server) {
   return `http://localhost:${addr.port}`;
 }
 
-describe('name mapping', () => {
+describe('local name mapping', () => {
   let apiClient: client.ClientSpec;
   let server: any;
 
@@ -71,7 +71,7 @@ describe('name mapping', () => {
   describe('of kind "value"', () => {
     it('maps name of response value class correctly', async () => {
       const item = await apiClient.item.get();
-      expect(item.value.value).toBeInstanceOf(types.MappedItem);
+      expect(item.value.value).toBeInstanceOf(types.Item);
     });
   });
 });
