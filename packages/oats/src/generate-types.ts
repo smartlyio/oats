@@ -576,10 +576,7 @@ export function run(options: Options) {
       ts.createIdentifier('reflection'),
       undefined,
       ts.createTypeReferenceNode(fromLib('reflection', 'NamedTypeDefinition'), [
-        ts.createTypeReferenceNode(
-          ts.createIdentifier(options.nameMapper(key, 'value')),
-          []
-        )
+        ts.createTypeReferenceNode(ts.createIdentifier(options.nameMapper(key, 'value')), [])
       ]),
       ts.createIdentifier('type' + options.nameMapper(key, 'value'))
     );
@@ -640,9 +637,7 @@ export function run(options: Options) {
                 ts.createCall(
                   ts.createPropertyAccess(
                     ts.createCall(
-                      ts.createIdentifier(
-                        'build' + options.nameMapper(key, 'value')
-                      ),
+                      ts.createIdentifier('build' + options.nameMapper(key, 'value')),
                       undefined,
                       [ts.createIdentifier('value'), ts.createIdentifier('opts')]
                     ),
@@ -697,9 +692,7 @@ export function run(options: Options) {
                 'make',
                 undefined,
                 ts.createCall(
-                  ts.createIdentifier(
-                    'build' + options.nameMapper(key, 'value')
-                  ),
+                  ts.createIdentifier('build' + options.nameMapper(key, 'value')),
                   undefined,
                   [ts.createIdentifier('value'), ts.createIdentifier('opts')]
                 )

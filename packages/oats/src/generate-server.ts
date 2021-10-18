@@ -53,8 +53,10 @@ function generateMethod<S extends oas.OperationObject>(
 
   const headers = ts.createTypeReferenceNode(
     fromTypes(
-      opts.nameMapper(oautil.endpointTypeName(schema, path, method, 'headers'),
-      opts.shapesAsRequests ? 'shape' : 'value')
+      opts.nameMapper(
+        oautil.endpointTypeName(schema, path, method, 'headers'),
+        opts.shapesAsRequests ? 'shape' : 'value'
+      )
     ),
     []
   );

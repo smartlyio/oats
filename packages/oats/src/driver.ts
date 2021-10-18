@@ -4,7 +4,13 @@ import * as types from './generate-types';
 import * as server from './generate-server';
 import * as path from 'path';
 import * as oas from 'openapi3-ts';
-import { UnsupportedFeatureBehaviour, refToTypeName, capitalize, NameMapper, NameKind } from './util';
+import {
+  UnsupportedFeatureBehaviour,
+  refToTypeName,
+  capitalize,
+  NameMapper,
+  NameKind
+} from './util';
 import { Resolve } from './generate-types';
 
 function modulePath(importer: string, module: string | undefined) {
@@ -59,7 +65,12 @@ function defaultResolve() {
 
 export function localResolve(ref: string, options: types.Options, kind?: NameKind) {
   if (ref[0] === '#') {
-    return { name: kind && options.nameMapper ? options.nameMapper(refToTypeName(ref), kind) : refToTypeName(ref) };
+    return {
+      name:
+        kind && options.nameMapper
+          ? options.nameMapper(refToTypeName(ref), kind)
+          : refToTypeName(ref)
+    };
   }
   return;
 }
@@ -76,9 +87,9 @@ export function compose(...fns: types.Resolve[]): types.Resolve {
   };
 }
 
-function localNameMapper (name: string, nameKind: NameKind) : string {
-  // name begins with non-alphabet is prefixed with 'Type' 
-  const sanitizedName = (name.match(/^[^a-zA-Z]/)) ? 'Type' + name : name;
+function localNameMapper(name: string, nameKind: NameKind): string {
+  // name begins with non-alphabet is prefixed with 'Type'
+  const sanitizedName = name.match(/^[^a-zA-Z]/) ? 'Type' + name : name;
   const capitalizedName = capitalize(sanitizedName);
   switch (nameKind) {
     case 'shape':
@@ -123,7 +134,10 @@ export function generateFile(opts?: GenerateFileOptions): types.Resolve {
     return {
       importAs: moduleName,
       importFrom: generatedFile,
-      name: kind && options.nameMapper ? options.nameMapper(refToTypeName(localName), kind) : refToTypeName(localName),
+      name:
+        kind && options.nameMapper
+          ? options.nameMapper(refToTypeName(localName), kind)
+          : refToTypeName(localName),
       generate: () => {
         generate({
           forceGenerateTypes: true,
