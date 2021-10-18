@@ -1497,7 +1497,7 @@ export function run(options: Options) {
   }
 
   function resolveRefToTypeName(ref: string): { qualified?: ts.Identifier; member: string } {
-    const external = options.resolve(ref, options);
+    const external = options.resolve(ref, options, 'value'); //TODO: value of 'kind' in the context is unsure
     if (external) {
       const importAs = safe(external).importAs.$;
       if (importAs) {

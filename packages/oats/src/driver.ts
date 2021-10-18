@@ -76,9 +76,9 @@ export function localResolve(ref: string, options: types.Options, kind?: NameKin
 }
 
 export function compose(...fns: types.Resolve[]): types.Resolve {
-  return (ref, options) => {
+  return (ref, options, kind?) => {
     for (const f of fns) {
-      const match = f(ref, options);
+      const match = f(ref, options, kind);
       if (match) {
         return match;
       }
