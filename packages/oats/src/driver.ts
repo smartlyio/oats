@@ -4,7 +4,7 @@ import * as types from './generate-types';
 import * as server from './generate-server';
 import * as path from 'path';
 import * as oas from 'openapi3-ts';
-import { UnsupportedFeatureBehaviour, refToTypeName, capitalize, NameMapper } from './util';
+import { UnsupportedFeatureBehaviour, refToTypeName, capitalize, NameMapper, NameKind } from './util';
 import { Resolve } from './generate-types';
 
 function modulePath(importer: string, module: string | undefined) {
@@ -57,9 +57,9 @@ function defaultResolve() {
   return undefined;
 }
 
-export function localResolve(ref: string, options: types.Options) {
+export function localResolve(ref: string, options: types.Options, kind?: NameKind) {
   if (ref[0] === '#') {
-    return { name: options.nameMapper?.(refToTypeName(ref), 'value') ?? refToTypeName(ref) };
+    return { name: kind && options.nameMapper ? options.nameMapper(refToTypeName(ref), kind) : refToTypeName(ref) };
   }
   return;
 }
@@ -90,7 +90,7 @@ function makeModuleName(filename: string, keepDirectoryName = false): string {
 
 export function generateFile(opts?: GenerateFileOptions): types.Resolve {
   const preservePathStructure = opts && opts.preservePathStructure;
-  return (ref: string, options: types.Options) => {
+  return (ref: string, options: types.Options, kind?: NameKind) => {
     if (ref[0] === '#') {
       return;
     }
@@ -107,7 +107,7 @@ export function generateFile(opts?: GenerateFileOptions): types.Resolve {
     return {
       importAs: moduleName,
       importFrom: generatedFile,
-      name: options.nameMapper?.(refToTypeName(localName), 'value') ?? refToTypeName(localName),
+      name: kind && options.nameMapper ? options.nameMapper(refToTypeName(localName), kind) : refToTypeName(localName),
       generate: () => {
         generate({
           forceGenerateTypes: true,

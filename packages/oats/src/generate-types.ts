@@ -4,7 +4,7 @@ import safe from '@smartlyio/safe-navigation';
 import * as _ from 'lodash';
 import * as assert from 'assert';
 import * as oautil from './util';
-import { UnsupportedFeatureBehaviour } from './util';
+import { UnsupportedFeatureBehaviour, NameKind } from './util';
 import * as path from 'path';
 import { resolvedStatusCodes } from './status-codes';
 
@@ -20,7 +20,8 @@ const voidSchema: oas.SchemaObject = { type: 'void' as any };
 
 export type Resolve = (
   ref: string,
-  options: Options
+  options: Options,
+  kind?: NameKind
 ) =>
   | { importAs: string; importFrom: string; name: string; generate?: () => Promise<void> }
   | { name: string }
