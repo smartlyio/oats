@@ -7,6 +7,8 @@ const nameMapper = (name: string, kind: util.NameKind) => {
     return 'Value' + name;
   } else if (kind === 'reflection') {
     return 'Reflection' + name;
+  } else if (kind === 'shape') {
+    return 'ShapeOf' + name;
   } else {
     return name;
   }
