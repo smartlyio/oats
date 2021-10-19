@@ -1,0 +1,45 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: example service
+servers:
+  - url: http://localhost:12000
+paths:
+  /item/{id}:
+    get:
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: error
+          content:
+            text/plain:
+              schema:
+                type: string
+  /item:
+    get:
+      parameters:
+        - in: query
+          name: ids
+          required: true
+          schema:
+            type: array
+            items:
+              type: number
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: array
