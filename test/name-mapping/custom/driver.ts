@@ -4,7 +4,9 @@ import * as process from 'process';
 process.chdir(__dirname);
 const nameMapper = (name: string, kind: util.NameKind) => {
   if (kind === 'value') {
-    return 'Mapped' + name;
+    return 'Value' + name;
+  } else if (kind === 'reflection') {
+    return 'Reflection' + name;
   } else {
     return name;
   }

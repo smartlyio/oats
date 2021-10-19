@@ -488,7 +488,7 @@ export function run(options: Options) {
   ): ts.TypeNode {
     assert(schema, 'missing schema');
     if (oautil.isReferenceObject(schema)) {
-      const resolved = resolveRefToTypeName(schema.$ref);
+      const resolved = resolveRefToTypeName(schema.$ref, 'value');
       const type = resolved.qualified
         ? ts.createQualifiedName(resolved.qualified, typeMapper(resolved.member))
         : typeMapper(resolved.member);
@@ -578,7 +578,7 @@ export function run(options: Options) {
       ts.createTypeReferenceNode(fromLib('reflection', 'NamedTypeDefinition'), [
         ts.createTypeReferenceNode(ts.createIdentifier(options.nameMapper(key, 'value')), [])
       ]),
-      ts.createIdentifier('type' + options.nameMapper(key, 'value'))
+      ts.createIdentifier(options.nameMapper(key, 'reflection'))
     );
   }
 
@@ -808,7 +808,7 @@ export function run(options: Options) {
       undefined,
       [
         ts.factory.createPropertyAccessExpression(
-          ts.factory.createIdentifier(`type${options.nameMapper(key, 'value')}`),
+          ts.factory.createIdentifier(options.nameMapper(key, 'reflection')),
           ts.factory.createIdentifier('definition')
         )
       ]
@@ -827,10 +827,10 @@ export function run(options: Options) {
     schema: oas.SchemaObject | oas.ReferenceObject
   ): ts.ObjectLiteralExpression {
     if (oautil.isReferenceObject(schema)) {
-      const resolved = resolveRefToTypeName(schema.$ref);
+      const resolved = resolveRefToTypeName(schema.$ref, 'reflection');
       const type: ts.Expression = resolved.qualified
-        ? ts.createPropertyAccess(resolved.qualified, 'type' + resolved.member)
-        : ts.createIdentifier('type' + resolved.member);
+        ? ts.createPropertyAccess(resolved.qualified, resolved.member)
+        : ts.createIdentifier(resolved.member);
       return ts.createObjectLiteral(
         [
           ts.createPropertyAssignment('type', ts.createStringLiteral('named')),
@@ -1092,7 +1092,7 @@ export function run(options: Options) {
       ts.createVariableDeclarationList(
         [
           ts.createVariableDeclaration(
-            'type' + options.nameMapper(key, 'value'),
+            options.nameMapper(key, 'reflection'),
             ts.createTypeReferenceNode(fromLib('reflection', 'NamedTypeDefinition'), [
               ts.createTypeReferenceNode(options.nameMapper(key, 'value'), []),
               ts.createTypeReferenceNode(options.nameMapper(key, 'shape'), [])
@@ -1125,6 +1125,7 @@ export function run(options: Options) {
 
   function generateNamedTypeDefinitionAssignment(
     key: string,
+    options: Options,
     valueIdentifier: string,
     schema: oas.SchemaObject,
     isA?: ts.ArrowFunction
@@ -1133,7 +1134,7 @@ export function run(options: Options) {
       ts.createPropertyAccess(ts.createIdentifier('Object'), 'assign'),
       undefined,
       [
-        ts.createIdentifier('type' + valueIdentifier),
+        ts.createIdentifier(options.nameMapper(key, 'reflection')),
         ts.createObjectLiteral(
           [
             ts.createPropertyAssignment('name', ts.createStringLiteral(valueIdentifier)),
@@ -1247,6 +1248,7 @@ export function run(options: Options) {
       generateTopLevelClassMaker(key, valueIdentifier),
       generateNamedTypeDefinitionAssignment(
         key,
+        options,
         valueIdentifier,
         schema,
         generateIsA(options.nameMapper(key, 'value'))
@@ -1260,7 +1262,7 @@ export function run(options: Options) {
   ): readonly ts.Node[] {
     const valueIdentifier = options.nameMapper(key, 'value');
     if (oautil.isReferenceObject(schema)) {
-      const resolved = resolveRefToTypeName(schema.$ref);
+      const resolved = resolveRefToTypeName(schema.$ref, 'value');
       const type = resolved.qualified
         ? ts.createQualifiedName(resolved.qualified, resolved.member)
         : resolved.member;
@@ -1274,7 +1276,7 @@ export function run(options: Options) {
         ),
         generateTypeShape(key, valueIdentifier),
         generateTopLevelMaker(key, schema),
-        generateNamedTypeDefinitionAssignment(key, valueIdentifier, schema)
+        generateNamedTypeDefinitionAssignment(key, options, valueIdentifier, schema)
       ];
     }
     if (schema.type === 'object') {
@@ -1295,6 +1297,7 @@ export function run(options: Options) {
         generateTopLevelMaker(key, schema),
         generateNamedTypeDefinitionAssignment(
           key,
+          options,
           valueIdentifier,
           schema,
           generateIsAForScalar(key)
@@ -1312,7 +1315,7 @@ export function run(options: Options) {
       ),
       generateTypeShape(key, valueIdentifier),
       generateTopLevelMaker(key, schema),
-      generateNamedTypeDefinitionAssignment(key, valueIdentifier, schema)
+      generateNamedTypeDefinitionAssignment(key, options, valueIdentifier, schema)
     ];
   }
 
@@ -1496,8 +1499,11 @@ export function run(options: Options) {
     }
   }
 
-  function resolveRefToTypeName(ref: string): { qualified?: ts.Identifier; member: string } {
-    const external = options.resolve(ref, options, 'value'); //TODO: value of 'kind' in the context is unsure
+  function resolveRefToTypeName(
+    ref: string,
+    kind: NameKind
+  ): { qualified?: ts.Identifier; member: string } {
+    const external = options.resolve(ref, options, kind);
     if (external) {
       const importAs = safe(external).importAs.$;
       if (importAs) {

@@ -71,8 +71,8 @@ describe('custom name mapper', () => {
   describe('of kind "value"', () => {
     it('maps name of response value class correctly', async () => {
       const item = await apiClient.item.get();
-      expect(item.value.value).toBeInstanceOf(types.MappedItem);
-      expect(types.typeMappedItem.isA(item.value.value)).toBe(true);
+      expect(item.value.value).toBeInstanceOf(types.ValueItem);
+      expect(types.ReflectionItem.isA(item.value.value)).toBe(true);
     });
   });
 });
