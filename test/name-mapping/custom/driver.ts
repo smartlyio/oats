@@ -1,5 +1,6 @@
 import { driver, util } from '@smartlyio/oats';
 import * as process from 'process';
+import * as assert from 'assert';
 
 process.chdir(__dirname);
 const nameMapper = (name: string, kind: util.NameKind) => {
@@ -10,7 +11,7 @@ const nameMapper = (name: string, kind: util.NameKind) => {
   } else if (kind === 'shape') {
     return 'ShapeOf' + name;
   } else {
-    return name;
+    assert(false, 'unknown name kind');
   }
 };
 driver.generate({
