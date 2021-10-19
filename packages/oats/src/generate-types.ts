@@ -1373,7 +1373,6 @@ export function run(options: Options) {
   }
 
   function generateComponentRequestsAndResponses(
-    opts: Options,
     components?: {
       [key: string]: oas.ResponseObject | oas.RequestBodyObject | oas.ReferenceObject;
     }
@@ -1402,12 +1401,12 @@ export function run(options: Options) {
     nodes.push(...oautil.errorTag('in component.schemas', () => generateComponentSchemas(opts)));
     nodes.push(
       ...oautil.errorTag('in component.responses', () =>
-        generateComponentRequestsAndResponses(opts, oas.components.responses.$)
+        generateComponentRequestsAndResponses(oas.components.responses.$)
       )
     );
     nodes.push(
       ...oautil.errorTag('in component.requestBodies', () =>
-        generateComponentRequestsAndResponses(opts, oas.components.requestBodies.$)
+        generateComponentRequestsAndResponses(oas.components.requestBodies.$)
       )
     );
     return ts.createNodeArray(nodes);
