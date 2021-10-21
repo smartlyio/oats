@@ -1372,11 +1372,9 @@ export function run(options: Options) {
     return nodes;
   }
 
-  function generateComponentRequestsAndResponses(
-    components?: {
-      [key: string]: oas.ResponseObject | oas.RequestBodyObject | oas.ReferenceObject;
-    }
-  ): ts.Node[] {
+  function generateComponentRequestsAndResponses(components?: {
+    [key: string]: oas.ResponseObject | oas.RequestBodyObject | oas.ReferenceObject;
+  }): ts.Node[] {
     const nodes: ts.Node[] = [];
     if (components) {
       Object.keys(components).map(key => {
@@ -1512,7 +1510,7 @@ export function run(options: Options) {
       return { member: external.name };
     }
     if (ref[0] === '#') {
-      return { member: oautil.refToTypeName(ref) };
+      return { member: options.nameMapper(oautil.refToTypeName(ref), kind) };
     }
     if (options.externalOpenApiSpecs) {
       const name = options.externalOpenApiSpecs(ref);

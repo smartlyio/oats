@@ -165,7 +165,7 @@ export function generate(driver: Driver) {
     header: driver.header || '',
     sourceFile: driver.openapiFilePath,
     targetFile: driver.generatedValueClassFile,
-    resolve: driver.resolve || localResolve,
+    resolve: driver.resolve || defaultResolve,
     externalOpenApiImports: (driver.externalOpenApiImports || []).map(i => ({
       importFile: i.importFile,
       importAs: i.importAs
