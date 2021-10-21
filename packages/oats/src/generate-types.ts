@@ -21,7 +21,7 @@ const voidSchema: oas.SchemaObject = { type: 'void' as any };
 export type Resolve = (
   ref: string,
   options: Options,
-  kind?: NameKind
+  kind: NameKind
 ) =>
   | { importAs: string; importFrom: string; name: string; generate?: () => Promise<void> }
   | { name: string }

@@ -63,20 +63,17 @@ function defaultResolve() {
   return undefined;
 }
 
-export function localResolve(ref: string, options: types.Options, kind?: NameKind) {
+export function localResolve(ref: string, options: types.Options, kind: NameKind) {
   if (ref[0] === '#') {
     return {
-      name:
-        kind && options.nameMapper
-          ? options.nameMapper(refToTypeName(ref), kind)
-          : refToTypeName(ref)
+      name: options.nameMapper(refToTypeName(ref), kind)
     };
   }
   return;
 }
 
 export function compose(...fns: types.Resolve[]): types.Resolve {
-  return (ref, options, kind?) => {
+  return (ref, options, kind) => {
     for (const f of fns) {
       const match = f(ref, options, kind);
       if (match) {
@@ -117,7 +114,7 @@ function makeModuleName(filename: string, keepDirectoryName = false): string {
 
 export function generateFile(opts?: GenerateFileOptions): types.Resolve {
   const preservePathStructure = opts && opts.preservePathStructure;
-  return (ref: string, options: types.Options, kind?: NameKind) => {
+  return (ref: string, options: types.Options, kind: NameKind) => {
     if (ref[0] === '#') {
       return;
     }
@@ -134,10 +131,7 @@ export function generateFile(opts?: GenerateFileOptions): types.Resolve {
     return {
       importAs: moduleName,
       importFrom: generatedFile,
-      name:
-        kind && options.nameMapper
-          ? options.nameMapper(refToTypeName(localName), kind)
-          : refToTypeName(localName),
+      name: options.nameMapper(refToTypeName(localName), kind),
       generate: () => {
         generate({
           forceGenerateTypes: true,
