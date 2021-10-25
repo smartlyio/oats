@@ -4,12 +4,14 @@ import * as assert from 'assert';
 
 process.chdir(__dirname);
 const nameMapper = (name: string, kind: util.NameKind) => {
+  const sanitizedName = name.match(/^[^a-zA-Z]/) ? 'Type' + name : name;
+  const capitalizedName = util.capitalize(sanitizedName);
   if (kind === 'value') {
-    return 'Value' + name;
+    return 'Value' + capitalizedName + 'WithSuffix';
   } else if (kind === 'reflection') {
-    return 'Reflection' + name;
+    return 'Reflection' + capitalizedName + 'WithSuffix';
   } else if (kind === 'shape') {
-    return 'ShapeOf' + name;
+    return 'ShapeOf' + capitalizedName + 'WithSuffix';
   } else {
     assert(false, 'unknown name kind');
   }

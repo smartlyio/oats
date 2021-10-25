@@ -1294,7 +1294,6 @@ export function run(options: Options) {
   }
 
   function generateIsAForScalar(key: string) {
-    console.log('key', key);
     return ts.createArrowFunction(
       undefined,
       undefined,
