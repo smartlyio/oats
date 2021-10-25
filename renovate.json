@@ -1,6 +1,5 @@
 {
   "extends": [
-    "github>smartlyio/renovate-config:security-base",
     "config:base",
     ":masterIssue"
   ],
