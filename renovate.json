@@ -1,0 +1,43 @@
+{
+  "extends": [
+    "github>smartlyio/renovate-config:security-base",
+    "github>smartlyio/renovate-config:github-actions",
+    "config:base",
+    ":masterIssue"
+  ],
+  "timezone": "Europe/Helsinki",
+  "labels": ["renovate-deps", "no release"],
+  "rebaseLabel": "rebase",
+  "ignorePaths": [
+    "packages/actionable-icon",
+    "packages/inline-list",
+    "packages/select-1",
+    "packages/notice"
+  ],
+  "separateMinorPatch": true,
+  "schedule": ["after 7am and before 9am every weekday"],
+  "packageRules": [
+    {
+      "groupName": "typescript-eslint group",
+      "packageNames": [
+        "@typescript-eslint/eslint-plugin",
+        "@typescript-eslint/parser"
+      ]
+    },
+    {
+      "groupName": "svgr group",
+      "packagePatterns": ["^@svgr/"]
+    },
+    {
+      "updateTypes": ["patch", "pin"],
+      "schedule": ["every weekday"],
+      "automerge": true
+    },
+    {
+      "extends": "monorepo:storybook",
+      "matchUpdateTypes": ["digest", "patch", "minor", "major"],
+      "groupName": "storybook monorepo",
+      "automerge": false
+    }
+  ]
+}
