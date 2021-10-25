@@ -17,6 +17,7 @@
       ]
     },
     {
+      "depTypeList": ["devDependencies"],
       "updateTypes": ["patch", "pin"],
       "schedule": ["every weekday"],
       "automerge": true
