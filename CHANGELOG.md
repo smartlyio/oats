@@ -1,3 +1,10 @@
+# 3.3.0
+
+## Introduce `nameMapper` in code generator options
+
+The `nameMapper` callback allows customizing the exported value, shape and reflection type names. Eg to 
+omit `ShapeOf` in `ShapeOfType` for nicer usage when preferring to use shapes instead of `ValueClass` 
+
 # 3.2.0
 
 ## Features
