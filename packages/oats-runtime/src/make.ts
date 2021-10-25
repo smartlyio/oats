@@ -7,7 +7,7 @@ import { discriminateUnion } from './union-discriminator';
 import { isEqual, uniq } from 'lodash';
 
 export class MakeError extends Error {
-  constructor(public readonly errors: ValidationError[]) {
+  constructor(readonly errors: ValidationError[]) {
     super(
       'tried to get success value from error: ' + errors.map(validationErrorPrinter).join('\n')
     );
@@ -63,32 +63,29 @@ export class Make<V> {
     this.errors = errors;
   }
 
-  public isError() {
+  isError() {
     return this.errors.length > 0;
   }
 
-  public isSuccess() {
+  isSuccess() {
     return !this.isError();
   }
 
-  public success(handler?: (e: this) => V): V {
-    if (!this.isSuccess()) {
-      if (handler) {
-        return handler(this);
-      }
+  success(handler?: (e: this) => V): V {
+    if (this.isSuccess()) {
+      return this.value as V;
     }
-    if (!this.isSuccess()) {
-      throw new MakeError(this.errors);
+    if (handler) {
+      return handler(this);
     }
-    assert(this.isSuccess());
-    return this.value as V;
+    throw new MakeError(this.errors);
   }
 
-  public group(groupMessage: string) {
+  group(groupMessage: string) {
     return new Make(null, [{ path: [], error: { groupMessage, errors: this.errors } }]);
   }
 
-  public errorPath(path: string) {
+  errorPath(path: string) {
     return new Make(
       null,
       this.errors.map(error => ({
@@ -98,7 +95,7 @@ export class Make<V> {
     );
   }
 
-  public map<R>(fn: (value: V) => R): Make<R> {
+  map<R>(fn: (value: V) => R): Make<R> {
     if (this.isError()) {
       return Make.error(this.errors);
     }
@@ -111,12 +108,28 @@ export class Make<V> {
 
 export interface MakeOptions {
   unknownField?: 'drop' | 'fail';
+  /**
+   * If enabled, "number" ans "integer" schemas will accept strings and try to parse them.
+   */
+  parseNumericStrings?: boolean;
+  /**
+   * If enabled, "boolean" schemas will accept strings and try to parse them.
+   */
+  parseBooleanStrings?: boolean;
+  /**
+   * If enabled, "array" schema will convert any non-array value to an array with a single element.
+   * Useful for supporting arrays in query parameters
+   * (if query parameter is not repeated, it will not be an array on server side).
+   */
+  allowConvertForArrayType?: boolean;
 }
 
 export type Maker<Shape, V> = (value: Shape, opts?: MakeOptions) => Make<V>;
 
 function getErrorWithValueMsg<T>(msg: string, value: T): Make<T> {
-  return error(`${msg}, but got "${JSON.stringify(value)}" instead.`);
+  const stringified =
+    typeof value === 'object' || typeof value === 'string' ? JSON.stringify(value) : String(value);
+  return error(`${msg}, but got \`${stringified}\` instead.`);
 }
 
 function error<T>(error: string): Make<T> {
@@ -162,10 +175,10 @@ function getPatterner(pattern: string | undefined): Maker<any, void> {
 }
 
 export function makeString(
-  format: string | undefined = undefined,
-  pattern: string | undefined = undefined,
-  minLength: number | undefined = undefined,
-  maxLength: number | undefined = undefined
+  format?: string,
+  pattern?: string,
+  minLength?: number,
+  maxLength?: number
 ): Maker<any, string> {
   const formatter = getFormatter(format);
   const patterner = getPatterner(pattern);
@@ -198,10 +211,31 @@ export function makeString(
   };
 }
 
-export function makeNumber(min?: number, max?: number): Maker<number, number> {
-  return (value: any) => {
-    if (typeof value !== 'number') {
-      return getErrorWithValueMsg('expected a number', value);
+export function makeNumber(min?: number, max?: number) {
+  return makeFloatOrInteger(false, min, max);
+}
+export function makeInteger(min?: number, max?: number) {
+  return makeFloatOrInteger(true, min, max);
+}
+function makeFloatOrInteger(
+  isInteger: boolean,
+  min?: number,
+  max?: number
+): Maker<unknown, number> {
+  return (x, { parseNumericStrings = false } = {}) => {
+    let value: number;
+    if (typeof x === 'number') {
+      value = x;
+    } else if (typeof x === 'string' && parseNumericStrings) {
+      value = x.trim() === '' ? NaN : Number(x);
+      if (!Number.isFinite(value)) {
+        return getErrorWithValueMsg('expected a number', x as any);
+      }
+    } else {
+      return getErrorWithValueMsg('expected a number', x as number);
+    }
+    if (isInteger && !Number.isInteger(value)) {
+      return getErrorWithValueMsg('expected an integer', x);
     }
     if (min != null && value < min) {
       return getErrorWithValueMsg('expected a number greater than ' + min, value);
@@ -246,21 +280,35 @@ export function makeOptional(maker: any) {
   return { optional: maker };
 }
 
-function checkBoolean(value: any) {
-  if (typeof value !== 'boolean') {
-    return getErrorWithValueMsg('expected a boolean', value);
-  }
-  return Make.ok(value);
+export function makeBoolean(): Maker<unknown, boolean> {
+  return (x: unknown, { parseBooleanStrings = false } = {}) => {
+    let value: boolean;
+    if (typeof x === 'boolean') {
+      value = x;
+    } else if (parseBooleanStrings && x === 'true') {
+      value = true;
+    } else if (parseBooleanStrings && x === 'false') {
+      value = false;
+    } else {
+      return getErrorWithValueMsg('expected a boolean', x as boolean);
+    }
+    return Make.ok(value);
+  };
 }
 
-export function makeBoolean() {
-  return checkBoolean;
-}
-
-export function makeArray(maker: any, minSize?: number, maxSize?: number) {
-  return (value: any, opts?: MakeOptions) => {
-    if (!Array.isArray(value)) {
-      return getErrorWithValueMsg('expected an array', value);
+export function makeArray(
+  maker: any,
+  minSize?: number,
+  maxSize?: number
+): Maker<unknown, unknown[]> {
+  return (x, opts) => {
+    let value: unknown[];
+    if (Array.isArray(x)) {
+      value = x;
+    } else if (opts?.allowConvertForArrayType) {
+      value = [x];
+    } else {
+      return getErrorWithValueMsg('expected an array', x as unknown[]);
     }
     if (minSize != null && value.length < minSize) {
       return getErrorWithValueMsg(`expected an array of minimum length ${minSize}`, value);
@@ -273,7 +321,7 @@ export function makeArray(maker: any, minSize?: number, maxSize?: number) {
       const item = value[index];
       const mapped: Make<any> = maker(item, opts);
       if (mapped.isError()) {
-        return mapped.errorPath('[' + index + ']');
+        return mapped.errorPath('[' + index + ']') as Make<any>;
       }
       result.push(mapped.success());
     }
@@ -392,10 +440,7 @@ interface FormDataArguments {
 export type Binary = File | Buffer | FormBinary;
 
 export class FormBinary {
-  constructor(
-    public readonly binary: Binary,
-    public readonly options?: FormDataArguments['options']
-  ) {}
+  constructor(readonly binary: Binary, readonly options?: FormDataArguments['options']) {}
 }
 
 enum FileBrand {}
@@ -404,11 +449,7 @@ export class File {
   // @ts-ignore
   private brand: FileBrand;
 
-  constructor(
-    public readonly path: string,
-    public readonly size: number,
-    public readonly name?: string
-  ) {}
+  constructor(readonly path: string, readonly size: number, readonly name?: string) {}
 }
 
 function checkBinary(value: any) {
@@ -561,6 +602,7 @@ export function fromReflection(type: Type): Maker<any, any> {
   }
   switch (type.type) {
     case 'integer':
+      return makeInteger(type.minimum, type.maximum);
     case 'number':
       return makeNumber(type.minimum, type.maximum);
     case 'string':

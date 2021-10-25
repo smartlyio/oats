@@ -184,7 +184,10 @@ function generateClientTree(
             undefined,
             tree.param.name,
             undefined,
-            ts.createKeywordTypeNode(ts.SyntaxKind.StringKeyword)
+            ts.createUnionTypeNode([
+              ts.createKeywordTypeNode(ts.SyntaxKind.StringKeyword),
+              ts.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword)
+            ])
           )
         ],
         generateClientSpecType(opts, tree.param.tree)
@@ -350,6 +353,17 @@ function generateHandler(schema: oas.OpenAPIObject) {
   );
 }
 
+function generateRouterJSDoc() {
+  return ts.createJSDocComment(undefined, [
+    ts.createJSDocTag(
+      ts.createIdentifier('deprecated'),
+      'Use `createRouter()` instead. ' +
+        'It supports "number", "integer", "boolean" and "array" types in query parameters ' +
+        'and numeric types in path parameters.'
+    )
+  ]);
+}
+
 export function generateRouter() {
   return ts.createVariableStatement(
     [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
@@ -369,6 +383,157 @@ export function generateRouter() {
         )
       ],
       ts.NodeFlags.Const
+    )
+  );
+}
+export function generateCreateRouter() {
+  return ts.createFunctionDeclaration(
+    undefined,
+    [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
+    undefined,
+    'createRouter',
+    [ts.createTypeParameterDeclaration('TRequestContext')],
+    [
+      ts.createParameter(
+        undefined,
+        undefined,
+        undefined,
+        'handlerOptions',
+        undefined,
+        ts.createTypeReferenceNode(ts.createIdentifier('oar.server.HandlerOptions')),
+        ts.createObjectLiteral()
+      )
+    ],
+    ts.createTypeReferenceNode(ts.createIdentifier('oar.server.HandlerFactory'), [
+      ts.createTypeReferenceNode('EndpointsWithContext', [
+        ts.createTypeReferenceNode('TRequestContext')
+      ])
+    ]),
+    ts.createBlock(
+      [
+        ts.createVariableStatement(
+          undefined,
+          ts.createVariableDeclarationList(
+            [
+              ts.createVariableDeclaration(
+                ts.createObjectBindingPattern([
+                  ts.createBindingElement(
+                    undefined,
+                    'validationOptions',
+                    ts.createObjectBindingPattern([
+                      ts.createBindingElement(
+                        undefined,
+                        'query',
+                        ts.createObjectBindingPattern([
+                          ts.createBindingElement(
+                            undefined,
+                            'parseBooleanStrings',
+                            'queryParseBooleanStrings',
+                            ts.createTrue()
+                          ),
+                          ts.createBindingElement(
+                            undefined,
+                            'parseNumericStrings',
+                            'queryParseNumericStrings',
+                            ts.createTrue()
+                          ),
+                          ts.createBindingElement(
+                            undefined,
+                            'allowConvertForArrayType',
+                            'queryAllowConvertForArrayType',
+                            ts.createTrue()
+                          ),
+                          ts.createBindingElement(
+                            ts.createToken(ts.SyntaxKind.DotDotDotToken),
+                            undefined,
+                            'queryRest'
+                          )
+                        ]),
+                        ts.createObjectLiteral()
+                      ),
+                      ts.createBindingElement(
+                        undefined,
+                        'params',
+                        ts.createObjectBindingPattern([
+                          ts.createBindingElement(
+                            undefined,
+                            'parseNumericStrings',
+                            'paramsParseNumericStrings',
+                            ts.createTrue()
+                          ),
+                          ts.createBindingElement(
+                            ts.createToken(ts.SyntaxKind.DotDotDotToken),
+                            undefined,
+                            'paramsRest'
+                          )
+                        ]),
+                        ts.createObjectLiteral()
+                      ),
+                      ts.createBindingElement(
+                        ts.createToken(ts.SyntaxKind.DotDotDotToken),
+                        undefined,
+                        'validationOptionsRest'
+                      )
+                    ]),
+                    ts.createObjectLiteral()
+                  ),
+                  ts.createBindingElement(
+                    ts.createToken(ts.SyntaxKind.DotDotDotToken),
+                    undefined,
+                    'handlerOptionsRest'
+                  )
+                ]),
+                undefined,
+                ts.createIdentifier('handlerOptions')
+              )
+            ],
+            ts.NodeFlags.Const
+          )
+        ),
+        ts.createReturn(
+          ts.createCall(ts.createIdentifier('oar.server.createHandlerFactory'), undefined, [
+            ts.createIdentifier('endpointHandlers'),
+            ts.createObjectLiteral([
+              ts.createSpreadAssignment(ts.createIdentifier('handlerOptionsRest')),
+              ts.createPropertyAssignment(
+                'validationOptions',
+                ts.createObjectLiteral([
+                  ts.createSpreadAssignment(ts.createIdentifier('validationOptionsRest')),
+                  ts.createPropertyAssignment(
+                    'query',
+                    ts.createObjectLiteral([
+                      ts.createSpreadAssignment(ts.createIdentifier('queryRest')),
+                      ts.createPropertyAssignment(
+                        'parseBooleanStrings',
+                        ts.createIdentifier('queryParseBooleanStrings')
+                      ),
+                      ts.createPropertyAssignment(
+                        'parseNumericStrings',
+                        ts.createIdentifier('queryParseNumericStrings')
+                      ),
+                      ts.createPropertyAssignment(
+                        'allowConvertForArrayType',
+                        ts.createIdentifier('queryAllowConvertForArrayType')
+                      )
+                    ])
+                  ),
+                  ts.createPropertyAssignment(
+                    'params',
+                    ts.createObjectLiteral([
+                      ts.createSpreadAssignment(ts.createIdentifier('paramsRest')),
+                      ts.createPropertyAssignment(
+                        'parseNumericStrings',
+                        ts.createIdentifier('paramsParseNumericStrings')
+                      )
+                    ])
+                  )
+                ])
+              )
+            ])
+          ])
+        )
+      ],
+      true
     )
   );
 }
@@ -416,7 +581,9 @@ export function run(opts: Options) {
   const endpoints = generateEndpointsType(opts);
   const clientSpec = generateClientSpec(opts);
   const handler = generateHandler(opts.oas);
+  const routerJSDoc = generateRouterJSDoc();
   const router = generateRouter();
+  const createRouter = generateCreateRouter();
   const client = generateClient();
 
   const sourceFile: ts.SourceFile = ts.createSourceFile(
@@ -436,7 +603,9 @@ export function run(opts: Options) {
         ...endpoints,
         ...clientSpec,
         handler,
+        routerJSDoc,
         router,
+        createRouter,
         client
       ]),
       sourceFile

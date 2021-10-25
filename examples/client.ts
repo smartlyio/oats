@@ -7,7 +7,7 @@ import * as assert from 'assert';
 
 // 'api.client' is the abstract implementation of the client which is then
 // mapped to axios requests using 'axiosAdapter'
-const apiClient = api.client(axiosAdapter.bind);
+const apiClient = api.client(axiosAdapter.create());
 async function runClient() {
   const posted = await apiClient.item.post({
     headers: {

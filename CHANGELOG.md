@@ -1,3 +1,27 @@
+# 3.2.0
+
+## Features
+
+### Inroduce `parseNumericStrings`, `parseBooleanStrings`, `allowConvertForArrayType` validation options.
+
+They enable us to use `number`, `interger`, `boolean` and `array` schema types for query and path parameters.
+In the new generated `createRouter()` api they are enabled by default for query parameters.
+For path parameters `parseNumericStrings` only is enabled by default.
+
+### Deprecate generated `router` api in favor of `createRouter()`.
+
+`createRouter()` supports parsing query and path parameters by default.
+
+### Deprecate `axiosAdapter.bind` in favor of `axiosAdapter.create()`.
+
+`axiosAdapter.create()` fixes the issue with axios suffixing array query parameters with `[]` (see https://github.com/axios/axios/issues/2840). This used not to work well with oats since it expects query parameter names to be the same on client and server.
+
+## Bug Fixes
+
+### `integer` schema type asserts a number is an integer.
+
+This might break an implementation where `integer` schema type was by mistake used instead of `number` type. Validation in this case will not pass anymore.
+
 # 3.0.0
 
 ## Deprecate non standard discriminator support.

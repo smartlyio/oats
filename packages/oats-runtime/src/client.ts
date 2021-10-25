@@ -23,7 +23,7 @@ export type ClientEndpoint<
   ? (ctx?: ClientArg<H, Q, B>) => Promise<R>
   : (ctx: ClientArg<H, Q, B>) => Promise<R>;
 
-type PathParam = (param: string) => ClientSpec | ClientEndpoint<any, any, any, any>;
+type PathParam = (param: string | number) => ClientSpec | ClientEndpoint<any, any, any, any>;
 export interface ClientSpec {
   readonly [part: string]: ClientSpec | PathParam | ClientEndpoint<any, any, any, any>;
 }

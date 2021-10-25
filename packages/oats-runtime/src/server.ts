@@ -1,6 +1,6 @@
 import * as assert from 'assert';
 import safeNavigation from '@smartlyio/safe-navigation';
-import { Make, Maker, ValidationError, validationErrorPrinter } from './make';
+import { Make, MakeOptions, Maker, ValidationError, validationErrorPrinter } from './make';
 
 export interface Response<
   Status extends number,
@@ -150,7 +150,8 @@ export function safe<
   query: Maker<any, Q>,
   body: Maker<any, Body>,
   response: Maker<any, R>,
-  endpoint: Endpoint<H, P, Q, Body, R, RC>
+  endpoint: Endpoint<H, P, Q, Body, R, RC>,
+  { validationOptions = {} }: HandlerOptions = {}
 ): Endpoint<
   Headers,
   Params,
@@ -166,8 +167,12 @@ export function safe<
       servers: ctx.servers,
       op: ctx.op,
       headers: cleanHeaders(headers, ctx.headers),
-      params: params(voidify(ctx.params)).success(throwRequestValidationError.bind(null, 'params')),
-      query: query(ctx.query || {}).success(throwRequestValidationError.bind(null, 'query')),
+      params: params(voidify(ctx.params), validationOptions.params).success(
+        throwRequestValidationError.bind(null, 'params')
+      ),
+      query: query(ctx.query || {}, validationOptions.query).success(
+        throwRequestValidationError.bind(null, 'query')
+      ),
       body: body(voidify(ctx.body)).success(throwRequestValidationError.bind(null, 'body')),
       requestContext: ctx.requestContext as any
     });
@@ -193,7 +198,10 @@ type AnyMaker = Maker<any, any>;
 interface CheckingTree {
   [path: string]: {
     [method: string]: {
-      safeHandler: (e: Endpoint<any, any, any, any, any, any>) => SafeEndpoint;
+      safeHandler: (
+        e: Endpoint<any, any, any, any, any, any>,
+        opts?: HandlerOptions
+      ) => SafeEndpoint;
       op: string;
       servers: string[];
     };
@@ -218,8 +226,16 @@ function createTree(handlers: Handler[]): CheckingTree {
       memo[element.path] = {};
     }
     memo[element.path][element.method] = {
-      safeHandler: (e: Endpoint<any, any, any, any, any, any>) =>
-        safe(element.headers, element.params, element.query, element.body, element.response, e),
+      safeHandler: (e: Endpoint<any, any, any, any, any, any>, opts?: HandlerOptions) =>
+        safe(
+          element.headers,
+          element.params,
+          element.query,
+          element.body,
+          element.response,
+          e,
+          opts
+        ),
       op: element.op,
       servers: element.servers
     };
@@ -242,7 +258,20 @@ export type ServerAdapter = (
   servers: string[]
 ) => void;
 
-export function createHandlerFactory<Spec>(handlers: Handler[]): HandlerFactory<Spec> {
+export interface HandlerOptions {
+  /**
+   * Options for request schema validation.
+   */
+  validationOptions?: {
+    query?: MakeOptions;
+    params?: MakeOptions;
+  };
+}
+
+export function createHandlerFactory<Spec>(
+  handlers: Handler[],
+  opts?: HandlerOptions
+): HandlerFactory<Spec> {
   const tree = createTree(handlers);
   return (adapter: ServerAdapter) => {
     return (spec: Spec) => {
@@ -259,7 +288,7 @@ export function createHandlerFactory<Spec>(handlers: Handler[]): HandlerFactory<
             path,
             endpointWrapper.op,
             assertMethod(method),
-            endpointWrapper.safeHandler(methodHandler),
+            endpointWrapper.safeHandler(methodHandler, opts),
             endpointWrapper.servers
           );
         });
