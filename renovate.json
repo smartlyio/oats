@@ -19,7 +19,7 @@
       "schedule" : "before 8am on monday",
       "groupName": "devDependencies",
       "labels": ["no-release"]
-    }
+    },
     {
       "depTypeList": ["devDependencies"],
       "updateTypes": ["pin"],
