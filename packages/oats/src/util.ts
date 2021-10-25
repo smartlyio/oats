@@ -17,10 +17,10 @@ export function nonNullableClass(name: string) {
   return 'nonNullable' + typenamify(name);
 }
 
+export type NameKind = 'shape' | 'value' | 'reflection';
+export type NameMapper = (name: string, kind: NameKind) => string;
+
 export function typenamify(name: string) {
-  if (name.match(/^[^a-zA-Z]/)) {
-    name = 'Type' + name;
-  }
   return capitalize(name);
 }
 

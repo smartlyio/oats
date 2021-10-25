@@ -4,7 +4,13 @@ import * as types from './generate-types';
 import * as server from './generate-server';
 import * as path from 'path';
 import * as oas from 'openapi3-ts';
-import { UnsupportedFeatureBehaviour, refToTypeName, capitalize } from './util';
+import {
+  UnsupportedFeatureBehaviour,
+  refToTypeName,
+  capitalize,
+  NameMapper,
+  NameKind
+} from './util';
 import { Resolve } from './generate-types';
 
 function modulePath(importer: string, module: string | undefined) {
@@ -42,6 +48,7 @@ export interface Driver {
     security?: UnsupportedFeatureBehaviour;
   };
   forceGenerateTypes?: boolean; // output the type file even if it would have been already generated
+  nameMapper?: NameMapper; // mapping function to customize generated shape/value/reflect names
 }
 
 interface GenerateFileOptions {
@@ -56,23 +63,41 @@ function defaultResolve() {
   return undefined;
 }
 
-export function localResolve(ref: string) {
+export function localResolve(ref: string, options: types.Options, kind: NameKind) {
   if (ref[0] === '#') {
-    return { name: refToTypeName(ref) };
+    return {
+      name: options.nameMapper(refToTypeName(ref), kind)
+    };
   }
   return;
 }
 
 export function compose(...fns: types.Resolve[]): types.Resolve {
-  return (ref, options) => {
+  return (ref, options, kind) => {
     for (const f of fns) {
-      const match = f(ref, options);
+      const match = f(ref, options, kind);
       if (match) {
         return match;
       }
     }
     return;
   };
+}
+
+function localNameMapper(name: string, nameKind: NameKind): string {
+  // name begins with non-alphabet is prefixed with 'Type'
+  const sanitizedName = name.match(/^[^a-zA-Z]/) ? 'Type' + name : name;
+  const capitalizedName = capitalize(sanitizedName);
+  switch (nameKind) {
+    case 'shape':
+      return 'ShapeOf' + capitalizedName;
+    case 'value':
+      return capitalizedName;
+    case 'reflection':
+      return 'type' + capitalizedName;
+    default:
+      return capitalizedName;
+  }
 }
 
 function makeModuleName(filename: string, keepDirectoryName = false): string {
@@ -89,7 +114,7 @@ function makeModuleName(filename: string, keepDirectoryName = false): string {
 
 export function generateFile(opts?: GenerateFileOptions): types.Resolve {
   const preservePathStructure = opts && opts.preservePathStructure;
-  return (ref: string, options: types.Options) => {
+  return (ref: string, options: types.Options, kind: NameKind) => {
     if (ref[0] === '#') {
       return;
     }
@@ -106,7 +131,7 @@ export function generateFile(opts?: GenerateFileOptions): types.Resolve {
     return {
       importAs: moduleName,
       importFrom: generatedFile,
-      name: refToTypeName(localName),
+      name: options.nameMapper(refToTypeName(localName), kind),
       generate: () => {
         generate({
           forceGenerateTypes: true,
@@ -117,7 +142,8 @@ export function generateFile(opts?: GenerateFileOptions): types.Resolve {
           externalOpenApiSpecs: options.externalOpenApiSpecs,
           externalOpenApiImports: options.externalOpenApiImports,
           emitStatusCode: options.emitStatusCode,
-          unsupportedFeatures: options.unsupportedFeatures
+          unsupportedFeatures: options.unsupportedFeatures,
+          nameMapper: options.nameMapper
         });
       }
     };
@@ -147,7 +173,8 @@ export function generate(driver: Driver) {
     externalOpenApiSpecs: driver.externalOpenApiSpecs,
     oas: spec,
     runtimeModule: modulePath(driver.generatedValueClassFile, driver.runtimeFilePath),
-    emitStatusCode: driver.emitStatusCode || emitAllStatusCodes
+    emitStatusCode: driver.emitStatusCode || emitAllStatusCodes,
+    nameMapper: driver.nameMapper || localNameMapper
   });
   if (typeSource) {
     fs.writeFileSync(driver.generatedValueClassFile, header + typeSource);
@@ -166,7 +193,8 @@ export function generate(driver: Driver) {
           shapesAsRequests: true,
           unsupportedFeatures: {
             security: driver.unsupportedFeatures?.security ?? UnsupportedFeatureBehaviour.reject
-          }
+          },
+          nameMapper: driver.nameMapper || localNameMapper
         })
     );
   }
@@ -183,7 +211,8 @@ export function generate(driver: Driver) {
           shapesAsResponses: true,
           unsupportedFeatures: {
             security: driver.unsupportedFeatures?.security ?? UnsupportedFeatureBehaviour.reject
-          }
+          },
+          nameMapper: driver.nameMapper || localNameMapper
         })
     );
   }
