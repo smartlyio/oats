@@ -2,6 +2,7 @@ import * as runtime from '@smartlyio/oats-runtime';
 import * as FormData from 'form-data';
 import * as assert from 'assert';
 import globalAxios, { AxiosInstance, AxiosResponse } from 'axios';
+import { urlSearchParamsSerializer } from './src/utils';
 
 function toRequestData(data: runtime.server.RequestBody<any> | undefined) {
   if (data == null) {
@@ -32,12 +33,53 @@ function axiosToJson(data: any) {
   return data;
 }
 
-export const bind: runtime.client.ClientAdapter = withAxios(globalAxios);
+/**
+ * @deprecated By default axios suffixes query array parameter names with "[]".
+ * This is likely to break oats request validation.
+ * See https://github.com/axios/axios/issues/2840.
+ * Use `create()` instead.
+ */
+export const bind: runtime.client.ClientAdapter = createAxiosAdapter({
+  axiosInstance: globalAxios,
+  preserveQueryArrayParamNames: false
+});
 
+/**
+ * @deprecated By default axios suffixes query array parameter names with "[]".
+ * This is likely to break oats request validation.
+ * See https://github.com/axios/axios/issues/2840.
+ * Use `create()` instead.
+ */
 export function withAxios(axiosInstance: AxiosInstance): runtime.client.ClientAdapter {
-  return async (
-    arg: runtime.server.EndpointArg<any, any, any, any>
-  ): Promise<runtime.server.Response<any, any, any, Record<string, any>>> => {
+  return createAxiosAdapter({ axiosInstance, preserveQueryArrayParamNames: false });
+}
+
+export interface AxiosAdapterOptions {
+  axiosInstance: AxiosInstance;
+  /**
+   * Whether to preserve query array param names and do not suffix them with "[]".
+   * By default axios will append "[]" suffix which is likely to break oats request validation.
+   * See https://github.com/axios/axios/issues/2840.
+   * @default true
+   */
+  preserveQueryArrayParamNames: boolean;
+}
+
+/**
+ * @returns oats runtime client adapter.
+ */
+export function create({
+  axiosInstance = globalAxios,
+  preserveQueryArrayParamNames = true
+}: Partial<AxiosAdapterOptions> = {}): runtime.client.ClientAdapter {
+  return createAxiosAdapter({ axiosInstance, preserveQueryArrayParamNames });
+}
+
+function createAxiosAdapter({
+  axiosInstance,
+  preserveQueryArrayParamNames
+}: AxiosAdapterOptions): runtime.client.ClientAdapter {
+  return async arg => {
     if (arg.servers.length !== 1) {
       return assert.fail('cannot decide which server to use from ' + arg.servers.join(', '));
     }
@@ -51,6 +93,7 @@ export function withAxios(axiosInstance: AxiosInstance): runtime.client.ClientAd
       headers,
       url,
       params,
+      paramsSerializer: preserveQueryArrayParamNames ? urlSearchParamsSerializer : undefined,
       data,
       validateStatus: () => true
     });

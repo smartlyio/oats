@@ -166,15 +166,11 @@ const spec: api.EndpointsWithContext<RequestContext> = {
 
 let index = 0;
 
-// 'koaAdapter.bind'  binds the endpoint implemantion in'spec' to
+// 'koaAdapter.bind' binds the endpoint implemantion in 'spec' to
 // koa-router routes using a koa adapter
-const routes = koaAdapter.bind<api.EndpointsWithContext<RequestContext>, RequestContext>(
-  runtime.server.createHandlerFactory<api.EndpointsWithContext<RequestContext>>(
-    api.endpointHandlers
-  ),
-  spec,
-  () => ({ messageIndex: index++ })
-);
+const routes = koaAdapter.bind(api.createRouter<RequestContext>(), spec, () => ({
+  messageIndex: index++
+}));
 
 // finally we can create a Koa app from the routes
 export function createApp() {
@@ -211,7 +207,7 @@ import * as assert from 'assert';
 
 // 'api.client' is the abstract implementation of the client which is then
 // mapped to axios requests using 'axiosAdapter'
-const apiClient = api.client(axiosAdapter.bind);
+const apiClient = api.client(axiosAdapter.create());
 async function runClient() {
   const posted = await apiClient.item.post({
     headers: {

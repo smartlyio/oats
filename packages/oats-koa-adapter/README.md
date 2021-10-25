@@ -33,7 +33,7 @@ import spec from '<Your Route Definitions>';
 export const router = () => {
   const requestContextCreator = (ctx: any): any => ctx;
 
-  const oatsRouter = koaAdapter.bind(oaserver.router, spec, requestContextCreator);
+  const oatsRouter = koaAdapter.bind(oaserver.createRouter(), spec, requestContextCreator);
 
   return new Router().use(oatsRouter.routes())
 };
@@ -67,7 +67,7 @@ export const router = () => {
   const oatsRouter = koaAdapter.bind<
     oaserver.EndpointsWithContext<RequestContext>,
     RequestContext
-  >(oaserver.router as any, spec, requestContextCreator);
+  >(oaserver.createRouter() as any, spec, requestContextCreator);
 
   return new Router().use(oatsRouter.routes());
 }

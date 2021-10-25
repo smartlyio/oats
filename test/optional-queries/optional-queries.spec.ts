@@ -69,7 +69,7 @@ describe('optional queries', () => {
     const port = serverPort(server);
     const url = `http://localhost:${port}`;
     apiClient = client.client((spec: typeof server.endpointHandlers) => {
-      return axiosAdapter.bind({ ...spec, servers: [url] });
+      return axiosAdapter.create()({ ...spec, servers: [url] });
     });
   });
 

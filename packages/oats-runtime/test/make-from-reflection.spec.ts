@@ -354,6 +354,24 @@ describe('unknown', () => {
   });
 });
 
+describe('boolean', () => {
+  it('validates value is a boolean', () => {
+    const fun = make.fromReflection({ type: 'boolean' });
+    for (const nonBoolean of [undefined, null, 0, 1, NaN, {}]) {
+      expect(fun(nonBoolean).errors[0].error).toMatch('expected a boolean');
+    }
+    expect(fun(true).success()).toBe(true);
+    expect(fun(false).success()).toBe(false);
+  });
+  it('converts a string to a boolean', () => {
+    const fun = make.fromReflection({ type: 'boolean' });
+    for (const value of [false, true]) {
+      expect(fun(String(value)).isError()).toBe(true);
+      expect(fun(String(value), { parseBooleanStrings: true }).success()).toBe(value);
+    }
+  });
+});
+
 describe('number', () => {
   it('enforces minimum if passed', () => {
     const fun = make.fromReflection({ type: 'number', minimum: 3 });
@@ -364,6 +382,25 @@ describe('number', () => {
     const fun = make.fromReflection({ type: 'number', maximum: 3 });
     expect(fun(4).errors[0].error).toMatch('expected a number smaller than');
     expect(fun(3).isSuccess()).toBeTruthy();
+  });
+  it('requires number to be integer', () => {
+    const fun = make.fromReflection({ type: 'integer', minimum: 1 });
+    expect(fun(1.5).errors[0].error).toMatch('expected an integer');
+    expect(fun(123).success()).toBe(123);
+  });
+  it('converts a string to a number', () => {
+    const fun1 = make.fromReflection({ type: 'number' });
+    expect(fun1('123.5', { parseNumericStrings: true }).success()).toBe(123.5);
+    expect(fun1('123.5').isError()).toBe(true);
+
+    const fun2 = make.fromReflection({ type: 'integer' });
+    expect(fun2('123', { parseNumericStrings: true }).success()).toBe(123);
+    expect(fun2('123').isError()).toBe(true);
+
+    for (const invalid of ['1x', 'NaN', 'Infinity', '', ' \t\r\n']) {
+      expect(fun1(invalid).isError()).toBe(true);
+      expect(fun2(invalid).isError()).toBe(true);
+    }
   });
 });
 
@@ -383,6 +420,29 @@ describe('array', () => {
       'expected an array of maximum length'
     );
     expect(fun(['a', 'b', 'c']).isSuccess()).toBeTruthy();
+  });
+  it('supports `allowConvertForArrayType`', () => {
+    const fun = make.fromReflection({ type: 'array', items: { type: 'integer' } });
+    expect(fun(123).errors[0].error).toMatch('expected an array, but got `123` instead.');
+    expect(fun(123, { allowConvertForArrayType: true }).success()).toEqual([123]);
+  });
+  it('works for "string | array" type with `allowConvertForArrayType`', () => {
+    const fun1 = make.fromReflection({
+      type: 'union',
+      options: [
+        {
+          type: 'string'
+        },
+        {
+          type: 'array',
+          items: { type: 'string' }
+        }
+      ]
+    });
+    expect(fun1(['abc'], { allowConvertForArrayType: true }).success()).toEqual(['abc']);
+    expect(fun1('abc', { allowConvertForArrayType: true }).errors[0].error).toMatch(
+      'multiple options match'
+    );
   });
 });
 
@@ -408,7 +468,7 @@ describe('object', () => {
         properties: {},
         additionalProperties: { type: 'unknown' }
       });
-      expect(fun([]).errors[0].error).toEqual('expected an object, but got "[]" instead.');
+      expect(fun([]).errors[0].error).toEqual('expected an object, but got `[]` instead.');
     });
 
     it('disallows constructor', () => {
