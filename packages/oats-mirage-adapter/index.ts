@@ -92,7 +92,7 @@ function adapter<Registry extends mirageTypes.AnyRegistry, RequestContext>(
             ? JSON.stringify(result.value.value)
             : result.value.value
         );
-      } catch (error) {
+      } catch (error: any) {
         // eslint-disable-next-line no-console
         console.log('oats-mirage-adapter handler threw: ' + error.message, { error });
         return new mirage.Response(

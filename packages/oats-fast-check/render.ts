@@ -27,7 +27,7 @@ Promise.all(
     try {
       await util.promisify(child.exec)(example);
       return example + ': ok';
-    } catch (e) {
+    } catch (e: any) {
       return example + ': error ' + e.message;
     }
   })

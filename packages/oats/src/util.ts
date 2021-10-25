@@ -37,7 +37,7 @@ function resolveRef(ref: string, schema: oas.OpenAPIObject): oas.SchemaObject | 
 export function errorTag<T>(tag: string, fn: () => T): T {
   try {
     return fn();
-  } catch (e) {
+  } catch (e: any) {
     e.message = tag + ' ' + e.message;
     throw e;
   }
