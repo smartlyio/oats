@@ -10,17 +10,21 @@
   "schedule": ["after 7am and before 9am every weekday"],
   "packageRules": [
     {
-      "groupName": "typescript-eslint group",
-      "packageNames": [
-        "@typescript-eslint/eslint-plugin",
-        "@typescript-eslint/parser"
-      ]
+      "depTypeList": ["dependencies"],
+      "schedule" : "before 8am on monday",
+      "groupName": "Dependencies"
     },
     {
       "depTypeList": ["devDependencies"],
-      "updateTypes": ["patch", "pin"],
-      "schedule": ["every weekday"],
-      "automerge": true
+      "schedule" : "before 8am on monday",
+      "groupName": "devDependencies",
+      "labels": ["no-release"]
+    }
+    {
+      "depTypeList": ["devDependencies"],
+      "updateTypes": ["pin"],
+      "schedule": "before 8am on monday",
+      "labels": ["no-release"]
     }
   ]
 }
