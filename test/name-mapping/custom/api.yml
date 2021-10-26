@@ -16,6 +16,12 @@ paths:
                 $ref: "#/components/schemas/Item"
 components:
   schemas:
+    NullableScalar:
+      type: string
+      nullable: true
+    NullableObject:
+      type: object
+      nullable: true
     ItemType:
       type: string
       enum:
