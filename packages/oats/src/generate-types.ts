@@ -1180,7 +1180,7 @@ export function run(options: Options) {
   }
 
   function brandTypeName(key: string): string {
-    return 'BrandOf' + oautil.typenamify(key);
+    return 'BrandOf' + options.nameMapper(key, 'value');
   }
 
   function generateBrand(key: string) {
@@ -1302,7 +1302,7 @@ export function run(options: Options) {
       ts.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
       ts.createCall(
         ts.createPropertyAccess(
-          ts.createCall(ts.createIdentifier('make' + oautil.typenamify(key)), undefined, [
+          ts.createCall(ts.createIdentifier('make' + options.nameMapper(key, 'value')), undefined, [
             ts.createIdentifier('value')
           ]),
           'isSuccess'

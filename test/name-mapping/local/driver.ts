@@ -6,7 +6,7 @@ driver.generate({
   generatedValueClassFile: './tmp/client/types.generated.ts',
   generatedClientFile: './tmp/client/generated.ts',
   header: '/* tslint:disable variable-name only-arrow-functions*/',
-  openapiFilePath: './api.yml',
+  openapiFilePath: '../api.yml',
   resolve: driver.compose(driver.generateFile(), driver.localResolve)
 });
 
@@ -14,6 +14,6 @@ driver.generate({
   generatedValueClassFile: './tmp/server/types.generated.ts',
   generatedServerFile: './tmp/server/generated.ts',
   header: '/* tslint:disable variable-name only-arrow-functions*/',
-  openapiFilePath: './api.yml',
+  openapiFilePath: '../api.yml',
   resolve: driver.compose(driver.generateFile(), driver.localResolve)
 });

@@ -16,6 +16,17 @@ paths:
                 $ref: "#/components/schemas/Item"
 components:
   schemas:
+    NullableScalar:
+      type: string
+      nullable: true
+    NullableObject:
+      type: object
+      nullable: true
+    ItemType:
+      type: string
+      enum:
+        - custom
+        - default 
     Item:
       type: object
       required:
@@ -30,4 +41,6 @@ components:
           pattern: .*
         flag:
           type: boolean
+        type:
+          $ref: "#/components/schemas/ItemType"
 
