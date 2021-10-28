@@ -1,9 +1,0 @@
-node_modules
-test-app
-.vscode
-.github
-.git
-bin
-dist
-tmp
-examples
