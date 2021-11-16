@@ -47,8 +47,8 @@ function adapter<StateT, CustomT, RequestContext>(
         body,
         requestContext: requestContextCreator(ctx)
       });
-      ctx.status = result.status;
       ctx.body = result.value.value;
+      ctx.status = result.status;
       ctx.set(result.headers);
     });
   };
