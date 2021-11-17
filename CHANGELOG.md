@@ -1,9 +1,14 @@
+# 3.4.0
+
+oats-koa-adapter does not anymore set status code 204 when no content is set in response body.
+This might break existing usages relying on the broken previous behavior.
+
 # 3.3.0
 
 ## Introduce `nameMapper` in code generator options
 
-The `nameMapper` callback allows customizing the exported value, shape and reflection type names. Eg to 
-omit `ShapeOf` in `ShapeOfType` for nicer usage when preferring to use shapes instead of `ValueClass` 
+The `nameMapper` callback allows customizing the exported value, shape and reflection type names. Eg to
+omit `ShapeOf` in `ShapeOfType` for nicer usage when preferring to use shapes instead of `ValueClass`
 
 # 3.2.0
 
