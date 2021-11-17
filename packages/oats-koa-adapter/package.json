@@ -40,7 +40,7 @@
     "@smartlyio/oats-runtime": "^3.4.0",
     "@types/koa": "2.13.4",
     "@types/koa-router": "7.4.4",
-    "@types/lodash": "4.14.176",
+    "@types/lodash": "4.14.177",
     "@types/node": "16.11.7",
     "koa": "2.13.4",
     "koa-body": "4.2.0",
