@@ -48,7 +48,7 @@
     "@types/koa-mount": "4.0.1",
     "@types/koa-router": "7.4.4",
     "@types/lodash": "4.14.176",
-    "@types/node": "14.17.29",
+    "@types/node": "16.11.7",
     "axios": "0.24.0",
     "fast-check": "2.19.0",
     "form-data": "4.0.0",
