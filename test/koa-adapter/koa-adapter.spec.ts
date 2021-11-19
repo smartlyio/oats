@@ -7,6 +7,7 @@ import * as Koa from 'koa';
 import * as koaBody from 'koa-body';
 import * as axiosAdapter from '@smartlyio/oats-axios-adapter';
 import * as http from 'http';
+import { IMiddleware } from 'koa-router';
 
 const spec: server.Endpoints = {
   '/test': {
@@ -16,19 +17,22 @@ const spec: server.Endpoints = {
   }
 };
 
-const routes = koaAdapter.bind(
-  runtime.server.createHandlerFactory<server.Endpoints>(server.endpointHandlers),
-  spec
-);
+function createRoutes(middleware: IMiddleware<any, any>) {
+  return koaAdapter.bind({
+    handler: runtime.server.createHandlerFactory<server.Endpoints>(server.endpointHandlers),
+    spec,
+    middlewares: [middleware]
+  });
+}
 
-function createApp() {
+function createApp(middleware: IMiddleware<any, any>) {
   const app = new Koa();
   app.use(
     koaBody({
       multipart: true
     })
   );
-  app.use(routes.routes());
+  app.use(createRoutes(middleware).routes());
   return app;
 }
 
@@ -50,6 +54,11 @@ function serverAddress(server: http.Server) {
 describe('Koa adapter', () => {
   let apiClient: client.ClientSpec;
   let server: any;
+  let middlewareHit = false;
+
+  beforeEach(() => {
+    middlewareHit = false;
+  });
 
   afterAll(() => {
     server?.close();
@@ -57,7 +66,10 @@ describe('Koa adapter', () => {
 
   beforeAll(async () => {
     server = await new Promise(ok => {
-      const server = createApp().listen(0, () => ok(server));
+      const server = createApp(async (ctx, next) => {
+        middlewareHit = true;
+        await next();
+      }).listen(0, () => ok(server));
     });
     const port = serverPort(server);
     const url = `http://localhost:${port}`;
@@ -69,5 +81,10 @@ describe('Koa adapter', () => {
   it('sets a valid status code, when noContent is returned', async () => {
     const item = await apiClient.test.get();
     expect(item.status).toEqual(201);
+  });
+
+  it('hits the given middleware', async () => {
+    await apiClient.test.get();
+    expect(middlewareHit).toBeTruthy();
   });
 });

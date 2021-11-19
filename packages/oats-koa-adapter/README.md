@@ -13,7 +13,7 @@ Oats Koa Adapter is a library that binds server endpoints written with [Oats](ht
 Use `npm` or `yarn` to install `oats-koa-adapter`.
 
 ```bash
-npm install oats-koa-adapter
+npm install @smartlyio/oats-koa-adapter
 ```
 
 ## Usage
@@ -33,8 +33,15 @@ import spec from '<Your Route Definitions>';
 export const router = () => {
   const requestContextCreator = (ctx: any): any => ctx;
 
-  const oatsRouter = koaAdapter.bind(oaserver.createRouter(), spec, requestContextCreator);
-
+  const middlewares = [(_ctx, next) => { return next() }];
+  
+  const oatsRouter = koaAdapter.bind({ 
+    handler: oaserver.createRouter(), 
+    spec, 
+    requestContextCreator,
+    middlewares
+  });
+  
   return new Router().use(oatsRouter.routes())
 };
 
