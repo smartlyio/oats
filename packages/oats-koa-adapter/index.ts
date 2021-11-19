@@ -7,7 +7,7 @@ import { IMiddleware } from 'koa-router';
 function adapter<StateT, CustomT, RequestContext>(
   router: Router<StateT, CustomT>,
   requestContextCreator: (ctx: ParameterizedContext<StateT, CustomT>) => RequestContext,
-  middlewares: Array<IMiddleware<any, any>>
+  middlewares: Array<IMiddleware<StateT, CustomT>>
 ): runtime.server.ServerAdapter {
   return (
     path: string,
@@ -69,7 +69,7 @@ type Opts<Spec, StateT, CustomT, RequestContext> = {
   handler: runtime.server.HandlerFactory<Spec>;
   spec: Spec;
   requestContextCreator?: (ctx: ParameterizedContext<StateT, CustomT>) => RequestContext;
-  middlewares?: Array<IMiddleware<any, any>>;
+  middlewares?: Array<IMiddleware<StateT, CustomT>>;
 };
 
 /**
