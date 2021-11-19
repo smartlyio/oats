@@ -1,3 +1,7 @@
+# 3.4.1
+
+Allow passing middlewares to oats-koa-adapter in `bind`. The middlewares are applied to all specified endpoints.
+
 # 3.4.0
 
 oats-koa-adapter does not anymore set status code 204 when no content is set in response body.
