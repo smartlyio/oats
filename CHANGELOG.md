@@ -1,4 +1,4 @@
-# 3.4.1
+# 3.5.0
 
 Allow passing middlewares to oats-koa-adapter in `bind`. The middlewares are applied to all specified endpoints.
 
