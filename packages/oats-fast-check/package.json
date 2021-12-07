@@ -41,9 +41,9 @@
   "devDependencies": {
     "@smartlyio/oats": "^3.5.0",
     "@smartlyio/oats-runtime": "^3.5.0",
-    "@types/jest": "27.0.2",
+    "@types/jest": "27.0.3",
     "@types/lodash": "4.14.177",
-    "@types/node": "16.11.7",
+    "@types/node": "16.11.12",
     "jest": "27.3.1",
     "jsverify": "0.8.4",
     "ts-jest": "27.0.7",

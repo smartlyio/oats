@@ -35,9 +35,9 @@
     "client"
   ],
   "devDependencies": {
-    "@types/jest": "27.0.2",
+    "@types/jest": "27.0.3",
     "@types/lodash": "4.14.177",
-    "@types/node": "16.11.7",
+    "@types/node": "16.11.12",
     "fast-check": "2.19.0",
     "jest": "27.3.1",
     "jsverify": "0.8.4",
