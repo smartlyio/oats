@@ -833,18 +833,17 @@ export function run(options: Options) {
       return ts.createObjectLiteral(
         [
           ts.createPropertyAssignment('type', ts.createStringLiteral('named')),
-          ts.createPropertyAssignment('reference',
+          ts.createPropertyAssignment(
+            'reference',
             ts.factory.createArrowFunction(
               undefined,
               undefined,
               [],
               undefined,
               ts.factory.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
-              ts.factory.createBlock(
-                [ts.factory.createReturnStatement(type)],
-                false
-              )
-            ))
+              ts.factory.createBlock([ts.factory.createReturnStatement(type)], false)
+            )
+          )
         ],
         true
       );
@@ -1075,7 +1074,7 @@ export function run(options: Options) {
       return generateIsA(options.nameMapper(key, 'value'));
     }
     if (isScalar(schema)) {
-        return generateIsAForScalar(key);
+      return generateIsAForScalar(key);
     }
   }
 
@@ -1094,9 +1093,15 @@ export function run(options: Options) {
             ts.createAsExpression(
               ts.createObjectLiteral(
                 [
-                  ts.createPropertyAssignment('name', ts.createStringLiteral(options.nameMapper(key, 'value'))),
+                  ts.createPropertyAssignment(
+                    'name',
+                    ts.createStringLiteral(options.nameMapper(key, 'value'))
+                  ),
                   ts.createPropertyAssignment('definition', generateReflectionType(schema)),
-                  ts.createPropertyAssignment('maker', ts.createIdentifier('make' + options.nameMapper(key, 'value'))),
+                  ts.createPropertyAssignment(
+                    'maker',
+                    ts.createIdentifier('make' + options.nameMapper(key, 'value'))
+                  ),
                   ts.createPropertyAssignment('isA', isA ?? ts.createNull())
                 ],
                 true
@@ -1266,7 +1271,7 @@ export function run(options: Options) {
         ),
         generateTypeShape(key, valueIdentifier),
         generateTopLevelMaker(key, schema),
-        generateNamedTypeDefinitionDeclaration(key, schema),
+        generateNamedTypeDefinitionDeclaration(key, schema)
       ];
     }
 
@@ -1280,7 +1285,7 @@ export function run(options: Options) {
       ),
       generateTypeShape(key, valueIdentifier),
       generateTopLevelMaker(key, schema),
-      generateNamedTypeDefinitionDeclaration(key, schema),
+      generateNamedTypeDefinitionDeclaration(key, schema)
     ];
   }
 
@@ -1338,14 +1343,9 @@ export function run(options: Options) {
       Object.keys(components).map(key => {
         const component = components[key];
         const schema = oautil.isReferenceObject(component)
-            ? { $ref: component.$ref }
-            : generateContentSchemaType(component.content || assert.fail('missing content'))
-        nodes.push(
-          ...generateTopLevelType(
-            key,
-            schema
-          )
-        )
+          ? { $ref: component.$ref }
+          : generateContentSchemaType(component.content || assert.fail('missing content'));
+        nodes.push(...generateTopLevelType(key, schema));
       });
     }
     return nodes;
