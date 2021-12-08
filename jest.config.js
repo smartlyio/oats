@@ -11,7 +11,7 @@ module.exports = {
   testRegex: '.*\\.spec.(tsx?)$',
 
   collectCoverageFrom: [
-    'packages/*/src/**/*.{ts,tsxx}',
+    'packages/*/src/**/*.{ts,tsx}',
     '!packages/*/src/**/*.story.*'
   ],
 

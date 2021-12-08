@@ -1,7 +1,10 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["src", "test", "index.ts"],
+  "include": ["src", "index.ts", "render.ts"],
   "compilerOptions": {
-    "outDir": "./dist"
+    "outDir": "dist",
+    "paths": {
+      "@smartlyio/oats": ["index"]
+    }
   }
 }
