@@ -34,13 +34,13 @@
     "client"
   ],
   "devDependencies": {
-    "@jest/globals": "27.3.1",
+    "@jest/globals": "27.4.2",
     "@smartlyio/oats-runtime": "^3.5.0",
     "@types/form-data": "2.5.0",
     "@types/node": "16.11.12",
     "axios": "0.24.0",
-    "jest": "27.3.1",
-    "ts-jest": "27.0.7",
-    "typescript": "4.4.4"
+    "jest": "27.4.3",
+    "ts-jest": "27.1.1",
+    "typescript": "4.5.2"
   }
 }
