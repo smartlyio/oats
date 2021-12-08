@@ -1,21 +1,7 @@
 {
+  "extends": "../../tsconfig.json",
+  "include": ["src", "test", "index.ts"],
   "compilerOptions": {
-    "strict": true,
-    "declaration": true,
-    "target": "es2017",
-    "lib": ["es6", "es2017", "dom", "esnext.asynciterable"],
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "sourceMap": true,
-    "removeComments": false,
-    "alwaysStrict": true,
-    "typeRoots": ["./src/types", "./node_modules/@types"],
-    "baseUrl": ".",
-    "forceConsistentCasingInFileNames": true,
-    "outDir": "dist",
-    "paths": {
-      "@smartlyio/oats": ["index"]
-    }
-  },
-  "exclude": ["examples/", "test/"]
+    "outDir": "./dist"
+  }
 }
