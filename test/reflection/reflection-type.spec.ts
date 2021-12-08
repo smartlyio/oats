@@ -626,7 +626,7 @@ describe('reflection-type', () => {
               isA: (v): v is TestClass => v instanceof TestClass,
               definition: {
                 type: 'object',
-                additionalProperties: { type: 'named', reference: () =>target },
+                additionalProperties: { type: 'named', reference: () => target },
                 properties: {
                   field: { required: false, value: { type: 'string' } },
                   other: { required: false, value: { type: 'string' } }
