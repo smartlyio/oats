@@ -49,14 +49,14 @@ export function getTags(type: Type): Map<string, unknown[]> {
 
 function rootType(type: Type): Type {
   if (type.type === 'named') {
-    return rootType(type.reference.definition);
+    return rootType(type.reference().definition);
   }
   return type;
 }
 
 function typeTag(v: Type): unknown[] {
   if (v.type === 'named') {
-    return typeTag(v.reference.definition);
+    return typeTag(v.reference().definition);
   }
   if (v.type === 'string' || v.type === 'boolean' || v.type === 'number' || v.type === 'integer') {
     if (v.enum) {

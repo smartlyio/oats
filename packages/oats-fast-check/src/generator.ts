@@ -67,7 +67,7 @@ export class GenType extends fc.Arbitrary<any> {
       assert.fail('todo intersection value generation');
     }
     if (type.type === 'named') {
-      return named(type.reference);
+      return named(type.reference());
     }
     if (type.type === 'null') {
       return fc.constant(null);
