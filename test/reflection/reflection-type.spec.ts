@@ -78,7 +78,7 @@ describe('reflection-type', () => {
         isA: null,
         definition: {
           type: 'array',
-          items: { type: 'named', reference: target }
+          items: { type: 'named', reference: () => target }
         }
       };
       const root: reflectionType.NamedTypeDefinition<any> = {
@@ -92,14 +92,14 @@ describe('reflection-type', () => {
             items: {
               value: {
                 type: 'named',
-                reference: middle
+                reference: () => middle
               },
               required: true
             },
             items2: {
               value: {
                 type: 'named',
-                reference: middle
+                reference: () => middle
               },
               required: true
             }
@@ -131,7 +131,7 @@ describe('reflection-type', () => {
         isA: null,
         definition: {
           type: 'named',
-          reference: target
+          reference: () => target
         }
       };
 
@@ -141,7 +141,7 @@ describe('reflection-type', () => {
         isA: null,
         definition: {
           type: 'named',
-          reference: middle2
+          reference: () => middle2
         }
       };
       const root: reflectionType.NamedTypeDefinition<any> = {
@@ -153,7 +153,7 @@ describe('reflection-type', () => {
           additionalProperties: false,
           properties: {
             item: {
-              value: { type: 'named', reference: middle },
+              value: { type: 'named', reference: () => middle },
               required: false
             }
           }
@@ -185,7 +185,7 @@ describe('reflection-type', () => {
             items: {
               value: {
                 type: 'array',
-                items: { type: 'named', reference: target }
+                items: { type: 'named', reference: () => target }
               },
               required: false
             }
@@ -208,7 +208,7 @@ describe('reflection-type', () => {
           additionalProperties: false,
           properties: {
             recursive: {
-              value: { type: 'named', reference: middle },
+              value: { type: 'named', reference: () => middle },
               required: false
             },
             noHit: {
@@ -218,7 +218,7 @@ describe('reflection-type', () => {
             middleField: {
               value: {
                 type: 'union',
-                options: [{ type: 'named', reference: target }]
+                options: [{ type: 'named', reference: () => target }]
               },
               required: false
             }
@@ -236,7 +236,7 @@ describe('reflection-type', () => {
             rootField: {
               value: {
                 type: 'union',
-                options: [{ type: 'named', reference: middle }]
+                options: [{ type: 'named', reference: () => middle }]
               },
               required: false
             }
@@ -276,7 +276,7 @@ describe('reflection-type', () => {
             middleField: {
               value: {
                 type: 'union',
-                options: [{ type: 'named', reference: target }]
+                options: [{ type: 'named', reference: () => target }]
               },
               required: false
             }
@@ -294,7 +294,7 @@ describe('reflection-type', () => {
             rootField: {
               value: {
                 type: 'union',
-                options: [{ type: 'named', reference: middle }]
+                options: [{ type: 'named', reference: () => middle }]
               },
               required: false
             }
@@ -322,7 +322,7 @@ describe('reflection-type', () => {
             field: {
               value: {
                 type: 'named',
-                reference: target
+                reference: () => target
               },
               required: false
             }
@@ -346,7 +346,7 @@ describe('reflection-type', () => {
             options: {
               value: {
                 type: 'union',
-                options: [{ type: 'named', reference: target }]
+                options: [{ type: 'named', reference: () => target }]
               },
               required: false
             }
@@ -368,14 +368,14 @@ describe('reflection-type', () => {
           additionalProperties: false,
           properties: {
             field: {
-              value: { type: 'named', reference: target },
+              value: { type: 'named', reference: () => target },
               required: false
             },
             ambiguous: {
               required: false,
               value: {
                 type: 'union',
-                options: [{ type: 'named', reference: target }, { type: 'string' }]
+                options: [{ type: 'named', reference: () => target }, { type: 'string' }]
               }
             }
           }
@@ -398,7 +398,7 @@ describe('reflection-type', () => {
             options: {
               value: {
                 type: 'union',
-                options: [{ type: 'named', reference: target }, { type: 'null' }]
+                options: [{ type: 'named', reference: () => target }, { type: 'null' }]
               },
               required: false
             }
@@ -420,7 +420,7 @@ describe('reflection-type', () => {
         isA: null,
         definition: {
           type: 'union',
-          options: [{ type: 'named', reference: target }]
+          options: [{ type: 'named', reference: () => target }]
         }
       };
       const root: reflectionType.NamedTypeDefinition<any> = {
@@ -432,7 +432,7 @@ describe('reflection-type', () => {
           additionalProperties: false,
           properties: {
             options: {
-              value: { type: 'named', reference: union },
+              value: { type: 'named', reference: () => union },
               required: false
             }
           }
@@ -474,7 +474,7 @@ describe('reflection-type', () => {
             options: {
               value: {
                 type: 'union',
-                options: [{ type: 'named', reference: target }, { type: 'string' }]
+                options: [{ type: 'named', reference: () => target }, { type: 'string' }]
               },
               required: false
             }
@@ -573,7 +573,7 @@ describe('reflection-type', () => {
                   field: {
                     value: {
                       type: 'named',
-                      reference: target
+                      reference: () => target
                     },
                     required: false
                   }
@@ -599,7 +599,7 @@ describe('reflection-type', () => {
                       type: 'array',
                       items: {
                         type: 'named',
-                        reference: target
+                        reference: () => target
                       }
                     },
                     required: false
@@ -626,7 +626,7 @@ describe('reflection-type', () => {
               isA: (v): v is TestClass => v instanceof TestClass,
               definition: {
                 type: 'object',
-                additionalProperties: { type: 'named', reference: target },
+                additionalProperties: { type: 'named', reference: () => target },
                 properties: {
                   field: { required: false, value: { type: 'string' } },
                   other: { required: false, value: { type: 'string' } }
@@ -664,7 +664,7 @@ describe('reflection-type', () => {
                   field: {
                     value: {
                       type: 'named',
-                      reference: target
+                      reference: () => target
                     },
                     required: false
                   }

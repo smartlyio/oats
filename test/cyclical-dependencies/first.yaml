@@ -1,0 +1,12 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: fixtures for runtime test
+paths: {}
+components:
+  schemas:
+    FirstObject:
+      type: object
+      properties:
+        target:
+          $ref: './second.yaml#/components/schemas/SecondObject'

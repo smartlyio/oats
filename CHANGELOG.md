@@ -1,3 +1,12 @@
+
+# 4.0.0
+
+Fix cyclical imports and lose the need for `Object.assign` in the generated types.
+
+## Breaking changes:
+Type of `reference` in named reflection nodes has changed to `() => ...`
+Type of `reflection` in `ValueClass` classes has changed to `() => ...`
+
 # 3.5.0
 
 Allow passing middlewares to oats-koa-adapter in `bind`. The middlewares are applied to all specified endpoints.

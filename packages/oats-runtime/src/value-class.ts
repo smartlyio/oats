@@ -1,4 +1,4 @@
-import { NamedTypeDefinition } from './reflection-type';
+import { NamedTypeDefinitionDeferred } from './reflection-type';
 import { ShapeOf } from './runtime';
 
 function asPlainObject(value: any): any {
@@ -15,7 +15,7 @@ function asPlainObject(value: any): any {
 }
 
 export class ValueClass {
-  public static reflection: NamedTypeDefinition<ValueClass>;
+  public static reflection: NamedTypeDefinitionDeferred<ValueClass>;
 }
 
 type WritableArray<T> = Array<Writable<T>>;

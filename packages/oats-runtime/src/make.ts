@@ -484,7 +484,7 @@ export function makeNullable(maker: any) {
 
 function isScalar(type: Type): boolean {
   if (type.type === 'named') {
-    return isScalar(type.reference.definition);
+    return isScalar(type.reference().definition);
   }
   return ['array', 'object', 'union', 'intersection', 'unknown'].indexOf(type.type) < 0;
 }
@@ -494,7 +494,7 @@ function enumOptions(type: Type): number | null {
     return 1;
   }
   if (type.type === 'named') {
-    return enumOptions(type.reference.definition);
+    return enumOptions(type.reference().definition);
   }
   if (
     type.type === 'string' ||
@@ -622,7 +622,7 @@ export function fromReflection(type: Type): Maker<any, any> {
     case 'intersection':
       return makeAllOf(...type.options.map(req => fromReflection(req)));
     case 'named':
-      return type.reference.maker;
+      return type.reference().maker;
     case 'unknown':
       return makeAny();
     case 'binary':
@@ -683,7 +683,7 @@ export function extractDiscriminatorKeys(
   typeObjectRef: Type
 ): string[] {
   const typeObject =
-    typeObjectRef.type === 'named' ? typeObjectRef.reference.definition : typeObjectRef;
+    typeObjectRef.type === 'named' ? typeObjectRef.reference().definition : typeObjectRef;
 
   if (typeObject.type === 'union') {
     const keys = typeObject.options.map(type => extractDiscriminatorKeys(discriminatorField, type));
@@ -700,7 +700,7 @@ export function extractDiscriminatorKeys(
   }
   const fieldSchemaRef = typeObject.properties[discriminatorField].value;
   const fieldSchema =
-    fieldSchemaRef.type === 'named' ? fieldSchemaRef.reference.definition : fieldSchemaRef;
+    fieldSchemaRef.type === 'named' ? fieldSchemaRef.reference().definition : fieldSchemaRef;
 
   if (fieldSchema.type === 'union') {
     return extractDiscriminatorKeys(discriminatorField, fieldSchemaRef);

@@ -18,6 +18,8 @@ export type Type =
   | ObjectType
   | NamedType;
 
+export type NamedTypeDefinitionDeferred<A, Shape = any> = () => NamedTypeDefinition<A, Shape>;
+
 export interface NamedTypeDefinition<A, Shape = any> {
   readonly name: string;
   readonly definition: Type;
@@ -88,7 +90,7 @@ export interface ArrayType {
 
 export interface NamedType {
   readonly type: 'named';
-  readonly reference: NamedTypeDefinition<unknown>;
+  readonly reference: NamedTypeDefinitionDeferred<unknown>;
 }
 
 export interface PropType {
@@ -348,8 +350,8 @@ function calculateReachInType(
   ambiguousPath: boolean
 ) {
   if (type.type === 'named') {
-    canReach(reaches, from, type.reference, path);
-    calculateReverseReach(processed, reaches, type.reference, to, ambiguousPath);
+    canReach(reaches, from, type.reference(), path);
+    calculateReverseReach(processed, reaches, type.reference(), to, ambiguousPath);
   } else if (type.type === 'array') {
     calculateReachInType(
       processed,

@@ -96,7 +96,7 @@ describe('union differentation', () => {
         tag: {
           value: {
             type: 'named',
-            reference: {
+            reference: () => ({
               name: 'a',
               isA: 1 as any,
               maker: 1 as any,
@@ -104,7 +104,7 @@ describe('union differentation', () => {
                 type: 'string',
                 enum: ['a']
               }
-            }
+            })
           },
           required: true
         }
@@ -112,7 +112,7 @@ describe('union differentation', () => {
     };
     const btype: Type = {
       type: 'named',
-      reference: {
+      reference: () => ({
         maker: make.fromReflection({
           type: 'object',
           additionalProperties: false,
@@ -129,7 +129,7 @@ describe('union differentation', () => {
             tag: { value: { type: 'string', enum: ['b'] }, required: true }
           }
         }
-      }
+      })
     };
     const fun = make.fromReflection({ type: 'union', options: [atype, btype] });
     expect(fun({ tag: 'b' }).success()).toEqual({ tag: 'b' });
@@ -140,12 +140,12 @@ describe('named', () => {
   it('uses the maker from name', () => {
     const type: Type = {
       type: 'named',
-      reference: {
+      reference: () => ({
         name: 'aa',
         definition: 1 as any,
         isA: 1 as any,
         maker: make.fromReflection({ type: 'string' })
-      }
+      })
     };
     const fun = make.fromReflection(type);
     const result = fun('aaa').success();
@@ -183,12 +183,12 @@ describe('union', () => {
         },
         {
           type: 'named',
-          reference: {
+          reference: () => ({
             name: 'aa',
             definition: 1 as any,
             isA: 1 as any,
             maker: TestClass.make
-          }
+          })
         }
       ]
     };
@@ -206,21 +206,21 @@ describe('union', () => {
         },
         {
           type: 'named',
-          reference: {
+          reference: () => ({
             name: 'aa',
             definition: 1 as any,
             isA: 1 as any,
             maker: TestClass.make
-          }
+          })
         },
         {
           type: 'named',
-          reference: {
+          reference: () => ({
             name: 'aa',
             definition: 1 as any,
             isA: 1 as any,
             maker: TestClass.make
-          }
+          })
         }
       ]
     };
