@@ -41,7 +41,19 @@ class BrandedClass2 extends runtime.valueClass.ValueClass {
 type CustomShaped = runtime.Shaped<{ f: number }, string>;
 type CustomIndexType = runtime.Shaped<{ [k: string]: number }, string>;
 
+type FieldValueWithBrand = ReadonlyArray<FieldValueWithBrand> | number;
+type WritableFieldValueWithBrand = Array<WritableFieldValueWithBrand> | number;
+
 describe('ShapeOf', () => {
+  it('works with recursive readonly arrays', () => {
+    assignableTo<runtime.ShapeOf<FieldValueWithBrand>>([1]);
+    const p: runtime.ShapeOf<FieldValueWithBrand> = [1];
+    // readonly shape cannot be assigned to writable
+    // @ts-expect-error
+    const r: WritableFieldValueWithBrand = p;
+    r == p;
+  });
+
   it('works with branded types', () => {
     assignableTo<runtime.ShapeOf<Value>>('a');
     // @ts-expect-error
