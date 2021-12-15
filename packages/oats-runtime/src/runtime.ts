@@ -22,10 +22,10 @@ export type ShapeOf<A> = A extends Scalar
   ? S
   : unknown extends A
   ? unknown
-  : A extends ReadonlyArray<infer Item>
-  ? ReadonlyArray<ShapeOf<Item>>
   : A extends Array<infer Item>
   ? Array<ShapeOf<Item>>
+  : A extends ReadonlyArray<infer Item>
+  ? ReadonlyArray<ShapeOf<Item>>
   : { [K in keyof A]: ShapeOf<A[K]> };
 
 class ShapedClass<Shape> {
