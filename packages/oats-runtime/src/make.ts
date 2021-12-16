@@ -581,7 +581,7 @@ function fromUnionReflection(types: Type[]): Maker<any, any> {
     discriminatedMakers.set(key, makeOneOf(...[...untaggedMaker, fromReflection(t)]));
   }
   return (value: any, opts?: MakeOptions) => {
-    if (value && typeof value === 'object' && !Array.isArray(value) && value[discriminator.key]) {
+    if (value && typeof value === 'object' && !Array.isArray(value) && discriminator.key in value) {
       const discriminatedType = discriminatedMakers.get(value[discriminator.key]);
       if (discriminatedType) {
         return discriminatedType(value, opts);
