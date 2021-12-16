@@ -134,6 +134,58 @@ describe('union differentation', () => {
     const fun = make.fromReflection({ type: 'union', options: [atype, btype] });
     expect(fun({ tag: 'b' }).success()).toEqual({ tag: 'b' });
   });
+
+  it('handles enums with falsy values as discriminators', () => {
+    const atype: Type = {
+      type: 'union',
+      options: [
+        {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            name: {
+              value: {
+                type: 'string'
+              },
+              required: true
+            },
+            enabled: {
+              value: {
+                type: 'boolean',
+                enum: [false]
+              },
+              required: true
+            }
+          }
+        },
+        {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            other_name: {
+              value: {
+                type: 'string'
+              },
+              required: true
+            },
+            enabled: {
+              value: {
+                type: 'boolean',
+                enum: [true]
+              },
+              required: true
+            }
+          }
+        }
+      ]
+    };
+    const fun = make.fromReflection(atype);
+    expect(fun({ enabled: false, name: 'aaa' }).success()).toEqual({ enabled: false, name: 'aaa' });
+    expect(fun({ enabled: true, other_name: 'aaa' }).success()).toEqual({
+      enabled: true,
+      other_name: 'aaa'
+    });
+  });
 });
 
 describe('named', () => {
