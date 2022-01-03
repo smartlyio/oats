@@ -37,7 +37,9 @@ export interface Driver {
   openapiFilePath: string;
   generatedValueClassFile: string;
   resolve?: Resolve;
+  /** @deprecated Consider using 'resolve' instead */
   externalOpenApiImports?: readonly ImportDefinition[];
+  /** @deprecated Consider using 'resolve' instead */
   externalOpenApiSpecs?: (url: string) => string | undefined;
   header?: string;
   generatedServerFile?: string;
@@ -49,6 +51,14 @@ export interface Driver {
   };
   forceGenerateTypes?: boolean; // output the type file even if it would have been already generated
   nameMapper?: NameMapper; // mapping function to customize generated shape/value/reflect names
+  /** if true emit union type with undefined for additionalProperties. Default is *true*.
+   *  Note! Likely the default will be set to false later. Now like this to avoid
+   *  breaking typechecking for existing projects.
+   *
+   * Typescript can be {@link https://www.typescriptlang.org/tsconfig#noUncheckedIndexedAccess configured } to consider
+   *  index signature accesses to have implicit undefined type so we can let the caller decide on the level of safety they want.
+   * */
+  emitUndefinedForIndexTypes?: boolean;
 }
 
 interface GenerateFileOptions {
@@ -142,6 +152,7 @@ export function generateFile(opts?: GenerateFileOptions): types.Resolve {
           externalOpenApiSpecs: options.externalOpenApiSpecs,
           externalOpenApiImports: options.externalOpenApiImports,
           emitStatusCode: options.emitStatusCode,
+          emitUndefinedForIndexTypes: options.emitUndefinedForIndexTypes,
           unsupportedFeatures: options.unsupportedFeatures,
           nameMapper: options.nameMapper
         });
@@ -174,7 +185,8 @@ export function generate(driver: Driver) {
     oas: spec,
     runtimeModule: modulePath(driver.generatedValueClassFile, driver.runtimeFilePath),
     emitStatusCode: driver.emitStatusCode || emitAllStatusCodes,
-    nameMapper: driver.nameMapper || localNameMapper
+    nameMapper: driver.nameMapper || localNameMapper,
+    emitUndefinedForIndexTypes: driver.emitUndefinedForIndexTypes ?? true
   });
   if (typeSource) {
     fs.writeFileSync(driver.generatedValueClassFile, header + typeSource);
