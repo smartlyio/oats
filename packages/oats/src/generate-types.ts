@@ -43,6 +43,14 @@ export interface Options {
   unsupportedFeatures?: {
     security?: UnsupportedFeatureBehaviour;
   };
+  /** if true emit union type with undefined for additionalProperties. Default is *true*.
+   *  Note! Likely the default will be set to false later. Now like this to avoid
+   *  breaking typechecking for existing projects.
+   *
+   * Typescript can be {@link https://www.typescriptlang.org/tsconfig#noUncheckedIndexedAccess configured } to consider
+   *  index signature accesses to have implicit undefined type so we can let the caller decide on the level of safety they want.
+   * */
+  emitUndefinedForIndexTypes?: boolean;
   nameMapper: oautil.NameMapper;
 }
 
@@ -130,6 +138,24 @@ export function run(options: Options) {
     );
   }
 
+  function generateAdditionalPropType(
+    additional: boolean | oas.SchemaObject['additionalProperties']
+  ) {
+    if (additional === false) {
+      return;
+    }
+    if (additional === true || additional == null) {
+      return ts.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword);
+    }
+    if (options.emitUndefinedForIndexTypes || options.emitUndefinedForIndexTypes == null) {
+      return ts.createUnionTypeNode([
+        generateType(additional),
+        ts.createKeywordTypeNode(ts.SyntaxKind.UndefinedKeyword)
+      ]);
+    }
+    return generateType(additional);
+  }
+
   function generateClassMembers(
     properties: oas.SchemaObject['properties'],
     required: oas.SchemaObject['required'],
@@ -150,14 +176,8 @@ export function run(options: Options) {
 
     proptypes.push(generateOatsBrandProperty());
 
-    if (additional !== false) {
-      const type =
-        additional === true || additional == null
-          ? ts.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword)
-          : ts.createUnionTypeNode([
-              generateType(additional),
-              ts.createKeywordTypeNode(ts.SyntaxKind.UndefinedKeyword)
-            ]);
+    const additionalType = generateAdditionalPropType(additional);
+    if (additionalType) {
       proptypes.push(
         ts.createIndexSignature(
           undefined,
@@ -172,7 +192,7 @@ export function run(options: Options) {
               ts.createKeywordTypeNode(ts.SyntaxKind.StringKeyword)
             )
           ],
-          type
+          additionalType
         ) as any
       );
     }
@@ -198,14 +218,8 @@ export function run(options: Options) {
         )
       )
     );
-    if (additional !== false) {
-      const type =
-        additional === true || additional == null
-          ? ts.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword)
-          : ts.createUnionTypeNode([
-              generateType(additional, typeMapper),
-              ts.createKeywordTypeNode(ts.SyntaxKind.UndefinedKeyword)
-            ]);
+    const additionalType = generateAdditionalPropType(additional);
+    if (additionalType) {
       proptypes.push(
         ts.createIndexSignature(
           undefined,
@@ -220,7 +234,7 @@ export function run(options: Options) {
               ts.createKeywordTypeNode(ts.SyntaxKind.StringKeyword)
             )
           ],
-          type
+          additionalType
         ) as any
       );
     }

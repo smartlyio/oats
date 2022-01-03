@@ -1,4 +1,12 @@
 
+# 4.1.0
+
+Provide option `emitUndefinedForIndexTypes` (default true for backwards compatibility) which can be set to 
+false to avoid generating union types with `undefined` for `additionalProperties`.
+
+Typescript can be [configured](https://www.typescriptlang.org/tsconfig#noUncheckedIndexedAccess) to consider
+index signature accesses to have implicit undefined type so we can let the caller decide on the level of safety they want.
+
 # 4.0.0
 
 Fix cyclical imports and lose the need for `Object.assign` in the generated types.
