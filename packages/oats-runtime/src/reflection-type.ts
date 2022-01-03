@@ -1,5 +1,5 @@
 import { Maker } from './make';
-import * as assert from 'assert';
+import { assert, fail } from './assert';
 import safe from '@smartlyio/safe-navigation';
 import * as runtime from './runtime';
 
@@ -212,7 +212,7 @@ export class Traversal<Root, Leaf> {
   ): Map<NamedTypeDefinition<unknown>, Path[]> {
     const found = this.cache.get(target);
     if (!found) {
-      return assert.fail('no path to target');
+      return fail('no path to target');
     }
     const allAncestors: Map<NamedTypeDefinition<unknown>, Path[]> = new Map();
     for (const [pathStr, parents] of found.entries()) {
@@ -229,7 +229,7 @@ export class Traversal<Root, Leaf> {
             );
           }
         } else {
-          assert.fail('nearest containing named thing is not an object: ' + ancestor.name);
+          fail('nearest containing named thing is not an object: ' + ancestor.name);
         }
       });
     }

@@ -1,6 +1,6 @@
 import * as server from './server';
-import * as assert from 'assert';
 import safe from '@smartlyio/safe-navigation';
+import { assert } from './assert';
 
 type HasOnlyOptionalTypes<O> = Partial<O> extends O ? true : O extends void ? true : false;
 

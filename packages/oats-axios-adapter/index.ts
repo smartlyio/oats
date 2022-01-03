@@ -1,6 +1,6 @@
 import * as runtime from '@smartlyio/oats-runtime';
 import * as FormData from 'form-data';
-import * as assert from 'assert';
+import { fail } from './src/assert';
 import globalAxios, { AxiosInstance, AxiosResponse } from 'axios';
 import { urlSearchParamsSerializer } from './src/utils';
 
@@ -23,7 +23,7 @@ function toRequestData(data: runtime.server.RequestBody<any> | undefined) {
     });
     return form;
   }
-  assert.fail('unknown content type for axios client ' + data.contentType);
+  fail('unknown content type for axios client ' + data.contentType);
 }
 
 function axiosToJson(data: any) {
@@ -81,7 +81,7 @@ function createAxiosAdapter({
 }: AxiosAdapterOptions): runtime.client.ClientAdapter {
   return async arg => {
     if (arg.servers.length !== 1) {
-      return assert.fail('cannot decide which server to use from ' + arg.servers.join(', '));
+      return fail('cannot decide which server to use from ' + arg.servers.join(', '));
     }
     const server = arg.servers[0];
     const params = axiosToJson(arg.query);

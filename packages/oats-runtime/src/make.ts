@@ -1,4 +1,4 @@
-import * as assert from 'assert';
+import { assert, fail } from './assert';
 import safe from '@smartlyio/safe-navigation';
 import * as _ from 'lodash';
 import { ValueClass } from './value-class';
@@ -102,7 +102,7 @@ export class Make<V> {
     if (this.isSuccess()) {
       return Make.ok(fn(this.success()));
     }
-    return assert.fail('neither failed or succesfull make');
+    return fail('neither failed or succesfull make');
   }
 }
 
