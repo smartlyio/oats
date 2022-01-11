@@ -42,6 +42,7 @@
     "@typescript-eslint/no-use-before-define": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/ban-ts-ignore": "off",
+    "import/no-nodejs-modules": "error",
     "import/no-cycle": "error",
     "import/no-useless-path-segments": "error",
     "import/no-self-import": "error",

@@ -1,4 +1,4 @@
-import * as assert from 'assert';
+import { assert } from './assert';
 import safeNavigation from '@smartlyio/safe-navigation';
 import { Make, MakeOptions, Maker, ValidationError, validationErrorPrinter } from './make';
 
@@ -280,10 +280,7 @@ export function createHandlerFactory<Spec>(
         Object.keys(endpoint).forEach(method => {
           const methodHandler = (endpoint as any)[method];
           const endpointWrapper = safeNavigation(tree)[path][method].$;
-          if (!endpointWrapper) {
-            assert.fail('unknown endpoint ' + method.toUpperCase() + ' ' + path);
-            return;
-          }
+          assert(endpointWrapper, 'unknown endpoint ' + method.toUpperCase() + ' ' + path);
           adapter(
             path,
             endpointWrapper.op,

@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-floating-promises */
 
+// eslint-disable-next-line import/no-nodejs-modules
 import * as fs from 'fs';
 
 const md: string = fs.readFileSync('README.template.md', 'utf8');

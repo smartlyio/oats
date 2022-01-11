@@ -50,6 +50,7 @@
     "jest/expect-expect": "off",
     "jest/no-standalone-expect": "off",
     "jest/valid-describe": "off",
+    "import/no-nodejs-modules":  "error",
     "import/no-cycle": "error",
     "import/no-useless-path-segments": "error",
     "import/no-self-import": "error",

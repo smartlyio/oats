@@ -1,6 +1,8 @@
 import * as jsc from 'jsverify';
 import * as _ from 'lodash';
+// eslint-disable-next-line import/no-nodejs-modules
 import * as assert from 'assert';
+// eslint-disable-next-line import/no-nodejs-modules
 import { promisify } from 'util';
 import { make, pmap, set, map, getAll, json, setHeaders } from '../src/runtime';
 import { TestClass } from './test-class';

@@ -37,7 +37,6 @@
     "@jest/globals": "27.4.4",
     "@smartlyio/oats-runtime": "^4.1.0",
     "@types/form-data": "2.5.0",
-    "@types/node": "16.11.14",
     "axios": "0.24.0",
     "jest": "27.4.5",
     "ts-jest": "27.1.2",
