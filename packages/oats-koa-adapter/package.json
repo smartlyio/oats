@@ -7,24 +7,30 @@
   "author": "Smartly.io",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "scripts": {
-    "clean": "rm -rf ./dist && rm -f ./tmp/*.ts",
-    "build": "yarn clean && tsc",
-    "prebuild": "yarn clean",
-    "pretest": "yarn render",
-    "render": "ts-node render-docs.ts",
-    "lint": "eslint --max-warnings=0 --ext .ts ."
-  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/smartlyio/oats.git"
+    "url": "https://github.com/smartlyio/oats.git",
+    "directory": "packages/oats-koa-adapter"
   },
   "peerDependencies": {
-    "@smartlyio/oats-runtime": "^4.3.1",
     "koa": "^2.3.0",
     "koa-body": "^4.0.4 || ^5.0.0",
     "koa-router": "^10.0.0 || ^11.0.0",
     "typescript": "^4.2.0"
+  },
+  "dependencies": {
+    "@smartlyio/oats-runtime": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/koa": "2.13.4",
+    "@types/koa-router": "7.4.4",
+    "@types/lodash": "4.14.182",
+    "@types/node": "16.11.44",
+    "koa": "2.13.4",
+    "koa-body": "4.2.0",
+    "koa-router": "10.1.1",
+    "ts-node": "10.5.0",
+    "typescript": "4.5.5"
   },
   "keywords": [
     "oats",
@@ -35,17 +41,5 @@
     "typescript",
     "server",
     "client"
-  ],
-  "devDependencies": {
-    "@smartlyio/oats-runtime": "^5.0.0",
-    "@types/koa": "2.13.5",
-    "@types/koa-router": "7.4.4",
-    "@types/lodash": "4.14.182",
-    "@types/node": "16.11.44",
-    "koa": "2.13.4",
-    "koa-body": "4.2.0",
-    "koa-router": "10.1.1",
-    "ts-node": "10.7.0",
-    "typescript": "4.6.4"
-  }
+  ]
 }

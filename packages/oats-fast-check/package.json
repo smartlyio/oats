@@ -7,18 +7,10 @@
   "author": "Smartly.io",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
-  "scripts": {
-    "clean": "rm -rf ./dist && rm -f ./tmp/*.ts",
-    "build": "yarn tsc",
-    "prebuild": "yarn clean",
-    "prerender": "yarn ts-node examples/driver.ts",
-    "pretest": "yarn render",
-    "render": "yarn ts-node render.ts",
-    "lint": "eslint --max-warnings=0 --ext .ts src test"
-  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/smartlyio/oats"
+    "url": "https://github.com/smartlyio/oats",
+    "directory": "packages/oats-fast-check"
   },
   "peerDependencies": {
     "fast-check": "3.0.1",
@@ -26,8 +18,20 @@
   },
   "dependencies": {
     "@smartlyio/safe-navigation": "^5.0.1",
+    "@smartlyio/oats-runtime": "^4.1.0",
     "lodash": "^4.17.20",
     "randexp": "^0.5.3"
+  },
+  "devDependencies": {
+    "@smartlyio/oats": "^4.1.0",
+    "@types/jest": "27.4.0",
+    "@types/lodash": "4.14.178",
+    "@types/node": "16.11.22",
+    "jest": "27.5.1",
+    "jsverify": "0.8.4",
+    "ts-jest": "27.1.3",
+    "ts-node": "10.5.0",
+    "typescript": "4.5.5"
   },
   "keywords": [
     "oats",
@@ -37,17 +41,5 @@
     "typescript",
     "server",
     "client"
-  ],
-  "devDependencies": {
-    "@smartlyio/oats": "^5.0.0",
-    "@smartlyio/oats-runtime": "^5.0.0",
-    "@types/jest": "27.4.1",
-    "@types/lodash": "4.14.182",
-    "@types/node": "16.11.44",
-    "jest": "27.5.1",
-    "jsverify": "0.8.4",
-    "ts-jest": "27.1.5",
-    "ts-node": "10.7.0",
-    "typescript": "4.6.4"
-  }
+  ]
 }

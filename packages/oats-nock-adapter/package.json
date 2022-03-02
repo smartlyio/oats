@@ -1,32 +1,46 @@
 {
   "name": "@smartlyio/oats-nock-adapter",
-  "version": "5.0.0",
+  "version": "4.1.0",
   "license": "MIT",
   "description": "nock server adapter for smartlyio/oats s",
   "private": false,
   "author": "Smartly.io",
   "main": "dist/src/nock.js",
   "types": "dist/src/nock.d.ts",
-  "scripts": {
-    "prebuild": "yarn clean && yarn ts-node examples/driver && yarn render",
-    "lint": "eslint . --ext .ts",
-    "lint:fix": "eslint . --ext .ts --fix",
-    "clean": "rm -rf ./dist && rm -f ./tmp/*.ts",
-    "pretest": "yarn prebuild",
-    "build": "yarn tsc",
-    "render": "yarn ts-node render.ts"
-  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/smartlyio/oats-nock-adapter.git"
+    "url": "https://github.com/smartlyio/oats-nock-adapter.git",
+    "directory": "packages/oats-nock-adapter"
   },
   "peerDependencies": {
-    "@smartlyio/oats-runtime": "^4.3.1",
     "typescript": "^4.2.0"
   },
   "dependencies": {
     "@smartlyio/safe-navigation": "^5.0.2",
+    "@smartlyio/oats-runtime": "^4.1.0",
     "lodash": "^4.17.20"
+  },
+  "devDependencies": {
+    "@smartlyio/oats": "^4.1.0",
+    "@smartlyio/oats-axios-adapter": "^4.1.0",
+    "@types/jest": "27.4.0",
+    "@types/lodash": "4.14.178",
+    "@types/node": "16.11.22",
+    "@typescript-eslint/eslint-plugin": "5.11.0",
+    "@typescript-eslint/parser": "5.11.0",
+    "axios": "0.25.0",
+    "eslint": "8.8.0",
+    "eslint-config-prettier": "8.3.0",
+    "eslint-plugin-import": "2.25.4",
+    "eslint-plugin-jest": "26.1.0",
+    "eslint-plugin-prettier": "4.0.0",
+    "jest": "27.5.1",
+    "jsverify": "0.8.4",
+    "nock": "13.2.4",
+    "prettier": "2.5.1",
+    "ts-jest": "27.1.3",
+    "ts-node": "10.5.0",
+    "typescript": "4.5.5"
   },
   "keywords": [
     "oats",
@@ -36,41 +50,5 @@
     "typescript",
     "server",
     "client"
-  ],
-  "devDependencies": {
-    "@smartlyio/oats": "^5.0.0",
-    "@smartlyio/oats-axios-adapter": "^5.0.0",
-    "@smartlyio/oats-runtime": "^5.0.0",
-    "@types/jest": "27.4.1",
-    "@types/lodash": "4.14.182",
-    "@types/node": "16.11.44",
-    "@typescript-eslint/eslint-plugin": "5.21.0",
-    "@typescript-eslint/parser": "5.21.0",
-    "axios": "0.27.2",
-    "eslint": "8.14.0",
-    "eslint-config-prettier": "8.5.0",
-    "eslint-plugin-import": "2.26.0",
-    "eslint-plugin-jest": "26.1.5",
-    "eslint-plugin-prettier": "4.0.0",
-    "jest": "27.5.1",
-    "jsverify": "0.8.4",
-    "nock": "13.2.8",
-    "prettier": "2.6.2",
-    "ts-jest": "27.1.5",
-    "ts-node": "10.7.0",
-    "typescript": "4.6.4"
-  },
-  "jest": {
-    "testEnvironment": "node",
-    "testRegex": "(examples|test)/.*\\.spec.ts$",
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "jsx",
-      "ts",
-      "tsx"
-    ],
-    "preset": "ts-jest",
-    "testMatch": null
-  }
+  ]
 }

@@ -1,33 +1,36 @@
 {
   "name": "@smartlyio/oats-runtime",
-  "version": "5.0.0",
+  "version": "4.1.0",
   "license": "MIT",
   "description": "Runtime for Oats a Openapi3 based generator for typescript aware servers and clients",
   "private": false,
   "author": "Smartly.io",
   "main": "dist/runtime.js",
   "types": "dist/runtime.d.ts",
-  "scripts": {
-    "clean": "yarn clean:dist && rm -f ./tmp/*.ts",
-    "clean:dist": "rm -rf ./dist",
-    "prebuild": "yarn clean && yarn tsc --project tsconfig.test.json --noEmit",
-    "build": "yarn tsc",
-    "lint": "eslint --max-warnings=0 --ext .ts src test"
-  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/smartlyio/oats.git"
+    "url": "https://github.com/smartlyio/oats.git",
+    "directory": "packages/oats-runtime"
   },
   "peerDependencies": {
     "typescript": "^4.0.0"
   },
   "dependencies": {
     "@smartlyio/safe-navigation": "^5.0.1",
-    "@types/encodeurl": "1.0.0",
-    "@types/escape-html": "1.0.2",
-    "encodeurl": "1.0.2",
-    "escape-html": "1.0.3",
     "lodash": "^4.17.20"
+  },
+  "devDependencies": {
+    "@types/jest": "27.4.0",
+    "@types/lodash": "4.14.178",
+    "@types/node": "16.11.22",
+    "fast-check": "2.21.0",
+    "jest": "27.5.1",
+    "jsverify": "0.8.4",
+    "prettier": "2.5.1",
+    "ts-jest": "27.1.3",
+    "ts-node": "10.5.0",
+    "tsconfig-paths": "3.12.0",
+    "typescript": "4.5.5"
   },
   "keywords": [
     "oats",
@@ -37,18 +40,5 @@
     "typescript",
     "server",
     "client"
-  ],
-  "devDependencies": {
-    "@types/jest": "27.4.1",
-    "@types/lodash": "4.14.182",
-    "@types/node": "16.11.44",
-    "fast-check": "2.25.0",
-    "jest": "27.5.1",
-    "jsverify": "0.8.4",
-    "prettier": "2.6.2",
-    "ts-jest": "27.1.5",
-    "ts-node": "10.7.0",
-    "tsconfig-paths": "3.14.1",
-    "typescript": "4.6.4"
-  }
+  ]
 }
