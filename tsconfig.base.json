@@ -1,16 +1,15 @@
 {
   "extends": "@smartly/tsconfig",
   "compilerOptions": {
-    "baseUrl": ".",
-    "incremental": true,
-    "module": "commonjs",
-    "sourceMap": true,
-    "allowJs": true,
-    "jsx": "react",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "skipLibCheck": false,
-    "removeComments": true
+    "strict": true,
+     "declaration": true,
+     "module": "commonjs",
+     "moduleResolution": "node",
+     "sourceMap": true,
+     "removeComments": false,
+     "alwaysStrict": true,
+     "baseUrl": ".",
+     "forceConsistentCasingInFileNames": true
   },
   "exclude": ["**/node_modules", "**/dist", "coverage"]
 }
