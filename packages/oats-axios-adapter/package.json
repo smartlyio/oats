@@ -7,11 +7,6 @@
   "author": "Smartly.io",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "scripts": {
-    "clean": "rm -rf ./dist && rm -f ./tmp/*.ts",
-    "build": "yarn clean && yarn tsc",
-    "lint": "eslint --max-warnings=0 --ext .ts ."
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/smartlyio/oats.git"
@@ -24,15 +19,6 @@
   "dependencies": {
     "form-data": "^4.0.0"
   },
-  "keywords": [
-    "oats",
-    "openapi3",
-    "rest",
-    "generator",
-    "typescript",
-    "server",
-    "client"
-  ],
   "devDependencies": {
     "@jest/globals": "27.5.1",
     "@smartlyio/oats-runtime": "^5.0.0",

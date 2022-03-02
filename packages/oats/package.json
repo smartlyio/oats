@@ -7,17 +7,12 @@
   "author": "Smartly.io",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "scripts": {
-    "pretest": "yarn render",
-    "render": "yarn ts-node examples/driver.ts && yarn ts-node render.ts",
-    "clean": "rm -rf ./dist/* && rm -rf ./tmp && find test -name '*generated.ts' -exec rm {} \\;",
-    "prebuild": "yarn clean",
-    "build": "yarn tsc",
-    "lint": "eslint --max-warnings=0 --ext .ts src test"
-  },
+  "ts:main": "./src/index.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/smartlyio/oats.git"
+    "url": "https://github.com/smartlyio/oats.git",
+    "directory": "packages/oats"
+
   },
   "peerDependencies": {
     "@smartlyio/oats-runtime": "^4.3.1",
@@ -29,15 +24,6 @@
     "lodash": "^4.17.20",
     "openapi3-ts": "^2.0.0"
   },
-  "keywords": [
-    "oats",
-    "openapi3",
-    "rest",
-    "generator",
-    "typescript",
-    "server",
-    "client"
-  ],
   "devDependencies": {
     "@smartlyio/oats-axios-adapter": "^5.0.0",
     "@smartlyio/oats-koa-adapter": "^5.0.0",

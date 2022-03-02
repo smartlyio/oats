@@ -51,7 +51,8 @@ function generateMethod<S extends oas.OperationObject>(
     assert(!schema.security, 'security not supported');
   }
 
-  const headers = ts.createTypeReferenceNode(
+  const headers =
+  ts.createTypeReferenceNode(
     fromTypes(
       opts.nameMapper(
         oautil.endpointTypeName(schema, path, method, 'headers'),

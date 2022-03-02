@@ -1,10 +1,10 @@
-import * as runtime from '@smartlyio/oats-runtime';
-import * as FormData from 'form-data';
-import { fail } from './src/assert';
+import * as oats from '@smartlyio/oats-runtime';
+import FormData from 'form-data';
+import { fail } from './assert';
 import globalAxios, { AxiosInstance, AxiosResponse } from 'axios';
-import { urlSearchParamsSerializer } from './src/utils';
+import { urlSearchParamsSerializer } from './utils';
 
-function toRequestData(data: runtime.server.RequestBody<any> | undefined) {
+function toRequestData(data: oats.server.RequestBody<any> | undefined) {
   if (data == null) {
     return data;
   }
@@ -15,7 +15,7 @@ function toRequestData(data: runtime.server.RequestBody<any> | undefined) {
     const form = new FormData();
     Object.keys(data.value).forEach(key => {
       const element = data.value[key];
-      if (element instanceof runtime.make.FormBinary) {
+      if (element instanceof oats.make.FormBinary) {
         form.append(key, element.binary, element.options);
       } else {
         form.append(key, element);
@@ -27,8 +27,8 @@ function toRequestData(data: runtime.server.RequestBody<any> | undefined) {
 }
 
 function axiosToJson(data: any) {
-  if (data instanceof runtime.valueClass.ValueClass) {
-    return runtime.valueClass.toJSON(data);
+  if (data instanceof oats.valueClass.ValueClass) {
+    return oats.valueClass.toJSON(data);
   }
   return data;
 }
@@ -39,7 +39,7 @@ function axiosToJson(data: any) {
  * See https://github.com/axios/axios/issues/2840.
  * Use `create()` instead.
  */
-export const bind: runtime.client.ClientAdapter = createAxiosAdapter({
+export const bind: oats.client.ClientAdapter = createAxiosAdapter({
   axiosInstance: globalAxios,
   preserveQueryArrayParamNames: false
 });
@@ -50,7 +50,7 @@ export const bind: runtime.client.ClientAdapter = createAxiosAdapter({
  * See https://github.com/axios/axios/issues/2840.
  * Use `create()` instead.
  */
-export function withAxios(axiosInstance: AxiosInstance): runtime.client.ClientAdapter {
+export function withAxios(axiosInstance: AxiosInstance): oats.client.ClientAdapter {
   return createAxiosAdapter({ axiosInstance, preserveQueryArrayParamNames: false });
 }
 
@@ -71,14 +71,14 @@ export interface AxiosAdapterOptions {
 export function create({
   axiosInstance = globalAxios,
   preserveQueryArrayParamNames = true
-}: Partial<AxiosAdapterOptions> = {}): runtime.client.ClientAdapter {
+}: Partial<AxiosAdapterOptions> = {}): oats.client.ClientAdapter {
   return createAxiosAdapter({ axiosInstance, preserveQueryArrayParamNames });
 }
 
 function createAxiosAdapter({
   axiosInstance,
   preserveQueryArrayParamNames
-}: AxiosAdapterOptions): runtime.client.ClientAdapter {
+}: AxiosAdapterOptions): oats.client.ClientAdapter {
   return async arg => {
     if (arg.servers.length !== 1) {
       return fail('cannot decide which server to use from ' + arg.servers.join(', '));
@@ -112,7 +112,7 @@ function createAxiosAdapter({
 function getContentType(response: AxiosResponse<any>) {
   const type = response.headers['content-type'];
   if (!type) {
-    return runtime.noContentContentType;
+    return oats.runtime.noContentContentType;
   }
   if (response.status === 204) {
     return 'text/plain';
@@ -121,7 +121,7 @@ function getContentType(response: AxiosResponse<any>) {
 }
 
 function getResponseData(contentType: string, response: AxiosResponse<any>) {
-  if (contentType === runtime.noContentContentType) {
+  if (contentType === oats.runtime.noContentContentType) {
     if (!response.data) {
       return null;
     }

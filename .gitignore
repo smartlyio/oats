@@ -13,3 +13,4 @@ dist/
 .yalc
 yalc.lock
 yarn.lock
+.npmrc
