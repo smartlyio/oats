@@ -1,17 +1,17 @@
 import * as fs from 'fs';
 import * as yaml from 'js-yaml';
 import * as types from './generate-types';
+import { AdditionalPropertiesIndexSignature, Resolve } from './generate-types';
 import * as server from './generate-server';
 import * as path from 'path';
 import * as oas from 'openapi3-ts';
 import {
-  UnsupportedFeatureBehaviour,
-  refToTypeName,
   capitalize,
+  NameKind,
   NameMapper,
-  NameKind
+  refToTypeName,
+  UnsupportedFeatureBehaviour
 } from './util';
-import { Resolve } from './generate-types';
 
 function modulePath(importer: string, module: string | undefined) {
   if (!module) {
@@ -59,6 +59,12 @@ export interface Driver {
    *  index signature accesses to have implicit undefined type so we can let the caller decide on the level of safety they want.
    * */
   emitUndefinedForIndexTypes?: boolean;
+  /** If 'AdditionalPropertiesIndexSignature.emit' or not set emit
+   * `[key: string]: unknown`
+   * for objects with `additionalProperties: true` or no additionalProperties set
+   * NOTE: the resulting runtime value may still have extra properties even if those are not visible in the type
+   * */
+  unknownAdditionalPropertiesIndexSignature?: AdditionalPropertiesIndexSignature;
 }
 
 interface GenerateFileOptions {
@@ -153,6 +159,8 @@ export function generateFile(opts?: GenerateFileOptions): types.Resolve {
           externalOpenApiImports: options.externalOpenApiImports,
           emitStatusCode: options.emitStatusCode,
           emitUndefinedForIndexTypes: options.emitUndefinedForIndexTypes,
+          unknownAdditionalPropertiesIndexSignature:
+            options.unknownAdditionalPropertiesIndexSignature,
           unsupportedFeatures: options.unsupportedFeatures,
           nameMapper: options.nameMapper
         });
@@ -186,7 +194,9 @@ export function generate(driver: Driver) {
     runtimeModule: modulePath(driver.generatedValueClassFile, driver.runtimeFilePath),
     emitStatusCode: driver.emitStatusCode || emitAllStatusCodes,
     nameMapper: driver.nameMapper || localNameMapper,
-    emitUndefinedForIndexTypes: driver.emitUndefinedForIndexTypes ?? true
+    emitUndefinedForIndexTypes: driver.emitUndefinedForIndexTypes ?? true,
+    unknownAdditionalPropertiesIndexSignature:
+      driver.unknownAdditionalPropertiesIndexSignature ?? AdditionalPropertiesIndexSignature.emit
   });
   if (typeSource) {
     fs.writeFileSync(driver.generatedValueClassFile, header + typeSource);

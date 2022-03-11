@@ -4,7 +4,7 @@ import safe from '@smartlyio/safe-navigation';
 import * as _ from 'lodash';
 import * as assert from 'assert';
 import * as oautil from './util';
-import { UnsupportedFeatureBehaviour, NameKind } from './util';
+import { NameKind, UnsupportedFeatureBehaviour } from './util';
 import * as path from 'path';
 import { resolvedStatusCodes } from './status-codes';
 
@@ -51,6 +51,10 @@ export interface Options {
    *  index signature accesses to have implicit undefined type so we can let the caller decide on the level of safety they want.
    * */
   emitUndefinedForIndexTypes?: boolean;
+  /** If 'AdditionalPropertiesIndexSignature.emit' or not set emit
+   * `[key: string]: unknown`
+   * for objects with `additionalProperties: true` or no additionalProperties set */
+  unknownAdditionalPropertiesIndexSignature?: AdditionalPropertiesIndexSignature;
   nameMapper: oautil.NameMapper;
 }
 
@@ -145,6 +149,9 @@ export function run(options: Options) {
       return;
     }
     if (additional === true || additional == null) {
+      if (options.unknownAdditionalPropertiesIndexSignature === AdditionalPropertiesIndexSignature.omit) {
+        return;
+      }
       return ts.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword);
     }
     if (options.emitUndefinedForIndexTypes || options.emitUndefinedForIndexTypes == null) {
@@ -1510,4 +1517,11 @@ export function run(options: Options) {
     }
     return './' + p;
   }
+}
+
+export enum AdditionalPropertiesIndexSignature {
+  /** emit unknown typed index signature when additionalProperties: true or missing (defaults to true) */
+  emit = 'emit',
+  /** do not emit unknown typed index signature when additionalProperties: true or missing*/
+  omit = 'omit'
 }
