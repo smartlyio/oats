@@ -149,7 +149,10 @@ export function run(options: Options) {
       return;
     }
     if (additional === true || additional == null) {
-      if (options.unknownAdditionalPropertiesIndexSignature === AdditionalPropertiesIndexSignature.omit) {
+      if (
+        options.unknownAdditionalPropertiesIndexSignature ===
+        AdditionalPropertiesIndexSignature.omit
+      ) {
         return;
       }
       return ts.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword);
