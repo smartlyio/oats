@@ -1,6 +1,5 @@
 import { driver } from '@smartlyio/oats';
 import * as process from 'process';
-import { AdditionalPropertiesIndexSignature } from '../../packages/oats/src/generate-types';
 
 process.chdir(__dirname);
 
@@ -11,5 +10,5 @@ driver.generate({
   openapiFilePath: './api.yml',
   resolve: driver.compose(driver.generateFile(), driver.localResolve),
   emitUndefinedForIndexTypes: false,
-  unknownAdditionalPropertiesIndexSignature: AdditionalPropertiesIndexSignature.omit
+  unknownAdditionalPropertiesIndexSignature: driver.AdditionalPropertiesIndexSignature.omit
 });

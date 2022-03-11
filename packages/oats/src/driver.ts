@@ -13,6 +13,8 @@ import {
   UnsupportedFeatureBehaviour
 } from './util';
 
+export { AdditionalPropertiesIndexSignature } from './generate-types';
+
 function modulePath(importer: string, module: string | undefined) {
   if (!module) {
     return '@smartlyio/oats-runtime';
