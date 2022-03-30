@@ -9,10 +9,18 @@ const TEXT_PLAIN_CONTENT_TYPE = 'text/plain';
 
 export type RedirectStatus = typeof REDIRECT_STATUSES[number];
 
+type DefaultValue<ContentType extends string> = ContentType extends
+  | typeof TEXT_HTML_CONTENT_TYPE
+  | typeof TEXT_PLAIN_CONTENT_TYPE
+  | `${typeof TEXT_HTML_CONTENT_TYPE};${string}`
+  | `${typeof TEXT_PLAIN_CONTENT_TYPE};${string}`
+  ? string
+  : null;
+
 export function redirect<
   Status extends RedirectStatus = typeof DEFAULT_REDIRECT_STATUS,
   ContentType extends string = typeof TEXT_HTML_CONTENT_TYPE,
-  Value = string
+  Value = DefaultValue<ContentType>
 >(
   url: string,
   options: {
@@ -27,7 +35,6 @@ export function redirect<
   if (!REDIRECT_STATUSES.includes(status)) {
     throw new Error(`Status "${status}" is not a redirect status.`);
   }
-
   const {
     contentType = TEXT_HTML_CONTENT_TYPE as ContentType,
     value = getDefaultRedirectValue({ encodedUrl, contentType }) as unknown as Value
