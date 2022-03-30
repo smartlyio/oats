@@ -55,8 +55,8 @@ function getDefaultRedirectValue({
   encodedUrl: string;
   contentType: string;
 }) {
-  // This is what Koa responds with. Maybe it is a good practice.
   if (isContentType({ contentType, base: TEXT_HTML_CONTENT_TYPE })) {
+    // In case automatic redirects are turned off, respond with a redirect link for the user to proceed.
     const escapedUrl = escapeHtml(encodedUrl);
     return `Redirecting to <a href="${escapedUrl}">${escapedUrl}</a>.`;
   }
