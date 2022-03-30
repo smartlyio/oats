@@ -2,6 +2,8 @@ import { assert } from './assert';
 import safeNavigation from '@smartlyio/safe-navigation';
 import { Make, MakeOptions, Maker, ValidationError, validationErrorPrinter } from './make';
 
+export type { RedirectStatus } from './redirect';
+
 export interface Response<
   Status extends number,
   ContentType,
