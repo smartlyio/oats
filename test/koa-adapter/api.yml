@@ -3,9 +3,35 @@ info:
   title: Test spec
   version: v1
 paths:
+  /:
+    get:
+      description: Get home page
+      responses:
+        200:
+          description: Home page
+          content:
+            text/plain:
+              schema:
+                type: string
   /test:
     get:
       description: Test endpoint
       responses:
         201:
           description: Test response
+  /test-redirect:
+    get:
+      description: Redirect to root
+      responses:
+        200:
+          description: Home page
+          content:
+            text/plain:
+              schema:
+                type: string
+        302:
+          description: Redirect response
+          content:
+            text/html:
+              schema:
+                type: string

@@ -1,5 +1,5 @@
 import { describe, it, expect } from '@jest/globals';
-import type { RedirectStatus } from '../src/server';
+import type { RedirectStatus, Response } from '../src/server';
 import { redirect } from '../src/redirect';
 
 describe('redirect()', () => {
@@ -30,6 +30,13 @@ describe('redirect()', () => {
       value: { contentType: 'text/html', value: '' },
       headers: { Location: '/' }
     });
+  });
+
+  it('does not override generic type default value', () => {
+    // @ts-expect-error
+    const response: Response<308, 'text/html', string, { Location: string }> = redirect('/');
+
+    expect(response).toBeTruthy();
   });
 
   it('overrides default "text/html" content type', () => {

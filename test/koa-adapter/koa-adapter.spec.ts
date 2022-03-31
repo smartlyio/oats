@@ -1,4 +1,5 @@
 // yarn ts-node examples/server.ts
+import { describe, it, expect, beforeAll, afterAll, beforeEach } from '@jest/globals';
 import * as server from './tmp/server/generated';
 import * as client from './tmp/client/generated';
 import * as runtime from '@smartlyio/oats-runtime';
@@ -8,11 +9,22 @@ import * as koaBody from 'koa-body';
 import * as axiosAdapter from '@smartlyio/oats-axios-adapter';
 import * as http from 'http';
 import { IMiddleware } from 'koa-router';
+import axios from 'axios';
 
 const spec: server.Endpoints = {
   '/test': {
     get: async () => {
       return runtime.noContent(201);
+    }
+  },
+  '/test-redirect': {
+    get: async () => {
+      return runtime.redirect('/');
+    }
+  },
+  '/': {
+    get: async () => {
+      return runtime.text(200, 'Welcome to Home Page!');
     }
   }
 };
@@ -53,7 +65,8 @@ function serverAddress(server: http.Server) {
 
 describe('Koa adapter', () => {
   let apiClient: client.ClientSpec;
-  let server: any;
+  let apiClientNoAutoRedirect: client.ClientSpec;
+  let httpServer: http.Server | undefined;
   let middlewareHit = false;
 
   beforeEach(() => {
@@ -61,20 +74,26 @@ describe('Koa adapter', () => {
   });
 
   afterAll(() => {
-    server?.close();
+    httpServer?.close();
   });
 
   beforeAll(async () => {
-    server = await new Promise(ok => {
-      const server = createApp(async (ctx, next) => {
+    httpServer = await new Promise<http.Server>(resolve => {
+      const httpServer = createApp(async (ctx, next) => {
         middlewareHit = true;
         await next();
-      }).listen(0, () => ok(server));
+      }).listen(0, () => resolve(httpServer));
     });
-    const port = serverPort(server);
+    const port = serverPort(httpServer);
     const url = `http://localhost:${port}`;
-    apiClient = client.client((spec: typeof server.endpointHandlers) => {
+
+    apiClient = client.client(spec => {
       return axiosAdapter.create()({ ...spec, servers: [url] });
+    });
+    apiClientNoAutoRedirect = client.client(spec => {
+      return axiosAdapter.create({
+        axiosInstance: axios.create({ maxRedirects: 0, validateStatus: status => status < 400 })
+      })({ ...spec, servers: [url] });
     });
   });
 
@@ -86,5 +105,19 @@ describe('Koa adapter', () => {
   it('hits the given middleware', async () => {
     await apiClient.test.get();
     expect(middlewareHit).toBeTruthy();
+  });
+
+  it('redirects to "/"', async () => {
+    const result = await apiClient['test-redirect'].get();
+    expect(result.status).toBe(200);
+    expect(result.value.contentType).toBe('text/plain');
+    expect(result.value.value).toBe('Welcome to Home Page!');
+  });
+
+  it('does not redirect to "/" if auto redirect is not enabled', async () => {
+    const result = await apiClientNoAutoRedirect['test-redirect'].get();
+    expect(result.status).toBe(302);
+    expect(result.value.contentType).toBe('text/html');
+    expect(result.value.value).toBe('Redirecting to <a href="/">/</a>.');
   });
 });

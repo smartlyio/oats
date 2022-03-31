@@ -16,6 +16,16 @@ type DefaultValue<ContentType extends string> = ContentType extends
   ? string
   : null;
 
+/**
+ * This hack is needed to use the provided generic types defaults rather than their inferred values.
+ * For example, this should result in error because the default status is 302:
+ * ```typescript
+ * const response: Response<308, 'text/html', string, { Location: string }> = redirect('/');
+ * ```
+ * But it will pass if type inference is not prevented.
+ */
+type PreventGenericDefaultValueOverride<T> = [T][T extends unknown ? 0 : never];
+
 export function redirect<
   Status extends RedirectStatus = typeof DEFAULT_REDIRECT_STATUS,
   ContentType extends string = typeof TEXT_HTML_CONTENT_TYPE,
@@ -27,7 +37,12 @@ export function redirect<
     contentType?: ContentType;
     value?: Value;
   } = {}
-): Response<Status, ContentType, Value, { Location: string }> {
+): Response<
+  PreventGenericDefaultValueOverride<Status>,
+  PreventGenericDefaultValueOverride<ContentType>,
+  PreventGenericDefaultValueOverride<Value>,
+  { Location: string }
+> {
   const { status = DEFAULT_REDIRECT_STATUS as Status } = options;
   const encodedUrl = encodeURI(url);
 

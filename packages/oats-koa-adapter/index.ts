@@ -59,6 +59,7 @@ function adapter<StateT, CustomT, RequestContext>(
         });
         ctx.body = result.value.value;
         ctx.status = result.status;
+        ctx.set('Content-Type', result.value.contentType);
         ctx.set(result.headers);
       }
     );
