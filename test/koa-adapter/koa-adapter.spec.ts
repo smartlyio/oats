@@ -98,8 +98,10 @@ describe('Koa adapter', () => {
   });
 
   it('sets a valid status code, when noContent is returned', async () => {
-    const item = await apiClient.test.get();
-    expect(item.status).toEqual(201);
+    const response = await apiClient.test.get();
+    expect(response.status).toEqual(201);
+    expect(response.value.contentType).toBe(runtime.noContentContentType);
+    expect(response.headers['content-type']).toBeUndefined();
   });
 
   it('hits the given middleware', async () => {
@@ -108,16 +110,18 @@ describe('Koa adapter', () => {
   });
 
   it('redirects to "/"', async () => {
-    const result = await apiClient['test-redirect'].get();
-    expect(result.status).toBe(200);
-    expect(result.value.contentType).toBe('text/plain');
-    expect(result.value.value).toBe('Welcome to Home Page!');
+    const response = await apiClient['test-redirect'].get();
+    expect(response.status).toBe(200);
+    expect(response.value.contentType).toBe('text/plain');
+    expect(response.value.value).toBe('Welcome to Home Page!');
+    expect(response.headers['content-type']).toBe('text/plain');
   });
 
   it('does not redirect to "/" if auto redirect is not enabled', async () => {
-    const result = await apiClientNoAutoRedirect['test-redirect'].get();
-    expect(result.status).toBe(302);
-    expect(result.value.contentType).toBe('text/html');
-    expect(result.value.value).toBe('Redirecting to <a href="/">/</a>.');
+    const response = await apiClientNoAutoRedirect['test-redirect'].get();
+    expect(response.status).toBe(302);
+    expect(response.value.contentType).toBe('text/html');
+    expect(response.value.value).toBe('Redirecting to <a href="/">/</a>.');
+    expect(response.headers['content-type']).toBe('text/html');
   });
 });

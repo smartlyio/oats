@@ -33,10 +33,12 @@ describe('redirect()', () => {
   });
 
   it('does not override generic type default value', () => {
+    const response1: Response<302, 'text/html', string, { Location: string }> = redirect('/');
     // @ts-expect-error
-    const response: Response<308, 'text/html', string, { Location: string }> = redirect('/');
+    const response2: Response<308, 'text/html', string, { Location: string }> = redirect('/');
 
-    expect(response).toBeTruthy();
+    expect(response1).toBeTruthy();
+    expect(response2).toBeTruthy();
   });
 
   it('overrides default "text/html" content type', () => {

@@ -59,7 +59,10 @@ function adapter<StateT, CustomT, RequestContext>(
         });
         ctx.body = result.value.value;
         ctx.status = result.status;
-        ctx.set('Content-Type', result.value.contentType);
+
+        if (result.value.contentType !== runtime.noContentContentType) {
+          ctx.set('content-type', result.value.contentType);
+        }
         ctx.set(result.headers);
       }
     );
