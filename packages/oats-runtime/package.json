@@ -1,6 +1,6 @@
 {
   "name": "@smartlyio/oats-runtime",
-  "version": "4.2.0",
+  "version": "4.3.0",
   "license": "MIT",
   "description": "Runtime for Oats a Openapi3 based generator for typescript aware servers and clients",
   "private": false,
