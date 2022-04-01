@@ -42,7 +42,7 @@
     "@smartlyio/oats-axios-adapter": "^4.3.0",
     "@smartlyio/oats-runtime": "^4.3.0",
     "@types/jest": "27.4.1",
-    "@types/lodash": "4.14.179",
+    "@types/lodash": "4.14.181",
     "@types/node": "16.11.26",
     "@typescript-eslint/eslint-plugin": "5.14.0",
     "@typescript-eslint/parser": "5.14.0",
@@ -50,15 +50,15 @@
     "eslint": "8.10.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-import": "2.25.4",
-    "eslint-plugin-jest": "26.1.1",
+    "eslint-plugin-jest": "26.1.3",
     "eslint-plugin-prettier": "4.0.0",
     "jest": "27.5.1",
     "jsverify": "0.8.4",
     "nock": "13.2.4",
     "prettier": "2.5.1",
-    "ts-jest": "27.1.3",
+    "ts-jest": "27.1.4",
     "ts-node": "10.7.0",
-    "typescript": "4.6.2"
+    "typescript": "4.6.3"
   },
   "jest": {
     "testEnvironment": "node",
