@@ -1,3 +1,10 @@
+# 4.3.0
+
+## Bug Fixes
+
+### @smartlyio/oats-koa-adapter - set content-type specified in openapi spec
+
+Prior to that, the content type was determined automatically by Koa.
 
 # 4.1.0
 
