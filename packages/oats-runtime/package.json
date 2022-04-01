@@ -10,7 +10,7 @@
   "scripts": {
     "clean": "yarn clean:dist && rm -f ./tmp/*.ts",
     "clean:dist": "rm -rf ./dist",
-    "prebuild": "yarn clean",
+    "prebuild": "yarn clean && yarn tsc --project tsconfig.test.json --noEmit",
     "build": "yarn tsc",
     "lint": "eslint --max-warnings=0 --ext .ts src test"
   },
@@ -23,6 +23,8 @@
   },
   "dependencies": {
     "@smartlyio/safe-navigation": "^5.0.1",
+    "@types/escape-html": "1.0.1",
+    "escape-html": "1.0.3",
     "lodash": "^4.17.20"
   },
   "keywords": [

@@ -5,6 +5,8 @@ import { fromReflection } from './make';
 import * as valueClass from './value-class';
 import * as reflection from './reflection-type';
 
+export { redirect } from './redirect';
+
 export { make, fromReflection, server, client, valueClass, reflection };
 
 export const noContentContentType = 'oatsNoContent' as const;
