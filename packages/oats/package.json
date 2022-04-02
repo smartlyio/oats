@@ -50,7 +50,7 @@
     "@types/lodash": "4.14.181",
     "@types/node": "16.11.26",
     "axios": "0.26.1",
-    "fast-check": "2.22.0",
+    "fast-check": "2.24.0",
     "form-data": "4.0.0",
     "jest": "27.5.1",
     "jsverify": "0.8.4",
