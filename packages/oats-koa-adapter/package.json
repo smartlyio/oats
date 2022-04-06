@@ -20,7 +20,7 @@
     "url": "https://github.com/smartlyio/oats.git"
   },
   "peerDependencies": {
-    "@smartlyio/oats-runtime": "^3.1.1",
+    "@smartlyio/oats-runtime": "^4.3.1",
     "koa": "^2.3.0",
     "koa-body": "^4.0.4",
     "koa-router": "^10.0.0",
