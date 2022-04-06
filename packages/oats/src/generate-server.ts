@@ -251,13 +251,12 @@ function generateClientSpec(opts: Options) {
     }, memo);
   }, client.emptyTree<ts.TypeNode>());
   return ts.createNodeArray([
-    ts.createInterfaceDeclaration(
+    ts.createTypeAliasDeclaration(
       undefined,
       [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
       'ClientSpec',
       undefined,
-      undefined,
-      generateClientTree(opts, tree)
+      ts.createTypeLiteralNode(generateClientTree(opts, tree))
     )
   ]);
 }
@@ -277,13 +276,12 @@ function generateEndpointsType(opts: Options) {
     });
   });
   return ts.createNodeArray([
-    ts.createInterfaceDeclaration(
+    ts.createTypeAliasDeclaration(
       undefined,
       [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
       'EndpointsWithContext',
       [ts.createTypeParameterDeclaration('RequestContext', undefined, undefined)],
-      undefined,
-      members
+      ts.createTypeLiteralNode(members)
     ),
     ts.createTypeAliasDeclaration(
       undefined,
