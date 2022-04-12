@@ -1,5 +1,6 @@
 import type { Response } from './server';
 import escapeHtml = require('escape-html');
+import encodeUrl = require('encodeurl');
 
 const REDIRECT_STATUSES = [300, 301, 302, 303, 305, 307, 308] as const;
 const DEFAULT_REDIRECT_STATUS = 302;
@@ -44,7 +45,7 @@ export function redirect<
   { Location: string }
 > {
   const { status = DEFAULT_REDIRECT_STATUS as Status } = options;
-  const encodedUrl = encodeURI(url);
+  const encodedUrl = encodeUrl(url);
 
   if (!REDIRECT_STATUSES.includes(status)) {
     throw new Error(`Status "${status}" is not a redirect status.`);
