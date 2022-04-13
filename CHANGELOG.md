@@ -1,11 +1,3 @@
-# 4.3.0
-
-## Bug Fixes
-
-### @smartlyio/oats-koa-adapter - set content-type specified in openapi spec
-
-Prior to that, the content type was determined automatically by Koa.
-
 # 4.3.2
 
 ## Bug Fixes
@@ -13,6 +5,14 @@ Prior to that, the content type was determined automatically by Koa.
 ### `encodeURI` is replaced with `encodeurl` for redirect url encoding.
 
 `encodeURI` does double encoding of already encoded query parameters. `runtime.redirect()` will encode url with `encodeurl` now. See https://github.com/pillarjs/encodeurl.
+
+# 4.3.0
+
+## Bug Fixes
+
+### @smartlyio/oats-koa-adapter - set content-type specified in openapi spec
+
+Prior to that, the content type was determined automatically by Koa.
 
 # 4.1.0
 
