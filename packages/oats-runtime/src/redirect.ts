@@ -27,6 +27,12 @@ type DefaultValue<ContentType extends string> = ContentType extends
  */
 type PreventGenericDefaultValueOverride<T> = [T][T extends unknown ? 0 : never];
 
+/**
+ * Use to perform HTTP redirect.
+ * @param url an absolute or relative URL string. Will be encoded with `encodeurl` and set as "Location" header (@see https://github.com/pillarjs/encodeurl).
+ * @param options optional `status`, `contentType`, `value` that will override the default ones. Default `status` is 302, `contentType` is "text/html".
+ * @returns redirect server response.
+ */
 export function redirect<
   Status extends RedirectStatus = typeof DEFAULT_REDIRECT_STATUS,
   ContentType extends string = typeof TEXT_HTML_CONTENT_TYPE,
