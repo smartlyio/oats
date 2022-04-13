@@ -78,10 +78,18 @@ describe('redirect()', () => {
   });
 
   it('encodes url in the location header', () => {
-    const response = redirect('https://www.example.com/?a= &b', {
-      contentType: 'text/plain'
-    });
-    const encodedUrl = 'https://www.example.com/?a=%20&b';
+    // Make sure it does not encode already encoded params.
+    const alreadyEncodedParam = encodeURIComponent('&');
+    const toEncode = ' \u0439';
+    const response = redirect(
+      `https://www.example.com/?param=,;=${toEncode}&alreadyEncodedParam=${alreadyEncodedParam}`,
+      {
+        contentType: 'text/plain'
+      }
+    );
+    const encodedUrl = `https://www.example.com/?param=,;=${encodeURIComponent(
+      toEncode
+    )}&alreadyEncodedParam=${alreadyEncodedParam}`;
 
     expect(response).toEqual({
       status: 302,
