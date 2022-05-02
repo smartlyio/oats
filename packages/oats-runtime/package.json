@@ -42,7 +42,7 @@
     "@types/jest": "27.4.1",
     "@types/lodash": "4.14.181",
     "@types/node": "16.11.26",
-    "fast-check": "2.24.0",
+    "fast-check": "2.25.0",
     "jest": "27.5.1",
     "jsverify": "0.8.4",
     "prettier": "2.6.2",
