@@ -45,8 +45,12 @@ async function handleFormData(value: FormData) {
 
 function adapter<Registry extends mirageTypes.AnyRegistry, RequestContext>(
   mirageServer: mirage.Server<Registry>,
-  requestContextCreator: (schema: Schema<Registry>, request: mirage.Request) => RequestContext
+  requestContextCreator: (schema: Schema<Registry>, request: mirage.Request) => RequestContext,
+  logging: boolean = true
 ): runtime.server.ServerAdapter {
+  // eslint-disable-next-line no-console, @typescript-eslint/no-empty-function
+  const log = logging === true ? console.log : () => {};
+
   return (
     path: string,
     op: string,
@@ -79,12 +83,10 @@ function adapter<Registry extends mirageTypes.AnyRegistry, RequestContext>(
         body,
         requestContext: requestContextCreator(schema, request)
       };
-      // eslint-disable-next-line no-console
-      console.log('oats-mirage-adapter request', ctx);
+      log('oats-mirage-adapter request', ctx);
       try {
         const result = await handler(ctx);
-        // eslint-disable-next-line no-console
-        console.log('oats-mirage-adapter response', { result });
+        log('oats-mirage-adapter response', { result });
         return new mirage.Response(
           result.status,
           { ...result.headers, 'content-type': result.value.contentType },
@@ -93,8 +95,7 @@ function adapter<Registry extends mirageTypes.AnyRegistry, RequestContext>(
             : result.value.value
         );
       } catch (error: any) {
-        // eslint-disable-next-line no-console
-        console.log('oats-mirage-adapter handler threw: ' + error.message, { error });
+        log('oats-mirage-adapter handler threw: ' + error.message, { error });
         return new mirage.Response(
           400,
           { 'content-type': 'text/plain' },
@@ -118,6 +119,9 @@ export function bind<
   handler: runtime.server.HandlerFactory<Spec>;
   spec: Spec;
   requestContextCreator?: (schema: Schema<Registry<Models, Factories>>) => RequestContext;
+  logging?: boolean;
 }): void {
-  opts.handler(adapter(opts.server, opts.requestContextCreator || (() => ({}))))(opts.spec);
+  opts.handler(
+    adapter(opts.server, opts.requestContextCreator || (() => ({})), opts.logging ?? true)
+  )(opts.spec);
 }
