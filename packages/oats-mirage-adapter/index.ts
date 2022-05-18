@@ -43,11 +43,15 @@ async function handleFormData(value: FormData) {
   return result;
 }
 
-function adapter<Registry extends mirageTypes.AnyRegistry, RequestContext>(
-  mirageServer: mirage.Server<Registry>,
-  requestContextCreator: (schema: Schema<Registry>, request: mirage.Request) => RequestContext,
-  logging: boolean = true
-): runtime.server.ServerAdapter {
+function adapter<Registry extends mirageTypes.AnyRegistry, RequestContext>({
+  mirageServer,
+  requestContextCreator,
+  logging = true
+}: {
+  mirageServer: mirage.Server<Registry>;
+  requestContextCreator: (schema: Schema<Registry>, request: mirage.Request) => RequestContext;
+  logging: boolean;
+}): runtime.server.ServerAdapter {
   // eslint-disable-next-line no-console, @typescript-eslint/no-empty-function
   const log = logging === true ? console.log : () => {};
 
@@ -122,6 +126,10 @@ export function bind<
   logging?: boolean;
 }): void {
   opts.handler(
-    adapter(opts.server, opts.requestContextCreator || (() => ({})), opts.logging ?? true)
+    adapter({
+      mirageServer: opts.server,
+      requestContextCreator: opts.requestContextCreator || (() => ({})),
+      logging: opts.logging ?? true
+    })
   )(opts.spec);
 }
