@@ -558,6 +558,51 @@ describe('object', () => {
     });
   });
 
+  describe('property mapping', () => {
+    it('map properties from network to ts side', () => {
+      const fun = make.fromReflection({
+        type: 'object',
+        additionalProperties: false,
+        properties: { ts: { value: { type: 'number' }, required: true, networkName: 'network' } }
+      });
+      expect(fun({ network: 1 }, { convertFromNetwork: true }).success()).toEqual({ ts: 1 });
+    });
+
+    it('does not map properties without the flag', () => {
+      const fun = make.fromReflection({
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          ts: { value: { type: 'number' }, required: true, networkName: 'network' }
+        }
+      });
+      expect(fun({ network: 1 }, {}).errors[0]).toEqual(expect.objectContaining({ path: ['ts'] }));
+    });
+
+    it('does not map additionalProperties', () => {
+      const fun = make.fromReflection({
+        type: 'object',
+        additionalProperties: true,
+        properties: { ts: { value: { type: 'number' }, required: true, networkName: 'network' } }
+      });
+      expect(fun({ network: 1, foo: 2 }, { convertFromNetwork: true }).success()).toEqual({
+        ts: 1,
+        foo: 2
+      });
+    });
+
+    it('does not overwrite with additionalProps', () => {
+      const fun = make.fromReflection({
+        type: 'object',
+        additionalProperties: true,
+        properties: { ts: { value: { type: 'number' }, required: true, networkName: 'network' } }
+      });
+      expect(fun({ network: 1, ts: 2 }, { convertFromNetwork: true }).success()).toEqual({
+        ts: 1
+      });
+    });
+  });
+
   it('drops unknown properties if told to', () => {
     const fun = make.fromReflection({
       type: 'object',

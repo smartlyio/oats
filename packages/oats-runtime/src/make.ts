@@ -122,6 +122,9 @@ export interface MakeOptions {
    * (if query parameter is not repeated, it will not be an array on server side).
    */
   allowConvertForArrayType?: boolean;
+
+  /** If true convert property names from network to ts format while parsing objects */
+  convertFromNetwork?: boolean;
 }
 
 export type Maker<Shape, V> = (value: Shape, opts?: MakeOptions) => Make<V>;
@@ -382,7 +385,14 @@ function isMagic(field: string) {
 
 export function makeObject<
   P extends { [key: string]: Maker<any, any> | { optional: Maker<any, any> } }
->(props: P, additionalProp?: any, comparisorOrder?: string[]) {
+>(
+  props: P,
+  additionalProp?: any,
+  comparisorOrder?: string[],
+  fromNetwork: Record<string, string> = {}
+) {
+  const listedInputPropNames = new Set(Object.keys(props).map(prop => fromNetwork[prop] ?? prop));
+
   return (value: any, opts?: MakeOptions) => {
     if (typeof value !== 'object' || value == null || Array.isArray(value)) {
       return getErrorWithValueMsg('expected an object', value);
@@ -393,26 +403,32 @@ export function makeObject<
       if (isMagic(index)) {
         return error(`Using ${index} as field of an object is not allowed`);
       }
+      const inputPropName = opts?.convertFromNetwork ? fromNetwork?.[index] ?? index : index;
       let maker: any = props[index];
       if (!maker) {
         return error(`Prop maker not found for key ${index}. This is likely a bug in oats`);
       }
       if (maker.optional) {
-        if (!(index in value) || value[index] === undefined) {
+        if (!(inputPropName in value) || value[inputPropName] === undefined) {
           continue;
         }
         maker = maker.optional;
       }
-      const propResult: Make<any> = maker(value[index], opts);
+      const propResult: Make<any> = maker(value[inputPropName], opts);
       if (propResult.isError()) {
         return propResult.errorPath(index);
       }
       result[index] = propResult.success();
     }
     for (const index of Object.keys(value)) {
+      // do not consider props that got mapped
+      if (opts?.convertFromNetwork && listedInputPropNames.has(index)) {
+        continue;
+      }
       if (isMagic(index)) {
         return error(`Using ${index} as objects additional field is not allowed.`);
       }
+      // do not allow overriding mapped props
       if (props[index]) {
         continue;
       }
@@ -542,12 +558,23 @@ function priority(v: ObjectType['properties'][string]) {
   return Priority.NonScalar;
 }
 
+function fromNetworkMap(type: ObjectType) {
+  const fromNetwork = Object.keys(type.properties).reduce<Record<string, string>>((memo, key) => {
+    const mapped = type.properties[key].networkName;
+    if (mapped) {
+      memo[key] = mapped;
+    }
+    return memo;
+  }, {});
+  return fromNetwork;
+}
 function fromObjectReflection(type: ObjectType): Maker<any, any> {
   const comparisonOrder = Object.keys(type.properties).sort((aKey, bKey) => {
     const a = type.properties[aKey]!;
     const b = type.properties[bKey]!;
     return priority(a) - priority(b);
   });
+
   return makeObject(
     Object.entries(type.properties).reduce(
       (memo, [key, prop]) => ({
@@ -561,7 +588,8 @@ function fromObjectReflection(type: ObjectType): Maker<any, any> {
         ? makeAny()
         : fromReflection(type.additionalProperties)
       : undefined,
-    comparisonOrder
+    comparisonOrder,
+    fromNetworkMap(type)
   );
 }
 
