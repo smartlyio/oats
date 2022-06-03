@@ -149,6 +149,9 @@ function serializeWhenClient(mode: Mode, value: any) {
 }
 
 function getOutBody<Body extends RequestBody<any>>(mode: Mode, value: Body): Body {
+  if (!value) {
+    return value;
+  }
   return { contentType: value.contentType, value: serializeWhenClient(mode, value.value) } as Body;
 }
 
@@ -210,12 +213,13 @@ export function safe<
     const responseValue = response(result, { convertFromNetwork: mode === 'client' }).success(
       throwResponseValidationError.bind(null, `body ${ctx.path}`, result.value.value)
     );
-    if (mode === 'client') {
+    if (mode === 'client' || !responseValue) {
       return responseValue;
     }
     // the response must be serialized for transferring from server to client
     return {
       ...responseValue,
+      headers: serialize(responseValue.headers),
       value: {
         ...responseValue.value,
         value: serialize(responseValue.value.value)
