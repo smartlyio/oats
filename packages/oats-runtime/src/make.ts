@@ -127,6 +127,7 @@ export interface MakeOptions {
   convertFromNetwork?: boolean;
 }
 
+/** a maker with optional reflection type from which it was constructed */
 export type Maker<Shape, V> = (value: Shape, opts?: MakeOptions) => Make<V>;
 
 function getErrorWithValueMsg<T>(msg: string, value: T): Make<T> {
@@ -385,12 +386,8 @@ function isMagic(field: string) {
 
 export function makeObject<
   P extends { [key: string]: Maker<any, any> | { optional: Maker<any, any> } }
->(
-  props: P,
-  additionalProp?: any,
-  comparisorOrder?: string[],
-  fromNetwork: Record<string, string> = {}
-) {
+>(props: P, additionalProp?: any, comparisorOrder?: string[], type?: ObjectType) {
+  const fromNetwork = fromNetworkMap(type);
   const listedInputPropNames = new Set(Object.keys(props).map(prop => fromNetwork[prop] ?? prop));
 
   return (value: any, opts?: MakeOptions) => {
@@ -444,9 +441,25 @@ export function makeObject<
       }
       result[index] = propResult.success();
     }
+
+    // tag each constructed object with a hidden type property
+    Object.defineProperty(result, reflection, { enumerable: false, value: type });
+
     return Make.ok(result);
   };
 }
+
+/**  Get reflection type from a  made value.
+ * Note that only directly made object values or ValueClasses can be used
+ * */
+export function getType(value: Record<string, any>): Type | undefined {
+  if (!value || typeof value !== 'object') {
+    return;
+  }
+  // @ts-ignore
+  return value[reflection] || undefined;
+}
+const reflection = Symbol();
 
 interface FormDataArguments {
   value: any;
@@ -558,7 +571,10 @@ function priority(v: ObjectType['properties'][string]) {
   return Priority.NonScalar;
 }
 
-function fromNetworkMap(type: ObjectType) {
+function fromNetworkMap(type?: ObjectType) {
+  if (!type) {
+    return {};
+  }
   const fromNetwork = Object.keys(type.properties).reduce<Record<string, string>>((memo, key) => {
     const mapped = type.properties[key].networkName;
     if (mapped) {
@@ -589,7 +605,7 @@ function fromObjectReflection(type: ObjectType): Maker<any, any> {
         : fromReflection(type.additionalProperties)
       : undefined,
     comparisonOrder,
-    fromNetworkMap(type)
+    type
   );
 }
 

@@ -2,6 +2,7 @@ import * as make from '../src/make';
 import * as jsc from 'jsverify';
 import { TestClass } from './test-class';
 import { Type } from '../src/reflection-type';
+import { serialize } from '../src/runtime';
 
 describe('union differentation', () => {
   it('handles cases where union children are missing the tag', () => {
@@ -558,6 +559,37 @@ describe('object', () => {
     });
   });
 
+  describe('getType', () => {
+    it('returns undefined for falsys', () => {
+      const type: Type = {
+        type: 'null'
+      };
+      const fun = make.fromReflection(type);
+      expect(make.getType(fun(null).success())).toEqual(undefined);
+    });
+
+    it('returns undefined for non-objects', () => {
+      const type: Type = {
+        type: 'array',
+        items: {
+          type: 'unknown'
+        }
+      };
+      const fun = make.fromReflection(type);
+      expect(make.getType(fun([]).success())).toEqual(undefined);
+    });
+
+    it('returns the type used for construction', () => {
+      const type: Type = {
+        type: 'object',
+        additionalProperties: false,
+        properties: { a: { value: { type: 'number' }, required: true } }
+      };
+      const fun = make.fromReflection(type);
+      expect(make.getType(fun({ a: 1 }).success())).toEqual(type);
+    });
+  });
+
   describe('property mapping', () => {
     it('map properties from network to ts side', () => {
       const fun = make.fromReflection({
@@ -565,7 +597,41 @@ describe('object', () => {
         additionalProperties: false,
         properties: { ts: { value: { type: 'number' }, required: true, networkName: 'network' } }
       });
-      expect(fun({ network: 1 }, { convertFromNetwork: true }).success()).toEqual({ ts: 1 });
+      const value = fun({ network: 1 }, { convertFromNetwork: true }).success();
+      expect(value).toEqual({ ts: 1 });
+      expect(serialize(value)).toEqual({ network: 1 });
+    });
+
+    it('maps arrays', () => {
+      const fun = make.fromReflection({
+        type: 'array',
+        items: {
+          type: 'object',
+          additionalProperties: false,
+          properties: { ts: { value: { type: 'number' }, required: true, networkName: 'network' } }
+        }
+      });
+      const value = fun([{ network: 1 }], { convertFromNetwork: true }).success();
+      expect(value).toEqual([{ ts: 1 }]);
+      expect(serialize(value)).toEqual([{ network: 1 }]);
+    });
+
+    it('does not do anything with scalars', () => {
+      const fun = make.fromReflection({
+        type: 'string'
+      });
+      const value = fun('abc', { convertFromNetwork: true }).success();
+      expect(value).toEqual('abc');
+      expect(serialize(value)).toEqual('abc');
+    });
+
+    it('does not do anything with nulls', () => {
+      const fun = make.fromReflection({
+        type: 'null'
+      });
+      const value = fun(null, { convertFromNetwork: true }).success();
+      expect(value).toEqual(null);
+      expect(serialize(value)).toEqual(null);
     });
 
     it('does not map properties without the flag', () => {

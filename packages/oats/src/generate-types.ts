@@ -55,6 +55,11 @@ export interface Options {
    * `[key: string]: unknown`
    * for objects with `additionalProperties: true` or no additionalProperties set */
   unknownAdditionalPropertiesIndexSignature?: AdditionalPropertiesIndexSignature;
+  /** property name mapper for object properties
+   *  ex. to map 'snake_case' property in network format to property 'camelCase' usable in ts code provide mapper
+   *  > propertyNameMapper: (p) => p === 'snake_case ? 'camelCase' : p
+   * */
+  propertyNameMapper?: (openapiPropertyName: string) => string;
   nameMapper: oautil.NameMapper;
 }
 
@@ -175,7 +180,7 @@ export function run(options: Options) {
       return ts.createProperty(
         undefined,
         [ts.createToken(ts.SyntaxKind.ReadonlyKeyword)],
-        quotedProp(key),
+        quotedProp(options.propertyNameMapper ? options.propertyNameMapper(key) : key),
         required && required.indexOf(key) >= 0
           ? ts.createToken(ts.SyntaxKind.ExclamationToken)
           : ts.createToken(ts.SyntaxKind.QuestionToken),
@@ -1067,7 +1072,7 @@ export function run(options: Options) {
           ts.createObjectLiteral(
             Object.keys(schema.properties || {}).map((propertyName: string) => {
               return ts.createPropertyAssignment(
-                ts.createStringLiteral(propertyName),
+                ts.createStringLiteral(options.propertyNameMapper ? options.propertyNameMapper(propertyName) : propertyName),
                 ts.createObjectLiteral(
                   [
                     ts.createPropertyAssignment(
@@ -1076,6 +1081,7 @@ export function run(options: Options) {
                         ? ts.createTrue()
                         : ts.createFalse()
                     ),
+                    ...(options.propertyNameMapper ? [ts.createPropertyAssignment('networkName', ts.createStringLiteral(propertyName))] : []),
                     ts.createPropertyAssignment(
                       'value',
                       generateReflectionType((schema.properties as any)[propertyName])

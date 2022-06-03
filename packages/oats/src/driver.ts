@@ -52,6 +52,11 @@ export interface Driver {
     security?: UnsupportedFeatureBehaviour;
   };
   forceGenerateTypes?: boolean; // output the type file even if it would have been already generated
+  /** property name mapper for object properties
+   *  ex. to map 'snake_case' property in network format to property 'camelCase' usable in ts code provide mapper
+   *  > propertyNameMapper: (p) => p === 'snake_case ? 'camelCase' : p
+   * */
+  propertyNameMapper?: (openapiPropertyName: string) => string;
   nameMapper?: NameMapper; // mapping function to customize generated shape/value/reflect names
   /** if true emit union type with undefined for additionalProperties. Default is *true*.
    *  Note! Likely the default will be set to false later. Now like this to avoid
@@ -164,7 +169,8 @@ export function generateFile(opts?: GenerateFileOptions): types.Resolve {
           unknownAdditionalPropertiesIndexSignature:
             options.unknownAdditionalPropertiesIndexSignature,
           unsupportedFeatures: options.unsupportedFeatures,
-          nameMapper: options.nameMapper
+          nameMapper: options.nameMapper,
+          propertyNameMapper: options.propertyNameMapper
         });
       }
     };
@@ -196,6 +202,7 @@ export function generate(driver: Driver) {
     runtimeModule: modulePath(driver.generatedValueClassFile, driver.runtimeFilePath),
     emitStatusCode: driver.emitStatusCode || emitAllStatusCodes,
     nameMapper: driver.nameMapper || localNameMapper,
+    propertyNameMapper: driver.propertyNameMapper,
     emitUndefinedForIndexTypes: driver.emitUndefinedForIndexTypes ?? true,
     unknownAdditionalPropertiesIndexSignature:
       driver.unknownAdditionalPropertiesIndexSignature ?? AdditionalPropertiesIndexSignature.emit
