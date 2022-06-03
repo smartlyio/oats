@@ -2,11 +2,6 @@ import * as types from './tmp/client/types.generated';
 import { serialize } from '../../packages/oats-runtime/src/serialize';
 
 describe('network ts mappig', () => {
-  describe('safe mappig', () => {
-    it('serializes and deserializes', () => {
-
-    });
-  });
   describe('mapping works', () => {
     it('maps inputs', async () => {
       const p = types.typeItem
