@@ -1,6 +1,7 @@
 import { assert } from './assert';
 import safeNavigation from '@smartlyio/safe-navigation';
 import { Make, MakeOptions, Maker, ValidationError, validationErrorPrinter } from './make';
+import { serialize } from './serialize';
 
 export type { RedirectStatus } from './redirect';
 
@@ -128,15 +129,27 @@ function voidify(value: object | undefined | null) {
   return null;
 }
 
-function cleanHeaders<H>(maker: Maker<any, H>, headers: object) {
+function cleanHeaders<H>(mode: Mode, maker: Maker<any, H>, headers: object) {
   const normalized = voidify(lowercaseObject(headers));
   const acceptsNull = maker(null);
   if (acceptsNull.isSuccess()) {
     return acceptsNull.success();
   }
   return maker(normalized, {
-    unknownField: 'drop'
+    unknownField: 'drop',
+    convertFromNetwork: mode === 'server'
   }).success(throwRequestValidationError.bind(null, 'headers'));
+}
+
+function serializeWhenClient(mode: Mode, value: any) {
+  if (mode === 'client') {
+    return serialize(value);
+  }
+  return value;
+}
+
+function getOutBody<Body extends RequestBody<any>>(mode: Mode, value: Body): Body {
+  return { contentType: value.contentType, value: serializeWhenClient(mode, value.value) } as Body;
 }
 
 export function safe<
@@ -153,7 +166,7 @@ export function safe<
   body: Maker<any, Body>,
   response: Maker<any, R>,
   endpoint: Endpoint<H, P, Q, Body, R, RC>,
-  { validationOptions = {} }: HandlerOptions = {}
+  { validationOptions = {}, mode }: HandlerOptions & InternalHandlerOptions = { mode: 'client' }
 ): Endpoint<
   Headers,
   Params,
@@ -163,24 +176,51 @@ export function safe<
   RequestContext
 > {
   return async ctx => {
+    // note: data coming to client adapter needs to be serialized and data coming from the adapter needs conversion from network
+    // note: data coming to server adapter needs to be deserialized and data coming from the adapter needs serialization
+    // this is all very clear.
+    const internalMakeOptions = { convertFromNetwork: mode === 'server' };
     const result = await endpoint({
       path: ctx.path,
       method: ctx.method,
       servers: ctx.servers,
       op: ctx.op,
-      headers: cleanHeaders(headers, ctx.headers),
-      params: params(voidify(ctx.params), validationOptions.params).success(
-        throwRequestValidationError.bind(null, 'params')
+      headers: serializeWhenClient(mode, cleanHeaders(mode, headers, ctx.headers)),
+      params: serializeWhenClient(
+        mode,
+        params(voidify(ctx.params), {
+          ...validationOptions.params,
+          ...internalMakeOptions
+        }).success(throwRequestValidationError.bind(null, 'params'))
       ),
-      query: query(ctx.query || {}, validationOptions.query).success(
-        throwRequestValidationError.bind(null, 'query')
+      query: serializeWhenClient(
+        mode,
+        query(ctx.query || {}, { ...validationOptions.query, ...internalMakeOptions }).success(
+          throwRequestValidationError.bind(null, 'query')
+        )
       ),
-      body: body(voidify(ctx.body)).success(throwRequestValidationError.bind(null, 'body')),
+      body: getOutBody<Body>(
+        mode,
+        body(voidify(ctx.body), internalMakeOptions).success(
+          throwRequestValidationError.bind(null, 'body')
+        )
+      ),
       requestContext: ctx.requestContext as any
     });
-    return response(result).success(
+    const responseValue = response(result, { convertFromNetwork: mode === 'client' }).success(
       throwResponseValidationError.bind(null, `body ${ctx.path}`, result.value.value)
     );
+    if (mode === 'client') {
+      return responseValue;
+    }
+    // the response must be serialized for transferring from server to client
+    return {
+      ...responseValue,
+      value: {
+        ...responseValue.value,
+        value: serialize(responseValue.value.value)
+      }
+    };
   };
 }
 
@@ -202,7 +242,7 @@ interface CheckingTree {
     [method: string]: {
       safeHandler: (
         e: Endpoint<any, any, any, any, any, any>,
-        opts?: HandlerOptions
+        opts?: HandlerOptions & InternalHandlerOptions
       ) => SafeEndpoint;
       op: string;
       servers: string[];
@@ -228,7 +268,10 @@ function createTree(handlers: Handler[]): CheckingTree {
       memo[element.path] = {};
     }
     memo[element.path][element.method] = {
-      safeHandler: (e: Endpoint<any, any, any, any, any, any>, opts?: HandlerOptions) =>
+      safeHandler: (
+        e: Endpoint<any, any, any, any, any, any>,
+        opts?: HandlerOptions & InternalHandlerOptions
+      ) =>
         safe(
           element.headers,
           element.params,
@@ -260,6 +303,15 @@ export type ServerAdapter = (
   servers: string[]
 ) => void;
 
+type Mode = 'client' | 'server';
+export interface InternalHandlerOptions {
+  /** whether we are calling this on client side or in server side.
+   * This may have effect on eg network <-> ts property mapping.
+   * This value is set automatically by oats.
+   * */
+  mode: Mode;
+}
+
 export interface HandlerOptions {
   /**
    * Options for request schema validation.
@@ -287,7 +339,7 @@ export function createHandlerFactory<Spec>(
             path,
             endpointWrapper.op,
             assertMethod(method),
-            endpointWrapper.safeHandler(methodHandler, opts),
+            endpointWrapper.safeHandler(methodHandler, { ...opts, mode: 'server' }),
             endpointWrapper.servers
           );
         });

@@ -2,7 +2,7 @@ import * as make from '../src/make';
 import * as jsc from 'jsverify';
 import { TestClass } from './test-class';
 import { Type } from '../src/reflection-type';
-import { serialize } from '../src/runtime';
+import { serialize } from '../src/serialize';
 
 describe('union differentation', () => {
   it('handles cases where union children are missing the tag', () => {
