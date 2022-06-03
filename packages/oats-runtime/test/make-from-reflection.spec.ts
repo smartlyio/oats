@@ -588,6 +588,11 @@ describe('object', () => {
       const fun = make.fromReflection(type);
       expect(make.getType(fun({ a: 1 }).success())).toEqual(type);
     });
+
+    it('returns the type for value class', () => {
+      const value = TestClass.make({ a: [], b: 'a' }).success();
+      expect(make.getType(value)).toEqual(TestClass.reflection().definition);
+    });
   });
 
   describe('property mapping', () => {

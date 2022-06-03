@@ -456,6 +456,11 @@ export function getType(value: Record<string, any>): Type | undefined {
   if (!value || typeof value !== 'object') {
     return;
   }
+  if (value instanceof ValueClass) {
+    // a bit of leap here to trust that all ValueClasses have generated `reflection`
+    // @ts-ignore
+    return value.constructor.reflection().definition;
+  }
   // @ts-ignore
   return value[reflection] || undefined;
 }

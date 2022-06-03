@@ -16,7 +16,7 @@ describe('mapping works', () => {
 
   it('serializes object values', async () => {
     const value = types.typeItem.maker({ someProperty: 'x' }).success();
-    const serialized = serialize(types.typeItem.maker.type!, value);
+    const serialized = serialize(value);
     expect(serialized.some_property).toEqual('x');
   });
 });
