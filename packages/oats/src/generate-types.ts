@@ -1072,7 +1072,11 @@ export function run(options: Options) {
           ts.createObjectLiteral(
             Object.keys(schema.properties || {}).map((propertyName: string) => {
               return ts.createPropertyAssignment(
-                ts.createStringLiteral(options.propertyNameMapper ? options.propertyNameMapper(propertyName) : propertyName),
+                ts.createStringLiteral(
+                  options.propertyNameMapper
+                    ? options.propertyNameMapper(propertyName)
+                    : propertyName
+                ),
                 ts.createObjectLiteral(
                   [
                     ts.createPropertyAssignment(
@@ -1081,7 +1085,14 @@ export function run(options: Options) {
                         ? ts.createTrue()
                         : ts.createFalse()
                     ),
-                    ...(options.propertyNameMapper ? [ts.createPropertyAssignment('networkName', ts.createStringLiteral(propertyName))] : []),
+                    ...(options.propertyNameMapper
+                      ? [
+                          ts.createPropertyAssignment(
+                            'networkName',
+                            ts.createStringLiteral(propertyName)
+                          )
+                        ]
+                      : []),
                     ts.createPropertyAssignment(
                       'value',
                       generateReflectionType((schema.properties as any)[propertyName])

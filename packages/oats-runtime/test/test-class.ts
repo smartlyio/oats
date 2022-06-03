@@ -12,7 +12,7 @@ const type: ObjectType = {
     a: { value: { type: 'array', items: { type: 'string' } }, required: true, networkName: 'netB' },
     b: { value: { type: 'string' }, required: true, networkName: 'netB' }
   }
-}
+};
 const named: NamedTypeDefinition<any> = {
   name: 'TestClass',
   maker: fromReflection(type),
