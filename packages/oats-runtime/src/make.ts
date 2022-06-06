@@ -127,7 +127,6 @@ export interface MakeOptions {
   convertFromNetwork?: boolean;
 }
 
-/** a maker with optional reflection type from which it was constructed */
 export type Maker<Shape, V> = (value: Shape, opts?: MakeOptions) => Make<V>;
 
 function getErrorWithValueMsg<T>(msg: string, value: T): Make<T> {
