@@ -35,6 +35,7 @@ describe('network ts mappig', () => {
     const requestParam = 'request path param';
     const replyHeader = 'reply header';
     const requestHeaderItem = 'request header item';
+    const someQueryItem = 'some query item';
     const requestItem: types.ShapeOfItem = {
       someProperty: 'some property of item',
       extraProp: { extraNestedObjectProp: 'xxnn' }
@@ -44,6 +45,7 @@ describe('network ts mappig', () => {
     const spec: server.Endpoints = {
       '/item/{some_item}': {
         post: async ctx => {
+          expect(ctx.query.someQueryItem).toEqual(someQueryItem);
           expect(ctx.headers.headerItem).toEqual(requestHeaderItem);
           expect(ctx.params.someItem).toEqual(requestParam);
           expect(ctx.body.value).toEqual(requestItem);
@@ -112,7 +114,8 @@ describe('network ts mappig', () => {
       it('maps everything', async () => {
         const p = await apiClient.item(requestParam).post({
           headers: { headerItem: requestHeaderItem },
-          body: runtime.client.json(requestItem)
+          body: runtime.client.json(requestItem),
+          query: { someQueryItem }
         });
         expect(p.value.value).toEqual(replyItem);
         expect(p.headers.replyHeader).toEqual(replyHeader);
@@ -120,7 +123,7 @@ describe('network ts mappig', () => {
 
       it('server maps correctly', async () => {
         const p = await axios.post(
-          `${url}/item/${requestParam}`,
+          `${url}/item/${requestParam}?some_query_item=${someQueryItem}`,
           {
             some_property: requestItem.someProperty,
             extra_prop: { extra_nested_object_prop: requestItem.extraProp!.extraNestedObjectProp }
