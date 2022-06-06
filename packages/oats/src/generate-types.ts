@@ -224,7 +224,7 @@ export function run(options: Options) {
       oautil.errorTag(`property '${key}'`, () =>
         ts.createPropertySignature(
           readonly,
-          quotedProp(key),
+          quotedProp(options.propertyNameMapper ? options.propertyNameMapper(key) : key),
           required && required.indexOf(key) >= 0
             ? undefined
             : ts.createToken(ts.SyntaxKind.QuestionToken),

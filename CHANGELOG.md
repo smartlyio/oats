@@ -1,3 +1,13 @@
+# 4.4.0
+
+Allow mapping properties from network format specified in the openapi spec to something more expected in typescript. 
+Eg from snake_case to camelCase. This mapping is done for headers, query parameters, path parameters and bodies.
+
+NOTE: due to the mapping we cannot anymore lowercase request headers on the client side. This has been prevented before by the
+type system but if somebody has subverted the type system to allow upper cased headers you will have a bad time as 
+the uppercased headers will be dropped now. This only affects the client side usage of oats. Please check that you have well typed
+request headers on client side.
+
 # 4.3.2
 
 ## Bug Fixes

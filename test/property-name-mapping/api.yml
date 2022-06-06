@@ -5,11 +5,32 @@ info:
 servers:
   - url: http://localhost:12000
 paths:
-  /item:
-    get:
+  /item/{some_item}:
+    post:
+      parameters:
+        - in: header
+          name: header_item
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: some_item
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Item"
       responses:
         '200':
           description: item found
+          headers:
+            reply_header:
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -23,4 +44,9 @@ components:
       properties:
         some_property:
           type: string
+        extra_prop:
+          type: object
+          properties:
+            extra_nested_object_prop:
+              type: string
 
