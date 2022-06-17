@@ -1,10 +1,11 @@
 import { assert, fail } from './assert';
 import safe from '@smartlyio/safe-navigation';
 import * as _ from 'lodash';
+import { isEqual, uniq } from 'lodash';
 import { ValueClass } from './value-class';
 import { NamedTypeDefinition, ObjectType, Type } from './reflection-type';
 import { discriminateUnion } from './union-discriminator';
-import { isEqual, uniq } from 'lodash';
+import { getTypeSet, withType } from './type-tag';
 
 export class MakeError extends Error {
   constructor(readonly errors: ValidationError[]) {
@@ -366,16 +367,18 @@ export function makeOneOf(...options: any[]) {
   };
 }
 
-export function makeAllOf(...all: any[]) {
+export function makeAllOf(...all: Maker<any, any>[]) {
   return (value: any, opts?: MakeOptions) => {
+    const types = [];
     for (const make of all) {
       const result: Make<any> = make(value, opts);
       if (result.isError()) {
         return result.errorPath('(allOf)');
       }
       value = result.success();
+      types.push(...(getTypeSet(value) ?? []));
     }
-    return Make.ok(value);
+    return Make.ok(withType(value, types));
   };
 }
 
@@ -440,30 +443,9 @@ export function makeObject<
       }
       result[index] = propResult.success();
     }
-
-    // tag each constructed object with a hidden type property
-    Object.defineProperty(result, reflection, { enumerable: false, value: type });
-
-    return Make.ok(result);
+    return Make.ok(withType(result, type ? [type] : []));
   };
 }
-
-/**  Get reflection type from a  made value.
- * Note that only directly made object values or ValueClasses can be used
- * */
-export function getType(value: Record<string, any>): Type | undefined {
-  if (!value || typeof value !== 'object') {
-    return;
-  }
-  if (value instanceof ValueClass) {
-    // a bit of leap here to trust that all ValueClasses have generated `reflection`
-    // @ts-ignore
-    return value.constructor.reflection().definition;
-  }
-  // @ts-ignore
-  return value[reflection] || undefined;
-}
-const reflection = Symbol();
 
 interface FormDataArguments {
   value: any;

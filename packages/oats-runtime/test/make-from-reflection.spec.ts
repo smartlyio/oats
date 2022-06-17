@@ -1,8 +1,10 @@
 import * as make from '../src/make';
 import * as jsc from 'jsverify';
 import { TestClass } from './test-class';
+import * as classWithAdditional from './test-class-with-additional-props';
 import { Type } from '../src/reflection-type';
 import { serialize } from '../src/serialize';
+import { getType } from '../src/type-tag';
 
 describe('union differentation', () => {
   it('handles cases where union children are missing the tag', () => {
@@ -565,7 +567,7 @@ describe('object', () => {
         type: 'null'
       };
       const fun = make.fromReflection(type);
-      expect(make.getType(fun(null).success())).toEqual(undefined);
+      expect(getType(fun(null).success())).toEqual(undefined);
     });
 
     it('returns undefined for non-objects', () => {
@@ -576,7 +578,71 @@ describe('object', () => {
         }
       };
       const fun = make.fromReflection(type);
-      expect(make.getType(fun([]).success())).toEqual(undefined);
+      expect(getType(fun([]).success())).toEqual(undefined);
+    });
+
+    describe('oneOf', () => {
+      it('returns the type used for construction', () => {
+        const type1: Type = {
+          type: 'object',
+          properties: { a: { value: { type: 'number' }, required: true } },
+          additionalProperties: true
+        };
+        const type2: Type = {
+          type: 'object',
+          properties: { b: { value: { type: 'number' }, required: true } },
+          additionalProperties: true
+        };
+        const oneOf: Type = {
+          type: 'union',
+          options: [type1, type2]
+        };
+        const fun = make.fromReflection(oneOf);
+        const gotType = getType(fun({ a: 1 }).success());
+        expect(gotType).toEqual([type1]);
+      });
+    });
+
+    describe('allOf', () => {
+      it('returns the type used for construction', () => {
+        const type1: Type = {
+          type: 'object',
+          properties: { a: { value: { type: 'number' }, required: true } },
+          additionalProperties: true
+        };
+        const type2: Type = {
+          type: 'object',
+          properties: { b: { value: { type: 'number' }, required: true } },
+          additionalProperties: true
+        };
+        const allOf: Type = {
+          type: 'intersection',
+          options: [type1, type2]
+        };
+        const fun = make.fromReflection(allOf);
+        const gotType = getType(fun({ a: 1, b: 1 }).success());
+        expect(gotType).toHaveLength(2);
+        expect(gotType).toEqual(expect.arrayContaining([type1, type2]));
+      });
+
+      it('returns the type for value class', () => {
+        const type: Type = {
+          type: 'object',
+          properties: { c: { value: { type: 'string' }, required: true } },
+          additionalProperties: true
+        };
+        const allOf: Type = {
+          type: 'intersection',
+          options: [{ type: 'named', reference: () => classWithAdditional.named }, type]
+        };
+        const input = { a: [], b: 'a', c: 'other value' };
+        const fun = make.fromReflection(allOf);
+        const madeValue = fun(input).success();
+        expect(getType(madeValue)).toEqual(
+          expect.arrayContaining([classWithAdditional.TestClass.reflection().definition, type])
+        );
+        expect(madeValue).toEqual(input);
+      });
     });
 
     it('returns the type used for construction', () => {
@@ -586,12 +652,12 @@ describe('object', () => {
         properties: { a: { value: { type: 'number' }, required: true } }
       };
       const fun = make.fromReflection(type);
-      expect(make.getType(fun({ a: 1 }).success())).toEqual(type);
+      expect(getType(fun({ a: 1 }).success())).toEqual([type]);
     });
 
     it('returns the type for value class', () => {
       const value = TestClass.make({ a: [], b: 'a' }).success();
-      expect(make.getType(value)).toEqual(TestClass.reflection().definition);
+      expect(getType(value)).toEqual([TestClass.reflection().definition]);
     });
   });
 

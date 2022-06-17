@@ -12,20 +12,26 @@ import * as axiosAdapter from '@smartlyio/oats-axios-adapter';
 import axios from 'axios';
 
 describe('network ts mappig', () => {
-  describe('allOf mapping', () => {
-    const input = {
-      overlapping_property: 'y',
-      some_property: 'x',
-      extra_second_property: 'z'
-    };
-    const value = types.typeAllOfSchema.maker(input, { convertFromNetwork: true }).success();
-    expect(value).toEqual({
-      extraSecondProperty: input.extra_second_property,
-      someProperty: input.some_property,
-      overlappingProperty: input.overlapping_property
+  describe('allOf', () => {
+    it('cheks mapped props with all branches of allOf', () => {
+      // todo
+      expect('todo').toEqual('done');
     });
-    const serialized = serialize(value);
-    expect(serialized).toEqual(input);
+    it('maps props', () => {
+      const input = {
+        overlapping_property: 'y',
+        some_property: 'x',
+        extra_second_property: 'z'
+      };
+      const value = types.typeAllOfSchema.maker(input, { convertFromNetwork: true }).success();
+      expect(value).toEqual({
+        extraSecondProperty: input.extra_second_property,
+        someProperty: input.some_property,
+        overlappingProperty: input.overlapping_property
+      });
+      const serialized = serialize(value);
+      expect(serialized).toEqual(input);
+    });
   });
   describe('mapping works', () => {
     it('maps inputs', async () => {
