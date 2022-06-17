@@ -42,11 +42,33 @@ paths:
                 $ref: "#/components/schemas/Item"
 components:
   schemas:
+    AllOfSchema:
+      allOf:
+        - $ref: "#/components/schemas/Item"
+        - allOf:
+          - $ref: "#/components/schemas/ThirdItem"
+          - $ref: "#/components/schemas/SecondItem"
+    ThirdItem:
+      type: object
+      properties:
+        overlapping_property:
+          type: string
+        extra_second_property:
+          type: string
+        extra_third_property:
+          type: string
+    SecondItem:
+      type: object
+      properties:
+        extra_second_property:
+          type: string
     Item:
       type: object
       required:
         - some_property
       properties:
+        overlapping_property:
+          type: string
         some_property:
           type: string
         extra_prop:
