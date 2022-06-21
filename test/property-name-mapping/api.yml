@@ -68,7 +68,9 @@ components:
         - some_property
       properties:
         overlapping_property:
-          type: string
+          oneOf:
+            - type: string
+            - type: number
         some_property:
           type: string
         extra_prop:

@@ -5,7 +5,7 @@ import { isEqual, uniq } from 'lodash';
 import { ValueClass } from './value-class';
 import { NamedTypeDefinition, ObjectType, Type } from './reflection-type';
 import { discriminateUnion } from './union-discriminator';
-import { getTypeSet, withType } from './type-tag';
+import { getType, getTypeSet, withType } from './type-tag';
 
 export class MakeError extends Error {
   constructor(readonly errors: ValidationError[]) {
@@ -386,6 +386,36 @@ function isMagic(field: string) {
   return ['__proto__', 'constructor'].indexOf(field) >= 0;
 }
 
+function getInputPropName(args: {
+  value: any;
+  index: string;
+  fromNetwork: Record<string, string>;
+  opts?: MakeOptions;
+}) {
+  if (!args.opts?.convertFromNetwork) {
+    return args.index;
+  }
+  const types = getType(args.value) ?? [];
+  const networkProp = args.fromNetwork?.[args.index] ?? args.index;
+  for (const type of types) {
+    if (type.type !== 'object') {
+      // only objects can have network mappings
+      continue;
+    }
+    const mapped = type.properties[args.index];
+    if (mapped) {
+      // if the object was made already then network mapping has been done for listed properties
+      // and we should use the ts side property
+      assert(
+        networkProp == mapped.networkName,
+        `Network names for properties with the same name need to be equal when a object has multiple types. Mismatch in ${networkProp} and ${mapped.networkName}.`
+      );
+      return args.index;
+    }
+  }
+  return networkProp;
+}
+
 export function makeObject<
   P extends { [key: string]: Maker<any, any> | { optional: Maker<any, any> } }
 >(props: P, additionalProp?: any, comparisorOrder?: string[], type?: ObjectType) {
@@ -402,7 +432,7 @@ export function makeObject<
       if (isMagic(index)) {
         return error(`Using ${index} as field of an object is not allowed`);
       }
-      const inputPropName = opts?.convertFromNetwork ? fromNetwork?.[index] ?? index : index;
+      const inputPropName = getInputPropName({ opts, index, fromNetwork, value });
       let maker: any = props[index];
       if (!maker) {
         return error(`Prop maker not found for key ${index}. This is likely a bug in oats`);

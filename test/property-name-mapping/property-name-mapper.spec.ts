@@ -13,10 +13,21 @@ import axios from 'axios';
 
 describe('network ts mappig', () => {
   describe('allOf', () => {
-    it('cheks mapped props with all branches of allOf', () => {
-      // todo
-      expect('todo').toEqual('done');
+    it('checks mapped props with all branches of allOf', () => {
+      const input = {
+        // this is allowed by Item but not by overlapping other ThirdItem
+        overlapping_property: 1,
+        some_property: 'x',
+        extra_second_property: 'z'
+      };
+      expect(types.typeAllOfSchema.maker(input, { convertFromNetwork: true }).errors).toEqual([
+        {
+          error: 'expected a string, but got `1` instead.',
+          path: ['(allOf)', '(allOf)', 'overlappingProperty']
+        }
+      ]);
     });
+
     it('maps props', () => {
       const input = {
         overlapping_property: 'y',
