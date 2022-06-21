@@ -13,11 +13,11 @@ export function serialize(value: any): any {
       case 'object':
         return Object.keys(value).reduce<Record<string, any>>((memo, key) => {
           const prop = type.properties[key];
-          const serialized = serialize(value[key]);
-          if (prop && prop.networkName) {
-            memo[prop.networkName] = serialized;
-          } else {
-            memo[key] = serialized;
+          const networkProp = prop && prop.networkName ? prop.networkName : key;
+          // serializing the same value multiple times is ok but unnecessary so long
+          // as the mappings in different objects match. If that is not the case we are screwed.
+          if (memo[networkProp] === undefined) {
+            memo[networkProp] = serialize(value[key]);
           }
           return memo;
         }, {});
