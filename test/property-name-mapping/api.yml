@@ -42,6 +42,31 @@ paths:
                 $ref: "#/components/schemas/Item"
 components:
   schemas:
+    NestedNamed:
+      type: object
+      properties:
+        nested_named_prop:
+          type: string
+    SchemaWithNestedObjects:
+      allOf:
+        - type: object
+          properties:
+            prop:
+              type: object
+              properties:
+                first_nested:
+                  type: string
+        - type: object
+          properties:
+            prop:
+              type: object
+              properties:
+                second_nested:
+                  type: string
+        - type: object
+          properties:
+            prop:
+              $ref: "#/components/schemas/NestedNamed"
     AllOfSchema:
       allOf:
         - $ref: "#/components/schemas/Item"

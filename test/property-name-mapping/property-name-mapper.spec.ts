@@ -1,5 +1,4 @@
 import * as types from './tmp/client/types.generated';
-import { serialize } from '../../packages/oats-runtime/src/serialize';
 import * as server from './tmp/server/generated';
 import * as runtime from '@smartlyio/oats-runtime';
 import * as koaAdapter from '@smartlyio/oats-koa-adapter';
@@ -40,7 +39,40 @@ describe('network ts mappig', () => {
         someProperty: input.some_property,
         overlappingProperty: input.overlapping_property
       });
-      const serialized = serialize(value);
+      const serialized = runtime.serialize(value);
+      expect(serialized).toEqual(input);
+    });
+    it('maps props in nested objects', () => {
+      const input = {
+        prop: {
+          first_nested: 'y',
+          second_nested: 'x',
+          nested_named_prop: 'z'
+        }
+      };
+      const value = types.typeSchemaWithNestedObjects
+        .maker(input, { convertFromNetwork: true })
+        .success();
+      expect(value).toEqual({
+        prop: {
+          firstNested: input.prop.first_nested,
+          secondNested: input.prop.second_nested,
+          nestedNamedProp: input.prop.nested_named_prop
+        }
+      });
+      expect(runtime.getType(value.prop!)).toHaveLength(3);
+      expect(runtime.getType(value.prop!)).toEqual(
+        expect.arrayContaining([
+          types.typeNestedNamed.definition,
+          expect.objectContaining({
+            properties: expect.objectContaining({ firstNested: expect.anything() })
+          }),
+          expect.objectContaining({
+            properties: expect.objectContaining({ secondNested: expect.anything() })
+          })
+        ])
+      );
+      const serialized = runtime.serialize(value);
       expect(serialized).toEqual(input);
     });
   });
@@ -59,7 +91,7 @@ describe('network ts mappig', () => {
 
     it('serializes object values', async () => {
       const value = types.typeItem.maker({ someProperty: 'x' }).success();
-      const serialized = serialize(value);
+      const serialized = runtime.serialize(value);
       expect(serialized.some_property).toEqual('x');
     });
   });

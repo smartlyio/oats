@@ -473,6 +473,10 @@ export function makeObject<
       }
       result[index] = propResult.success();
     }
+    const oldType = getType(value);
+    if (oldType) {
+      withType(result, oldType);
+    }
     return Make.ok(withType(result, type ? [type] : []));
   };
 }

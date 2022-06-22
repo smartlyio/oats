@@ -60,4 +60,4 @@ export function getType(value: Record<string, any>): Type[] | undefined {
   }
 }
 
-const reflection = Symbol();
+const reflection = Symbol('reflection');

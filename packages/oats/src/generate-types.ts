@@ -647,34 +647,13 @@ export function run(options: Options) {
         ts.createExpressionStatement(ts.createCall(ts.createIdentifier('super'), [], [])),
         ts.createExpressionStatement(
           ts.createCall(
-            ts.createPropertyAccess(ts.createIdentifier('Object'), 'assign'),
+            ts.createPropertyAccess(ts.factory.createIdentifier('oar'), 'instanceAssign'),
             [],
             [
               ts.createThis(),
-              ts.createConditional(
-                ts.createBinary(
-                  ts.createIdentifier('opts'),
-                  ts.createToken(ts.SyntaxKind.AmpersandAmpersandToken),
-                  ts.createBinary(
-                    ts.createStringLiteral('unSafeSet'),
-                    ts.createToken(ts.SyntaxKind.InKeyword),
-                    ts.createIdentifier('opts')
-                  )
-                ),
-                ts.createIdentifier('value'),
-                ts.createCall(
-                  ts.createPropertyAccess(
-                    ts.createCall(
-                      ts.createIdentifier('build' + options.nameMapper(key, 'value')),
-                      undefined,
-                      [ts.createIdentifier('value'), ts.createIdentifier('opts')]
-                    ),
-                    ts.createIdentifier('success')
-                  ),
-                  undefined,
-                  []
-                )
-              )
+              ts.createIdentifier('value'),
+              ts.createIdentifier('opts'),
+              ts.createIdentifier('build' + options.nameMapper(key, 'value'))
             ]
           )
         )
