@@ -83,7 +83,7 @@ describe('network ts mappig', () => {
         .success();
       expect(p.extra_property).toEqual('y');
     });
-    
+
     it('maps inputs', async () => {
       const p = types.typeItem
         .maker({ some_property: 'x' } as any, { convertFromNetwork: true })
