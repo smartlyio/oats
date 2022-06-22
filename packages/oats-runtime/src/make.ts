@@ -395,6 +395,9 @@ function getInputPropName(args: {
   if (!args.opts?.convertFromNetwork) {
     return args.index;
   }
+  // we need to look at the types already used for making the value to detect cases
+  // where the property has already been mapped and we should use the ts side
+  // property name
   const types = getType(args.value) ?? [];
   const networkProp = args.fromNetwork?.[args.index] ?? args.index;
   for (const type of types) {
@@ -467,6 +470,10 @@ export function makeObject<
         }
         return error('unexpected property').errorPath(index);
       }
+      // If the input value A has been made already with network prop name mapping
+      // this runs the property value through the current additionalProps maker to validate it
+      // nb. the property key *has* already been mapped when making A and we just use it here
+      // this works unless we start mapping additionalProp property names.
       const propResult: Make<any> = additionalProp(value[index], opts);
       if (propResult.isError()) {
         return propResult.errorPath(index);
