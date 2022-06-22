@@ -7,6 +7,9 @@ when generating code.
 NOTE: the mapping is not done for `additionalProperties` property names as those often contain maps and mapping map keys
 seemed unwise and hard to do.
 
+NOTE: unknown types such as property values for `additionalProperties: true` properties are not mapped as we do not know
+the schemas for those values.
+
 ## Silently breaking change 
 
 Due to the mapping we cannot anymore lowercase request headers on the client side. This has been prevented before by the

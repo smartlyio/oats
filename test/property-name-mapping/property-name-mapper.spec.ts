@@ -77,6 +77,13 @@ describe('network ts mappig', () => {
     });
   });
   describe('mapping works', () => {
+    it('maps inputs but not additional props', async () => {
+      const p = types.typeItem
+        .maker({ some_property: 'x', extra_property: 'y' } as any, { convertFromNetwork: true })
+        .success();
+      expect(p.extra_property).toEqual('y');
+    });
+    
     it('maps inputs', async () => {
       const p = types.typeItem
         .maker({ some_property: 'x' } as any, { convertFromNetwork: true })

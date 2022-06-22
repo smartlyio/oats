@@ -50,7 +50,7 @@ export function getTypeSet(value: Record<string, any>): Set<Type> | undefined {
   return;
 }
 
-/**  Get reflection type from a  made value.
+/**  Get reflection type from a  made value for serialization.
  * Note that only directly made object values or ValueClasses can be used
  * */
 export function getType(value: Record<string, any>): Type[] | undefined {
