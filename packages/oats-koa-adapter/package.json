@@ -40,12 +40,12 @@
     "@smartlyio/oats-runtime": "^4.4.0",
     "@types/koa": "2.13.4",
     "@types/koa-router": "7.4.4",
-    "@types/lodash": "4.14.181",
-    "@types/node": "16.11.26",
+    "@types/lodash": "4.14.182",
+    "@types/node": "16.11.41",
     "koa": "2.13.4",
     "koa-body": "4.2.0",
     "koa-router": "10.1.1",
     "ts-node": "10.7.0",
-    "typescript": "4.6.3"
+    "typescript": "4.6.4"
   }
 }
