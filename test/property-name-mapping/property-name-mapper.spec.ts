@@ -51,6 +51,13 @@ describe('network ts mapping', () => {
     });
   });
   describe('allOf', () => {
+    it('handles discriminated objects in allOf', () => {
+      const input: any = { prop_tag: 'one' };
+      const value = types.typeAllOfWithDiscrimination
+        .maker(input, { convertFromNetwork: true })
+        .success();
+      expect(runtime.serialize(value)).toEqual(input);
+    });
     it('checks mapped props with all branches of allOf', () => {
       const input = {
         // this is allowed by Item but not by overlapping other ThirdItem

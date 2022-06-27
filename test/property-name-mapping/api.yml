@@ -68,6 +68,19 @@ components:
           properties:
             extra_value:
               type: string
+    AllOfWithDiscrimination:
+      description: |
+        test that we consider the mapped discriminator
+      allOf:
+        - type: object
+          properties:
+            prop_tag:
+              type: string
+        - $ref: '#/components/schemas/Discriminated'
+        - type: object
+          properties:
+            prop_tag:
+              type: string
     Discriminated:
       description: |
         oneOf with discriminators need mapping of the discriminator key
