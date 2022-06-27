@@ -636,6 +636,22 @@ function fromObjectReflection(type: ObjectType): Maker<any, any> {
   );
 }
 
+function networkMapFromDiscriminatedType(prop: string, type: Type): string | undefined {
+  switch (type.type) {
+    case 'object':
+      return type.properties[prop].networkName;
+    case 'named':
+      return networkMapFromDiscriminatedType(prop, type.reference().definition);
+    case 'intersection':
+      // note that within a single discriminator set the key must the be the same
+      // and thus the network key must be the same and we can consider only the first option
+      return networkMapFromDiscriminatedType(prop, type.options[0]);
+    case 'union':
+      return networkMapFromDiscriminatedType(prop, type.options[0]);
+  }
+  return;
+}
+
 function fromUnionReflection(types: Type[]): Maker<any, any> {
   const { discriminator, undiscriminated } = discriminateUnion(types);
   const untaggedMaker =
@@ -651,9 +667,20 @@ function fromUnionReflection(types: Type[]): Maker<any, any> {
     // note that we need to check the undiscriminated values also as those *might* match also
     discriminatedMakers.set(key, makeOneOf(...[...untaggedMaker, fromReflection(t)]));
   }
+  // we choose the first entry from discriminators as all the options *must* have the same property name and
+  // thus the same network property name.
+  const networkDiscriminatorKey =
+    networkMapFromDiscriminatedType(discriminator.key, [...discriminator.map.values()][0]) ??
+    discriminator.key;
   return (value: any, opts?: MakeOptions) => {
-    if (value && typeof value === 'object' && !Array.isArray(value) && discriminator.key in value) {
-      const discriminatedType = discriminatedMakers.get(value[discriminator.key]);
+    const key = getInputPropName({
+      value,
+      index: discriminator.key,
+      fromNetwork: { [discriminator.key]: networkDiscriminatorKey },
+      opts
+    });
+    if (value && typeof value === 'object' && !Array.isArray(value) && key in value) {
+      const discriminatedType = discriminatedMakers.get(value[key]);
       if (discriminatedType) {
         return discriminatedType(value, opts);
       }

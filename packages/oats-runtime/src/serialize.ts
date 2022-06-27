@@ -11,10 +11,14 @@ export function serialize(value: any): any {
   if (!types) {
     return value;
   }
+  let hasAdditionalProps = false;
   // get mapping from all types ts property names to network names
   const jointMap = types
     .flatMap(type => (type.type === 'object' ? [type] : []))
     .reduce<Map<string, string>>((memo, type) => {
+      if (type.additionalProperties !== false) {
+        hasAdditionalProps = true;
+      }
       for (const key in type.properties) {
         const mapped = type.properties[key].networkName;
         if (mapped != null) {
@@ -24,7 +28,7 @@ export function serialize(value: any): any {
       return memo;
     }, new Map());
   // in case there are no network mapping done we can return immediately to avoid wasting a loop
-  if (jointMap.size === 0) {
+  if (jointMap.size === 0 && !hasAdditionalProps) {
     return value;
   }
   // map value using jointMap

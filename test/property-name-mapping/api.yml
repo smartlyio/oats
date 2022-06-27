@@ -42,6 +42,62 @@ paths:
                 $ref: "#/components/schemas/Item"
 components:
   schemas:
+    ArraySchema:
+      type: array
+      items:
+        $ref: '#/components/schemas/Item'
+    NonDiscriminatedOneOf:
+      oneOf:
+        - type: object
+          required:
+            - first_value
+          properties:
+            first_value:
+              type: string
+        - type: object
+          required:
+            - other_value
+          properties:
+            other_value:
+              type: string
+    MixedDiscrimination:
+      oneOf:
+        - $ref: "#/components/schemas/AdditionalpPropOne"
+        - $ref: "#/components/schemas/AdditionalpPropTwo"
+        - type: object
+          properties:
+            extra_value:
+              type: string
+    Discriminated:
+      description: |
+        oneOf with discriminators need mapping of the discriminator key
+      oneOf:
+        - $ref: "#/components/schemas/AdditionalpPropOne"
+        - $ref: "#/components/schemas/AdditionalpPropTwo"
+    AdditionalpPropTwo:
+      type: object
+      required:
+        - prop_tag
+      properties:
+        prop_tag:
+          type: string
+          enum:
+            - two
+    AdditionalpPropOne:
+      type: object
+      required:
+        - prop_tag
+      properties:
+        prop_tag:
+          type: string
+          enum:
+            - one
+    AdditionalPropSchema:
+      type: object
+      additionalProperties:
+        oneOf:
+          - $ref: "#/components/schemas/AdditionalpPropOne"
+          - $ref: "#/components/schemas/AdditionalpPropTwo"
     NestedNamed:
       type: object
       properties:

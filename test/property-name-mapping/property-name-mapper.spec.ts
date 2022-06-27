@@ -10,7 +10,46 @@ import * as client from './tmp/client/generated';
 import * as axiosAdapter from '@smartlyio/oats-axios-adapter';
 import axios from 'axios';
 
-describe('network ts mappig', () => {
+describe('network ts mapping', () => {
+  describe('array', () => {
+    it('maps values inside arrays', () => {
+      const input: any = [{ some_property: 'abc' }];
+      const value = types.typeArraySchema.maker(input, { convertFromNetwork: true }).success();
+      expect(runtime.serialize(value)).toEqual(input);
+    });
+  });
+  describe('oneOf', () => {
+    it('handles mixed discriminated and undiscriminated objects', () => {
+      const input: any = { extra_value: 'one' };
+      const value = types.typeMixedDiscrimination
+        .maker(input, { convertFromNetwork: true })
+        .success();
+      expect(runtime.serialize(value)).toEqual(input);
+    });
+
+    it('handles discriminated objects', () => {
+      const input: any = { prop_tag: 'one' };
+      const value = types.typeDiscriminated.maker(input, { convertFromNetwork: true }).success();
+      expect(runtime.serialize(value)).toEqual(input);
+    });
+
+    it('handles undiscriminated objects', () => {
+      const input: any = { first_value: 'one' };
+      const value = types.typeNonDiscriminatedOneOf
+        .maker(input, { convertFromNetwork: true })
+        .success();
+      expect(runtime.serialize(value)).toEqual(input);
+    });
+  });
+  describe('additionalProps', () => {
+    it('serialized names objects as values in additionalProps', () => {
+      const input: any = { some_key: { prop_tag: 'one' } };
+      const value = types.typeAdditionalPropSchema
+        .maker(input, { convertFromNetwork: true })
+        .success();
+      expect(runtime.serialize(value)).toEqual(input);
+    });
+  });
   describe('allOf', () => {
     it('checks mapped props with all branches of allOf', () => {
       const input = {
