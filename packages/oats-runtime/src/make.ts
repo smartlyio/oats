@@ -648,8 +648,11 @@ function networkMapFromDiscriminatedType(prop: string, type: Type): string | und
       return networkMapFromDiscriminatedType(prop, type.options[0]);
     case 'union':
       return networkMapFromDiscriminatedType(prop, type.options[0]);
+    default:
+      throw new Error(
+        `Non object like type when looking for discriminator network mapping for ${prop}. This is likely a bug in oats`
+      );
   }
-  return;
 }
 
 function fromUnionReflection(types: Type[]): Maker<any, any> {

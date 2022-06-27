@@ -19,6 +19,13 @@ describe('network ts mapping', () => {
     });
   });
   describe('oneOf', () => {
+    it('handles mixed discriminated and undiscriminated objects with string value', () => {
+      const input: any = 'string value';
+      const value = types.typeMixedDiscrimination
+        .maker(input, { convertFromNetwork: true })
+        .success();
+      expect(runtime.serialize(value)).toEqual(input);
+    });
     it('handles mixed discriminated and undiscriminated objects', () => {
       const input: any = { extra_value: 'one' };
       const value = types.typeMixedDiscrimination

@@ -64,6 +64,7 @@ components:
       oneOf:
         - $ref: "#/components/schemas/AdditionalpPropOne"
         - $ref: "#/components/schemas/AdditionalpPropTwo"
+        - type: string
         - type: object
           properties:
             extra_value:
