@@ -1,4 +1,4 @@
-# 4.4.0
+# 5.0.0
 
 Allow mapping properties from network format specified in the openapi spec to something more expected in typescript. Eg
 from snake_case to camelCase. The mapping is done using `propertyNameMapper` function passed to the driver configuration
