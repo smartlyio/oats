@@ -1,7 +1,10 @@
 import * as make from '../src/make';
 import * as jsc from 'jsverify';
 import { TestClass } from './test-class';
+import * as classWithAdditional from './test-class-with-additional-props';
 import { Type } from '../src/reflection-type';
+import { serialize } from '../src/serialize';
+import { getType } from '../src/type-tag';
 
 describe('union differentation', () => {
   it('handles cases where union children are missing the tag', () => {
@@ -555,6 +558,185 @@ describe('object', () => {
       expect(fun(value).errors[0].error).toEqual(
         'Using constructor as objects additional field is not allowed.'
       );
+    });
+  });
+
+  describe('getType', () => {
+    it('returns undefined for falsys', () => {
+      const type: Type = {
+        type: 'null'
+      };
+      const fun = make.fromReflection(type);
+      expect(getType(fun(null).success())).toEqual(undefined);
+    });
+
+    it('returns undefined for non-objects', () => {
+      const type: Type = {
+        type: 'array',
+        items: {
+          type: 'unknown'
+        }
+      };
+      const fun = make.fromReflection(type);
+      expect(getType(fun([]).success())).toEqual(undefined);
+    });
+
+    describe('oneOf', () => {
+      it('returns the type used for construction', () => {
+        const type1: Type = {
+          type: 'object',
+          properties: { a: { value: { type: 'number' }, required: true } },
+          additionalProperties: true
+        };
+        const type2: Type = {
+          type: 'object',
+          properties: { b: { value: { type: 'number' }, required: true } },
+          additionalProperties: true
+        };
+        const oneOf: Type = {
+          type: 'union',
+          options: [type1, type2]
+        };
+        const fun = make.fromReflection(oneOf);
+        const gotType = getType(fun({ a: 1 }).success());
+        expect(gotType).toEqual([type1]);
+      });
+    });
+
+    describe('allOf', () => {
+      it('returns the type used for construction', () => {
+        const type1: Type = {
+          type: 'object',
+          properties: { a: { value: { type: 'number' }, required: true } },
+          additionalProperties: true
+        };
+        const type2: Type = {
+          type: 'object',
+          properties: { b: { value: { type: 'number' }, required: true } },
+          additionalProperties: true
+        };
+        const allOf: Type = {
+          type: 'intersection',
+          options: [type1, type2]
+        };
+        const fun = make.fromReflection(allOf);
+        const gotType = getType(fun({ a: 1, b: 1 }).success());
+        expect(gotType).toHaveLength(2);
+        expect(gotType).toEqual(expect.arrayContaining([type1, type2]));
+      });
+
+      it('returns the type for value class', () => {
+        const type: Type = {
+          type: 'object',
+          properties: { c: { value: { type: 'string' }, required: true } },
+          additionalProperties: true
+        };
+        const allOf: Type = {
+          type: 'intersection',
+          options: [{ type: 'named', reference: () => classWithAdditional.named }, type]
+        };
+        const input = { a: [], b: 'a', c: 'other value' };
+        const fun = make.fromReflection(allOf);
+        const madeValue = fun(input).success();
+        expect(getType(madeValue)).toEqual(
+          expect.arrayContaining([classWithAdditional.TestClass.reflection().definition, type])
+        );
+        expect(madeValue).toEqual(input);
+      });
+    });
+
+    it('returns the type used for construction', () => {
+      const type: Type = {
+        type: 'object',
+        additionalProperties: false,
+        properties: { a: { value: { type: 'number' }, required: true } }
+      };
+      const fun = make.fromReflection(type);
+      expect(getType(fun({ a: 1 }).success())).toEqual([type]);
+    });
+
+    it('returns the type for value class', () => {
+      const value = TestClass.make({ a: [], b: 'a' }).success();
+      expect(getType(value)).toEqual([TestClass.reflection().definition]);
+    });
+  });
+
+  describe('property mapping', () => {
+    it('map properties from network to ts side', () => {
+      const fun = make.fromReflection({
+        type: 'object',
+        additionalProperties: false,
+        properties: { ts: { value: { type: 'number' }, required: true, networkName: 'network' } }
+      });
+      const value = fun({ network: 1 }, { convertFromNetwork: true }).success();
+      expect(value).toEqual({ ts: 1 });
+      expect(serialize(value)).toEqual({ network: 1 });
+    });
+
+    it('maps arrays', () => {
+      const fun = make.fromReflection({
+        type: 'array',
+        items: {
+          type: 'object',
+          additionalProperties: false,
+          properties: { ts: { value: { type: 'number' }, required: true, networkName: 'network' } }
+        }
+      });
+      const value = fun([{ network: 1 }], { convertFromNetwork: true }).success();
+      expect(value).toEqual([{ ts: 1 }]);
+      expect(serialize(value)).toEqual([{ network: 1 }]);
+    });
+
+    it('does not do anything with scalars', () => {
+      const fun = make.fromReflection({
+        type: 'string'
+      });
+      const value = fun('abc', { convertFromNetwork: true }).success();
+      expect(value).toEqual('abc');
+      expect(serialize(value)).toEqual('abc');
+    });
+
+    it('does not do anything with nulls', () => {
+      const fun = make.fromReflection({
+        type: 'null'
+      });
+      const value = fun(null, { convertFromNetwork: true }).success();
+      expect(value).toEqual(null);
+      expect(serialize(value)).toEqual(null);
+    });
+
+    it('does not map properties without the flag', () => {
+      const fun = make.fromReflection({
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          ts: { value: { type: 'number' }, required: true, networkName: 'network' }
+        }
+      });
+      expect(fun({ network: 1 }, {}).errors[0]).toEqual(expect.objectContaining({ path: ['ts'] }));
+    });
+
+    it('does not map additionalProperties', () => {
+      const fun = make.fromReflection({
+        type: 'object',
+        additionalProperties: true,
+        properties: { ts: { value: { type: 'number' }, required: true, networkName: 'network' } }
+      });
+      expect(fun({ network: 1, foo: 2 }, { convertFromNetwork: true }).success()).toEqual({
+        ts: 1,
+        foo: 2
+      });
+    });
+
+    it('does not overwrite with additionalProps', () => {
+      const fun = make.fromReflection({
+        type: 'object',
+        additionalProperties: true,
+        properties: { ts: { value: { type: 'number' }, required: true, networkName: 'network' } }
+      });
+      expect(fun({ network: 1, ts: 2 }, { convertFromNetwork: true }).success()).toEqual({
+        ts: 1
+      });
     });
   });
 

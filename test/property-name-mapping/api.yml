@@ -1,0 +1,176 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: example service
+servers:
+  - url: http://localhost:12000
+paths:
+  /item/{some_item}:
+    post:
+      parameters:
+        - in: query
+          name: some_query_item
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: header_item
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: some_item
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Item"
+      responses:
+        '200':
+          description: item found
+          headers:
+            reply_header:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+components:
+  schemas:
+    ArraySchema:
+      type: array
+      items:
+        $ref: '#/components/schemas/Item'
+    NonDiscriminatedOneOf:
+      oneOf:
+        - type: object
+          required:
+            - first_value
+          properties:
+            first_value:
+              type: string
+        - type: object
+          required:
+            - other_value
+          properties:
+            other_value:
+              type: string
+    MixedDiscrimination:
+      oneOf:
+        - $ref: "#/components/schemas/AdditionalpPropOne"
+        - $ref: "#/components/schemas/AdditionalpPropTwo"
+        - type: string
+        - type: object
+          properties:
+            extra_value:
+              type: string
+    AllOfWithDiscrimination:
+      description: |
+        test that we consider the mapped discriminator
+      allOf:
+        - type: object
+          properties:
+            prop_tag:
+              type: string
+        - $ref: '#/components/schemas/Discriminated'
+        - type: object
+          properties:
+            prop_tag:
+              type: string
+    Discriminated:
+      description: |
+        oneOf with discriminators need mapping of the discriminator key
+      oneOf:
+        - $ref: "#/components/schemas/AdditionalpPropOne"
+        - $ref: "#/components/schemas/AdditionalpPropTwo"
+    AdditionalpPropTwo:
+      type: object
+      required:
+        - prop_tag
+      properties:
+        prop_tag:
+          type: string
+          enum:
+            - two
+    AdditionalpPropOne:
+      type: object
+      required:
+        - prop_tag
+      properties:
+        prop_tag:
+          type: string
+          enum:
+            - one
+    AdditionalPropSchema:
+      type: object
+      additionalProperties:
+        oneOf:
+          - $ref: "#/components/schemas/AdditionalpPropOne"
+          - $ref: "#/components/schemas/AdditionalpPropTwo"
+    NestedNamed:
+      type: object
+      properties:
+        nested_named_prop:
+          type: string
+    SchemaWithNestedObjects:
+      allOf:
+        - type: object
+          properties:
+            prop:
+              type: object
+              properties:
+                first_nested:
+                  type: string
+        - type: object
+          properties:
+            prop:
+              type: object
+              properties:
+                second_nested:
+                  type: string
+        - type: object
+          properties:
+            prop:
+              $ref: "#/components/schemas/NestedNamed"
+    AllOfSchema:
+      allOf:
+        - $ref: "#/components/schemas/Item"
+        - allOf:
+          - $ref: "#/components/schemas/ThirdItem"
+          - $ref: "#/components/schemas/SecondItem"
+    ThirdItem:
+      type: object
+      properties:
+        overlapping_property:
+          type: string
+        extra_second_property:
+          type: string
+        extra_third_property:
+          type: string
+    SecondItem:
+      type: object
+      properties:
+        extra_second_property:
+          type: string
+    Item:
+      type: object
+      required:
+        - some_property
+      properties:
+        overlapping_property:
+          oneOf:
+            - type: string
+            - type: number
+        some_property:
+          type: string
+        extra_prop:
+          type: object
+          properties:
+            extra_nested_object_prop:
+              type: string
+

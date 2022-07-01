@@ -1,10 +1,11 @@
 import { assert, fail } from './assert';
 import safe from '@smartlyio/safe-navigation';
 import * as _ from 'lodash';
+import { isEqual, uniq } from 'lodash';
 import { ValueClass } from './value-class';
 import { NamedTypeDefinition, ObjectType, Type } from './reflection-type';
 import { discriminateUnion } from './union-discriminator';
-import { isEqual, uniq } from 'lodash';
+import { getType, getTypeSet, withType } from './type-tag';
 
 export class MakeError extends Error {
   constructor(readonly errors: ValidationError[]) {
@@ -122,6 +123,9 @@ export interface MakeOptions {
    * (if query parameter is not repeated, it will not be an array on server side).
    */
   allowConvertForArrayType?: boolean;
+
+  /** If true convert property names from network to ts format while parsing objects */
+  convertFromNetwork?: boolean;
 }
 
 export type Maker<Shape, V> = (value: Shape, opts?: MakeOptions) => Make<V>;
@@ -363,16 +367,18 @@ export function makeOneOf(...options: any[]) {
   };
 }
 
-export function makeAllOf(...all: any[]) {
+export function makeAllOf(...all: Maker<any, any>[]) {
   return (value: any, opts?: MakeOptions) => {
+    const types = [];
     for (const make of all) {
       const result: Make<any> = make(value, opts);
       if (result.isError()) {
         return result.errorPath('(allOf)');
       }
       value = result.success();
+      types.push(...(getTypeSet(value) ?? []));
     }
-    return Make.ok(value);
+    return Make.ok(withType(value, types));
   };
 }
 
@@ -380,9 +386,45 @@ function isMagic(field: string) {
   return ['__proto__', 'constructor'].indexOf(field) >= 0;
 }
 
+function getInputPropName(args: {
+  value: any;
+  index: string;
+  fromNetwork: Record<string, string>;
+  opts?: MakeOptions;
+}) {
+  if (!args.opts?.convertFromNetwork) {
+    return args.index;
+  }
+  // we need to look at the types already used for making the value to detect cases
+  // where the property has already been mapped and we should use the ts side
+  // property name
+  const types = getType(args.value) ?? [];
+  const networkProp = args.fromNetwork?.[args.index] ?? args.index;
+  for (const type of types) {
+    if (type.type !== 'object') {
+      // only objects can have network mappings
+      continue;
+    }
+    const mapped = type.properties[args.index];
+    if (mapped) {
+      // if the object was made already then network mapping has been done for listed properties
+      // and we should use the ts side property
+      assert(
+        networkProp == mapped.networkName,
+        `Network names for properties with the same name need to be equal when a object has multiple types. Mismatch in ${networkProp} and ${mapped.networkName}.`
+      );
+      return args.index;
+    }
+  }
+  return networkProp;
+}
+
 export function makeObject<
   P extends { [key: string]: Maker<any, any> | { optional: Maker<any, any> } }
->(props: P, additionalProp?: any, comparisorOrder?: string[]) {
+>(props: P, additionalProp?: any, comparisorOrder?: string[], type?: ObjectType) {
+  const fromNetwork = fromNetworkMap(type);
+  const listedInputPropNames = new Set(Object.keys(props).map(prop => fromNetwork[prop] ?? prop));
+
   return (value: any, opts?: MakeOptions) => {
     if (typeof value !== 'object' || value == null || Array.isArray(value)) {
       return getErrorWithValueMsg('expected an object', value);
@@ -393,26 +435,32 @@ export function makeObject<
       if (isMagic(index)) {
         return error(`Using ${index} as field of an object is not allowed`);
       }
+      const inputPropName = getInputPropName({ opts, index, fromNetwork, value });
       let maker: any = props[index];
       if (!maker) {
         return error(`Prop maker not found for key ${index}. This is likely a bug in oats`);
       }
       if (maker.optional) {
-        if (!(index in value) || value[index] === undefined) {
+        if (!(inputPropName in value) || value[inputPropName] === undefined) {
           continue;
         }
         maker = maker.optional;
       }
-      const propResult: Make<any> = maker(value[index], opts);
+      const propResult: Make<any> = maker(value[inputPropName], opts);
       if (propResult.isError()) {
         return propResult.errorPath(index);
       }
       result[index] = propResult.success();
     }
     for (const index of Object.keys(value)) {
+      // do not consider props that got mapped
+      if (opts?.convertFromNetwork && listedInputPropNames.has(index)) {
+        continue;
+      }
       if (isMagic(index)) {
         return error(`Using ${index} as objects additional field is not allowed.`);
       }
+      // do not allow overriding mapped props
       if (props[index]) {
         continue;
       }
@@ -422,13 +470,21 @@ export function makeObject<
         }
         return error('unexpected property').errorPath(index);
       }
+      // If the input value A has been made already with network prop name mapping
+      // this runs the property value through the current additionalProps maker to validate it
+      // nb. the property key *has* already been mapped when making A and we just use it here
+      // this works unless we start mapping additionalProp property names.
       const propResult: Make<any> = additionalProp(value[index], opts);
       if (propResult.isError()) {
         return propResult.errorPath(index);
       }
       result[index] = propResult.success();
     }
-    return Make.ok(result);
+    const oldType = getType(value);
+    if (oldType) {
+      withType(result, oldType);
+    }
+    return Make.ok(withType(result, type ? [type] : []));
   };
 }
 
@@ -542,12 +598,26 @@ function priority(v: ObjectType['properties'][string]) {
   return Priority.NonScalar;
 }
 
+function fromNetworkMap(type?: ObjectType) {
+  if (!type) {
+    return {};
+  }
+  const fromNetwork = Object.keys(type.properties).reduce<Record<string, string>>((memo, key) => {
+    const mapped = type.properties[key].networkName;
+    if (mapped) {
+      memo[key] = mapped;
+    }
+    return memo;
+  }, {});
+  return fromNetwork;
+}
 function fromObjectReflection(type: ObjectType): Maker<any, any> {
   const comparisonOrder = Object.keys(type.properties).sort((aKey, bKey) => {
     const a = type.properties[aKey]!;
     const b = type.properties[bKey]!;
     return priority(a) - priority(b);
   });
+
   return makeObject(
     Object.entries(type.properties).reduce(
       (memo, [key, prop]) => ({
@@ -561,8 +631,28 @@ function fromObjectReflection(type: ObjectType): Maker<any, any> {
         ? makeAny()
         : fromReflection(type.additionalProperties)
       : undefined,
-    comparisonOrder
+    comparisonOrder,
+    type
   );
+}
+
+function networkMapFromDiscriminatedType(prop: string, type: Type): string | undefined {
+  switch (type.type) {
+    case 'object':
+      return type.properties[prop].networkName;
+    case 'named':
+      return networkMapFromDiscriminatedType(prop, type.reference().definition);
+    case 'intersection':
+      // note that within a single discriminator set the key must the be the same
+      // and thus the network key must be the same and we can consider only the first option
+      return networkMapFromDiscriminatedType(prop, type.options[0]);
+    case 'union':
+      return networkMapFromDiscriminatedType(prop, type.options[0]);
+    default:
+      throw new Error(
+        `Non object like type when looking for discriminator network mapping for ${prop}. This is likely a bug in oats`
+      );
+  }
 }
 
 function fromUnionReflection(types: Type[]): Maker<any, any> {
@@ -580,9 +670,20 @@ function fromUnionReflection(types: Type[]): Maker<any, any> {
     // note that we need to check the undiscriminated values also as those *might* match also
     discriminatedMakers.set(key, makeOneOf(...[...untaggedMaker, fromReflection(t)]));
   }
+  // we choose the first entry from discriminators as all the options *must* have the same property name and
+  // thus the same network property name.
+  const networkDiscriminatorKey =
+    networkMapFromDiscriminatedType(discriminator.key, [...discriminator.map.values()][0]) ??
+    discriminator.key;
   return (value: any, opts?: MakeOptions) => {
-    if (value && typeof value === 'object' && !Array.isArray(value) && discriminator.key in value) {
-      const discriminatedType = discriminatedMakers.get(value[discriminator.key]);
+    const key = getInputPropName({
+      value,
+      index: discriminator.key,
+      fromNetwork: { [discriminator.key]: networkDiscriminatorKey },
+      opts
+    });
+    if (value && typeof value === 'object' && !Array.isArray(value) && key in value) {
+      const discriminatedType = discriminatedMakers.get(value[key]);
       if (discriminatedType) {
         return discriminatedType(value, opts);
       }

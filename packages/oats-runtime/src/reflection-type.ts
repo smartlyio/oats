@@ -96,6 +96,7 @@ export interface NamedType {
 export interface PropType {
   required: boolean;
   value: Type;
+  networkName?: string;
 }
 
 export interface Props {

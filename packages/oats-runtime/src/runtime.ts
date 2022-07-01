@@ -4,12 +4,16 @@ import * as make from './make';
 import { fromReflection } from './make';
 import * as valueClass from './value-class';
 import * as reflection from './reflection-type';
+import * as typeTag from './type-tag';
+import { ValueClass } from './value-class';
 
 export { redirect } from './redirect';
 
 export { make, fromReflection, server, client, valueClass, reflection };
 
 export const noContentContentType = 'oatsNoContent' as const;
+export { serialize } from './serialize';
+export { getType, withType } from './type-tag';
 
 type Scalar = number | string | boolean;
 
@@ -17,6 +21,23 @@ const typeWitnessKey = Symbol();
 const tagKey = Symbol();
 
 type ScalarWithoutBrand<V> = V extends ShapedClass<infer S> ? ScalarWithoutBrand<S> : V;
+
+// helper to set necessary metadata  for valueclass instances
+export function instanceAssign(
+  to: ValueClass,
+  value: Record<string, unknown>,
+  opts: make.MakeOptions | { unSafeSet: boolean } | undefined,
+  builder: make.Maker<any, any>
+) {
+  Object.assign(to, opts && 'unSafeSet' in opts ? value : builder(value, opts).success());
+  // when we create an instance of a ValueClass we need to propagate the type information from 'value' to the newly
+  // constructed instance
+  const existingType = typeTag.getType(value);
+  if (existingType) {
+    return typeTag.withType(to, existingType);
+  }
+  return to;
+}
 
 export type ShapeOf<A> = A extends Scalar
   ? ScalarWithoutBrand<A>

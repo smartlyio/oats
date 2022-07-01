@@ -55,6 +55,11 @@ export interface Options {
    * `[key: string]: unknown`
    * for objects with `additionalProperties: true` or no additionalProperties set */
   unknownAdditionalPropertiesIndexSignature?: AdditionalPropertiesIndexSignature;
+  /** property name mapper for object properties
+   *  ex. to map 'snake_case' property in network format to property 'camelCase' usable in ts code provide mapper
+   *  > propertyNameMapper: (p) => p === 'snake_case ? 'camelCase' : p
+   * */
+  propertyNameMapper?: (openapiPropertyName: string) => string;
   nameMapper: oautil.NameMapper;
 }
 
@@ -175,7 +180,7 @@ export function run(options: Options) {
       return ts.createProperty(
         undefined,
         [ts.createToken(ts.SyntaxKind.ReadonlyKeyword)],
-        quotedProp(key),
+        quotedProp(options.propertyNameMapper ? options.propertyNameMapper(key) : key),
         required && required.indexOf(key) >= 0
           ? ts.createToken(ts.SyntaxKind.ExclamationToken)
           : ts.createToken(ts.SyntaxKind.QuestionToken),
@@ -219,7 +224,7 @@ export function run(options: Options) {
       oautil.errorTag(`property '${key}'`, () =>
         ts.createPropertySignature(
           readonly,
-          quotedProp(key),
+          quotedProp(options.propertyNameMapper ? options.propertyNameMapper(key) : key),
           required && required.indexOf(key) >= 0
             ? undefined
             : ts.createToken(ts.SyntaxKind.QuestionToken),
@@ -642,34 +647,13 @@ export function run(options: Options) {
         ts.createExpressionStatement(ts.createCall(ts.createIdentifier('super'), [], [])),
         ts.createExpressionStatement(
           ts.createCall(
-            ts.createPropertyAccess(ts.createIdentifier('Object'), 'assign'),
+            ts.createPropertyAccess(ts.factory.createIdentifier('oar'), 'instanceAssign'),
             [],
             [
               ts.createThis(),
-              ts.createConditional(
-                ts.createBinary(
-                  ts.createIdentifier('opts'),
-                  ts.createToken(ts.SyntaxKind.AmpersandAmpersandToken),
-                  ts.createBinary(
-                    ts.createStringLiteral('unSafeSet'),
-                    ts.createToken(ts.SyntaxKind.InKeyword),
-                    ts.createIdentifier('opts')
-                  )
-                ),
-                ts.createIdentifier('value'),
-                ts.createCall(
-                  ts.createPropertyAccess(
-                    ts.createCall(
-                      ts.createIdentifier('build' + options.nameMapper(key, 'value')),
-                      undefined,
-                      [ts.createIdentifier('value'), ts.createIdentifier('opts')]
-                    ),
-                    ts.createIdentifier('success')
-                  ),
-                  undefined,
-                  []
-                )
-              )
+              ts.createIdentifier('value'),
+              ts.createIdentifier('opts'),
+              ts.createIdentifier('build' + options.nameMapper(key, 'value'))
             ]
           )
         )
@@ -1067,7 +1051,11 @@ export function run(options: Options) {
           ts.createObjectLiteral(
             Object.keys(schema.properties || {}).map((propertyName: string) => {
               return ts.createPropertyAssignment(
-                ts.createStringLiteral(propertyName),
+                ts.createStringLiteral(
+                  options.propertyNameMapper
+                    ? options.propertyNameMapper(propertyName)
+                    : propertyName
+                ),
                 ts.createObjectLiteral(
                   [
                     ts.createPropertyAssignment(
@@ -1076,6 +1064,14 @@ export function run(options: Options) {
                         ? ts.createTrue()
                         : ts.createFalse()
                     ),
+                    ...(options.propertyNameMapper
+                      ? [
+                          ts.createPropertyAssignment(
+                            'networkName',
+                            ts.createStringLiteral(propertyName)
+                          )
+                        ]
+                      : []),
                     ts.createPropertyAssignment(
                       'value',
                       generateReflectionType((schema.properties as any)[propertyName])

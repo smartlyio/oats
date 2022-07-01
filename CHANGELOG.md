@@ -1,3 +1,22 @@
+# 5.0.0
+
+Allow mapping properties from network format specified in the openapi spec to something more expected in typescript. Eg
+from snake_case to camelCase. The mapping is done using `propertyNameMapper` function passed to the driver configuration
+when generating code.
+
+NOTE: the mapping is not done for `additionalProperties` property names as those often contain maps and mapping map keys
+seemed unwise and hard to do.
+
+NOTE: unknown types such as property values for `additionalProperties: true` properties are not mapped as we do not know
+the schemas for those values.
+
+## Silently breaking change 
+
+Due to the mapping we cannot anymore lowercase request headers on the client side. This has been prevented before by the
+type system but if somebody has subverted the type system to allow upper cased headers you will have a bad time as 
+the uppercased headers will be dropped now. This only affects the client side usage of oats. Please check that you have well typed
+request headers on client side.
+
 # 4.3.2
 
 ## Bug Fixes

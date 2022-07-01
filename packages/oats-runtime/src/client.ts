@@ -184,7 +184,8 @@ function makeMethod(adapter: ClientAdapter, handler: server.Handler, pathParams:
     handler.body,
     handler.response,
     ctx =>
-      adapter({ ...ctx, path: fillInPathParams(params, handler.path), servers: handler.servers })
+      adapter({ ...ctx, path: fillInPathParams(params, handler.path), servers: handler.servers }),
+    { mode: 'client' }
   );
   return (ctx: ClientArg<any, any, any>) =>
     call({

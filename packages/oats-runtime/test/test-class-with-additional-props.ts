@@ -7,7 +7,7 @@ export type ShapeOfTestClass = ShapeOf<TestClass>;
 
 const type: ObjectType = {
   type: 'object',
-  additionalProperties: false,
+  additionalProperties: true,
   properties: {
     a: { value: { type: 'array', items: { type: 'string' } }, required: true, networkName: 'netB' },
     b: { value: { type: 'string' }, required: true, networkName: 'netB' }
@@ -25,6 +25,7 @@ export class TestClass extends ValueClass {
   }
   public b!: string;
   public a!: ReadonlyArray<string>;
+  [key: string]: unknown;
   constructor(v: ShapeOfTestClass) {
     super();
     const value = named.maker(v).success();
