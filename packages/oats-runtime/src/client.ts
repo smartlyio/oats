@@ -31,7 +31,7 @@ export interface ClientSpec {
 export type RequestContext = { parameterised_path: string };
 
 export type ClientAdapter = server.Endpoint<
-  Headers | undefined,
+  server.Headers | undefined,
   server.Params | undefined,
   server.Query | undefined,
   server.RequestBody<any> | undefined,
