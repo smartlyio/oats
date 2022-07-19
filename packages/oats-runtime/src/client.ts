@@ -28,7 +28,16 @@ export interface ClientSpec {
   readonly [part: string]: ClientSpec | PathParam | ClientEndpoint<any, any, any, any>;
 }
 
-export type ClientAdapter = server.SafeEndpoint;
+export type RequestContext = { parameterised_path: string };
+
+export type ClientAdapter = server.Endpoint<
+  server.Headers | undefined,
+  server.Params | undefined,
+  server.Query | undefined,
+  server.RequestBody<any> | undefined,
+  server.Response<number, any, any, Record<string, any>>,
+  RequestContext
+>;
 export type ClientFactory<Spec> = (adapter: ClientAdapter) => Spec;
 
 interface RequestBody<T, ContentType> {
@@ -177,7 +186,7 @@ function fillInPathParams(params: { [key: string]: string }, path: string) {
 
 function makeMethod(adapter: ClientAdapter, handler: server.Handler, pathParams: string[]) {
   const params = paramObject(pathParams, handler.path);
-  const call = server.safe(
+  const call = server.safe<any, any, any, any, any, RequestContext>(
     handler.headers,
     handler.params,
     handler.query,
@@ -196,7 +205,7 @@ function makeMethod(adapter: ClientAdapter, handler: server.Handler, pathParams:
       headers: safe(ctx).headers.$,
       query: safe(ctx).query.$,
       body: safe(ctx).body.$,
-      requestContext: {}
+      requestContext: { path: handler.path }
     });
 }
 
