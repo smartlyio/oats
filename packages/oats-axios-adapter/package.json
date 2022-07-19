@@ -1,6 +1,6 @@
 {
   "name": "@smartlyio/oats-axios-adapter",
-  "version": "5.0.0",
+  "version": "5.1.0",
   "license": "MIT",
   "description": "Axios adapter for Oats a Openapi3 based generator for typescript aware servers and clients",
   "private": false,
@@ -35,7 +35,7 @@
   ],
   "devDependencies": {
     "@jest/globals": "27.5.1",
-    "@smartlyio/oats-runtime": "^5.0.0",
+    "@smartlyio/oats-runtime": "^5.1.0",
     "@types/form-data": "2.5.0",
     "axios": "0.27.2",
     "jest": "27.5.1",
