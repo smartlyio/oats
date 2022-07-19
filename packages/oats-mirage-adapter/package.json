@@ -20,7 +20,7 @@
     "url": "https://github.com/smartlyio/oats"
   },
   "peerDependencies": {
-    "@smartlyio/oats-runtime": "^4.3.1"
+    "@smartlyio/oats-runtime": "^5.1.1"
   },
   "keywords": [
     "oats",
