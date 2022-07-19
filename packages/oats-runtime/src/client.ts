@@ -28,7 +28,7 @@ export interface ClientSpec {
   readonly [part: string]: ClientSpec | PathParam | ClientEndpoint<any, any, any, any>;
 }
 
-export type RequestContext = { parameterised_path: string };
+export type RequestContext = { path: string };
 
 export type ClientAdapter = server.Endpoint<
   server.Headers | undefined,
