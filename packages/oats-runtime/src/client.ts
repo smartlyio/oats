@@ -205,7 +205,7 @@ function makeMethod(adapter: ClientAdapter, handler: server.Handler, pathParams:
       headers: safe(ctx).headers.$,
       query: safe(ctx).query.$,
       body: safe(ctx).body.$,
-      requestContext: { parameterised_path: handler.path }
+      requestContext: { path: handler.path }
     });
 }
 
