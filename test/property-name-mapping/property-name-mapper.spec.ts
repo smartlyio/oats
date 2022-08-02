@@ -58,6 +58,13 @@ describe('network ts mapping', () => {
     });
   });
   describe('allOf', () => {
+    it('handles allOf with multiple objects', () => {
+      const input = { foo_prop: { some_prop: 'abc' }, other_prop: { other_prop_prop: 'xxx' } };
+      const value = types.typeMultipleObjectsinAllOf
+        .maker(input, { convertFromNetwork: true })
+        .success();
+      expect(runtime.serialize(value)).toEqual(input);
+    });
     it('handles discriminated objects in allOf', () => {
       const input: any = { prop_tag: 'one' };
       const value = types.typeAllOfWithDiscrimination
