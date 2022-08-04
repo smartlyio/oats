@@ -252,6 +252,10 @@ function makeFloatOrInteger(
 }
 
 function checkAny(value: any) {
+  const type = getType(value);
+  if (type && type.length > 0) {
+    return Make.ok(withType(_.cloneDeep(value), type));
+  }
   return Make.ok(_.cloneDeep(value));
 }
 

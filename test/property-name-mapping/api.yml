@@ -42,6 +42,22 @@ paths:
                 $ref: "#/components/schemas/Item"
 components:
   schemas:
+    MultipleObjectsinAllOf:
+      allOf:
+        - type: object
+          properties:
+            foo_prop:
+              type: object
+              properties:
+                some_prop:
+                  type: string
+        - type: object
+          properties:
+            other_prop:
+              type: object
+              properties:
+                other_prop_prop:
+                  type: string
     ArraySchema:
       type: array
       items:
