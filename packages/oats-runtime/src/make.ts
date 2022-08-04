@@ -698,9 +698,7 @@ function fromUnionReflection(types: Type[]): Maker<any, any> {
       return untaggedMaker[0](value, opts);
     }
     if (value) {
-      return error(
-        `Invalid value '${value[key]}' for object discriminator '${discriminator.key}'`
-      );
+      return error(`Invalid value '${value[key]}' for object discriminator '${discriminator.key}'`);
     }
     return error(`Missing object value when discriminating by property '${discriminator.key}'`);
   };
