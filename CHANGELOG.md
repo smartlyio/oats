@@ -1,3 +1,7 @@
+# 5.1.4
+
+Fixed serializing to network format not converting property names to network format in `allOf` in all cases.
+
 # 5.0.0
 
 Allow mapping properties from network format specified in the openapi spec to something more expected in typescript. Eg
