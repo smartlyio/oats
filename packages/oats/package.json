@@ -1,6 +1,6 @@
 {
   "name": "@smartlyio/oats",
-  "version": "5.1.3",
+  "version": "5.1.4",
   "license": "MIT",
   "description": "Openapi3 based generator for typescript aware servers and clients",
   "private": false,
@@ -39,9 +39,9 @@
     "client"
   ],
   "devDependencies": {
-    "@smartlyio/oats-axios-adapter": "^5.1.3",
-    "@smartlyio/oats-koa-adapter": "^5.1.3",
-    "@smartlyio/oats-runtime": "^5.1.3",
+    "@smartlyio/oats-axios-adapter": "^5.1.4",
+    "@smartlyio/oats-koa-adapter": "^5.1.4",
+    "@smartlyio/oats-runtime": "^5.1.4",
     "@types/jest": "27.4.1",
     "@types/js-yaml": "4.0.5",
     "@types/koa": "2.13.5",
