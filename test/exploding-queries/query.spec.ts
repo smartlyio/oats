@@ -70,7 +70,7 @@ describe('queries', () => {
   describe('with additionalProperties', () => {
     it('allows calling with specified query property', async () => {
       const item = await apiClient.item.post({ query: { foo: 'abc' } });
-      expect(item.value.value.query).toEqual({ foo: 'abc'});
+      expect(item.value.value.query).toEqual({ foo: 'abc' });
     });
 
     it('allows calling with additionalProps', async () => {
