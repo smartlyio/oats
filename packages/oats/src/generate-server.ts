@@ -275,10 +275,7 @@ function generateEndpointsType(opts: Options) {
     ts.factory.createTypeAliasDeclaration(
       [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
       'EndpointsWithContext',
-      [ts.factory.createTypeParameterDeclaration(
-        undefined,
-        'RequestContext',
-      )],
+      [ts.factory.createTypeParameterDeclaration(undefined,'RequestContext' )],
       ts.createTypeLiteralNode(members)
     ),
     ts.factory.createTypeAliasDeclaration(
