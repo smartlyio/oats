@@ -115,7 +115,7 @@ export function bind<
   Spec,
   Models extends mirageTypes.AnyModels = never,
   Factories extends mirageTypes.AnyFactories = never,
-  RequestContext = void
+  RequestContext extends Record<string, any> = Record<string, any>
 >(opts: {
   server: Server<MirageRegistry<Models, Factories>>;
   handler: runtime.server.HandlerFactory<Spec>;
