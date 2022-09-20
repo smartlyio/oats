@@ -52,10 +52,12 @@ export type ShapeOf<A> = A extends Scalar
   : { [K in keyof A]: ShapeOf<A[K]> };
 
 class ShapedClass<Shape> {
+  // @ts-ignore
   protected [typeWitnessKey]: Shape;
 }
 
 class BrandedClass<Tag> {
+  // @ts-ignore
   protected [tagKey]: Tag;
 }
 
@@ -118,7 +120,7 @@ export function set<Cls>(
   return (to as any).constructor.make({ ...to, ...set });
 }
 
-type ValueType =
+export type ValueType =
   | valueClass.ValueClass
   | { [key: string]: any }
   | readonly any[]
@@ -238,7 +240,7 @@ function selectRecord<T extends { [key: string]: unknown }>(original: T, newReco
   return newRecord;
 }
 
-function pmapArray<A, T>(
+function pmapArray<A extends ValueClass, T extends ValueType>(
   value: A[],
   predicate: (v: any) => v is T,
   map: (v: T, traversalPath: string[]) => Promise<T>,
@@ -255,7 +257,7 @@ function pmapArray<A, T>(
   return selectArray<A>(value, mapped as any);
 }
 
-function pmapObject<A, T>(
+function pmapObject<A extends Record<string, any>, T extends ValueType>(
   value: A,
   predicate: (v: any) => v is T,
   map: (v: T, traversalPath: string[]) => Promise<T>,
@@ -282,7 +284,7 @@ function pmapObject<A, T>(
   return selectRecord(value, record);
 }
 
-function pmapComposite<A, T>(
+function pmapComposite<A, T extends ValueType>(
   value: A,
   predicate: (v: any) => v is T,
   map: (v: T, traversalPath: string[]) => Promise<T>,

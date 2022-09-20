@@ -117,8 +117,11 @@ type PathItem =
   | { type: 'array' }
   | { type: 'additionalProperty'; definedProperties: string[] };
 
-export class Traversal<Root, Leaf> {
-  static compile<Root, Leaf>(root: NamedTypeDefinition<Root>, leaf: NamedTypeDefinition<Leaf>) {
+export class Traversal<Root extends runtime.ValueType, Leaf> {
+  static compile<Root extends runtime.ValueType, Leaf>(
+    root: NamedTypeDefinition<Root>,
+    leaf: NamedTypeDefinition<Leaf>
+  ) {
     return new Traversal(root, leaf);
   }
 

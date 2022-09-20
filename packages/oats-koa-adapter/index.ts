@@ -84,7 +84,12 @@ type Opts<Spec, StateT, CustomT, RequestContext> = {
  * @param spec Deprecated use the named arguments
  * @param requestContextCreator Deprecated
  */
-export function bind<Spec, RequestContext = void, StateT = any, CustomT = Record<string, unknown>>(
+export function bind<
+  Spec,
+  RequestContext extends Record<string, any> = Record<string, unknown>,
+  StateT = any,
+  CustomT = Record<string, unknown>
+>(
   opts: runtime.server.HandlerFactory<Spec> | Opts<Spec, StateT, CustomT, RequestContext>,
   spec?: Spec,
   requestContextCreator?: (ctx: ParameterizedContext<StateT, CustomT>) => RequestContext
