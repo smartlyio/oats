@@ -137,8 +137,7 @@ export function run(options: Options) {
   return finished;
 
   function generateOatsBrandProperty() {
-    return ts.createProperty(
-      undefined,
+    return ts.factory.createPropertyDeclaration(
       [ts.createToken(ts.SyntaxKind.PrivateKeyword), ts.createToken(ts.SyntaxKind.ReadonlyKeyword)],
       quotedProp(oatsBrandFieldName),
       ts.createToken(ts.SyntaxKind.ExclamationToken),
@@ -177,8 +176,7 @@ export function run(options: Options) {
     additional: oas.SchemaObject['additionalProperties']
   ): readonly ts.ClassElement[] {
     const proptypes = _.map(properties, (value, key) => {
-      return ts.createProperty(
-        undefined,
+      return ts.factory.createPropertyDeclaration(
         [ts.createToken(ts.SyntaxKind.ReadonlyKeyword)],
         quotedProp(options.propertyNameMapper ? options.propertyNameMapper(key) : key),
         required && required.indexOf(key) >= 0
@@ -194,12 +192,10 @@ export function run(options: Options) {
     const additionalType = generateAdditionalPropType(additional);
     if (additionalType) {
       proptypes.push(
-        ts.createIndexSignature(
-          undefined,
+        ts.factory.createIndexSignature(
           [ts.createToken(ts.SyntaxKind.ReadonlyKeyword)],
           [
-            ts.createParameter(
-              undefined,
+            ts.factory.createParameterDeclaration(
               undefined,
               undefined,
               valueClassIndexSignatureKey,
@@ -236,12 +232,10 @@ export function run(options: Options) {
     const additionalType = generateAdditionalPropType(additional);
     if (additionalType) {
       proptypes.push(
-        ts.createIndexSignature(
-          undefined,
+        ts.factory.createIndexSignature(
           readonly,
           [
-            ts.createParameter(
-              undefined,
+            ts.factory.createParameterDeclaration(
               undefined,
               undefined,
               'key',
@@ -581,8 +575,7 @@ export function run(options: Options) {
   }
 
   function generateReflectionProperty(key: string) {
-    return ts.createProperty(
-      undefined,
+    return ts.factory.createPropertyDeclaration(
       [
         ts.createModifier(ts.SyntaxKind.PublicKeyword),
         ts.createModifier(ts.SyntaxKind.StaticKeyword)
@@ -611,24 +604,21 @@ export function run(options: Options) {
   }
 
   function generateClassConstructor(key: string) {
-    return ts.createMethod(
-      undefined,
+    return ts.factory.createMethodDeclaration(
       [ts.createModifier(ts.SyntaxKind.PublicKeyword)],
       undefined,
       'constructor',
       undefined,
       undefined,
       [
-        ts.createParameter(
-          undefined,
+        ts.factory.createParameterDeclaration(
           undefined,
           undefined,
           'value',
           undefined,
           ts.createTypeReferenceNode(options.nameMapper(key, 'shape'), [])
         ),
-        ts.createParameter(
-          undefined,
+        ts.factory.createParameterDeclaration(
           undefined,
           undefined,
           'opts',
@@ -662,24 +652,21 @@ export function run(options: Options) {
   }
 
   function generateClassMakeMethod(key: string) {
-    return ts.createMethod(
-      undefined,
+    return ts.factory.createMethodDeclaration(
       [ts.createModifier(ts.SyntaxKind.StaticKeyword)],
       undefined,
       'make',
       undefined,
       undefined,
       [
-        ts.createParameter(
-          undefined,
+        ts.factory.createParameterDeclaration(
           undefined,
           undefined,
           'value',
           undefined,
           ts.createTypeReferenceNode(options.nameMapper(key, 'shape'), [])
         ),
-        ts.createParameter(
-          undefined,
+        ts.factory.createParameterDeclaration(
           undefined,
           undefined,
           'opts',
@@ -787,8 +774,7 @@ export function run(options: Options) {
   }
 
   function makeAnyProperty(name: string) {
-    return ts.createParameter(
-      undefined,
+    return ts.factory.createParameterDeclaration(
       undefined,
       undefined,
       ts.createIdentifier(name),

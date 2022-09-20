@@ -194,8 +194,7 @@ function generateClientTree(
       ts.createCallSignature(
         undefined,
         [
-          ts.createParameter(
-            undefined,
+          ts.factory.createParameterDeclaration(
             undefined,
             undefined,
             tree.param.name,
@@ -276,7 +275,10 @@ function generateEndpointsType(opts: Options) {
     ts.factory.createTypeAliasDeclaration(
       [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
       'EndpointsWithContext',
-      [ts.createTypeParameterDeclaration('RequestContext', undefined, undefined)],
+      [ts.factory.createTypeParameterDeclaration(
+        undefined,
+        'RequestContext',
+      )],
       ts.createTypeLiteralNode(members)
     ),
     ts.factory.createTypeAliasDeclaration(
@@ -403,15 +405,13 @@ export function generateRouter() {
   );
 }
 export function generateCreateRouter() {
-  return ts.createFunctionDeclaration(
-    undefined,
+  return ts.factory.createFunctionDeclaration(
     [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
     undefined,
     'createRouter',
-    [ts.createTypeParameterDeclaration('TRequestContext')],
+    [ts.factory.createTypeParameterDeclaration(undefined, 'TRequestContext')],
     [
-      ts.createParameter(
-        undefined,
+      ts.factory.createParameterDeclaration(
         undefined,
         undefined,
         'handlerOptions',
