@@ -1,3 +1,7 @@
+# 6.0.0
+
+Update to use typescript ^4.8. Some deprecated apis got broken in ts 4.8 and the new apis are not backwards compatible. 
+
 # 5.1.4
 
 Fixed serializing to network format not converting property names to network format in `allOf` in all cases.
