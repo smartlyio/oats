@@ -41,13 +41,13 @@
   "devDependencies": {
     "@smartlyio/oats": "^5.1.5",
     "@smartlyio/oats-runtime": "^5.1.5",
-    "@types/jest": "27.4.1",
+    "@types/jest": "27.5.2",
     "@types/lodash": "4.14.185",
     "@types/node": "16.11.60",
     "jest": "27.5.1",
     "jsverify": "0.8.4",
     "ts-jest": "27.1.5",
-    "ts-node": "10.7.0",
+    "ts-node": "10.9.1",
     "typescript": "4.8.3"
   }
 }
