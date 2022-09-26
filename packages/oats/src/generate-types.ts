@@ -1146,7 +1146,9 @@ export function run(options: Options) {
     );
   }
 
-  function inventIsA(key: string, schema: oas.SchemaObject) {
+  function inventIsA(key: string, schema: oas.SchemaObject | oas.ReferenceObject) {
+    if (oas.isReferenceObject(schema)) return;
+
     if (schema.type === 'object') {
       return generateIsA(options.nameMapper(key, 'value'));
     }
@@ -1155,7 +1157,10 @@ export function run(options: Options) {
     }
   }
 
-  function generateNamedTypeDefinitionDeclaration(key: string, schema: oas.SchemaObject) {
+  function generateNamedTypeDefinitionDeclaration(
+    key: string,
+    schema: oas.SchemaObject | oas.ReferenceObject
+  ) {
     const isA = inventIsA(key, schema);
     return ts.factory.createVariableStatement(
       [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
