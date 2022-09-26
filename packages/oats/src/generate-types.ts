@@ -1068,7 +1068,7 @@ export function run(options: Options) {
           )
         );
       }
-      return ts.createObjectLiteral(properties, true);
+      return ts.factory.createObjectLiteralExpression(properties, true);
     }
     if (schema.type === 'object') {
       return generateObjectReflectionType(schema);
