@@ -162,8 +162,6 @@ export function generateFile(opts?: GenerateFileOptions): types.Resolve {
           header: options.header,
           generatedValueClassFile: generatedFile + '.ts',
           resolve: options.resolve,
-          externalOpenApiSpecs: options.externalOpenApiSpecs,
-          externalOpenApiImports: options.externalOpenApiImports,
           emitStatusCode: options.emitStatusCode,
           emitUndefinedForIndexTypes: options.emitUndefinedForIndexTypes,
           unknownAdditionalPropertiesIndexSignature:
@@ -193,11 +191,6 @@ export function generate(driver: Driver) {
     sourceFile: driver.openapiFilePath,
     targetFile: driver.generatedValueClassFile,
     resolve: driver.resolve || defaultResolve,
-    externalOpenApiImports: (driver.externalOpenApiImports || []).map(i => ({
-      importFile: i.importFile,
-      importAs: i.importAs
-    })),
-    externalOpenApiSpecs: driver.externalOpenApiSpecs,
     oas: spec,
     runtimeModule: modulePath(driver.generatedValueClassFile, driver.runtimeFilePath),
     emitStatusCode: driver.emitStatusCode || emitAllStatusCodes,
