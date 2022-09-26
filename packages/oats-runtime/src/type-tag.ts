@@ -1,7 +1,7 @@
 import { Type } from './reflection-type';
 import { ValueClass } from './value-class';
 
-export function withType<A>(to: A, type: Type[]): A {
+export function withType<A extends Record<string, any>>(to: A, type: Type[]): A {
   if (type.length === 0) {
     return to;
   }

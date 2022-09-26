@@ -19,7 +19,7 @@
     "url": "https://github.com/smartlyio/oats.git"
   },
   "peerDependencies": {
-    "typescript": "^4.0.0"
+    "typescript": "^4.8.0"
   },
   "dependencies": {
     "@smartlyio/safe-navigation": "^5.0.1",
@@ -49,6 +49,6 @@
     "ts-jest": "27.1.5",
     "ts-node": "10.7.0",
     "tsconfig-paths": "3.14.1",
-    "typescript": "4.6.4"
+    "typescript": "4.8.3"
   }
 }

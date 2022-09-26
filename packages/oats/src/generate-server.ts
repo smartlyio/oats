@@ -8,8 +8,7 @@ import { NameMapper, UnsupportedFeatureBehaviour } from './util';
 
 function generateRuntimeImport(runtimeModule: string) {
   return ts.createNodeArray([
-    ts.createImportDeclaration(
-      undefined,
+    ts.factory.createImportDeclaration(
       undefined,
       ts.createImportClause(undefined, ts.createNamespaceImport(ts.createIdentifier('oar'))),
       ts.createStringLiteral(runtimeModule)
@@ -19,8 +18,7 @@ function generateRuntimeImport(runtimeModule: string) {
 
 function generateImport(as: string, module: string) {
   return ts.createNodeArray([
-    ts.createImportDeclaration(
-      undefined,
+    ts.factory.createImportDeclaration(
       undefined,
       ts.createImportClause(undefined, ts.createNamespaceImport(ts.createIdentifier(as))),
       ts.createStringLiteral(module)
@@ -196,8 +194,7 @@ function generateClientTree(
       ts.createCallSignature(
         undefined,
         [
-          ts.createParameter(
-            undefined,
+          ts.factory.createParameterDeclaration(
             undefined,
             undefined,
             tree.param.name,
@@ -251,8 +248,7 @@ function generateClientSpec(opts: Options) {
     }, memo);
   }, client.emptyTree<ts.TypeNode>());
   return ts.createNodeArray([
-    ts.createTypeAliasDeclaration(
-      undefined,
+    ts.factory.createTypeAliasDeclaration(
       [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
       'ClientSpec',
       undefined,
@@ -276,15 +272,13 @@ function generateEndpointsType(opts: Options) {
     });
   });
   return ts.createNodeArray([
-    ts.createTypeAliasDeclaration(
-      undefined,
+    ts.factory.createTypeAliasDeclaration(
       [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
       'EndpointsWithContext',
-      [ts.createTypeParameterDeclaration('RequestContext', undefined, undefined)],
+      [ts.factory.createTypeParameterDeclaration(undefined, 'RequestContext')],
       ts.createTypeLiteralNode(members)
     ),
-    ts.createTypeAliasDeclaration(
-      undefined,
+    ts.factory.createTypeAliasDeclaration(
       [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
       'Endpoints',
       undefined,
@@ -408,15 +402,13 @@ export function generateRouter() {
   );
 }
 export function generateCreateRouter() {
-  return ts.createFunctionDeclaration(
-    undefined,
+  return ts.factory.createFunctionDeclaration(
     [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
     undefined,
     'createRouter',
-    [ts.createTypeParameterDeclaration('TRequestContext')],
+    [ts.factory.createTypeParameterDeclaration(undefined, 'TRequestContext')],
     [
-      ts.createParameter(
-        undefined,
+      ts.factory.createParameterDeclaration(
         undefined,
         undefined,
         'handlerOptions',

@@ -327,7 +327,7 @@ export interface HandlerOptions {
   };
 }
 
-export function createHandlerFactory<Spec>(
+export function createHandlerFactory<Spec extends Record<string, any>>(
   handlers: Handler[],
   opts?: HandlerOptions
 ): HandlerFactory<Spec> {
