@@ -1,3 +1,7 @@
+# 6.0.0
+Fix compatibility with TypeScript 4.8 and above.
+Remove deprecated driver options `externalOpenApiSpecs` and `externalOpenApiImports`. Use `resolve` instead.
+
 # 5.1.4
 
 Fixed serializing to network format not converting property names to network format in `allOf` in all cases.
