@@ -46,6 +46,7 @@
   ],
   "devDependencies": {
     "@smartlyio/safe-navigation": "5.0.2",
+    "@types/jest": "29.0.3",
     "@types/koa": "2.13.5",
     "@types/koa-mount": "4.0.1",
     "@types/koa-router": "7.4.4",
