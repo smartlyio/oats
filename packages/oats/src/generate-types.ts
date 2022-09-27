@@ -31,12 +31,8 @@ export interface Options {
   forceGenerateTypes?: boolean;
   header: string;
   sourceFile: string;
-  /** @deprecated Consider using 'resolve' instead */
-  externalOpenApiImports: readonly ImportDefinition[];
   targetFile: string;
   resolve: Resolve;
-  /** @deprecated Consider using 'resolve' instead */
-  externalOpenApiSpecs?: (url: string) => string | undefined;
   oas: oas.OpenAPIObject;
   runtimeModule: string;
   emitStatusCode: (status: number) => boolean;
@@ -76,8 +72,8 @@ export function deprecated(condition: any, message: string) {
 }
 const oatsBrandFieldName = '__oats_value_class_brand_tag';
 const makeTypeTypeName = 'Make';
-const runtimeLibrary = ts.createIdentifier('oar');
-const readonly = [ts.createModifier(ts.SyntaxKind.ReadonlyKeyword)];
+const runtimeLibrary = ts.factory.createIdentifier('oar');
+const readonly = [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)];
 // list of files for which we have an action to generate it already
 // to prevent calling an action to generate it again and causing maybe some race conditions
 const generatedFiles: Set<string> = new Set();
@@ -93,14 +89,6 @@ export function run(options: Options) {
     return;
   }
   generatedFiles.add(options.targetFile);
-  deprecated(
-    options.externalOpenApiImports.length > 0,
-    "'externalOpenApiImports' is deprecated. Consider using 'resolve' instead"
-  );
-  deprecated(
-    options.externalOpenApiSpecs,
-    "'externalOpenApiSpecs' is deprecated. Consider using 'resolve' instead"
-  );
 
   const state = {
     cwd: path.dirname(options.sourceFile),
@@ -130,7 +118,7 @@ export function run(options: Options) {
     .createPrinter()
     .printList(
       ts.ListFormat.MultiLine,
-      ts.createNodeArray([...builtins, ...externals, ...types, ...queryTypes]),
+      ts.factory.createNodeArray([...builtins, ...externals, ...types, ...queryTypes]),
       sourceFile
     );
   const finished = addIndexSignatureIgnores(src);
@@ -138,10 +126,14 @@ export function run(options: Options) {
 
   function generateOatsBrandProperty() {
     return ts.factory.createPropertyDeclaration(
-      [ts.createToken(ts.SyntaxKind.PrivateKeyword), ts.createToken(ts.SyntaxKind.ReadonlyKeyword)],
+      undefined,
+      [
+        ts.factory.createToken(ts.SyntaxKind.PrivateKeyword),
+        ts.factory.createToken(ts.SyntaxKind.ReadonlyKeyword)
+      ],
       quotedProp(oatsBrandFieldName),
-      ts.createToken(ts.SyntaxKind.ExclamationToken),
-      ts.createKeywordTypeNode(ts.SyntaxKind.StringKeyword),
+      ts.factory.createToken(ts.SyntaxKind.ExclamationToken),
+      ts.factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword),
       undefined
     );
   }
@@ -159,12 +151,12 @@ export function run(options: Options) {
       ) {
         return;
       }
-      return ts.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword);
+      return ts.factory.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword);
     }
     if (options.emitUndefinedForIndexTypes || options.emitUndefinedForIndexTypes == null) {
-      return ts.createUnionTypeNode([
+      return ts.factory.createUnionTypeNode([
         generateType(additional),
-        ts.createKeywordTypeNode(ts.SyntaxKind.UndefinedKeyword)
+        ts.factory.createKeywordTypeNode(ts.SyntaxKind.UndefinedKeyword)
       ]);
     }
     return generateType(additional);
@@ -177,11 +169,12 @@ export function run(options: Options) {
   ): readonly ts.ClassElement[] {
     const proptypes = _.map(properties, (value, key) => {
       return ts.factory.createPropertyDeclaration(
-        [ts.createToken(ts.SyntaxKind.ReadonlyKeyword)],
+        undefined,
+        [ts.factory.createToken(ts.SyntaxKind.ReadonlyKeyword)],
         quotedProp(options.propertyNameMapper ? options.propertyNameMapper(key) : key),
         required && required.indexOf(key) >= 0
-          ? ts.createToken(ts.SyntaxKind.ExclamationToken)
-          : ts.createToken(ts.SyntaxKind.QuestionToken),
+          ? ts.factory.createToken(ts.SyntaxKind.ExclamationToken)
+          : ts.factory.createToken(ts.SyntaxKind.QuestionToken),
         generateType(value),
         undefined
       );
@@ -193,14 +186,16 @@ export function run(options: Options) {
     if (additionalType) {
       proptypes.push(
         ts.factory.createIndexSignature(
-          [ts.createToken(ts.SyntaxKind.ReadonlyKeyword)],
+          undefined,
+          [ts.factory.createToken(ts.SyntaxKind.ReadonlyKeyword)],
           [
             ts.factory.createParameterDeclaration(
               undefined,
               undefined,
+              undefined,
               valueClassIndexSignatureKey,
               undefined,
-              ts.createKeywordTypeNode(ts.SyntaxKind.StringKeyword)
+              ts.factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword)
             )
           ],
           additionalType
@@ -218,14 +213,13 @@ export function run(options: Options) {
   ): ts.TypeElement[] {
     const proptypes = _.map(properties, (value, key) =>
       oautil.errorTag(`property '${key}'`, () =>
-        ts.createPropertySignature(
+        ts.factory.createPropertySignature(
           readonly,
           quotedProp(options.propertyNameMapper ? options.propertyNameMapper(key) : key),
           required && required.indexOf(key) >= 0
             ? undefined
-            : ts.createToken(ts.SyntaxKind.QuestionToken),
-          generateType(value, typeMapper),
-          undefined
+            : ts.factory.createToken(ts.SyntaxKind.QuestionToken),
+          generateType(value, typeMapper)
         )
       )
     );
@@ -233,14 +227,16 @@ export function run(options: Options) {
     if (additionalType) {
       proptypes.push(
         ts.factory.createIndexSignature(
+          undefined,
           readonly,
           [
             ts.factory.createParameterDeclaration(
               undefined,
               undefined,
+              undefined,
               'key',
               undefined,
-              ts.createKeywordTypeNode(ts.SyntaxKind.StringKeyword)
+              ts.factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword)
             )
           ],
           additionalType
@@ -487,7 +483,7 @@ export function run(options: Options) {
         );
       });
     });
-    return ts.createNodeArray(response);
+    return ts.factory.createNodeArray(response);
   }
 
   function generateType(
@@ -498,16 +494,18 @@ export function run(options: Options) {
     if (oautil.isReferenceObject(schema)) {
       const resolved = resolveRefToTypeName(schema.$ref, 'value');
       const type = resolved.qualified
-        ? ts.createQualifiedName(resolved.qualified, typeMapper(resolved.member))
+        ? ts.factory.createQualifiedName(resolved.qualified, typeMapper(resolved.member))
         : typeMapper(resolved.member);
-      return ts.createTypeReferenceNode(type, undefined);
+      return ts.factory.createTypeReferenceNode(type, undefined);
     }
     if (schema.oneOf) {
-      return ts.createUnionTypeNode(schema.oneOf.map(schema => generateType(schema, typeMapper)));
+      return ts.factory.createUnionTypeNode(
+        schema.oneOf.map(schema => generateType(schema, typeMapper))
+      );
     }
 
     if (schema.allOf) {
-      return ts.createIntersectionTypeNode(
+      return ts.factory.createIntersectionTypeNode(
         schema.allOf.map(schema => generateType(schema, typeMapper))
       );
     }
@@ -515,14 +513,14 @@ export function run(options: Options) {
     assert(!schema.anyOf, 'anyOf is not supported');
 
     if (schema.nullable) {
-      return ts.createUnionTypeNode([
+      return ts.factory.createUnionTypeNode([
         generateType({ ...schema, nullable: false }, typeMapper),
         ts.factory.createLiteralTypeNode(ts.factory.createNull())
       ]);
     }
 
     if (schema.type === 'object') {
-      return ts.createTypeLiteralNode(
+      return ts.factory.createTypeLiteralNode(
         generateObjectMembers(
           schema.properties,
           schema.required,
@@ -533,57 +531,61 @@ export function run(options: Options) {
     }
 
     if (schema.enum) {
-      return ts.createUnionTypeNode(
+      return ts.factory.createUnionTypeNode(
         schema.enum.map(e => {
-          return ts.createLiteralTypeNode(ts.createLiteral(e));
+          return ts.factory.createLiteralTypeNode(ts.createLiteral(e));
         })
       );
     }
 
     if (schema.type === 'array') {
       const itemType = generateType(schema.items || {}, typeMapper);
-      return ts.createTypeReferenceNode('ReadonlyArray', [itemType]);
+      return ts.factory.createTypeReferenceNode('ReadonlyArray', [itemType]);
     }
 
     if (schema.type === 'string') {
       return generateStringType(schema.format);
     }
     if (schema.type === 'integer' || schema.type === 'number') {
-      return ts.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword);
+      return ts.factory.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword);
     }
     if (schema.type === 'boolean') {
-      return ts.createKeywordTypeNode(ts.SyntaxKind.BooleanKeyword);
+      return ts.factory.createKeywordTypeNode(ts.SyntaxKind.BooleanKeyword);
     }
     // @ts-expect-error schemas really do not have void type. but we do
     if (schema.type === 'void') {
-      return ts.createKeywordTypeNode(ts.SyntaxKind.VoidKeyword);
+      return ts.factory.createKeywordTypeNode(ts.SyntaxKind.VoidKeyword);
     }
     if (schema.type === 'null') {
       return ts.factory.createLiteralTypeNode(ts.factory.createNull());
     }
     if (!schema.type) {
-      return ts.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword);
+      return ts.factory.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword);
     }
     return assert.fail('unknown schema type: ' + schema.type);
   }
 
   function generateStringType(format: string | undefined) {
     if (format === 'binary') {
-      return ts.createTypeReferenceNode(fromLib('make', 'Binary'), []);
+      return ts.factory.createTypeReferenceNode(fromLib('make', 'Binary'), []);
     }
-    return ts.createKeywordTypeNode(ts.SyntaxKind.StringKeyword);
+    return ts.factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword);
   }
 
   function generateReflectionProperty(key: string) {
     return ts.factory.createPropertyDeclaration(
-      [
-        ts.createModifier(ts.SyntaxKind.PublicKeyword),
-        ts.createModifier(ts.SyntaxKind.StaticKeyword)
-      ],
-      ts.createIdentifier('reflection'),
       undefined,
-      ts.createTypeReferenceNode(fromLib('reflection', 'NamedTypeDefinitionDeferred'), [
-        ts.createTypeReferenceNode(ts.createIdentifier(options.nameMapper(key, 'value')), [])
+      [
+        ts.factory.createModifier(ts.SyntaxKind.PublicKeyword),
+        ts.factory.createModifier(ts.SyntaxKind.StaticKeyword)
+      ],
+      ts.factory.createIdentifier('reflection'),
+      undefined,
+      ts.factory.createTypeReferenceNode(fromLib('reflection', 'NamedTypeDefinitionDeferred'), [
+        ts.factory.createTypeReferenceNode(
+          ts.factory.createIdentifier(options.nameMapper(key, 'value')),
+          []
+        )
       ]),
       ts.factory.createArrowFunction(
         undefined,
@@ -594,7 +596,7 @@ export function run(options: Options) {
         ts.factory.createBlock(
           [
             ts.factory.createReturnStatement(
-              ts.createIdentifier(options.nameMapper(key, 'reflection'))
+              ts.factory.createIdentifier(options.nameMapper(key, 'reflection'))
             )
           ],
           false
@@ -605,7 +607,8 @@ export function run(options: Options) {
 
   function generateClassConstructor(key: string) {
     return ts.factory.createMethodDeclaration(
-      [ts.createModifier(ts.SyntaxKind.PublicKeyword)],
+      undefined,
+      [ts.factory.createModifier(ts.SyntaxKind.PublicKeyword)],
       undefined,
       'constructor',
       undefined,
@@ -614,36 +617,43 @@ export function run(options: Options) {
         ts.factory.createParameterDeclaration(
           undefined,
           undefined,
+          undefined,
           'value',
           undefined,
-          ts.createTypeReferenceNode(options.nameMapper(key, 'shape'), [])
+          ts.factory.createTypeReferenceNode(options.nameMapper(key, 'shape'), [])
         ),
         ts.factory.createParameterDeclaration(
           undefined,
           undefined,
+          undefined,
           'opts',
-          ts.createToken(ts.SyntaxKind.QuestionToken),
-          ts.createUnionTypeNode([
-            ts.createTypeReferenceNode(fromLib('make', 'MakeOptions'), []),
-            ts.createTypeReferenceNode(
-              ts.createIdentifier('InternalUnsafeConstructorOption'),
+          ts.factory.createToken(ts.SyntaxKind.QuestionToken),
+          ts.factory.createUnionTypeNode([
+            ts.factory.createTypeReferenceNode(fromLib('make', 'MakeOptions'), []),
+            ts.factory.createTypeReferenceNode(
+              ts.factory.createIdentifier('InternalUnsafeConstructorOption'),
               undefined
             )
           ])
         )
       ],
       undefined,
-      ts.createBlock([
-        ts.createExpressionStatement(ts.createCall(ts.createIdentifier('super'), [], [])),
-        ts.createExpressionStatement(
-          ts.createCall(
-            ts.createPropertyAccess(ts.factory.createIdentifier('oar'), 'instanceAssign'),
+      ts.factory.createBlock([
+        ts.factory.createExpressionStatement(
+          ts.factory.createCallExpression(ts.factory.createIdentifier('super'), [], [])
+        ),
+        ts.factory.createExpressionStatement(
+          ts.factory.createCallExpression(
+            ts.factory.createPropertyAccessExpression(
+              ts.factory.createIdentifier('oar'),
+              'instanceAssign'
+            ),
             [],
             [
-              ts.createThis(),
-              ts.createIdentifier('value'),
-              ts.createIdentifier('opts'),
-              ts.createIdentifier('build' + options.nameMapper(key, 'value'))
+              ts.factory.createThis(),
+              ts.factory.createIdentifier('value'),
+              ts.factory.createIdentifier('opts'),
+              ts.factory.createIdentifier('build' + options.nameMapper(key, 'value'))
             ]
           )
         )
@@ -653,7 +663,8 @@ export function run(options: Options) {
 
   function generateClassMakeMethod(key: string) {
     return ts.factory.createMethodDeclaration(
-      [ts.createModifier(ts.SyntaxKind.StaticKeyword)],
+      undefined,
+      [ts.factory.createModifier(ts.SyntaxKind.StaticKeyword)],
       undefined,
       'make',
       undefined,
@@ -662,75 +673,92 @@ export function run(options: Options) {
         ts.factory.createParameterDeclaration(
           undefined,
           undefined,
+          undefined,
           'value',
           undefined,
-          ts.createTypeReferenceNode(options.nameMapper(key, 'shape'), [])
+          ts.factory.createTypeReferenceNode(options.nameMapper(key, 'shape'), [])
         ),
         ts.factory.createParameterDeclaration(
           undefined,
           undefined,
+          undefined,
           'opts',
-          ts.createToken(ts.SyntaxKind.QuestionToken),
-          ts.createTypeReferenceNode(fromLib('make', 'MakeOptions'), [])
+          ts.factory.createToken(ts.SyntaxKind.QuestionToken),
+          ts.factory.createTypeReferenceNode(fromLib('make', 'MakeOptions'), [])
         )
       ],
-      ts.createTypeReferenceNode(fromLib('make', makeTypeTypeName), [
-        ts.createTypeReferenceNode(options.nameMapper(key, 'value'), [])
+      ts.factory.createTypeReferenceNode(fromLib('make', makeTypeTypeName), [
+        ts.factory.createTypeReferenceNode(options.nameMapper(key, 'value'), [])
       ]),
-      ts.createBlock([
-        ts.createVariableStatement(
+      ts.factory.createBlock([
+        ts.factory.createVariableStatement(
           [],
-          ts.createVariableDeclarationList(
+          ts.factory.createVariableDeclarationList(
             [
-              ts.createVariableDeclaration(
+              ts.factory.createVariableDeclaration(
                 'make',
                 undefined,
-                ts.createCall(
-                  ts.createIdentifier('build' + options.nameMapper(key, 'value')),
+                undefined,
+                ts.factory.createCallExpression(
+                  ts.factory.createIdentifier('build' + options.nameMapper(key, 'value')),
                   undefined,
-                  [ts.createIdentifier('value'), ts.createIdentifier('opts')]
+                  [ts.factory.createIdentifier('value'), ts.factory.createIdentifier('opts')]
                 )
               )
             ],
             ts.NodeFlags.Const
           )
         ),
-        ts.createReturn(
+        ts.factory.createReturnStatement(
           ts.createConditional(
-            ts.createCall(
-              ts.createPropertyAccess(ts.createIdentifier('make'), ts.createIdentifier('isError')),
+            ts.factory.createCallExpression(
+              ts.factory.createPropertyAccessExpression(
+                ts.factory.createIdentifier('make'),
+                ts.factory.createIdentifier('isError')
+              ),
               [],
               []
             ),
-            ts.createCall(
-              ts.createPropertyAccess(
-                ts.createPropertyAccess(ts.createPropertyAccess(runtimeLibrary, 'make'), 'Make'),
+            ts.factory.createCallExpression(
+              ts.factory.createPropertyAccessExpression(
+                ts.factory.createPropertyAccessExpression(
+                  ts.factory.createPropertyAccessExpression(runtimeLibrary, 'make'),
+                  'Make'
+                ),
                 'error'
               ),
               undefined,
-              [ts.createPropertyAccess(ts.createIdentifier('make'), 'errors')]
+              [
+                ts.factory.createPropertyAccessExpression(
+                  ts.factory.createIdentifier('make'),
+                  'errors'
+                )
+              ]
             ),
-            ts.createCall(
-              ts.createPropertyAccess(
-                ts.createPropertyAccess(ts.createPropertyAccess(runtimeLibrary, 'make'), 'Make'),
+            ts.factory.createCallExpression(
+              ts.factory.createPropertyAccessExpression(
+                ts.factory.createPropertyAccessExpression(
+                  ts.factory.createPropertyAccessExpression(runtimeLibrary, 'make'),
+                  'Make'
+                ),
                 'ok'
               ),
               undefined,
               [
-                ts.createCall(
-                  ts.createIdentifier('new ' + options.nameMapper(key, 'value')),
+                ts.factory.createCallExpression(
+                  ts.factory.createIdentifier('new ' + options.nameMapper(key, 'value')),
                   undefined,
                   [
-                    ts.createCall(
-                      ts.createPropertyAccess(
-                        ts.createIdentifier('make'),
-                        ts.createIdentifier('success')
+                    ts.factory.createCallExpression(
+                      ts.factory.createPropertyAccessExpression(
+                        ts.factory.createIdentifier('make'),
+                        ts.factory.createIdentifier('success')
                       ),
                       undefined,
                       undefined
                     ),
-                    ts.createObjectLiteral([
-                      ts.createPropertyAssignment('unSafeSet', ts.createTrue())
+                    ts.factory.createObjectLiteralExpression([
+                      ts.factory.createPropertyAssignment('unSafeSet', ts.createTrue())
                     ])
                   ]
                 )
@@ -756,39 +784,45 @@ export function run(options: Options) {
       schema.required,
       schema.additionalProperties
     );
-    const brand = ts.createExpressionWithTypeArguments(
-      [],
-      ts.createPropertyAccess(runtimeLibrary, 'valueClass.ValueClass')
+    const brand = ts.factory.createExpressionWithTypeArguments(
+      ts.factory.createPropertyAccessExpression(runtimeLibrary, 'valueClass.ValueClass'),
+      []
     );
     return ts.factory.createClassDeclaration(
-      [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
+      undefined,
+      [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
       valueIdentifier,
       [],
-      [ts.createHeritageClause(ts.SyntaxKind.ExtendsKeyword, [brand])],
+      [ts.factory.createHeritageClause(ts.SyntaxKind.ExtendsKeyword, [brand])],
       [...members, ...generateClassBuiltindMembers(key)]
     );
   }
 
   function makeCall(fun: string, args: readonly ts.Expression[]) {
-    return ts.createCall(ts.createPropertyAccess(runtimeLibrary, 'make.' + fun), undefined, args);
+    return ts.factory.createCallExpression(
+      ts.factory.createPropertyAccessExpression(runtimeLibrary, 'make.' + fun),
+      undefined,
+      args
+    );
   }
 
   function makeAnyProperty(name: string) {
     return ts.factory.createParameterDeclaration(
       undefined,
       undefined,
-      ts.createIdentifier(name),
       undefined,
-      ts.createKeywordTypeNode(ts.SyntaxKind.AnyKeyword),
+      ts.factory.createIdentifier(name),
+      undefined,
+      ts.factory.createKeywordTypeNode(ts.SyntaxKind.AnyKeyword),
       undefined
     );
   }
 
   function quotedProp(prop: string) {
     if (/\W/.test(prop)) {
-      return ts.createStringLiteral(prop);
+      return ts.factory.createStringLiteral(prop);
     }
-    return ts.createIdentifier(prop);
+    return ts.factory.createIdentifier(prop);
   }
 
   function generateReflectionMaker(key: string): ts.Expression {
@@ -807,12 +841,8 @@ export function run(options: Options) {
     );
   }
 
-  function generateTopLevelClassBuilder(
-    key: string,
-    valueIdentifier: string,
-    schema: oas.SchemaObject
-  ) {
-    return generateTopLevelMaker(key, schema, 'build', valueIdentifier);
+  function generateTopLevelClassBuilder(key: string, valueIdentifier: string) {
+    return generateTopLevelMaker(key, 'build', valueIdentifier);
   }
 
   function generateReflectionType(
@@ -821,12 +851,12 @@ export function run(options: Options) {
     if (oautil.isReferenceObject(schema)) {
       const resolved = resolveRefToTypeName(schema.$ref, 'reflection');
       const type: ts.Expression = resolved.qualified
-        ? ts.createPropertyAccess(resolved.qualified, resolved.member)
-        : ts.createIdentifier(resolved.member);
-      return ts.createObjectLiteral(
+        ? ts.factory.createPropertyAccessExpression(resolved.qualified, resolved.member)
+        : ts.factory.createIdentifier(resolved.member);
+      return ts.factory.createObjectLiteralExpression(
         [
-          ts.createPropertyAssignment('type', ts.createStringLiteral('named')),
-          ts.createPropertyAssignment(
+          ts.factory.createPropertyAssignment('type', ts.factory.createStringLiteral('named')),
+          ts.factory.createPropertyAssignment(
             'reference',
             ts.factory.createArrowFunction(
               undefined,
@@ -842,12 +872,12 @@ export function run(options: Options) {
       );
     }
     if (schema.oneOf) {
-      return ts.createObjectLiteral(
+      return ts.factory.createObjectLiteralExpression(
         [
-          ts.createPropertyAssignment('type', ts.createStringLiteral('union')),
-          ts.createPropertyAssignment(
+          ts.factory.createPropertyAssignment('type', ts.factory.createStringLiteral('union')),
+          ts.factory.createPropertyAssignment(
             'options',
-            ts.createArrayLiteral(
+            ts.factory.createArrayLiteralExpression(
               schema.oneOf.map(schema => generateReflectionType(schema)),
               true
             )
@@ -857,12 +887,15 @@ export function run(options: Options) {
       );
     }
     if (schema.allOf) {
-      return ts.createObjectLiteral(
+      return ts.factory.createObjectLiteralExpression(
         [
-          ts.createPropertyAssignment('type', ts.createStringLiteral('intersection')),
-          ts.createPropertyAssignment(
+          ts.factory.createPropertyAssignment(
+            'type',
+            ts.factory.createStringLiteral('intersection')
+          ),
+          ts.factory.createPropertyAssignment(
             'options',
-            ts.createArrayLiteral(
+            ts.factory.createArrayLiteralExpression(
               schema.allOf.map(schema => generateReflectionType(schema)),
               true
             )
@@ -880,14 +913,14 @@ export function run(options: Options) {
 
     // @ts-expect-error schemas really do not have void type. but we do
     if (schema.type === 'void') {
-      return ts.createObjectLiteral(
-        [ts.createPropertyAssignment('type', ts.createStringLiteral('void'))],
+      return ts.factory.createObjectLiteralExpression(
+        [ts.factory.createPropertyAssignment('type', ts.factory.createStringLiteral('void'))],
         true
       );
     }
     if (schema.type === 'null') {
-      return ts.createObjectLiteral(
-        [ts.createPropertyAssignment('type', ts.createStringLiteral('null'))],
+      return ts.factory.createObjectLiteralExpression(
+        [ts.factory.createPropertyAssignment('type', ts.factory.createStringLiteral('null'))],
         true
       );
     }
@@ -895,36 +928,58 @@ export function run(options: Options) {
     if (schema.type === 'string') {
       const enumValues = schema.enum
         ? [
-            ts.createPropertyAssignment(
+            ts.factory.createPropertyAssignment(
               'enum',
-              ts.createArrayLiteral(schema.enum.map(value => ts.factory.createStringLiteral(value)))
+              ts.factory.createArrayLiteralExpression(
+                schema.enum.map(value => ts.factory.createStringLiteral(value))
+              )
             )
           ]
         : [];
       if (schema.format === 'binary') {
-        return ts.createObjectLiteral(
-          [ts.createPropertyAssignment('type', ts.createStringLiteral('binary'))],
+        return ts.factory.createObjectLiteralExpression(
+          [ts.factory.createPropertyAssignment('type', ts.factory.createStringLiteral('binary'))],
           true
         );
       }
       const format = schema.format
-        ? [ts.createPropertyAssignment('format', ts.createStringLiteral(schema.format))]
+        ? [
+            ts.factory.createPropertyAssignment(
+              'format',
+              ts.factory.createStringLiteral(schema.format)
+            )
+          ]
         : [];
       const pattern = schema.pattern
-        ? [ts.createPropertyAssignment('pattern', ts.createStringLiteral(schema.pattern))]
+        ? [
+            ts.factory.createPropertyAssignment(
+              'pattern',
+              ts.factory.createStringLiteral(schema.pattern)
+            )
+          ]
         : [];
       const minLength =
         schema.minLength != null
-          ? [ts.createPropertyAssignment('minLength', ts.createNumericLiteral(schema.minLength))]
+          ? [
+              ts.factory.createPropertyAssignment(
+                'minLength',
+                ts.factory.createNumericLiteral(schema.minLength)
+              )
+            ]
           : [];
       const maxLength =
         schema.maxLength != null
-          ? [ts.createPropertyAssignment('maxLength', ts.createNumericLiteral(schema.maxLength))]
+          ? [
+              ts.factory.createPropertyAssignment(
+                'maxLength',
+                ts.factory.createNumericLiteral(schema.maxLength)
+              )
+            ]
           : [];
 
-      return ts.createObjectLiteral(
+      return ts.factory.createObjectLiteralExpression(
         [
-          ts.createPropertyAssignment('type', ts.createStringLiteral('string')),
+          ts.factory.createPropertyAssignment('type', ts.factory.createStringLiteral('string')),
           ...enumValues,
           ...format,
           ...pattern,
@@ -937,73 +992,90 @@ export function run(options: Options) {
     if (schema.type === 'number' || schema.type === 'integer') {
       const enumValues = schema.enum
         ? [
-            ts.createPropertyAssignment(
+            ts.factory.createPropertyAssignment(
               'enum',
-              ts.createArrayLiteral(schema.enum.map(i => ts.createNumericLiteral('' + i)))
+              ts.factory.createArrayLiteralExpression(
+                schema.enum.map(i => ts.factory.createNumericLiteral('' + i))
+              )
             )
           ]
         : [];
       const properties = [
-        ts.createPropertyAssignment('type', ts.createStringLiteral(schema.type)),
+        ts.factory.createPropertyAssignment('type', ts.factory.createStringLiteral(schema.type)),
         ...enumValues
       ];
       if (schema.minimum != null) {
         properties.push(
-          ts.createPropertyAssignment('minimum', ts.createNumericLiteral(schema.minimum + ''))
+          ts.factory.createPropertyAssignment(
+            'minimum',
+            ts.factory.createNumericLiteral(schema.minimum + '')
+          )
         );
       }
       if (schema.maximum != null) {
         properties.push(
-          ts.createPropertyAssignment('maximum', ts.createNumericLiteral(schema.maximum + ''))
+          ts.factory.createPropertyAssignment(
+            'maximum',
+            ts.factory.createNumericLiteral(schema.maximum + '')
+          )
         );
       }
-      return ts.createObjectLiteral(properties, true);
+      return ts.factory.createObjectLiteralExpression(properties, true);
     }
     if (schema.type === 'boolean') {
       const enumValues = schema.enum
         ? [
-            ts.createPropertyAssignment(
+            ts.factory.createPropertyAssignment(
               'enum',
-              ts.createArrayLiteral(
+              ts.factory.createArrayLiteralExpression(
                 schema.enum.map(i =>
                   i === true
-                    ? ts.createTrue()
+                    ? ts.factory.createTrue()
                     : i === false
-                    ? ts.createFalse()
+                    ? ts.factory.createFalse()
                     : assert.fail('unknown enum ' + i)
                 )
               )
             )
           ]
         : [];
-      return ts.createObjectLiteral(
-        [ts.createPropertyAssignment('type', ts.createStringLiteral('boolean')), ...enumValues],
+      return ts.factory.createObjectLiteralExpression(
+        [
+          ts.factory.createPropertyAssignment('type', ts.factory.createStringLiteral('boolean')),
+          ...enumValues
+        ],
         true
       );
     }
     if (schema.type === 'array') {
       const properties = [
-        ts.createPropertyAssignment('type', ts.createStringLiteral('array')),
-        ts.createPropertyAssignment('items', generateReflectionType(schema.items || {}))
+        ts.factory.createPropertyAssignment('type', ts.factory.createStringLiteral('array')),
+        ts.factory.createPropertyAssignment('items', generateReflectionType(schema.items || {}))
       ];
       if (schema.minItems != null) {
         properties.push(
-          ts.createPropertyAssignment('minItems', ts.createNumericLiteral(schema.minItems + ''))
+          ts.factory.createPropertyAssignment(
+            'minItems',
+            ts.factory.createNumericLiteral(schema.minItems + '')
+          )
         );
       }
       if (schema.maxItems != null) {
         properties.push(
-          ts.createPropertyAssignment('maxItems', ts.createNumericLiteral(schema.maxItems + ''))
+          ts.factory.createPropertyAssignment(
+            'maxItems',
+            ts.factory.createNumericLiteral(schema.maxItems + '')
+          )
         );
       }
-      return ts.createObjectLiteral(properties, true);
+      return ts.factory.createObjectLiteralExpression(properties, true);
     }
     if (schema.type === 'object') {
       return generateObjectReflectionType(schema);
     }
     if (!schema.type) {
-      return ts.createObjectLiteral(
-        [ts.createPropertyAssignment('type', ts.createStringLiteral('unknown'))],
+      return ts.factory.createObjectLiteralExpression(
+        [ts.factory.createPropertyAssignment('type', ts.factory.createStringLiteral('unknown'))],
         true
       );
     }
@@ -1027,37 +1099,37 @@ export function run(options: Options) {
 
   function generateObjectReflectionType(schema: oas.SchemaObject) {
     const additionalProps = generateAdditionalPropsReflectionType(schema.additionalProperties);
-    return ts.createObjectLiteral(
+    return ts.factory.createObjectLiteralExpression(
       [
-        ts.createPropertyAssignment('type', ts.createStringLiteral('object')),
-        ts.createPropertyAssignment('additionalProperties', additionalProps),
-        ts.createPropertyAssignment(
+        ts.factory.createPropertyAssignment('type', ts.factory.createStringLiteral('object')),
+        ts.factory.createPropertyAssignment('additionalProperties', additionalProps),
+        ts.factory.createPropertyAssignment(
           'properties',
-          ts.createObjectLiteral(
+          ts.factory.createObjectLiteralExpression(
             Object.keys(schema.properties || {}).map((propertyName: string) => {
-              return ts.createPropertyAssignment(
-                ts.createStringLiteral(
+              return ts.factory.createPropertyAssignment(
+                ts.factory.createStringLiteral(
                   options.propertyNameMapper
                     ? options.propertyNameMapper(propertyName)
                     : propertyName
                 ),
-                ts.createObjectLiteral(
+                ts.factory.createObjectLiteralExpression(
                   [
-                    ts.createPropertyAssignment(
+                    ts.factory.createPropertyAssignment(
                       'required',
                       (schema.required || []).indexOf(propertyName) >= 0
-                        ? ts.createTrue()
-                        : ts.createFalse()
+                        ? ts.factory.createTrue()
+                        : ts.factory.createFalse()
                     ),
                     ...(options.propertyNameMapper
                       ? [
-                          ts.createPropertyAssignment(
+                          ts.factory.createPropertyAssignment(
                             'networkName',
-                            ts.createStringLiteral(propertyName)
+                            ts.factory.createStringLiteral(propertyName)
                           )
                         ]
                       : []),
-                    ts.createPropertyAssignment(
+                    ts.factory.createPropertyAssignment(
                       'value',
                       generateReflectionType((schema.properties as any)[propertyName])
                     )
@@ -1074,7 +1146,9 @@ export function run(options: Options) {
     );
   }
 
-  function inventIsA(key: string, schema: oas.SchemaObject) {
+  function inventIsA(key: string, schema: oas.SchemaObject | oas.ReferenceObject) {
+    if (oas.isReferenceObject(schema)) return;
+
     if (schema.type === 'object') {
       return generateIsA(options.nameMapper(key, 'value'));
     }
@@ -1083,35 +1157,39 @@ export function run(options: Options) {
     }
   }
 
-  function generateNamedTypeDefinitionDeclaration(key: string, schema: oas.SchemaObject) {
+  function generateNamedTypeDefinitionDeclaration(
+    key: string,
+    schema: oas.SchemaObject | oas.ReferenceObject
+  ) {
     const isA = inventIsA(key, schema);
-    return ts.createVariableStatement(
-      [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
-      ts.createVariableDeclarationList(
+    return ts.factory.createVariableStatement(
+      [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+      ts.factory.createVariableDeclarationList(
         [
-          ts.createVariableDeclaration(
+          ts.factory.createVariableDeclaration(
             options.nameMapper(key, 'reflection'),
-            ts.createTypeReferenceNode(fromLib('reflection', 'NamedTypeDefinition'), [
-              ts.createTypeReferenceNode(options.nameMapper(key, 'value'), []),
-              ts.createTypeReferenceNode(options.nameMapper(key, 'shape'), [])
+            undefined,
+            ts.factory.createTypeReferenceNode(fromLib('reflection', 'NamedTypeDefinition'), [
+              ts.factory.createTypeReferenceNode(options.nameMapper(key, 'value'), []),
+              ts.factory.createTypeReferenceNode(options.nameMapper(key, 'shape'), [])
             ]),
-            ts.createAsExpression(
-              ts.createObjectLiteral(
+            ts.factory.createAsExpression(
+              ts.factory.createObjectLiteralExpression(
                 [
-                  ts.createPropertyAssignment(
+                  ts.factory.createPropertyAssignment(
                     'name',
-                    ts.createStringLiteral(options.nameMapper(key, 'value'))
+                    ts.factory.createStringLiteral(options.nameMapper(key, 'value'))
                   ),
-                  ts.createPropertyAssignment('definition', generateReflectionType(schema)),
-                  ts.createPropertyAssignment(
+                  ts.factory.createPropertyAssignment('definition', generateReflectionType(schema)),
+                  ts.factory.createPropertyAssignment(
                     'maker',
-                    ts.createIdentifier('make' + options.nameMapper(key, 'value'))
+                    ts.factory.createIdentifier('make' + options.nameMapper(key, 'value'))
                   ),
-                  ts.createPropertyAssignment('isA', isA ?? ts.createNull())
+                  ts.factory.createPropertyAssignment('isA', isA ?? ts.createNull())
                 ],
                 true
               ),
-              ts.createKeywordTypeNode(ts.SyntaxKind.AnyKeyword)
+              ts.factory.createKeywordTypeNode(ts.SyntaxKind.AnyKeyword)
             )
           )
         ],
@@ -1121,33 +1199,37 @@ export function run(options: Options) {
   }
 
   function generateIsA(type: string) {
-    return ts.createArrowFunction(
+    return ts.factory.createArrowFunction(
       undefined,
       undefined,
       [makeAnyProperty('value')],
       undefined,
-      ts.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
-      ts.createBinary(
-        ts.createIdentifier('value'),
-        ts.createToken(ts.SyntaxKind.InstanceOfKeyword),
-        ts.createIdentifier(type)
+      ts.factory.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
+      ts.factory.createBinaryExpression(
+        ts.factory.createIdentifier('value'),
+        ts.factory.createToken(ts.SyntaxKind.InstanceOfKeyword),
+        ts.factory.createIdentifier(type)
       )
     );
   }
 
   function generateTopLevelClassMaker(key: string, valueIdentifier: string) {
     const shape = options.nameMapper(key, 'shape');
-    return ts.createVariableStatement(
-      [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
-      ts.createVariableDeclarationList(
+    return ts.factory.createVariableStatement(
+      [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+      ts.factory.createVariableDeclarationList(
         [
-          ts.createVariableDeclaration(
+          ts.factory.createVariableDeclaration(
             'make' + valueIdentifier,
-            ts.createTypeReferenceNode(fromLib('make', 'Maker'), [
-              ts.createTypeReferenceNode(shape, []),
-              ts.createTypeReferenceNode(valueIdentifier, [])
+            undefined,
+            ts.factory.createTypeReferenceNode(fromLib('make', 'Maker'), [
+              ts.factory.createTypeReferenceNode(shape, []),
+              ts.factory.createTypeReferenceNode(valueIdentifier, [])
             ]),
-            ts.createPropertyAccess(ts.createIdentifier(valueIdentifier), 'make')
+            ts.factory.createPropertyAccessExpression(
+              ts.factory.createIdentifier(valueIdentifier),
+              'make'
+            )
           )
         ],
         ts.NodeFlags.Const
@@ -1155,34 +1237,32 @@ export function run(options: Options) {
     );
   }
 
-  function generateTopLevelMaker(
-    key: string,
-    schema: oas.SchemaObject,
-    name = 'make',
-    resultType?: string
-  ) {
+  function generateTopLevelMaker(key: string, name = 'make', resultType?: string) {
     const makerFun = 'createMaker';
     const shape = options.nameMapper(key, 'shape');
     resultType = resultType || options.nameMapper(key, 'value');
-    return ts.createVariableStatement(
-      [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
-      ts.createVariableDeclarationList(
+    return ts.factory.createVariableStatement(
+      [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+      ts.factory.createVariableDeclarationList(
         [
-          ts.createVariableDeclaration(
+          ts.factory.createVariableDeclaration(
             name + options.nameMapper(key, 'value'),
-            ts.createTypeReferenceNode(fromLib('make', 'Maker'), [
-              ts.createTypeReferenceNode(shape, []),
-              ts.createTypeReferenceNode(resultType, [])
+            undefined,
+            ts.factory.createTypeReferenceNode(fromLib('make', 'Maker'), [
+              ts.factory.createTypeReferenceNode(shape, []),
+              ts.factory.createTypeReferenceNode(resultType, [])
             ]),
             makeCall(makerFun, [
-              ts.createFunctionExpression(
+              ts.factory.createFunctionExpression(
                 undefined,
                 undefined,
                 undefined,
                 undefined,
                 [],
                 undefined,
-                ts.createBlock([ts.createReturn(generateReflectionMaker(key))])
+                ts.factory.createBlock([
+                  ts.factory.createReturnStatement(generateReflectionMaker(key))
+                ])
               )
             ])
           )
@@ -1197,16 +1277,17 @@ export function run(options: Options) {
   }
 
   function generateBrand(key: string) {
-    return ts.factory.createEnumDeclaration(undefined, brandTypeName(key), []);
+    return ts.factory.createEnumDeclaration(undefined, undefined, brandTypeName(key), []);
   }
 
   function generateTypeShape(key: string, valueIdentifier: string) {
     return ts.factory.createTypeAliasDeclaration(
-      [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
+      undefined,
+      [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
       options.nameMapper(key, 'shape'),
       undefined,
-      ts.createTypeReferenceNode(fromLib('ShapeOf'), [
-        ts.createTypeReferenceNode(valueIdentifier, [])
+      ts.factory.createTypeReferenceNode(fromLib('ShapeOf'), [
+        ts.factory.createTypeReferenceNode(valueIdentifier, [])
       ])
     );
   }
@@ -1215,14 +1296,7 @@ export function run(options: Options) {
     if (schema.nullable) {
       const classKey = oautil.nonNullableClass(key);
       const proxy = generateTopLevelType(key, {
-        oneOf: [
-          {
-            type: 'null'
-          },
-          {
-            $ref: '#/components/schemas/' + classKey
-          }
-        ]
+        oneOf: [{ type: 'null' }, { $ref: '#/components/schemas/' + classKey }]
       });
       return [...generateTopLevelClass(classKey, { ...schema, nullable: false }), ...proxy];
     }
@@ -1230,7 +1304,7 @@ export function run(options: Options) {
     return [
       generateTypeShape(key, valueIdentifier),
       generateValueClass(key, valueIdentifier, schema),
-      generateTopLevelClassBuilder(key, valueIdentifier, schema),
+      generateTopLevelClassBuilder(key, valueIdentifier),
       generateTopLevelClassMaker(key, valueIdentifier),
       generateNamedTypeDefinitionDeclaration(key, schema)
     ];
@@ -1244,17 +1318,18 @@ export function run(options: Options) {
     if (oautil.isReferenceObject(schema)) {
       const resolved = resolveRefToTypeName(schema.$ref, 'value');
       const type = resolved.qualified
-        ? ts.createQualifiedName(resolved.qualified, resolved.member)
+        ? ts.factory.createQualifiedName(resolved.qualified, resolved.member)
         : resolved.member;
       return [
         ts.factory.createTypeAliasDeclaration(
-          [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
+          undefined,
+          [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
           valueIdentifier,
           undefined,
-          ts.createTypeReferenceNode(type, undefined)
+          ts.factory.createTypeReferenceNode(type, undefined)
         ),
         generateTypeShape(key, valueIdentifier),
-        generateTopLevelMaker(key, schema),
+        generateTopLevelMaker(key),
         generateNamedTypeDefinitionDeclaration(key, schema)
       ];
     }
@@ -1266,42 +1341,46 @@ export function run(options: Options) {
       return [
         generateBrand(key),
         ts.factory.createTypeAliasDeclaration(
-          [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
+          undefined,
+          [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
           options.nameMapper(key, 'value'),
           undefined,
           scalarTypeWithBrand(key, generateType(schema))
         ),
         generateTypeShape(key, valueIdentifier),
-        generateTopLevelMaker(key, schema),
+        generateTopLevelMaker(key),
         generateNamedTypeDefinitionDeclaration(key, schema)
       ];
     }
 
     return [
       ts.factory.createTypeAliasDeclaration(
-        [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
+        undefined,
+        [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
         options.nameMapper(key, 'value'),
         undefined,
         generateType(schema)
       ),
       generateTypeShape(key, valueIdentifier),
-      generateTopLevelMaker(key, schema),
+      generateTopLevelMaker(key),
       generateNamedTypeDefinitionDeclaration(key, schema)
     ];
   }
 
   function generateIsAForScalar(key: string) {
-    return ts.createArrowFunction(
+    return ts.factory.createArrowFunction(
       undefined,
       undefined,
       [makeAnyProperty('value')],
       undefined,
-      ts.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
-      ts.createCall(
-        ts.createPropertyAccess(
-          ts.createCall(ts.createIdentifier('make' + options.nameMapper(key, 'value')), undefined, [
-            ts.createIdentifier('value')
-          ]),
+      ts.factory.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
+      ts.factory.createCallExpression(
+        ts.factory.createPropertyAccessExpression(
+          ts.factory.createCallExpression(
+            ts.factory.createIdentifier('make' + options.nameMapper(key, 'value')),
+            undefined,
+            [ts.factory.createIdentifier('value')]
+          ),
           'isSuccess'
         ),
         undefined,
@@ -1311,9 +1390,9 @@ export function run(options: Options) {
   }
 
   function scalarTypeWithBrand(key: string, type: ts.TypeNode): ts.TypeNode {
-    return ts.createTypeReferenceNode(fromLib('BrandedScalar'), [
+    return ts.factory.createTypeReferenceNode(fromLib('BrandedScalar'), [
       type,
-      ts.createTypeReferenceNode(brandTypeName(key), [])
+      ts.factory.createTypeReferenceNode(brandTypeName(key), [])
     ]);
   }
 
@@ -1366,44 +1445,51 @@ export function run(options: Options) {
         generateComponentRequestsAndResponses(oas.components.requestBodies.$)
       )
     );
-    return ts.createNodeArray(nodes);
+    return ts.factory.createNodeArray(nodes);
   }
 
   function fromLib(...names: string[]): ts.QualifiedName {
-    return ts.createQualifiedName(runtimeLibrary, names.join('.'));
+    return ts.factory.createQualifiedName(runtimeLibrary, names.join('.'));
   }
 
   function generateExternals(imports: readonly ImportDefinition[]) {
     return imports.map(external => {
       return ts.factory.createImportDeclaration(
         undefined,
-        ts.createImportClause(
+        undefined,
+        ts.factory.createImportClause(
+          false,
           undefined,
-          ts.createNamespaceImport(ts.createIdentifier(external.importAs))
+          ts.factory.createNamespaceImport(ts.factory.createIdentifier(external.importAs))
         ),
-        ts.createStringLiteral(external.importFile)
+        ts.factory.createStringLiteral(external.importFile)
       );
     });
   }
 
   function generateBuiltins() {
-    return ts.createNodeArray([
+    return ts.factory.createNodeArray([
       ts.factory.createImportDeclaration(
         undefined,
-        ts.createImportClause(undefined, ts.createNamespaceImport(runtimeLibrary)),
-        ts.createStringLiteral(options.runtimeModule)
+        undefined,
+        ts.factory.createImportClause(
+          false,
+          undefined,
+          ts.factory.createNamespaceImport(runtimeLibrary)
+        ),
+        ts.factory.createStringLiteral(options.runtimeModule)
       ),
       ts.factory.createTypeAliasDeclaration(
         undefined,
+        undefined,
         'InternalUnsafeConstructorOption',
         undefined,
-        ts.createTypeLiteralNode([
-          ts.createPropertySignature(
+        ts.factory.createTypeLiteralNode([
+          ts.factory.createPropertySignature(
             undefined,
-            ts.createIdentifier('unSafeSet'),
+            ts.factory.createIdentifier('unSafeSet'),
             undefined,
-            ts.createLiteralTypeNode(ts.createTrue()),
-            undefined
+            ts.factory.createLiteralTypeNode(ts.factory.createTrue())
           )
         ])
       )
@@ -1467,17 +1553,6 @@ export function run(options: Options) {
     }
     if (ref[0] === '#') {
       return { member: options.nameMapper(oautil.refToTypeName(ref), kind) };
-    }
-    if (options.externalOpenApiSpecs) {
-      const name = options.externalOpenApiSpecs(ref);
-      if (name) {
-        const [qualified, member] = name.split('.');
-        const file = options.externalOpenApiImports.find(
-          def => def.importAs === qualified
-        )?.importFile;
-        addToImports(qualified, file);
-        return { member, qualified: ts.createIdentifier(qualified) };
-      }
     }
     return assert.fail('could not resolve typename for ' + ref);
   }
