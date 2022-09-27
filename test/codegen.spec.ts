@@ -10,6 +10,6 @@ describe('codegen', () => {
 
   it('works correctly with boolean enums', () => {
     expect(common.typeGuard.maker(true).success()).toBe(true);
-    expect(common.typeGuard.maker(false as any).success).toThrowError();
+    expect(common.typeGuard.maker(false as any).success).toThrow();
   });
 });
