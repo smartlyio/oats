@@ -15,7 +15,8 @@
       "@smartlyio/oats-runtime": ["src/runtime"]
     },
     "forceConsistentCasingInFileNames": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "skipLibCheck": true
   },
   "exclude": ["node_modules/*", "*/**/dist/*", "dist/*", "test/"],
 }
