@@ -20,7 +20,7 @@
     "url": "https://github.com/smartlyio/oats"
   },
   "peerDependencies": {
-    "@smartlyio/oats-runtime": "^5.1.1"
+    "@smartlyio/oats-runtime": "^6.0.0"
   },
   "keywords": [
     "oats",
@@ -37,7 +37,7 @@
   "devDependencies": {
     "@smartlyio/oats-runtime": "^6.0.0",
     "@types/lodash": "4.14.185",
-    "@types/node": "16.11.60",
+    "@types/node": "16.11.62",
     "miragejs": "0.1.45",
     "nodemon": "2.0.20",
     "ts-node": "10.9.1",
