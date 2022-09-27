@@ -758,7 +758,7 @@ export function run(options: Options) {
                       undefined
                     ),
                     ts.factory.createObjectLiteralExpression([
-                      ts.factory.createPropertyAssignment('unSafeSet', ts.createTrue())
+                      ts.factory.createPropertyAssignment('unSafeSet', ts.factory.createTrue())
                     ])
                   ]
                 )
@@ -1185,7 +1185,7 @@ export function run(options: Options) {
                     'maker',
                     ts.factory.createIdentifier('make' + options.nameMapper(key, 'value'))
                   ),
-                  ts.factory.createPropertyAssignment('isA', isA ?? ts.createNull())
+                  ts.factory.createPropertyAssignment('isA', isA ?? ts.factory.createNull())
                 ],
                 true
               ),
@@ -1547,7 +1547,7 @@ export function run(options: Options) {
       const importAs = safe(external).importAs.$;
       if (importAs) {
         addToImports(importAs, safe(external).importFrom.$, safe(external).generate.$);
-        return { member: external.name, qualified: ts.createIdentifier(importAs) };
+        return { member: external.name, qualified: ts.factory.createIdentifier(importAs) };
       }
       return { member: external.name };
     }

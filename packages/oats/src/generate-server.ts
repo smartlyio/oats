@@ -366,7 +366,7 @@ function generateHandler(opts: Options) {
           undefined,
           ts.factory.createArrayTypeNode(
             ts.factory.createTypeReferenceNode(
-              ts.factory.createQualifiedName(ts.createIdentifier('oar'), 'server.Handler'),
+              ts.factory.createQualifiedName(ts.factory.createIdentifier('oar'), 'server.Handler'),
               []
             )
           ),
