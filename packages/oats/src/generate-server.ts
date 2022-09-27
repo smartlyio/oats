@@ -7,34 +7,44 @@ import safe from '@smartlyio/safe-navigation';
 import { NameMapper, UnsupportedFeatureBehaviour } from './util';
 
 function generateRuntimeImport(runtimeModule: string) {
-  return ts.createNodeArray([
+  return ts.factory.createNodeArray([
     ts.factory.createImportDeclaration(
       undefined,
-      ts.createImportClause(undefined, ts.createNamespaceImport(ts.createIdentifier('oar'))),
-      ts.createStringLiteral(runtimeModule)
+      undefined,
+      ts.factory.createImportClause(
+        false,
+        undefined,
+        ts.factory.createNamespaceImport(ts.factory.createIdentifier('oar'))
+      ),
+      ts.factory.createStringLiteral(runtimeModule)
     )
   ]);
 }
 
 function generateImport(as: string, module: string) {
-  return ts.createNodeArray([
+  return ts.factory.createNodeArray([
     ts.factory.createImportDeclaration(
       undefined,
-      ts.createImportClause(undefined, ts.createNamespaceImport(ts.createIdentifier(as))),
-      ts.createStringLiteral(module)
+      undefined,
+      ts.factory.createImportClause(
+        false,
+        undefined,
+        ts.factory.createNamespaceImport(ts.factory.createIdentifier(as))
+      ),
+      ts.factory.createStringLiteral(module)
     )
   ]);
 }
 
 function fromRuntime(name: string) {
-  return ts.createQualifiedName(ts.createIdentifier('oar'), name);
+  return ts.factory.createQualifiedName(ts.factory.createIdentifier('oar'), name);
 }
 
 function fromTypes(name: string) {
-  return ts.createQualifiedName(ts.createIdentifier('types'), name);
+  return ts.factory.createQualifiedName(ts.factory.createIdentifier('types'), name);
 }
 
-const readonly = [ts.createModifier(ts.SyntaxKind.ReadonlyKeyword)];
+const readonly = [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)];
 
 function generateMethod<S extends oas.OperationObject>(
   path: string,
@@ -49,7 +59,7 @@ function generateMethod<S extends oas.OperationObject>(
     assert(!schema.security, 'security not supported');
   }
 
-  const headers = ts.createTypeReferenceNode(
+  const headers = ts.factory.createTypeReferenceNode(
     fromTypes(
       opts.nameMapper(
         oautil.endpointTypeName(schema, path, method, 'headers'),
@@ -58,7 +68,7 @@ function generateMethod<S extends oas.OperationObject>(
     ),
     []
   );
-  const params = ts.createTypeReferenceNode(
+  const params = ts.factory.createTypeReferenceNode(
     fromTypes(
       opts.nameMapper(
         oautil.endpointTypeName(schema, path, method, 'parameters'),
@@ -67,7 +77,7 @@ function generateMethod<S extends oas.OperationObject>(
     ),
     []
   );
-  const query = ts.createTypeReferenceNode(
+  const query = ts.factory.createTypeReferenceNode(
     fromTypes(
       opts.nameMapper(
         oautil.endpointTypeName(schema, path, method, 'query'),
@@ -76,7 +86,7 @@ function generateMethod<S extends oas.OperationObject>(
     ),
     []
   );
-  const body = ts.createTypeReferenceNode(
+  const body = ts.factory.createTypeReferenceNode(
     fromTypes(
       opts.nameMapper(
         oautil.endpointTypeName(schema, path, method, 'requestBody'),
@@ -85,7 +95,7 @@ function generateMethod<S extends oas.OperationObject>(
     ),
     []
   );
-  const response = ts.createTypeReferenceNode(
+  const response = ts.factory.createTypeReferenceNode(
     fromTypes(
       opts.nameMapper(
         oautil.endpointTypeName(schema, path, method, 'response'),
@@ -94,13 +104,13 @@ function generateMethod<S extends oas.OperationObject>(
     ),
     []
   );
-  return ts.createTypeReferenceNode(fromRuntime('server.Endpoint'), [
+  return ts.factory.createTypeReferenceNode(fromRuntime('server.Endpoint'), [
     headers,
     params,
     query,
     body,
     response,
-    ts.createTypeReferenceNode('RequestContext', undefined)
+    ts.factory.createTypeReferenceNode('RequestContext', undefined)
   ]);
 }
 
@@ -113,19 +123,18 @@ function generateEndpoint(path: string, schema: oas.PathItemObject, opts: Option
       oautil.errorTag('in method ' + method.toUpperCase(), () => {
         const methodHandler = schema[method];
         if (methodHandler) {
-          const endpoint = ts.createPropertySignature(
+          const endpoint = ts.factory.createPropertySignature(
             readonly,
-            ts.createStringLiteral(method),
+            ts.factory.createStringLiteral(method),
             undefined,
-            generateMethod(path, method, methodHandler, opts),
-            undefined
+            generateMethod(path, method, methodHandler, opts)
           );
           signatures.push(endpoint);
         }
       }),
     []
   );
-  return ts.createTypeLiteralNode(signatures);
+  return ts.factory.createTypeLiteralNode(signatures);
 }
 
 function generateClientMethod(
@@ -140,7 +149,7 @@ function generateClientMethod(
   ) {
     assert(!op.security, 'security not supported');
   }
-  const headers = ts.createTypeReferenceNode(
+  const headers = ts.factory.createTypeReferenceNode(
     fromTypes(
       opts.nameMapper(
         oautil.endpointTypeName(op, path, method, 'headers'),
@@ -149,7 +158,7 @@ function generateClientMethod(
     ),
     []
   );
-  const query = ts.createTypeReferenceNode(
+  const query = ts.factory.createTypeReferenceNode(
     fromTypes(
       opts.nameMapper(
         oautil.endpointTypeName(op, path, method, 'query'),
@@ -158,7 +167,7 @@ function generateClientMethod(
     ),
     []
   );
-  const body = ts.createTypeReferenceNode(
+  const body = ts.factory.createTypeReferenceNode(
     fromTypes(
       opts.nameMapper(
         oautil.endpointTypeName(op, path, method, 'requestBody'),
@@ -167,7 +176,7 @@ function generateClientMethod(
     ),
     []
   );
-  const response = ts.createTypeReferenceNode(
+  const response = ts.factory.createTypeReferenceNode(
     fromTypes(
       opts.nameMapper(
         oautil.endpointTypeName(op, path, method, 'response'),
@@ -176,7 +185,7 @@ function generateClientMethod(
     ),
     []
   );
-  return ts.createTypeReferenceNode(fromRuntime('client.ClientEndpoint'), [
+  return ts.factory.createTypeReferenceNode(fromRuntime('client.ClientEndpoint'), [
     headers,
     query,
     body,
@@ -191,17 +200,18 @@ function generateClientTree(
   const members = [];
   if (tree.param) {
     members.push(
-      ts.createCallSignature(
+      ts.factory.createCallSignature(
         undefined,
         [
           ts.factory.createParameterDeclaration(
             undefined,
             undefined,
+            undefined,
             tree.param.name,
             undefined,
-            ts.createUnionTypeNode([
-              ts.createKeywordTypeNode(ts.SyntaxKind.StringKeyword),
-              ts.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword)
+            ts.factory.createUnionTypeNode([
+              ts.factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword),
+              ts.factory.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword)
             ])
           )
         ],
@@ -211,17 +221,16 @@ function generateClientTree(
   }
   Object.keys(tree.methods).forEach(method => {
     const type: ts.TypeNode = tree.methods[method];
-    members.push(ts.createPropertySignature(readonly, method, undefined, type, undefined));
+    members.push(ts.factory.createPropertySignature(readonly, method, undefined, type));
   });
   Object.keys(tree.parts).forEach(part => {
-    const pathPart = /[^a-zA-Z_0-9]/.test(part) ? ts.createStringLiteral(part) : part;
+    const pathPart = /[^a-zA-Z_0-9]/.test(part) ? ts.factory.createStringLiteral(part) : part;
     members.push(
-      ts.createPropertySignature(
+      ts.factory.createPropertySignature(
         readonly,
         pathPart,
         undefined,
-        generateClientSpecType(opts, tree.parts[part]),
-        undefined
+        generateClientSpecType(opts, tree.parts[part])
       )
     );
   });
@@ -229,7 +238,7 @@ function generateClientTree(
 }
 
 function generateClientSpecType(opts: Options, tree: client.OpTree<ts.TypeNode>) {
-  return ts.createTypeLiteralNode(generateClientTree(opts, tree));
+  return ts.factory.createTypeLiteralNode(generateClientTree(opts, tree));
 }
 
 function generateClientSpec(opts: Options) {
@@ -247,12 +256,13 @@ function generateClientSpec(opts: Options) {
       return memo;
     }, memo);
   }, client.emptyTree<ts.TypeNode>());
-  return ts.createNodeArray([
+  return ts.factory.createNodeArray([
     ts.factory.createTypeAliasDeclaration(
-      [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
+      undefined,
+      [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
       'ClientSpec',
       undefined,
-      ts.createTypeLiteralNode(generateClientTree(opts, tree))
+      ts.factory.createTypeLiteralNode(generateClientTree(opts, tree))
     )
   ]);
 }
@@ -262,35 +272,36 @@ function generateEndpointsType(opts: Options) {
     const endpoint: oas.PathItemObject = opts.oas.paths[path];
     return oautil.errorTag('in endpoint ' + path, () => {
       const type = generateEndpoint(path, endpoint, opts);
-      return ts.createPropertySignature(
+      return ts.factory.createPropertySignature(
         readonly,
-        ts.createStringLiteral(path),
-        ts.createToken(ts.SyntaxKind.QuestionToken),
-        type,
-        undefined
+        ts.factory.createStringLiteral(path),
+        ts.factory.createToken(ts.SyntaxKind.QuestionToken),
+        type
       );
     });
   });
-  return ts.createNodeArray([
+  return ts.factory.createNodeArray([
     ts.factory.createTypeAliasDeclaration(
-      [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
+      undefined,
+      [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
       'EndpointsWithContext',
-      [ts.factory.createTypeParameterDeclaration(undefined, 'RequestContext')],
-      ts.createTypeLiteralNode(members)
+      [ts.factory.createTypeParameterDeclaration('RequestContext')],
+      ts.factory.createTypeLiteralNode(members)
     ),
     ts.factory.createTypeAliasDeclaration(
-      [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
+      undefined,
+      [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
       'Endpoints',
       undefined,
-      ts.createTypeReferenceNode('EndpointsWithContext', [
-        ts.createTypeReferenceNode('void', undefined)
+      ts.factory.createTypeReferenceNode('EndpointsWithContext', [
+        ts.factory.createTypeReferenceNode('void', undefined)
       ])
     )
   ]);
 }
 function makeMaker(type: string, opts: Options): ts.Expression {
-  return ts.createPropertyAccess(
-    ts.createIdentifier('types'),
+  return ts.factory.createPropertyAccessExpression(
+    ts.factory.createIdentifier('types'),
     'make' + opts.nameMapper(type, 'value')
   );
 }
@@ -310,19 +321,21 @@ function generateMaker(
   const query = makeMaker(oautil.endpointTypeName(object, path, method, 'query'), opts);
   const body = makeMaker(oautil.endpointTypeName(object, path, method, 'requestBody'), opts);
   const response = makeMaker(oautil.endpointTypeName(object, path, method, 'response'), opts);
-  return ts.createObjectLiteral(
+  return ts.factory.createObjectLiteralExpression(
     [
-      ts.createPropertyAssignment('path', ts.createStringLiteral(path)),
-      ts.createPropertyAssignment('method', ts.createStringLiteral(method)),
-      ts.createPropertyAssignment(
+      ts.factory.createPropertyAssignment('path', ts.factory.createStringLiteral(path)),
+      ts.factory.createPropertyAssignment('method', ts.factory.createStringLiteral(method)),
+      ts.factory.createPropertyAssignment(
         'servers',
-        ts.createArrayLiteral(servers.map(value => ts.factory.createStringLiteral(value)))
+        ts.factory.createArrayLiteralExpression(
+          servers.map(value => ts.factory.createStringLiteral(value))
+        )
       ),
-      ts.createPropertyAssignment('headers', headers),
-      ts.createPropertyAssignment('query', query),
-      ts.createPropertyAssignment('body', body),
-      ts.createPropertyAssignment('params', params),
-      ts.createPropertyAssignment('response', response)
+      ts.factory.createPropertyAssignment('headers', headers),
+      ts.factory.createPropertyAssignment('query', query),
+      ts.factory.createPropertyAssignment('body', body),
+      ts.factory.createPropertyAssignment('params', params),
+      ts.factory.createPropertyAssignment('response', response)
     ],
     true
   );
@@ -344,19 +357,20 @@ function flattenPathAndMethod(paths: oas.PathsObject) {
 function generateHandler(opts: Options) {
   const schema = opts.oas;
   const servers = (safe(schema).servers.$ || []).map(server => server.url);
-  return ts.createVariableStatement(
-    [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
-    ts.createVariableDeclarationList(
+  return ts.factory.createVariableStatement(
+    [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+    ts.factory.createVariableDeclarationList(
       [
-        ts.createVariableDeclaration(
+        ts.factory.createVariableDeclaration(
           'endpointHandlers',
-          ts.createArrayTypeNode(
-            ts.createTypeReferenceNode(
-              ts.createQualifiedName(ts.createIdentifier('oar'), 'server.Handler'),
+          undefined,
+          ts.factory.createArrayTypeNode(
+            ts.factory.createTypeReferenceNode(
+              ts.factory.createQualifiedName(ts.createIdentifier('oar'), 'server.Handler'),
               []
             )
           ),
-          ts.createArrayLiteral(
+          ts.factory.createArrayLiteralExpression(
             flattenPathAndMethod(schema.paths).map(p =>
               generateMaker(servers, opts, p.path, p.method, p.object)
             )
@@ -369,9 +383,9 @@ function generateHandler(opts: Options) {
 }
 
 function generateRouterJSDoc() {
-  return ts.createJSDocComment(undefined, [
-    ts.createJSDocTag(
-      ts.createIdentifier('deprecated'),
+  return ts.factory.createJSDocComment(undefined, [
+    ts.factory.createJSDocUnknownTag(
+      ts.factory.createIdentifier('deprecated'),
       'Use `createRouter()` instead. ' +
         'It supports "number", "integer", "boolean" and "array" types in query parameters ' +
         'and numeric types in path parameters.'
@@ -380,20 +394,27 @@ function generateRouterJSDoc() {
 }
 
 export function generateRouter() {
-  return ts.createVariableStatement(
-    [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
-    ts.createVariableDeclarationList(
+  return ts.factory.createVariableStatement(
+    [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+    ts.factory.createVariableDeclarationList(
       [
-        ts.createVariableDeclaration(
+        ts.factory.createVariableDeclaration(
           'router',
-          ts.createTypeReferenceNode(
-            ts.createQualifiedName(ts.createIdentifier('oar'), 'server.HandlerFactory'),
-            [ts.createTypeReferenceNode('Endpoints', [])]
+          undefined,
+          ts.factory.createTypeReferenceNode(
+            ts.factory.createQualifiedName(
+              ts.factory.createIdentifier('oar'),
+              'server.HandlerFactory'
+            ),
+            [ts.factory.createTypeReferenceNode('Endpoints', [])]
           ),
-          ts.createCall(
-            ts.createPropertyAccess(ts.createIdentifier('oar'), 'server.createHandlerFactory'),
+          ts.factory.createCallExpression(
+            ts.factory.createPropertyAccessExpression(
+              ts.factory.createIdentifier('oar'),
+              'server.createHandlerFactory'
+            ),
             undefined,
-            [ts.createIdentifier('endpointHandlers')]
+            [ts.factory.createIdentifier('endpointHandlers')]
           )
         )
       ],
@@ -403,147 +424,162 @@ export function generateRouter() {
 }
 export function generateCreateRouter() {
   return ts.factory.createFunctionDeclaration(
-    [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
+    undefined,
+    [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
     undefined,
     'createRouter',
-    [ts.factory.createTypeParameterDeclaration(undefined, 'TRequestContext')],
+    [ts.factory.createTypeParameterDeclaration('TRequestContext')],
     [
       ts.factory.createParameterDeclaration(
         undefined,
         undefined,
+        undefined,
         'handlerOptions',
         undefined,
-        ts.createTypeReferenceNode(ts.createIdentifier('oar.server.HandlerOptions')),
-        ts.createObjectLiteral()
+        ts.factory.createTypeReferenceNode(
+          ts.factory.createIdentifier('oar.server.HandlerOptions')
+        ),
+        ts.factory.createObjectLiteralExpression()
       )
     ],
-    ts.createTypeReferenceNode(ts.createIdentifier('oar.server.HandlerFactory'), [
-      ts.createTypeReferenceNode('EndpointsWithContext', [
-        ts.createTypeReferenceNode('TRequestContext')
+    ts.factory.createTypeReferenceNode(ts.factory.createIdentifier('oar.server.HandlerFactory'), [
+      ts.factory.createTypeReferenceNode('EndpointsWithContext', [
+        ts.factory.createTypeReferenceNode('TRequestContext')
       ])
     ]),
-    ts.createBlock(
+    ts.factory.createBlock(
       [
-        ts.createVariableStatement(
+        ts.factory.createVariableStatement(
           undefined,
-          ts.createVariableDeclarationList(
+          ts.factory.createVariableDeclarationList(
             [
-              ts.createVariableDeclaration(
-                ts.createObjectBindingPattern([
-                  ts.createBindingElement(
+              ts.factory.createVariableDeclaration(
+                ts.factory.createObjectBindingPattern([
+                  ts.factory.createBindingElement(
                     undefined,
                     'validationOptions',
-                    ts.createObjectBindingPattern([
-                      ts.createBindingElement(
+                    ts.factory.createObjectBindingPattern([
+                      ts.factory.createBindingElement(
                         undefined,
                         'query',
-                        ts.createObjectBindingPattern([
-                          ts.createBindingElement(
+                        ts.factory.createObjectBindingPattern([
+                          ts.factory.createBindingElement(
                             undefined,
                             'parseBooleanStrings',
                             'queryParseBooleanStrings',
-                            ts.createTrue()
+                            ts.factory.createTrue()
                           ),
-                          ts.createBindingElement(
+                          ts.factory.createBindingElement(
                             undefined,
                             'parseNumericStrings',
                             'queryParseNumericStrings',
-                            ts.createTrue()
+                            ts.factory.createTrue()
                           ),
-                          ts.createBindingElement(
+                          ts.factory.createBindingElement(
                             undefined,
                             'allowConvertForArrayType',
                             'queryAllowConvertForArrayType',
-                            ts.createTrue()
+                            ts.factory.createTrue()
                           ),
-                          ts.createBindingElement(
-                            ts.createToken(ts.SyntaxKind.DotDotDotToken),
+                          ts.factory.createBindingElement(
+                            ts.factory.createToken(ts.SyntaxKind.DotDotDotToken),
                             undefined,
                             'queryRest'
                           )
                         ]),
-                        ts.createObjectLiteral()
+                        ts.factory.createObjectLiteralExpression()
                       ),
-                      ts.createBindingElement(
+                      ts.factory.createBindingElement(
                         undefined,
                         'params',
-                        ts.createObjectBindingPattern([
-                          ts.createBindingElement(
+                        ts.factory.createObjectBindingPattern([
+                          ts.factory.createBindingElement(
                             undefined,
                             'parseNumericStrings',
                             'paramsParseNumericStrings',
-                            ts.createTrue()
+                            ts.factory.createTrue()
                           ),
-                          ts.createBindingElement(
-                            ts.createToken(ts.SyntaxKind.DotDotDotToken),
+                          ts.factory.createBindingElement(
+                            ts.factory.createToken(ts.SyntaxKind.DotDotDotToken),
                             undefined,
                             'paramsRest'
                           )
                         ]),
-                        ts.createObjectLiteral()
+                        ts.factory.createObjectLiteralExpression()
                       ),
-                      ts.createBindingElement(
-                        ts.createToken(ts.SyntaxKind.DotDotDotToken),
+                      ts.factory.createBindingElement(
+                        ts.factory.createToken(ts.SyntaxKind.DotDotDotToken),
                         undefined,
                         'validationOptionsRest'
                       )
                     ]),
-                    ts.createObjectLiteral()
+                    ts.factory.createObjectLiteralExpression()
                   ),
-                  ts.createBindingElement(
-                    ts.createToken(ts.SyntaxKind.DotDotDotToken),
+                  ts.factory.createBindingElement(
+                    ts.factory.createToken(ts.SyntaxKind.DotDotDotToken),
                     undefined,
                     'handlerOptionsRest'
                   )
                 ]),
                 undefined,
-                ts.createIdentifier('handlerOptions')
+                undefined,
+                ts.factory.createIdentifier('handlerOptions')
               )
             ],
             ts.NodeFlags.Const
           )
         ),
-        ts.createReturn(
-          ts.createCall(ts.createIdentifier('oar.server.createHandlerFactory'), undefined, [
-            ts.createIdentifier('endpointHandlers'),
-            ts.createObjectLiteral([
-              ts.createSpreadAssignment(ts.createIdentifier('handlerOptionsRest')),
-              ts.createPropertyAssignment(
-                'validationOptions',
-                ts.createObjectLiteral([
-                  ts.createSpreadAssignment(ts.createIdentifier('validationOptionsRest')),
-                  ts.createPropertyAssignment(
-                    'query',
-                    ts.createObjectLiteral([
-                      ts.createSpreadAssignment(ts.createIdentifier('queryRest')),
-                      ts.createPropertyAssignment(
-                        'parseBooleanStrings',
-                        ts.createIdentifier('queryParseBooleanStrings')
-                      ),
-                      ts.createPropertyAssignment(
-                        'parseNumericStrings',
-                        ts.createIdentifier('queryParseNumericStrings')
-                      ),
-                      ts.createPropertyAssignment(
-                        'allowConvertForArrayType',
-                        ts.createIdentifier('queryAllowConvertForArrayType')
-                      )
-                    ])
-                  ),
-                  ts.createPropertyAssignment(
-                    'params',
-                    ts.createObjectLiteral([
-                      ts.createSpreadAssignment(ts.createIdentifier('paramsRest')),
-                      ts.createPropertyAssignment(
-                        'parseNumericStrings',
-                        ts.createIdentifier('paramsParseNumericStrings')
-                      )
-                    ])
-                  )
-                ])
-              )
-            ])
-          ])
+        ts.factory.createReturnStatement(
+          ts.factory.createCallExpression(
+            ts.factory.createIdentifier('oar.server.createHandlerFactory'),
+            undefined,
+            [
+              ts.factory.createIdentifier('endpointHandlers'),
+              ts.factory.createObjectLiteralExpression([
+                ts.factory.createSpreadAssignment(
+                  ts.factory.createIdentifier('handlerOptionsRest')
+                ),
+                ts.factory.createPropertyAssignment(
+                  'validationOptions',
+                  ts.factory.createObjectLiteralExpression([
+                    ts.factory.createSpreadAssignment(
+                      ts.factory.createIdentifier('validationOptionsRest')
+                    ),
+                    ts.factory.createPropertyAssignment(
+                      'query',
+                      ts.factory.createObjectLiteralExpression([
+                        ts.factory.createSpreadAssignment(ts.factory.createIdentifier('queryRest')),
+                        ts.factory.createPropertyAssignment(
+                          'parseBooleanStrings',
+                          ts.factory.createIdentifier('queryParseBooleanStrings')
+                        ),
+                        ts.factory.createPropertyAssignment(
+                          'parseNumericStrings',
+                          ts.factory.createIdentifier('queryParseNumericStrings')
+                        ),
+                        ts.factory.createPropertyAssignment(
+                          'allowConvertForArrayType',
+                          ts.factory.createIdentifier('queryAllowConvertForArrayType')
+                        )
+                      ])
+                    ),
+                    ts.factory.createPropertyAssignment(
+                      'params',
+                      ts.factory.createObjectLiteralExpression([
+                        ts.factory.createSpreadAssignment(
+                          ts.factory.createIdentifier('paramsRest')
+                        ),
+                        ts.factory.createPropertyAssignment(
+                          'parseNumericStrings',
+                          ts.factory.createIdentifier('paramsParseNumericStrings')
+                        )
+                      ])
+                    )
+                  ])
+                )
+              ])
+            ]
+          )
         )
       ],
       true
@@ -552,20 +588,27 @@ export function generateCreateRouter() {
 }
 
 export function generateClient() {
-  return ts.createVariableStatement(
-    [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
-    ts.createVariableDeclarationList(
+  return ts.factory.createVariableStatement(
+    [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+    ts.factory.createVariableDeclarationList(
       [
-        ts.createVariableDeclaration(
+        ts.factory.createVariableDeclaration(
           'client',
-          ts.createTypeReferenceNode(
-            ts.createQualifiedName(ts.createIdentifier('oar'), 'client.ClientFactory'),
-            [ts.createTypeReferenceNode('ClientSpec', [])]
+          undefined,
+          ts.factory.createTypeReferenceNode(
+            ts.factory.createQualifiedName(
+              ts.factory.createIdentifier('oar'),
+              'client.ClientFactory'
+            ),
+            [ts.factory.createTypeReferenceNode('ClientSpec', [])]
           ),
-          ts.createCall(
-            ts.createPropertyAccess(ts.createIdentifier('oar'), 'client.createClientFactory'),
+          ts.factory.createCallExpression(
+            ts.factory.createPropertyAccessExpression(
+              ts.factory.createIdentifier('oar'),
+              'client.createClientFactory'
+            ),
             undefined,
-            [ts.createIdentifier('endpointHandlers')]
+            [ts.factory.createIdentifier('endpointHandlers')]
           )
         )
       ],
@@ -611,7 +654,7 @@ export function run(opts: Options) {
     .createPrinter()
     .printList(
       ts.ListFormat.MultiLine,
-      ts.createNodeArray([
+      ts.factory.createNodeArray([
         ...runtime,
         ...types,
         ...endpoints,

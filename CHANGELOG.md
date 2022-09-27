@@ -1,6 +1,7 @@
 # 6.0.0
 
 Update to use typescript ^4.8. Some deprecated apis got broken in ts 4.8 and the new apis are not backwards compatible. 
+Remove deprecated driver options `externalOpenApiSpecs` and `externalOpenApiImports`. Use `resolve` instead.
 
 # 5.1.4
 
