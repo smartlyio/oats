@@ -43,7 +43,7 @@
     "@smartlyio/oats-runtime": "^6.0.0",
     "@types/jest": "27.5.2",
     "@types/lodash": "4.14.185",
-    "@types/node": "16.11.60",
+    "@types/node": "16.11.62",
     "jest": "27.5.1",
     "jsverify": "0.8.4",
     "ts-jest": "27.1.5",
