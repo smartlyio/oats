@@ -45,10 +45,10 @@
     "@types/jest": "29.0.3",
     "@types/js-yaml": "4.0.5",
     "@types/koa": "2.13.5",
-    "@types/koa-mount": "4.0.1",
+    "@types/koa-mount": "4.0.2",
     "@types/koa-router": "7.4.4",
-    "@types/lodash": "4.14.185",
-    "@types/node": "16.11.62",
+    "@types/lodash": "4.14.190",
+    "@types/node": "16.11.68",
     "axios": "0.27.2",
     "fast-check": "3.1.4",
     "form-data": "4.0.0",
@@ -58,8 +58,8 @@
     "koa-body": "5.0.0",
     "koa-mount": "4.0.0",
     "koa-router": "12.0.0",
-    "ts-jest": "29.0.2",
+    "ts-jest": "29.0.3",
     "ts-node": "10.9.1",
-    "typescript": "4.8.3"
+    "typescript": "4.8.4"
   }
 }
