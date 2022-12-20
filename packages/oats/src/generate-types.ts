@@ -9,7 +9,7 @@ import * as path from 'path';
 import { resolvedStatusCodes } from './status-codes';
 
 const valueClassIndexSignatureKey = 'instanceIndexSignatureKey';
-
+const scalarTypes = ['string', 'integer', 'number', 'boolean'];
 interface ImportDefinition {
   importAs: string;
   importFile: string;
@@ -126,7 +126,6 @@ export function run(options: Options) {
 
   function generateOatsBrandProperty() {
     return ts.factory.createPropertyDeclaration(
-      undefined,
       [
         ts.factory.createToken(ts.SyntaxKind.PrivateKeyword),
         ts.factory.createToken(ts.SyntaxKind.ReadonlyKeyword)
@@ -169,7 +168,6 @@ export function run(options: Options) {
   ): readonly ts.ClassElement[] {
     const proptypes = _.map(properties, (value, key) => {
       return ts.factory.createPropertyDeclaration(
-        undefined,
         [ts.factory.createToken(ts.SyntaxKind.ReadonlyKeyword)],
         quotedProp(options.propertyNameMapper ? options.propertyNameMapper(key) : key),
         required && required.indexOf(key) >= 0
@@ -186,11 +184,9 @@ export function run(options: Options) {
     if (additionalType) {
       proptypes.push(
         ts.factory.createIndexSignature(
-          undefined,
           [ts.factory.createToken(ts.SyntaxKind.ReadonlyKeyword)],
           [
             ts.factory.createParameterDeclaration(
-              undefined,
               undefined,
               undefined,
               valueClassIndexSignatureKey,
@@ -227,11 +223,9 @@ export function run(options: Options) {
     if (additionalType) {
       proptypes.push(
         ts.factory.createIndexSignature(
-          undefined,
           readonly,
           [
             ts.factory.createParameterDeclaration(
-              undefined,
               undefined,
               undefined,
               'key',
@@ -574,7 +568,6 @@ export function run(options: Options) {
 
   function generateReflectionProperty(key: string) {
     return ts.factory.createPropertyDeclaration(
-      undefined,
       [
         ts.factory.createModifier(ts.SyntaxKind.PublicKeyword),
         ts.factory.createModifier(ts.SyntaxKind.StaticKeyword)
@@ -607,7 +600,6 @@ export function run(options: Options) {
 
   function generateClassConstructor(key: string) {
     return ts.factory.createMethodDeclaration(
-      undefined,
       [ts.factory.createModifier(ts.SyntaxKind.PublicKeyword)],
       undefined,
       'constructor',
@@ -617,13 +609,11 @@ export function run(options: Options) {
         ts.factory.createParameterDeclaration(
           undefined,
           undefined,
-          undefined,
           'value',
           undefined,
           ts.factory.createTypeReferenceNode(options.nameMapper(key, 'shape'), [])
         ),
         ts.factory.createParameterDeclaration(
-          undefined,
           undefined,
           undefined,
           'opts',
@@ -663,7 +653,6 @@ export function run(options: Options) {
 
   function generateClassMakeMethod(key: string) {
     return ts.factory.createMethodDeclaration(
-      undefined,
       [ts.factory.createModifier(ts.SyntaxKind.StaticKeyword)],
       undefined,
       'make',
@@ -673,13 +662,11 @@ export function run(options: Options) {
         ts.factory.createParameterDeclaration(
           undefined,
           undefined,
-          undefined,
           'value',
           undefined,
           ts.factory.createTypeReferenceNode(options.nameMapper(key, 'shape'), [])
         ),
         ts.factory.createParameterDeclaration(
-          undefined,
           undefined,
           undefined,
           'opts',
@@ -789,7 +776,6 @@ export function run(options: Options) {
       []
     );
     return ts.factory.createClassDeclaration(
-      undefined,
       [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
       valueIdentifier,
       [],
@@ -808,7 +794,6 @@ export function run(options: Options) {
 
   function makeAnyProperty(name: string) {
     return ts.factory.createParameterDeclaration(
-      undefined,
       undefined,
       undefined,
       ts.factory.createIdentifier(name),
@@ -1277,12 +1262,11 @@ export function run(options: Options) {
   }
 
   function generateBrand(key: string) {
-    return ts.factory.createEnumDeclaration(undefined, undefined, brandTypeName(key), []);
+    return ts.factory.createEnumDeclaration(undefined, brandTypeName(key), []);
   }
 
   function generateTypeShape(key: string, valueIdentifier: string) {
     return ts.factory.createTypeAliasDeclaration(
-      undefined,
       [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
       options.nameMapper(key, 'shape'),
       undefined,
@@ -1322,7 +1306,6 @@ export function run(options: Options) {
         : resolved.member;
       return [
         ts.factory.createTypeAliasDeclaration(
-          undefined,
           [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
           valueIdentifier,
           undefined,
@@ -1341,7 +1324,6 @@ export function run(options: Options) {
       return [
         generateBrand(key),
         ts.factory.createTypeAliasDeclaration(
-          undefined,
           [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
           options.nameMapper(key, 'value'),
           undefined,
@@ -1355,7 +1337,6 @@ export function run(options: Options) {
 
     return [
       ts.factory.createTypeAliasDeclaration(
-        undefined,
         [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
         options.nameMapper(key, 'value'),
         undefined,
@@ -1397,7 +1378,9 @@ export function run(options: Options) {
   }
 
   function isScalar(schema: oas.SchemaObject): boolean {
-    return ['string', 'integer', 'number', 'boolean'].indexOf(schema.type || '') >= 0;
+    if (!schema.type) return false;
+    if (Array.isArray(schema.type)) return schema.type.findIndex(t => scalarTypes.includes(t)) >= 0;
+    return scalarTypes.includes(schema.type);
   }
 
   function generateComponentSchemas(opts: Options): ts.Node[] {
@@ -1456,7 +1439,6 @@ export function run(options: Options) {
     return imports.map(external => {
       return ts.factory.createImportDeclaration(
         undefined,
-        undefined,
         ts.factory.createImportClause(
           false,
           undefined,
@@ -1471,7 +1453,6 @@ export function run(options: Options) {
     return ts.factory.createNodeArray([
       ts.factory.createImportDeclaration(
         undefined,
-        undefined,
         ts.factory.createImportClause(
           false,
           undefined,
@@ -1480,7 +1461,6 @@ export function run(options: Options) {
         ts.factory.createStringLiteral(options.runtimeModule)
       ),
       ts.factory.createTypeAliasDeclaration(
-        undefined,
         undefined,
         'InternalUnsafeConstructorOption',
         undefined,
