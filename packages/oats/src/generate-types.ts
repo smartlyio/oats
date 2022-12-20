@@ -796,7 +796,6 @@ export function run(options: Options) {
     return ts.factory.createParameterDeclaration(
       undefined,
       undefined,
-      undefined,
       ts.factory.createIdentifier(name),
       undefined,
       ts.factory.createKeywordTypeNode(ts.SyntaxKind.AnyKeyword),
@@ -1440,7 +1439,6 @@ export function run(options: Options) {
     return imports.map(external => {
       return ts.factory.createImportDeclaration(
         undefined,
-        undefined,
         ts.factory.createImportClause(
           false,
           undefined,
@@ -1455,7 +1453,6 @@ export function run(options: Options) {
     return ts.factory.createNodeArray([
       ts.factory.createImportDeclaration(
         undefined,
-        undefined,
         ts.factory.createImportClause(
           false,
           undefined,
@@ -1464,7 +1461,6 @@ export function run(options: Options) {
         ts.factory.createStringLiteral(options.runtimeModule)
       ),
       ts.factory.createTypeAliasDeclaration(
-        undefined,
         undefined,
         'InternalUnsafeConstructorOption',
         undefined,
