@@ -9,7 +9,7 @@ import * as path from 'path';
 import { resolvedStatusCodes } from './status-codes';
 
 const valueClassIndexSignatureKey = 'instanceIndexSignatureKey';
-
+const scalarTypes =  ['string', 'integer', 'number', 'boolean'];
 interface ImportDefinition {
   importAs: string;
   importFile: string;
@@ -1396,12 +1396,10 @@ export function run(options: Options) {
     ]);
   }
 
-  const scalarTypes =  ['string', 'integer', 'number', 'boolean'];
-
   function isScalar(schema: oas.SchemaObject): boolean {
     if (!schema.type) return false;
     if (Array.isArray(schema.type)) return schema.type.findIndex(t => scalarTypes.includes(t)) >= 0;
-    return false;
+    return scalarTypes.includes(schema.type);
   }
 
   function generateComponentSchemas(opts: Options): ts.Node[] {
