@@ -1396,8 +1396,12 @@ export function run(options: Options) {
     ]);
   }
 
+  const scalarTypes =  ['string', 'integer', 'number', 'boolean'];
+
   function isScalar(schema: oas.SchemaObject): boolean {
-    return ['string', 'integer', 'number', 'boolean'].indexOf(schema.type || '') >= 0;
+    if (!schema.type) return false;
+    if (Array.isArray(schema.type)) return schema.type.findIndex(t => scalarTypes.includes(t)) >= 0;
+    return false;
   }
 
   function generateComponentSchemas(opts: Options): ts.Node[] {
