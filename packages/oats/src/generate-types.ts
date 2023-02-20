@@ -480,6 +480,17 @@ export function run(options: Options) {
     return ts.factory.createNodeArray(response);
   }
 
+  function generateLiteral(e: any): ts.LiteralTypeNode["literal"] {
+    const type = typeof e;
+    if (e === true) ts.factory.createTrue();
+    if (e === false) ts.factory.createFalse();
+    if (type === 'string') return ts.factory.createStringLiteral(e);
+    if (type === 'bigint') return ts.factory.createBigIntLiteral(e);
+    if (type === 'number') return ts.factory.createNumericLiteral(e);
+    
+    return ts.factory.createNull();
+  } 
+
   function generateType(
     schema: oautil.SchemaObject,
     typeMapper: (name: string) => string = n => n
@@ -527,7 +538,7 @@ export function run(options: Options) {
     if (schema.enum) {
       return ts.factory.createUnionTypeNode(
         schema.enum.map(e => {
-          return ts.factory.createLiteralTypeNode(ts.createLiteral(e));
+          return ts.factory.createLiteralTypeNode(generateLiteral(e));
         })
       );
     }
@@ -696,16 +707,16 @@ export function run(options: Options) {
             ts.NodeFlags.Const
           )
         ),
-        ts.factory.createReturnStatement(
-          ts.createConditional(
-            ts.factory.createCallExpression(
-              ts.factory.createPropertyAccessExpression(
-                ts.factory.createIdentifier('make'),
-                ts.factory.createIdentifier('isError')
-              ),
-              [],
-              []
+        ts.factory.createIfStatement(
+          ts.factory.createCallExpression(
+            ts.factory.createPropertyAccessExpression(
+              ts.factory.createIdentifier('make'),
+              ts.factory.createIdentifier('isError')
             ),
+            [],
+            []
+          ),
+          ts.factory.createReturnStatement(
             ts.factory.createCallExpression(
               ts.factory.createPropertyAccessExpression(
                 ts.factory.createPropertyAccessExpression(
@@ -722,36 +733,38 @@ export function run(options: Options) {
                 )
               ]
             ),
-            ts.factory.createCallExpression(
+        ),
+        ts.factory.createReturnStatement(
+          ts.factory.createCallExpression(
+            ts.factory.createPropertyAccessExpression(
               ts.factory.createPropertyAccessExpression(
-                ts.factory.createPropertyAccessExpression(
-                  ts.factory.createPropertyAccessExpression(runtimeLibrary, 'make'),
-                  'Make'
-                ),
-                'ok'
+                ts.factory.createPropertyAccessExpression(runtimeLibrary, 'make'),
+                'Make'
               ),
-              undefined,
-              [
-                ts.factory.createCallExpression(
-                  ts.factory.createIdentifier('new ' + options.nameMapper(key, 'value')),
-                  undefined,
-                  [
-                    ts.factory.createCallExpression(
-                      ts.factory.createPropertyAccessExpression(
-                        ts.factory.createIdentifier('make'),
-                        ts.factory.createIdentifier('success')
-                      ),
-                      undefined,
-                      undefined
+              'ok'
+            ),
+            undefined,
+            [
+              ts.factory.createCallExpression(
+                ts.factory.createIdentifier('new ' + options.nameMapper(key, 'value')),
+                undefined,
+                [
+                  ts.factory.createCallExpression(
+                    ts.factory.createPropertyAccessExpression(
+                      ts.factory.createIdentifier('make'),
+                      ts.factory.createIdentifier('success')
                     ),
-                    ts.factory.createObjectLiteralExpression([
-                      ts.factory.createPropertyAssignment('unSafeSet', ts.factory.createTrue())
-                    ])
-                  ]
-                )
-              ]
-            )
+                    undefined,
+                    undefined
+                  ),
+                  ts.factory.createObjectLiteralExpression([
+                    ts.factory.createPropertyAssignment('unSafeSet', ts.factory.createTrue())
+                  ])
+                ]
+              )
+            ]
           )
+      )
         )
       ])
     );

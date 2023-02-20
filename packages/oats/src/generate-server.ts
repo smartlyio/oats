@@ -10,7 +10,6 @@ function generateRuntimeImport(runtimeModule: string) {
   return ts.factory.createNodeArray([
     ts.factory.createImportDeclaration(
       undefined,
-      undefined,
       ts.factory.createImportClause(
         false,
         undefined,
@@ -24,7 +23,6 @@ function generateRuntimeImport(runtimeModule: string) {
 function generateImport(as: string, module: string) {
   return ts.factory.createNodeArray([
     ts.factory.createImportDeclaration(
-      undefined,
       undefined,
       ts.factory.createImportClause(
         false,
@@ -206,7 +204,6 @@ function generateClientTree(
           ts.factory.createParameterDeclaration(
             undefined,
             undefined,
-            undefined,
             tree.param.name,
             undefined,
             ts.factory.createUnionTypeNode([
@@ -258,7 +255,6 @@ function generateClientSpec(opts: Options) {
   }, client.emptyTree<ts.TypeNode>());
   return ts.factory.createNodeArray([
     ts.factory.createTypeAliasDeclaration(
-      undefined,
       [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
       'ClientSpec',
       undefined,
@@ -282,14 +278,12 @@ function generateEndpointsType(opts: Options) {
   });
   return ts.factory.createNodeArray([
     ts.factory.createTypeAliasDeclaration(
-      undefined,
       [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
       'EndpointsWithContext',
-      [ts.factory.createTypeParameterDeclaration('RequestContext')],
+      [ts.factory.createTypeParameterDeclaration([], 'RequestContext')],
       ts.factory.createTypeLiteralNode(members)
     ),
     ts.factory.createTypeAliasDeclaration(
-      undefined,
       [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
       'Endpoints',
       undefined,
@@ -424,14 +418,12 @@ export function generateRouter() {
 }
 export function generateCreateRouter() {
   return ts.factory.createFunctionDeclaration(
-    undefined,
     [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
     undefined,
     'createRouter',
-    [ts.factory.createTypeParameterDeclaration('TRequestContext')],
+    [ts.factory.createTypeParameterDeclaration([], 'TRequestContext')],
     [
       ts.factory.createParameterDeclaration(
-        undefined,
         undefined,
         undefined,
         'handlerOptions',
