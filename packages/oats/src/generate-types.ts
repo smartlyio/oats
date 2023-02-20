@@ -482,9 +482,9 @@ export function run(options: Options) {
 
   function generateLiteral(e: any): ts.LiteralTypeNode['literal'] {
     const type = typeof e;
-    if (e === true) ts.factory.createTrue();
-    if (e === false) ts.factory.createFalse();
-    if (e === null) ts.factory.createNull();
+    if (e === true) return ts.factory.createTrue();
+    if (e === false) return ts.factory.createFalse();
+    if (e === null) return ts.factory.createNull();
     if (type === 'string') return ts.factory.createStringLiteral(e);
     if (type === 'bigint') return ts.factory.createBigIntLiteral(e);
     if (type === 'number') return ts.factory.createNumericLiteral(e);
