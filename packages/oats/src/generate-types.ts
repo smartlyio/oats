@@ -480,7 +480,7 @@ export function run(options: Options) {
     return ts.factory.createNodeArray(response);
   }
 
-  function generateLiteral(e: any): ts.LiteralTypeNode["literal"] {
+  function generateLiteral(e: any): ts.LiteralTypeNode['literal'] {
     const type = typeof e;
     if (e === true) ts.factory.createTrue();
     if (e === false) ts.factory.createFalse();
@@ -488,9 +488,9 @@ export function run(options: Options) {
     if (type === 'string') return ts.factory.createStringLiteral(e);
     if (type === 'bigint') return ts.factory.createBigIntLiteral(e);
     if (type === 'number') return ts.factory.createNumericLiteral(e);
-    
+
     throw new Error(`unsupported enum value: "${e}"`);
-  } 
+  }
 
   function generateType(
     schema: oautil.SchemaObject,
@@ -733,39 +733,39 @@ export function run(options: Options) {
                   'errors'
                 )
               ]
-            ),
-        ),
-        ts.factory.createReturnStatement(
-          ts.factory.createCallExpression(
-            ts.factory.createPropertyAccessExpression(
+            )
+          ),
+          ts.factory.createReturnStatement(
+            ts.factory.createCallExpression(
               ts.factory.createPropertyAccessExpression(
-                ts.factory.createPropertyAccessExpression(runtimeLibrary, 'make'),
-                'Make'
+                ts.factory.createPropertyAccessExpression(
+                  ts.factory.createPropertyAccessExpression(runtimeLibrary, 'make'),
+                  'Make'
+                ),
+                'ok'
               ),
-              'ok'
-            ),
-            undefined,
-            [
-              ts.factory.createCallExpression(
-                ts.factory.createIdentifier('new ' + options.nameMapper(key, 'value')),
-                undefined,
-                [
-                  ts.factory.createCallExpression(
-                    ts.factory.createPropertyAccessExpression(
-                      ts.factory.createIdentifier('make'),
-                      ts.factory.createIdentifier('success')
+              undefined,
+              [
+                ts.factory.createCallExpression(
+                  ts.factory.createIdentifier('new ' + options.nameMapper(key, 'value')),
+                  undefined,
+                  [
+                    ts.factory.createCallExpression(
+                      ts.factory.createPropertyAccessExpression(
+                        ts.factory.createIdentifier('make'),
+                        ts.factory.createIdentifier('success')
+                      ),
+                      undefined,
+                      undefined
                     ),
-                    undefined,
-                    undefined
-                  ),
-                  ts.factory.createObjectLiteralExpression([
-                    ts.factory.createPropertyAssignment('unSafeSet', ts.factory.createTrue())
-                  ])
-                ]
-              )
-            ]
+                    ts.factory.createObjectLiteralExpression([
+                      ts.factory.createPropertyAssignment('unSafeSet', ts.factory.createTrue())
+                    ])
+                  ]
+                )
+              ]
+            )
           )
-      )
         )
       ])
     );
