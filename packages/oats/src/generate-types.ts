@@ -484,11 +484,12 @@ export function run(options: Options) {
     const type = typeof e;
     if (e === true) ts.factory.createTrue();
     if (e === false) ts.factory.createFalse();
+    if (e === null) ts.factory.createNull();
     if (type === 'string') return ts.factory.createStringLiteral(e);
     if (type === 'bigint') return ts.factory.createBigIntLiteral(e);
     if (type === 'number') return ts.factory.createNumericLiteral(e);
     
-    return ts.factory.createNull();
+    throw new Error(`unsupported enum value: "${e}"`);
   } 
 
   function generateType(
