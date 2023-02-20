@@ -174,12 +174,8 @@ const routes = koaAdapter.bind(api.createRouter<RequestContext>(), spec, () => (
 
 // finally we can create a Koa app from the routes
 export function createApp() {
-  const app = new Koa();
-  // we need a bodyparser to make body contain json and deal with multipart
-  // requests
-  app.use(koaBody({ multipart: true }));
-  app.use(routes.routes());
-  return app;
+  // we need a bodyparser to make body contain json and deal with multipart requests
+  return new Koa().use(koaBody({ multipart: true })).use(routes.routes());
 }
 
 ```
