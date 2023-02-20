@@ -7,7 +7,7 @@ const DEFAULT_REDIRECT_STATUS = 302;
 const TEXT_HTML_CONTENT_TYPE = 'text/html';
 const TEXT_PLAIN_CONTENT_TYPE = 'text/plain';
 
-export type RedirectStatus = typeof REDIRECT_STATUSES[number];
+export type RedirectStatus = (typeof REDIRECT_STATUSES)[number];
 
 type DefaultValue<ContentType extends string> = ContentType extends
   | typeof TEXT_HTML_CONTENT_TYPE
