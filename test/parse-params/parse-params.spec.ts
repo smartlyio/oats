@@ -5,7 +5,7 @@ import * as client from './tmp/client/generated';
 import * as runtime from '@smartlyio/oats-runtime';
 import * as koaAdapter from '@smartlyio/oats-koa-adapter';
 import * as Koa from 'koa';
-import * as koaBody from 'koa-body';
+import { koaBody } from 'koa-body';
 import * as axiosAdapter from '@smartlyio/oats-axios-adapter';
 import * as http from 'http';
 import { AddressInfo } from 'net';
