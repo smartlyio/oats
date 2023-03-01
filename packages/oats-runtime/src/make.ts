@@ -485,6 +485,9 @@ export function makeObject<
       const propResult: Make<any> = additionalProp(value[index], opts);
       if (propResult.isError()) {
         return propResult.errorPath(index);
+      } else if (value[index] === undefined) {
+        // when a schema is provided as additional props we should also skip the undefined values
+        continue;
       }
       result[index] = propResult.success();
     }
