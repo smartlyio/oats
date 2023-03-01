@@ -457,10 +457,6 @@ export function makeObject<
       result[index] = propResult.success();
     }
     for (const index of Object.keys(value)) {
-      // do not consider props that have undefined value
-      if (value[index] === undefined) {
-        continue;
-      }
       // do not consider props that got mapped
       if (opts?.convertFromNetwork && listedInputPropNames.has(index)) {
         continue;
@@ -473,6 +469,10 @@ export function makeObject<
         continue;
       }
       if (!additionalProp) {
+        // do not consider props that have undefined value
+        if (value[index] === undefined) {
+          continue;
+        }
         if (safe(opts).unknownField.$ === 'drop') {
           continue;
         }

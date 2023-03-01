@@ -1,5 +1,6 @@
+import { describe } from '@jest/globals';
 import * as make from '../src/make';
-import { ShapeOfTestClass, TestClass } from './test-class';
+import { ShapeOfTestClass, ShapeOfTestClassB, TestClass, TestClassB } from './test-class';
 import { validationErrorPrinter } from '../src/make';
 
 describe('createMakerWith', () => {
@@ -20,6 +21,15 @@ describe('createMakerWith', () => {
     expect(result).toBeInstanceOf(TestClass);
     expect(result.a).toEqual(['a']);
   });
+
+  it('when additional properties is false then remove undefined values', () => {
+    // I don't know how to pass the additional properties option
+    const fun = make.createMakerWith<ShapeOfTestClassB, TestClassB>(TestClassB);
+    const result = fun({ a: ['a'], b: 'string', c: undefined }).success();
+    expect(result).toBeInstanceOf(TestClassB);
+    expect(result.a).toEqual(['a']);
+    expect(result.b).toEqual(undefined);
+  });
 });
 
 describe('Make', () => {
@@ -30,6 +40,7 @@ describe('Make', () => {
     });
   });
 });
+
 
 describe('makeOneOf', () => {
   it('groups errors', () => {
