@@ -28,7 +28,7 @@ describe('createMakerWith', () => {
     const result = fun({ a: ['a'], b: 'string', c: undefined }).success();
     expect(result).toBeInstanceOf(TestClassB);
     expect(result.a).toEqual(['a']);
-    expect(result.b).toEqual(undefined);
+    expect(result.c).toEqual(undefined);
   });
 });
 
