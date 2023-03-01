@@ -41,7 +41,6 @@ describe('Make', () => {
   });
 });
 
-
 describe('makeOneOf', () => {
   it('groups errors', () => {
     const fun = make.makeObject({
