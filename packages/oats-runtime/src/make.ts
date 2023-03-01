@@ -425,7 +425,12 @@ function getInputPropName(args: {
 
 export function makeObject<
   P extends { [key: string]: Maker<any, any> | { optional: Maker<any, any> } }
->(props: P, additionalProp?: any, comparisorOrder?: string[], type?: ObjectType) {
+>(
+  props: P,
+  additionalProp?: Maker<any, any> | undefined,
+  comparisorOrder?: string[],
+  type?: ObjectType
+) {
   const fromNetwork = fromNetworkMap(type);
   const listedInputPropNames = new Set(Object.keys(props).map(prop => fromNetwork[prop] ?? prop));
 
@@ -469,14 +474,17 @@ export function makeObject<
         continue;
       }
       if (!additionalProp) {
-        // do not consider props that have undefined value
-        if (value[index] === undefined) {
-          continue;
-        }
         if (safe(opts).unknownField.$ === 'drop') {
           continue;
         }
         return error('unexpected property').errorPath(index);
+      }
+      // if additionalProperties allows any value then we skip props with undefined value
+      // when additionalProperties is an object we SHOULD drop it
+      // when additionalProperties is false we SHOULD drop it
+      // when additionalProperties is true we should NOT drop it
+      if (type?.additionalProperties !== true && value[index] === undefined) {
+        continue;
       }
       // If the input value A has been made already with network prop name mapping
       // this runs the property value through the current additionalProps maker to validate it
@@ -485,9 +493,6 @@ export function makeObject<
       const propResult: Make<any> = additionalProp(value[index], opts);
       if (propResult.isError()) {
         return propResult.errorPath(index);
-      } else if (value[index] === undefined) {
-        // when a schema is provided as additional props we should also skip the undefined values
-        continue;
       }
       result[index] = propResult.success();
     }
