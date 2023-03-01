@@ -1,6 +1,6 @@
 import { describe } from '@jest/globals';
 import * as make from '../src/make';
-import { ShapeOfTestClass, ShapeOfTestClassB, TestClass, TestClassB } from './test-class';
+import { ShapeOfTestClass, TestClass } from './test-class';
 import { validationErrorPrinter } from '../src/make';
 
 describe('createMakerWith', () => {
@@ -22,13 +22,66 @@ describe('createMakerWith', () => {
     expect(result.a).toEqual(['a']);
   });
 
-  it('when additional properties is false then remove undefined values', () => {
-    // I don't know how to pass the additional properties option
-    const fun = make.createMakerWith<ShapeOfTestClassB, TestClassB>(TestClassB);
-    const result = fun({ a: ['a'], b: 'string', c: undefined }).success();
-    expect(result).toBeInstanceOf(TestClassB);
-    expect(result.a).toEqual(['a']);
-    expect(result.c).toEqual(undefined);
+  describe('when type.additionalProperties is true', () => {
+    it('we should not drop the props with undefined values', () => {
+      const fun = make.makeObject(
+        {
+          a: make.makeString()
+        },
+        make.makeAny(),
+        undefined,
+        {
+          type: 'object',
+          additionalProperties: true,
+          properties: {}
+        }
+      );
+      const inputObject = { a: 'a', b: 'string', c: undefined };
+      const result = fun(inputObject).success();
+      expect(Object.keys(result)).toEqual(['a', 'b', 'c']);
+    });
+  });
+
+  describe('when type.additionalProperties is an object', () => {
+    it('we should drop the props with undefined values', () => {
+      const fun = make.makeObject(
+        {
+          a: make.makeString()
+        },
+        make.makeAny(),
+        undefined,
+        {
+          type: 'object',
+          additionalProperties: {
+            type: 'string'
+          },
+          properties: {}
+        }
+      );
+      const inputObject = { a: 'a', b: 'string', c: undefined };
+      const result = fun(inputObject).success();
+      expect(Object.keys(result)).toEqual(['a', 'b']);
+    });
+  });
+
+  describe('when type.additionalProperties is false', () => {
+    it('we should drop the props with undefined values', () => {
+      const fun = make.makeObject(
+        {
+          a: make.makeString()
+        },
+        make.makeAny(),
+        undefined,
+        {
+          type: 'object',
+          additionalProperties: false,
+          properties: {}
+        }
+      );
+      const inputObject = { a: 'a', b: 'string', c: undefined };
+      const result = fun(inputObject).success();
+      expect(Object.keys(result)).toEqual(['a', 'b']);
+    });
   });
 });
 

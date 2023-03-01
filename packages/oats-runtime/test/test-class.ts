@@ -4,7 +4,6 @@ import { createMakerWith, Make, fromReflection, Maker } from '../src/make';
 import { ShapeOf } from '../src/runtime';
 
 export type ShapeOfTestClass = ShapeOf<TestClass>;
-export type ShapeOfTestClassB = ShapeOf<TestClassB>;
 
 const type: ObjectType = {
   type: 'object',
@@ -36,21 +35,4 @@ export class TestClass extends ValueClass {
   }
 }
 
-export class TestClassB extends ValueClass {
-  static make(v: ShapeOf<TestClassB>): Make<TestClassB> {
-    return makeTestClassB(v);
-  }
-  public b!: string;
-  public a!: ReadonlyArray<string>;
-  public c!: undefined;
-  constructor(v: ShapeOfTestClassB) {
-    super();
-    const value = named.maker(v).success();
-    Object.assign(this, value);
-  }
-  static reflection() {
-    return named;
-  }
-}
 export const makeTestClass: Maker<ShapeOf<TestClass>, TestClass> = createMakerWith(TestClass);
-export const makeTestClassB: Maker<ShapeOf<TestClassB>, TestClassB> = createMakerWith(TestClassB);
