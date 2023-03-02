@@ -1,3 +1,7 @@
+# 6.1.0
+
+Update the implementation of `makeObject` so that if `additionalProperties` is an object or `false` then it will drop the properties with undefined value.
+
 # 6.0.0
 
 Update to use typescript ^4.8. Some deprecated apis got broken in ts 4.8 and the new apis are not backwards compatible. 
