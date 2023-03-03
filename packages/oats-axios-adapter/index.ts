@@ -93,7 +93,7 @@ function createAxiosAdapter({
       headers,
       url,
       params,
-      paramsSerializer: preserveQueryArrayParamNames ? urlSearchParamsSerializer : undefined,
+      paramsSerializer: preserveQueryArrayParamNames ? urlSearchParamsSerializer as any : undefined,
       data,
       validateStatus: () => true
     });
