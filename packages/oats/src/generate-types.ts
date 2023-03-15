@@ -126,11 +126,8 @@ export function run(options: Options) {
 
   function generateOatsBrandProperty() {
     return ts.factory.createPropertyDeclaration(
-      [
-        ts.factory.createToken(ts.SyntaxKind.PrivateKeyword),
-        ts.factory.createToken(ts.SyntaxKind.ReadonlyKeyword)
-      ],
-      quotedProp(oatsBrandFieldName),
+      [ts.factory.createToken(ts.SyntaxKind.ReadonlyKeyword)],
+      ts.factory.createIdentifier(`#${oatsBrandFieldName}`),
       ts.factory.createToken(ts.SyntaxKind.ExclamationToken),
       ts.factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword),
       undefined
@@ -1501,7 +1498,7 @@ export function run(options: Options) {
           return;
         }
       }
-      const brandMatch = line.match(new RegExp('\\s*private readonly ' + oatsBrandFieldName));
+      const brandMatch = line.match(new RegExp('\\s*readonly #' + oatsBrandFieldName));
       if (brandMatch) {
         result.push('    // @ts-ignore tsc does not like unused privates');
         result.push(line);
