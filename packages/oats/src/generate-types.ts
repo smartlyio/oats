@@ -127,7 +127,7 @@ export function run(options: Options) {
   function generateOatsBrandProperty() {
     return ts.factory.createPropertyDeclaration(
       [ts.factory.createToken(ts.SyntaxKind.ReadonlyKeyword)],
-      ts.factory.createIdentifier(`#${oatsBrandFieldName}`),
+      ts.factory.createPrivateIdentifier(`#${oatsBrandFieldName}`),
       ts.factory.createToken(ts.SyntaxKind.ExclamationToken),
       ts.factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword),
       undefined
