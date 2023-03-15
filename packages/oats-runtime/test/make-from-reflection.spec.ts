@@ -822,6 +822,33 @@ describe('object', () => {
     expect(fun({ a: 1 }).success()).toEqual({ a: 1 });
   });
 
+  it('does not remove undefined props when additionalProps true', () => {
+    const fun = make.fromReflection({
+      type: 'object',
+      additionalProperties: true,
+      properties: {}
+    });
+    expect(Object.keys(fun({ a: undefined }).success())).toEqual(['a']);
+  });
+
+  it('removes undefined props when additionalProps is a type', () => {
+    const fun = make.fromReflection({
+      type: 'object',
+      additionalProperties: { type: 'string' },
+      properties: {}
+    });
+    expect(Object.keys(fun({ a: undefined }).success())).toEqual([]);
+  });
+
+  it('removes unknown undefined props when additionalProps is false', () => {
+    const fun = make.fromReflection({
+      type: 'object',
+      additionalProperties: false,
+      properties: {}
+    });
+    expect(Object.keys(fun({ a: undefined }).success())).toEqual([]);
+  });
+
   it('allows undefined props', () => {
     const fun = make.fromReflection({
       type: 'object',

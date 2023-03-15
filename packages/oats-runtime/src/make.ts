@@ -473,18 +473,20 @@ export function makeObject<
       if (props[index]) {
         continue;
       }
-      if (!additionalProp) {
-        if (safe(opts).unknownField.$ === 'drop') {
-          continue;
-        }
-        return error('unexpected property').errorPath(index);
-      }
+
       // if additionalProperties allows any value then we skip props with undefined value
       // when additionalProperties is an object we SHOULD drop it
       // when additionalProperties is false we SHOULD drop it
       // when additionalProperties is true we should NOT drop it
       if (type?.additionalProperties !== true && value[index] === undefined) {
         continue;
+      }
+
+      if (!additionalProp) {
+        if (safe(opts).unknownField.$ === 'drop') {
+          continue;
+        }
+        return error('unexpected property').errorPath(index);
       }
       // If the input value A has been made already with network prop name mapping
       // this runs the property value through the current additionalProps maker to validate it
