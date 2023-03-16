@@ -2,8 +2,8 @@
   "compilerOptions": {
     "strict": true,
     "declaration": true,
-    "target": "es2017",
-    "lib": ["es6", "es2017", "dom", "esnext.asynciterable"],
+    "target": "es2022",
+    "lib": ["es2022", "dom", "esnext.asynciterable"],
     "module": "commonjs",
     "moduleResolution": "node",
     "sourceMap": true,
