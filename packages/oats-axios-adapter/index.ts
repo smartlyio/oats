@@ -75,6 +75,9 @@ export function create({
   return createAxiosAdapter({ axiosInstance, preserveQueryArrayParamNames });
 }
 
+const removeUndefined = <T extends object>(obj: T): T =>
+  Object.fromEntries(Object.entries(obj).filter(([,value]) => value !== undefined)) as any;
+
 function createAxiosAdapter({
   axiosInstance,
   preserveQueryArrayParamNames
@@ -84,10 +87,10 @@ function createAxiosAdapter({
       return fail('cannot decide which server to use from ' + arg.servers.join(', '));
     }
     const server = arg.servers[0];
-    const params = axiosToJson(arg.query);
+    const params = removeUndefined(axiosToJson(arg.query));
     const data = toRequestData(arg.body);
     const url = server + arg.path;
-    const headers = { ...arg.headers, ...(data instanceof FormData ? data.getHeaders() : {}) };
+    const headers = removeUndefined({ ...arg.headers, ...(data instanceof FormData ? data.getHeaders() : {}) });
     const response = await axiosInstance.request({
       method: arg.method,
       headers,
