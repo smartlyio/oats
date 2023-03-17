@@ -438,6 +438,12 @@ export function makeObject<
     if (typeof value !== 'object' || value == null || Array.isArray(value)) {
       return getErrorWithValueMsg('expected an object', value);
     }
+
+    // if the value been parsed already using the given object type
+    // return the value as is
+    if (type && getTypeSet(value)?.has(type)) {
+      return value;
+    }
     comparisorOrder ||= Object.keys(props);
     const result: { [key: string]: any } = {};
     for (const index of comparisorOrder) {
