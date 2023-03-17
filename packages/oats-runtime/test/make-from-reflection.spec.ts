@@ -661,6 +661,17 @@ describe('object', () => {
     });
   });
 
+  describe('work avoidance', () => {
+    it ('return argument when reparsing', () => {
+      const fun = make.fromReflection({
+        type: 'object',
+        additionalProperties: false,
+        properties: { field: { value: { type: 'number' }, required: true, networkName: 'network' } }
+      });
+      const value = fun({ field: 1 }).success();
+      expect(fun(value).success()).toBe(value);
+    });
+  });
   describe('property mapping', () => {
     it('map properties from network to ts side', () => {
       const fun = make.fromReflection({
