@@ -662,7 +662,7 @@ describe('object', () => {
   });
 
   describe('work avoidance', () => {
-    it ('return argument when reparsing', () => {
+    it('returns the input value when reparsing', () => {
       const fun = make.fromReflection({
         type: 'object',
         additionalProperties: false,
