@@ -7,7 +7,7 @@ import * as oautil from './util';
 import { NameKind, UnsupportedFeatureBehaviour } from './util';
 import * as path from 'path';
 import { resolvedStatusCodes } from './status-codes';
-import { buildBlock } from './builder';
+import { buildMethod } from './builder';
 
 const valueClassIndexSignatureKey = 'instanceIndexSignatureKey';
 const scalarTypes = ['string', 'integer', 'number', 'boolean'];
@@ -73,8 +73,8 @@ export function deprecated(condition: any, message: string) {
 }
 const oatsBrandFieldName = '__oats_value_class_brand_tag';
 const makeTypeTypeName = 'Make';
-const runtimeLibName = 'oar';
-const runtimeLibrary = ts.factory.createIdentifier(runtimeLibName);
+const runtime = 'oar';
+const runtimeLibrary = ts.factory.createIdentifier(runtime);
 const readonly = [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)];
 // list of files for which we have an action to generate it already
 // to prevent calling an action to generate it again and causing maybe some race conditions
@@ -664,43 +664,20 @@ export function run(options: Options) {
 
   function generateClassMakeMethod(key: string) {
     const className = options.nameMapper(key, 'value');
-    return ts.factory.createMethodDeclaration(
-      [ts.factory.createModifier(ts.SyntaxKind.StaticKeyword)],
-      undefined,
-      'make',
-      undefined,
-      undefined,
-      [
-        ts.factory.createParameterDeclaration(
-          undefined,
-          undefined,
-          'value',
-          undefined,
-          ts.factory.createTypeReferenceNode(options.nameMapper(key, 'shape'), [])
-        ),
-        ts.factory.createParameterDeclaration(
-          undefined,
-          undefined,
-          'opts',
-          ts.factory.createToken(ts.SyntaxKind.QuestionToken),
-          ts.factory.createTypeReferenceNode(fromLib('make', 'MakeOptions'), [])
-        )
-      ],
-      ts.factory.createTypeReferenceNode(fromLib('make', makeTypeTypeName), [
-        ts.factory.createTypeReferenceNode(options.nameMapper(key, 'value'), [])
-      ]),
-      buildBlock(`
+    const shapeName = options.nameMapper(key, 'shape');
+    return buildMethod(`
+    static make(value: ${shapeName}, opts?: ${runtime}.make.MakeOptions): ${runtime}.make.Make<${className}> {
       if (value instanceof ${className}) { 
-        return ${runtimeLibName}.make.Make.ok(value);
+        return ${runtime}.make.Make.ok(value);
       }
       const make = build${className}(value, opts); 
       if (make.isError()) {
-        return ${runtimeLibName}.make.Make.error(make.errors);
+        return ${runtime}.make.Make.error(make.errors);
       } else {
-        return ${runtimeLibName}.make.Make.ok(new ${className}(make.success(), { unSafeSet: true }));
+        return ${runtime}.make.Make.ok(new ${className}(make.success(), { unSafeSet: true }));
       }
-      `)
-    );
+    }
+    `);
   }
 
   function generateClassBuiltindMembers(key: string) {
