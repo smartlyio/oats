@@ -1,0 +1,15 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: example service
+servers:
+  - url: http://localhost:12000
+paths: {}
+components:
+  schemas:
+    value:
+      type: object
+      properties:
+        prop:
+          type: string
+
