@@ -442,7 +442,7 @@ export function makeObject<
     // if the value been parsed already using the given object type
     // return the value as is
     if (type && getTypeSet(value)?.has(type)) {
-      return value;
+      return Make.ok(value);
     }
     comparisorOrder ||= Object.keys(props);
     const result: { [key: string]: any } = {};
