@@ -72,7 +72,6 @@ export function deprecated(condition: any, message: string) {
   }
 }
 const oatsBrandFieldName = '__oats_value_class_brand_tag';
-const makeTypeTypeName = 'Make';
 const runtime = 'oar';
 const runtimeLibrary = ts.factory.createIdentifier(runtime);
 const readonly = [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)];
