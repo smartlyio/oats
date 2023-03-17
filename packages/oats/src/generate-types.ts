@@ -7,6 +7,7 @@ import * as oautil from './util';
 import { NameKind, UnsupportedFeatureBehaviour } from './util';
 import * as path from 'path';
 import { resolvedStatusCodes } from './status-codes';
+import { buildBlock } from './builder';
 
 const valueClassIndexSignatureKey = 'instanceIndexSignatureKey';
 const scalarTypes = ['string', 'integer', 'number', 'boolean'];
@@ -72,7 +73,8 @@ export function deprecated(condition: any, message: string) {
 }
 const oatsBrandFieldName = '__oats_value_class_brand_tag';
 const makeTypeTypeName = 'Make';
-const runtimeLibrary = ts.factory.createIdentifier('oar');
+const runtimeLibName = 'oar';
+const runtimeLibrary = ts.factory.createIdentifier(runtimeLibName);
 const readonly = [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)];
 // list of files for which we have an action to generate it already
 // to prevent calling an action to generate it again and causing maybe some race conditions
@@ -661,6 +663,7 @@ export function run(options: Options) {
   }
 
   function generateClassMakeMethod(key: string) {
+    const className = options.nameMapper(key, 'value');
     return ts.factory.createMethodDeclaration(
       [ts.factory.createModifier(ts.SyntaxKind.StaticKeyword)],
       undefined,
@@ -686,85 +689,17 @@ export function run(options: Options) {
       ts.factory.createTypeReferenceNode(fromLib('make', makeTypeTypeName), [
         ts.factory.createTypeReferenceNode(options.nameMapper(key, 'value'), [])
       ]),
-      ts.factory.createBlock([
-        ts.factory.createVariableStatement(
-          [],
-          ts.factory.createVariableDeclarationList(
-            [
-              ts.factory.createVariableDeclaration(
-                'make',
-                undefined,
-                undefined,
-                ts.factory.createCallExpression(
-                  ts.factory.createIdentifier('build' + options.nameMapper(key, 'value')),
-                  undefined,
-                  [ts.factory.createIdentifier('value'), ts.factory.createIdentifier('opts')]
-                )
-              )
-            ],
-            ts.NodeFlags.Const
-          )
-        ),
-        ts.factory.createIfStatement(
-          ts.factory.createCallExpression(
-            ts.factory.createPropertyAccessExpression(
-              ts.factory.createIdentifier('make'),
-              ts.factory.createIdentifier('isError')
-            ),
-            [],
-            []
-          ),
-          ts.factory.createReturnStatement(
-            ts.factory.createCallExpression(
-              ts.factory.createPropertyAccessExpression(
-                ts.factory.createPropertyAccessExpression(
-                  ts.factory.createPropertyAccessExpression(runtimeLibrary, 'make'),
-                  'Make'
-                ),
-                'error'
-              ),
-              undefined,
-              [
-                ts.factory.createPropertyAccessExpression(
-                  ts.factory.createIdentifier('make'),
-                  'errors'
-                )
-              ]
-            )
-          ),
-          ts.factory.createReturnStatement(
-            ts.factory.createCallExpression(
-              ts.factory.createPropertyAccessExpression(
-                ts.factory.createPropertyAccessExpression(
-                  ts.factory.createPropertyAccessExpression(runtimeLibrary, 'make'),
-                  'Make'
-                ),
-                'ok'
-              ),
-              undefined,
-              [
-                ts.factory.createCallExpression(
-                  ts.factory.createIdentifier('new ' + options.nameMapper(key, 'value')),
-                  undefined,
-                  [
-                    ts.factory.createCallExpression(
-                      ts.factory.createPropertyAccessExpression(
-                        ts.factory.createIdentifier('make'),
-                        ts.factory.createIdentifier('success')
-                      ),
-                      undefined,
-                      undefined
-                    ),
-                    ts.factory.createObjectLiteralExpression([
-                      ts.factory.createPropertyAssignment('unSafeSet', ts.factory.createTrue())
-                    ])
-                  ]
-                )
-              ]
-            )
-          )
-        )
-      ])
+      buildBlock(`
+      if (value instanceof ${className}) { 
+        return ${runtimeLibName}.make.Make.ok(value);
+      }
+      const make = build${className}(value, opts); 
+      if (make.isError()) {
+        return ${runtimeLibName}.make.Make.error(make.errors);
+      } else {
+        return ${runtimeLibName}.make.Make.ok(new ${className}(make.success(), { unSafeSet: true }));
+      }
+      `)
     );
   }
 
