@@ -1,3 +1,11 @@
+# 6.2.0
+
+Bug fix that changes aliasing of objects returned by Oats. Now re-making an object with the same maker will return the
+same object (by ===).  Eg `const a = typeValue.maker({a: 1}).success(); assert(a === typeValue.maker(a).success())` will hold.
+
+This will improve performance when re-parsing objects but changes the caller behaviour when the
+identity of the object is important.
+
 # 6.1.0
 
 Update the implementation of `makeObject` so that if `additionalProperties` is an object or `false` then it will drop the properties with undefined value.
