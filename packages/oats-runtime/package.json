@@ -22,7 +22,7 @@
     "typescript": "^4.8.0 || ^5.0.0"
   },
   "dependencies": {
-    "@smartlyio/safe-navigation": "^5.0.1",
+    "@smartlyio/safe-navigation": "^5.1.0",
     "@types/encodeurl": "1.0.0",
     "@types/escape-html": "1.0.2",
     "encodeurl": "1.0.2",
