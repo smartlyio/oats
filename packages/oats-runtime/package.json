@@ -12,7 +12,8 @@
     "clean:dist": "rm -rf ./dist",
     "prebuild": "yarn clean && yarn tsc --project tsconfig.test.json --noEmit",
     "build": "yarn tsc",
-    "lint": "eslint --max-warnings=0 --ext .ts src test"
+    "lint": "eslint --max-warnings=0 --ext .ts src test",
+    "lint:fix": "eslint --max-warnings=0 --ext .ts src test --fix"
   },
   "repository": {
     "type": "git",

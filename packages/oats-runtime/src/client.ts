@@ -96,10 +96,7 @@ export function addPath<T>(
     opTree = opTree || emptyTree();
     const part = parts[0];
     if (part === undefined) {
-      assert(
-        opTree.methods[method] === undefined,
-        'duplicate method definition for ' + path
-      );
+      assert(opTree.methods[method] === undefined, 'duplicate method definition for ' + path);
       return {
         ...opTree,
         methods: {
