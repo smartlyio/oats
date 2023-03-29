@@ -3,7 +3,7 @@ import { reflection as reflectionType } from '@smartlyio/oats-runtime';
 import * as fc from 'fast-check';
 import { generator as gen } from '@smartlyio/oats-fast-check';
 import * as testType from './tmp/fixture.types.generated';
-import safe from '@smartlyio/safe-navigation';
+
 const { createMakerWith, makeArray, makeObject, makeString } = runtime.make;
 const ValueClass = runtime.valueClass.ValueClass;
 type Make<A> = runtime.make.Make<A>;
@@ -530,12 +530,12 @@ describe('reflection-type', () => {
               fc.asyncProperty(
                 gen.named(testType.typeTestObject),
                 async (value: testType.TestObject) => {
-                  const original = safe(value).recursive.noHit.$;
+                  const original = value.recursive?.noHit;
                   const mappedValue: testType.TestObject = await traverser[call](
                     value,
                     (str: any) => ('mapped ' + str) as any
                   );
-                  expect(safe(mappedValue).recursive.noHit.$).toEqual(original);
+                  expect(mappedValue.recursive?.noHit).toEqual(original);
                 }
               )
             ));
@@ -545,12 +545,12 @@ describe('reflection-type', () => {
               fc.asyncProperty(
                 gen.named(testType.typeTestObject),
                 async (value: testType.TestObject) => {
-                  const original = safe(value).recursive.immediate.$;
+                  const original = value.recursive?.immediate;
                   const mappedValue: testType.TestObject = await traverser[call](
                     value,
                     (str: any) => ('mapped ' + str) as any
                   );
-                  expect(safe(mappedValue).recursive.immediate.$).toEqual(
+                  expect(mappedValue.recursive?.immediate).toEqual(
                     original !== undefined ? 'mapped ' + original : undefined
                   );
                 }

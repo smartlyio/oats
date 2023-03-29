@@ -1,6 +1,5 @@
 import * as oas from 'openapi3-ts';
 import * as ts from 'typescript';
-import safe from '@smartlyio/safe-navigation';
 import * as _ from 'lodash';
 import * as assert from 'assert';
 import * as oautil from './util';
@@ -1310,7 +1309,7 @@ export function run(options: Options) {
 
   function generateComponentSchemas(opts: Options): ts.Node[] {
     const oas = opts.oas;
-    const schemas = safe(oas).components.schemas.$;
+    const schemas = oas.components?.schemas;
     if (!schemas) {
       return [];
     }
@@ -1340,17 +1339,17 @@ export function run(options: Options) {
   }
 
   function generateComponents(opts: Options): ts.NodeArray<ts.Node> {
-    const oas = safe(opts.oas);
+    const oas = opts.oas;
     const nodes = [];
     nodes.push(...oautil.errorTag('in component.schemas', () => generateComponentSchemas(opts)));
     nodes.push(
       ...oautil.errorTag('in component.responses', () =>
-        generateComponentRequestsAndResponses(oas.components.responses.$)
+        generateComponentRequestsAndResponses(oas.components?.responses)
       )
     );
     nodes.push(
       ...oautil.errorTag('in component.requestBodies', () =>
-        generateComponentRequestsAndResponses(oas.components.requestBodies.$)
+        generateComponentRequestsAndResponses(oas.components?.requestBodies)
       )
     );
     return ts.factory.createNodeArray(nodes);
@@ -1449,9 +1448,9 @@ export function run(options: Options) {
   ): { qualified?: ts.Identifier; member: string } {
     const external = options.resolve(ref, options, kind);
     if (external) {
-      const importAs = safe(external).importAs.$;
-      if (importAs) {
-        addToImports(importAs, safe(external).importFrom.$, safe(external).generate.$);
+      if ('importAs' in external) {
+        const importAs = external.importAs;
+        addToImports(importAs, external.importFrom, external.generate);
         return { member: external.name, qualified: ts.factory.createIdentifier(importAs) };
       }
       return { member: external.name };

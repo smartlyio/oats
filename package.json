@@ -45,7 +45,6 @@
     "client"
   ],
   "devDependencies": {
-    "@smartlyio/safe-navigation": "5.0.2",
     "@types/jest": "29.5.0",
     "@types/koa": "2.13.6",
     "@types/koa-mount": "4.0.2",

@@ -1,5 +1,4 @@
 import * as oas from 'openapi3-ts';
-import safe from '@smartlyio/safe-navigation';
 import * as assert from 'assert';
 import * as _ from 'lodash';
 
@@ -93,7 +92,7 @@ export enum UnsupportedFeatureBehaviour {
 }
 
 function resolve(key: string, schema: oas.OpenAPIObject): oas.SchemaObject | undefined {
-  const hit = safe(schema).components.schemas[key].$;
+  const hit = schema.components?.schemas?.[key];
   if (!hit) {
     return undefined;
   }
