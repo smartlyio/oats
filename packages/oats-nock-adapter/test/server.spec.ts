@@ -231,7 +231,7 @@ describe('server', () => {
               return runtime.json(
                 200,
                 types.Item.make({
-                  id: ctx.body.value.someValue + ' ' + ctx.body.value.blob.options
+                  id: ctx.body.value.someValue + ' ' + ctx.body.value.blob?.options
                 }).success()
               );
             }
