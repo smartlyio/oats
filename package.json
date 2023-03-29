@@ -17,6 +17,7 @@
     "test:watch": "jest --watch",
     "lint:local": "eslint --max-warnings=0 --ext .ts test examples",
     "lint": "yarn lint:local && lerna run lint",
+    "lint:fix": "yarn lint:local && lerna run lint:fix",
     "generate": "yarn generate:examples && yarn generate:test",
     "generate:test": "find test -name 'driver.ts' -exec ts-node -r tsconfig-paths/register --project tsconfig.json {} \\;",
     "generate:examples": "ts-node -r tsconfig-paths/register --project tsconfig.json examples/driver.ts && ts-node -r tsconfig-paths/register --project tsconfig.json render.ts",
