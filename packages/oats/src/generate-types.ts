@@ -401,7 +401,10 @@ export function run(options: Options) {
                     }
                   }
                 ),
-            headers: { type: 'object' }
+            headers: {
+              type: 'object',
+              additionalProperties: { type: 'string' }
+            }
           },
           required: ['status', 'value', 'headers'],
           additionalProperties: false
