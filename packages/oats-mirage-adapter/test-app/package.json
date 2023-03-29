@@ -42,6 +42,6 @@
     ]
   },
   "devDependencies": {
-    "@smartlyio/oats": "6.1.3"
+    "@smartlyio/oats": "6.2.0"
   }
 }
