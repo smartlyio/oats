@@ -1,5 +1,4 @@
 import * as server from './server';
-import safe from '@smartlyio/safe-navigation';
 import { assert } from './assert';
 
 type HasOnlyOptionalTypes<O> = Partial<O> extends O ? true : O extends void ? true : false;
@@ -98,7 +97,7 @@ export function addPath<T>(
     const part = parts[0];
     if (part === undefined) {
       assert(
-        safe(opTree).methods[method].$ === undefined,
+        opTree.methods[method] === undefined,
         'duplicate method definition for ' + path
       );
       return {
@@ -120,7 +119,7 @@ export function addPath<T>(
           ...opTree,
           param: {
             name: identifier(param[2]),
-            tree: addPath_(parts.slice(1), safe(opTree).param.tree.$)
+            tree: addPath_(parts.slice(1), opTree.param?.tree)
           }
         };
       } else {
@@ -202,9 +201,9 @@ function makeMethod(adapter: ClientAdapter, handler: server.Handler, pathParams:
       servers: handler.servers,
       method: handler.method,
       params,
-      headers: safe(ctx).headers.$,
-      query: safe(ctx).query.$,
-      body: safe(ctx).body.$,
+      headers: ctx?.headers,
+      query: ctx?.query,
+      body: ctx?.body,
       requestContext: { path: handler.path }
     });
 }

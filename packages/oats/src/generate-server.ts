@@ -3,7 +3,6 @@ import * as ts from 'typescript';
 import * as assert from 'assert';
 import * as oautil from './util';
 import { server, client } from '@smartlyio/oats-runtime';
-import safe from '@smartlyio/safe-navigation';
 import { NameMapper, UnsupportedFeatureBehaviour } from './util';
 
 function generateRuntimeImport(runtimeModule: string) {
@@ -51,7 +50,7 @@ function generateMethod<S extends oas.OperationObject>(
   opts: Options
 ) {
   if (
-    (safe(opts).unsupportedFeatures.security.$ ?? UnsupportedFeatureBehaviour.reject) ===
+    (opts?.unsupportedFeatures?.security ?? UnsupportedFeatureBehaviour.reject) ===
     UnsupportedFeatureBehaviour.reject
   ) {
     assert(!schema.security, 'security not supported');
@@ -142,7 +141,7 @@ function generateClientMethod(
   op: oas.OperationObject
 ): ts.TypeNode {
   if (
-    (safe(opts).unsupportedFeatures.security.$ ?? UnsupportedFeatureBehaviour.reject) ===
+    (opts?.unsupportedFeatures?.security ?? UnsupportedFeatureBehaviour.reject) ===
     UnsupportedFeatureBehaviour.reject
   ) {
     assert(!op.security, 'security not supported');
@@ -350,7 +349,7 @@ function flattenPathAndMethod(paths: oas.PathsObject) {
 
 function generateHandler(opts: Options) {
   const schema = opts.oas;
-  const servers = (safe(schema).servers.$ || []).map(server => server.url);
+  const servers = (schema?.servers ?? []).map(server => server.url);
   return ts.factory.createVariableStatement(
     [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
     ts.factory.createVariableDeclarationList(

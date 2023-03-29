@@ -1,7 +1,6 @@
 import * as nockAdapter from '../src/nock';
 import * as axiosClient from '@smartlyio/oats-axios-adapter';
 import * as runtime from '@smartlyio/oats-runtime';
-import safe from '@smartlyio/safe-navigation';
 
 import * as api from '../tmp/client.types.generated';
 import * as types from '../tmp/openapi.types.generated';
@@ -232,7 +231,7 @@ describe('server', () => {
               return runtime.json(
                 200,
                 types.Item.make({
-                  id: ctx.body.value.someValue + ' ' + safe(ctx).body.value.blob.options.$
+                  id: ctx.body.value.someValue + ' ' + ctx.body.value.blob.options
                 }).success()
               );
             }

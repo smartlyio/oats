@@ -1,5 +1,4 @@
 import { assert, fail } from './assert';
-import safe from '@smartlyio/safe-navigation';
 import * as _ from 'lodash';
 import { isEqual, uniq } from 'lodash';
 import { ValueClass } from './value-class';
@@ -489,7 +488,7 @@ export function makeObject<
       }
 
       if (!additionalProp) {
-        if (safe(opts).unknownField.$ === 'drop') {
+        if (opts?.unknownField === 'drop') {
           continue;
         }
         return error('unexpected property').errorPath(index);
