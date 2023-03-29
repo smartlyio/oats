@@ -228,10 +228,12 @@ describe('server', () => {
         nockAdapter.bind(api.createRouter(), {
           '/item/formdata': {
             post: async ctx => {
+              const blob = ctx.body.value.blob;
+              const options = blob && 'options' in blob ? blob.options : undefined;
               return runtime.json(
                 200,
                 types.Item.make({
-                  id: ctx.body.value.someValue + ' ' + ctx.body.value.blob?.options
+                  id: ctx.body.value.someValue + ' ' + options
                 }).success()
               );
             }
