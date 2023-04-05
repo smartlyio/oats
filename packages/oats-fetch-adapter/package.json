@@ -8,11 +8,10 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "lint": "eslint . --ext .ts",
-    "lint:fix": "eslint . --ext .ts --fix",
     "clean": "rm -rf ./dist && rm -f ./tmp/*.ts",
-    "build": "yarn clean && yarn lint && yarn tsc",
-    "prepublish": "yarn build"
+    "build": "yarn clean && yarn tsc",
+    "lint": "eslint --max-warnings=0 --ext .ts .",
+    "lint:fix": "eslint --max-warnings=0 --ext --fix .ts ."
   },
   "repository": {
     "type": "git",
