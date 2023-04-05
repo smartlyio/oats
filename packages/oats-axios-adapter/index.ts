@@ -13,13 +13,15 @@ function toRequestData(data: runtime.server.RequestBody<any> | undefined) {
   }
   if (['application/x-www-form-urlencoded', 'multipart/form-data'].indexOf(data.contentType) >= 0) {
     const form = new FormData();
-    Object.entries(data.value).filter(([,element]) => !!element).forEach(([key, element]) => {
-      if (element instanceof runtime.make.FormBinary) {
-        form.append(key, element.binary, element.options);
-      } else {
-        form.append(key, element);
-      }
-    });
+    Object.entries(data.value)
+      .filter(([, element]) => !!element)
+      .forEach(([key, element]) => {
+        if (element instanceof runtime.make.FormBinary) {
+          form.append(key, element.binary, element.options);
+        } else {
+          form.append(key, element);
+        }
+      });
     return form;
   }
   fail('unknown content type for axios client ' + data.contentType);
