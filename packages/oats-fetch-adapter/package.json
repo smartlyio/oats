@@ -1,0 +1,51 @@
+{
+  "name": "@smartlyio/oats-fetch-adapter",
+  "version": "1.0.0",
+  "license": "MIT",
+  "description": "Fetch adapter for Oats a Openapi3 based generator for typescript aware servers and clients",
+  "private": false,
+  "author": "Smartly.io",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
+    "clean": "rm -rf ./dist && rm -f ./tmp/*.ts",
+    "build": "yarn clean && yarn lint && yarn tsc",
+    "prepublish": "yarn build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/smartlyio/oats.git"
+  },
+  "peerDependencies": {
+    "@smartlyio/oats-runtime": "^6.3.0",
+    "typescript": "^4.9.5"
+  },
+  "dependencies": {
+    "form-data": "^4.0.0"
+  },
+  "keywords": [
+    "oats",
+    "openapi3",
+    "rest",
+    "generator",
+    "typescript",
+    "server",
+    "client"
+  ],
+  "devDependencies": {
+    "@smartlyio/oats-runtime": "6.3.0",
+    "@types/node": "18.15.11",
+    "@typescript-eslint/eslint-plugin": "5.57.1",
+    "@typescript-eslint/parser": "5.57.1",
+    "eslint": "8.37.0",
+    "eslint-config-prettier": "8.8.0",
+    "eslint-plugin-import": "2.27.5",
+    "eslint-plugin-jest": "27.2.1",
+    "eslint-plugin-prettier": "4.2.1",
+    "node-fetch": "3.3.1",
+    "prettier": "2.8.7",
+    "typescript": "4.9.5"
+  }
+}
