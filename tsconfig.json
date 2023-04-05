@@ -17,6 +17,7 @@
       "@smartlyio/oats": ["packages/oats/index.ts"],
       "@smartlyio/oats-runtime": ["packages/oats-runtime/src/runtime.ts"],
       "@smartlyio/oats-axios-adapter": ["packages/oats-axios-adapter/index.ts"],
+      "@smartlyio/oats-fetch-adapter": ["packages/oats-fetch-adapter/index.ts"],
       "@smartlyio/oats-koa-adapter": ["packages/oats-koa-adapter/index.ts"]
     }
   },

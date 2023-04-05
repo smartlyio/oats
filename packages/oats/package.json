@@ -40,6 +40,7 @@
   ],
   "devDependencies": {
     "@smartlyio/oats-axios-adapter": "^6.3.0",
+    "@smartlyio/oats-fetch-adapter": "^6.3.0",
     "@smartlyio/oats-koa-adapter": "^6.3.0",
     "@smartlyio/oats-runtime": "^6.3.0",
     "@types/jest": "29.5.0",

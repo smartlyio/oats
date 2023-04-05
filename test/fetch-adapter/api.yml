@@ -1,0 +1,61 @@
+openapi: 3.0.0
+info:
+  title: Test spec
+  version: v1
+paths:
+  /:
+    get:
+      description: endpoint
+      responses:
+        200:
+          description: endpoint
+          content:
+            text/plain:
+              schema:
+                type: string
+  /with-query:
+    get:
+      parameters:
+        - in: query
+          name: one
+          schema:
+            type: string
+      description: endpoint
+      responses:
+        200:
+          description: endpoint
+          content:
+            text/plain:
+              schema:
+                type: string
+  /with-headers:
+    get:
+      parameters:
+        - in: header
+          name: one
+          schema:
+            type: string
+      description: endpoint
+      responses:
+        200:
+          description: endpoint
+          content:
+            text/plain:
+              schema:
+                type: string
+  /json-body:
+    post:
+      description: endpoint
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          description: endpoint
+          content:
+            text/plain:
+              schema:
+                type: string

@@ -4,6 +4,7 @@ module.exports = {
     '@smartlyio/oats$': '<rootDir>/packages/oats/index.ts',
     '@smartlyio/oats-runtime$': '<rootDir>/packages/oats-runtime/src/runtime.ts',
     '@smartlyio/oats-axios-adapter$': '<rootDir>/packages/oats-axios-adapter/index.ts',
+    '@smartlyio/oats-fetch-adapter$': '<rootDir>/packages/oats-fetch-adapter/index.ts',
     '@smartlyio/oats-koa-adapter$': '<rootDir>/packages/oats-koa-adapter/index.ts',
     '@smartlyio/oats-fast-check$': '<rootDir>/packages/oats-fast-check/src/index.ts'
   },
