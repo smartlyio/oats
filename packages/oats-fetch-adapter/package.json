@@ -11,7 +11,7 @@
     "clean": "rm -rf ./dist && rm -f ./tmp/*.ts",
     "build": "yarn clean && yarn tsc",
     "lint": "eslint --max-warnings=0 --ext .ts .",
-    "lint:fix": "eslint --max-warnings=0 --ext --fix .ts ."
+    "lint:fix": "eslint --max-warnings=0 --ext .ts . --fix"
   },
   "repository": {
     "type": "git",

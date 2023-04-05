@@ -31,6 +31,29 @@ function dataToJson(data: any) {
   return data;
 }
 
+function getContentType(response: Response) {
+  const type = response.headers.get('content-type');
+  if (!type) {
+    return runtime.noContentContentType;
+  }
+  if (response.status === 204) {
+    return 'text/plain';
+  }
+  return type.split(';')[0].trim();
+}
+
+function getResponseData(contentType: string, response: Response) {
+  if (contentType === runtime.noContentContentType) {
+    if (!response.body) {
+      return null;
+    }
+  }
+  if (response.status === 204) {
+    return '';
+  }
+  return response.json().catch(() => response.text());
+}
+
 export const bind: runtime.client.ClientAdapter = async (
   arg: runtime.server.EndpointArg<any, any, any, any>
 ): Promise<any> => {
@@ -61,25 +84,37 @@ export const bind: runtime.client.ClientAdapter = async (
   };
 };
 
-function getContentType(response: Response) {
-  const type = response.headers.get('content-type');
-  if (!type) {
-    return runtime.noContentContentType;
-  }
-  if (response.status === 204) {
-    return 'text/plain';
-  }
-  return type.split(';')[0].trim();
-}
-
-function getResponseData(contentType: string, response: Response) {
-  if (contentType === runtime.noContentContentType) {
-    if (!response.body) {
-      return null;
+/**
+ * @returns oats runtime client adapter.
+ */
+export function create(): runtime.client.ClientAdapter {
+  return async arg => {
+    if (arg.servers.length !== 1) {
+      return fail('cannot decide which server to use from ' + arg.servers.join(', '));
     }
-  }
-  if (response.status === 204) {
-    return '';
-  }
-  return response.json().catch(() => response.text());
+    const server = arg.servers[0];
+    const params = dataToJson(arg.query);
+    const data = toRequestData(arg.body);
+    const url = new URL(server + arg.path);
+
+    Object.entries(params).forEach(([key, value]) => url.searchParams.append(key, `${value}`));
+
+    const response = await fetch(
+      new Request(url.toString(), {
+        method: arg.method,
+        headers: arg.headers as Record<string, string>,
+        body: data
+      })
+    );
+
+    const contentType = getContentType(response);
+    return {
+      status: response.status,
+      value: {
+        contentType,
+        value: await getResponseData(contentType, response)
+      },
+      headers: response.headers ?? {}
+    };
+  };
 }
