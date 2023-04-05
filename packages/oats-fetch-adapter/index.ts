@@ -81,5 +81,5 @@ function getResponseData(contentType: string, response: Response) {
   if (response.status === 204) {
     return '';
   }
-  return response.json();
+  return response.json().catch(() => response.text());
 }
