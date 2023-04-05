@@ -1,4 +1,3 @@
-// yarn ts-node examples/server.ts
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from '@jest/globals';
 import * as server from './tmp/server/generated';
 import * as client from './tmp/client/generated';
