@@ -13,8 +13,7 @@ function toRequestData(data: runtime.server.RequestBody<any> | undefined) {
   }
   if (['application/x-www-form-urlencoded', 'multipart/form-data'].indexOf(data.contentType) >= 0) {
     const form = new FormData();
-    Object.keys(data.value).forEach(key => {
-      const element = data.value[key];
+    Object.entries(data.value).filter(([,element]) => !!element).forEach(([key, element]) => {
       if (element instanceof runtime.make.FormBinary) {
         form.append(key, element.binary, element.options);
       } else {
