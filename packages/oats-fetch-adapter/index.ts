@@ -65,15 +65,19 @@ export function create(): runtime.client.ClientAdapter {
     const server = arg.servers[0];
     const data = toRequestData(arg.body);
     const url = new URL(server + arg.path);
+    const requestContentType = arg.body?.contentType;
 
-    Object.entries(arg.query)
+    Object.entries(arg.query ?? {})
       .filter(([, value]) => !!value)
       .forEach(([key, value]) => url.searchParams.append(key, `${value}`));
 
     const response = await fetch(
       new Request(url.toString(), {
         method: arg.method,
-        headers: { 'content-type': arg.body?.contentType, ...arg.headers },
+        headers: {
+          ...(requestContentType ? { 'content-type': requestContentType } : {}),
+          ...arg.headers
+        },
         body: data
       })
     );
