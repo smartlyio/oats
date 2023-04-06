@@ -72,6 +72,7 @@ describe('fetch adapter', () => {
     const response = await apiClient.get();
 
     expect(response.status).toBe(200);
+    expect(response.value.value).toBe('done');
 
     expect(receivedContext).toBeDefined();
     expect(receivedContext.method).toEqual('get');
@@ -87,6 +88,7 @@ describe('fetch adapter', () => {
     });
 
     expect(response.status).toBe(200);
+    expect(response.value.value).toBe('done');
 
     expect(receivedContext).toBeDefined();
     expect(receivedContext.method).toEqual('get');
@@ -102,6 +104,7 @@ describe('fetch adapter', () => {
     });
 
     expect(response.status).toBe(200);
+    expect(response.value.value).toBe('done');
 
     expect(receivedContext).toBeDefined();
     expect(receivedContext.method).toEqual('get');
@@ -119,6 +122,7 @@ describe('fetch adapter', () => {
     });
 
     expect(response.status).toBe(200);
+    expect(response.value.value).toBe('done');
 
     expect(receivedContext).toBeDefined();
     expect(receivedContext.method).toEqual('post');
