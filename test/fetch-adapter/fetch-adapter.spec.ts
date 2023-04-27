@@ -98,6 +98,22 @@ describe('fetch adapter', () => {
     expect(receivedContext.body).toEqual(null);
   });
 
+  it('correctly calls GET request with array in query parameters', async () => {
+    const response = await apiClient['with-array-query'].get({
+      query: { numbers: ['one', 'two'] }
+    });
+
+    expect(response.status).toBe(200);
+    expect(response.value.value).toBe('done');
+
+    expect(receivedContext).toBeDefined();
+    expect(receivedContext.method).toEqual('get');
+    expect(receivedContext.path).toEqual('/with-array-query');
+    expect(receivedContext.query).toEqual({ numbers: ['one', 'two'] });
+    expect(receivedContext.headers).toEqual(null);
+    expect(receivedContext.body).toEqual(null);
+  });
+
   it('correctly calls GET request with header parameters', async () => {
     const response = await apiClient['with-headers'].get({
       headers: { one: 'the loneliest number' }

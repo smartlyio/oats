@@ -28,6 +28,23 @@ paths:
             text/plain:
               schema:
                 type: string
+  /with-array-query:
+    get:
+      parameters:
+        - in: query
+          name: numbers
+          schema:
+            type: array
+            items:
+              type: string
+      description: endpoint
+      responses:
+        200:
+          description: endpoint
+          content:
+            text/plain:
+              schema:
+                type: string
   /with-headers:
     get:
       parameters:
