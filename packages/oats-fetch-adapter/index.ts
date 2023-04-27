@@ -69,7 +69,11 @@ export function create(): runtime.client.ClientAdapter {
 
     Object.entries(arg.query ?? {})
       .filter(([, value]) => !!value)
-      .forEach(([key, value]) => url.searchParams.append(key, `${value}`));
+      .forEach(([key, value]) =>
+        Array.isArray(value)
+          ? value.forEach(v => url.searchParams.append(key, `${v}`))
+          : url.searchParams.append(key, `${value}`)
+      );
 
     const response = await fetch(
       new Request(url.toString(), {
