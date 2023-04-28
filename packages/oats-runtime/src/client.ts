@@ -180,7 +180,12 @@ function fillInPathParams(params: { [key: string]: string }, path: string) {
   });
 }
 
-function makeMethod(adapter: ClientAdapter, handler: server.Handler, pathParams: string[], opts?: server.HandlerOptions) {
+function makeMethod(
+  adapter: ClientAdapter,
+  handler: server.Handler,
+  pathParams: string[],
+  opts?: server.HandlerOptions
+) {
   const params = paramObject(pathParams, handler.path);
   const call = server.safe<any, any, any, any, any, RequestContext>(
     handler.headers,
@@ -223,7 +228,10 @@ function fromTree(
   return node;
 }
 
-export function createClientFactory<Spec>(handlers: server.Handler[], opts?: server.HandlerOptions): ClientFactory<Spec> {
+export function createClientFactory<Spec>(
+  handlers: server.Handler[],
+  opts?: server.HandlerOptions
+): ClientFactory<Spec> {
   return (adapter: ClientAdapter): Spec => {
     const tree: OpTree<server.Handler> = handlers.reduce((memo, handler) => {
       return addPath(memo, handler.path, handler.method, handler);

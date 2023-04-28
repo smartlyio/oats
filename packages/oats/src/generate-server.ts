@@ -623,7 +623,7 @@ export function generateCreateRouter() {
                           ts.factory.createIdentifier('bodyAllowConvertForArrayType')
                         )
                       ])
-                    ),
+                    )
                   ])
                 )
               ])
@@ -684,9 +684,9 @@ export function generateCreateClient() {
         ts.factory.createObjectLiteralExpression()
       )
     ],
-    ts.factory.createTypeReferenceNode(ts.factory.createIdentifier('oar.client.ClientFactory'),
-      [ts.factory.createTypeReferenceNode('ClientSpec', [])] 
-    ),
+    ts.factory.createTypeReferenceNode(ts.factory.createIdentifier('oar.client.ClientFactory'), [
+      ts.factory.createTypeReferenceNode('ClientSpec', [])
+    ]),
     ts.factory.createBlock(
       [
         ts.factory.createReturnStatement(
