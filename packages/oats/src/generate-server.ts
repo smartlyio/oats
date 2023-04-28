@@ -499,6 +499,42 @@ export function generateCreateRouter() {
                         ts.factory.createObjectLiteralExpression()
                       ),
                       ts.factory.createBindingElement(
+                        undefined,
+                        'body',
+                        ts.factory.createObjectBindingPattern([
+                          ts.factory.createBindingElement(
+                            undefined,
+                            'unknownField',
+                            'bodyUnknownField',
+                            ts.factory.createStringLiteral('fail')
+                          ),
+                          ts.factory.createBindingElement(
+                            undefined,
+                            'parseBooleanStrings',
+                            'bodyParseBooleanStrings',
+                            ts.factory.createTrue()
+                          ),
+                          ts.factory.createBindingElement(
+                            undefined,
+                            'parseNumericStrings',
+                            'bodyParseNumericStrings',
+                            ts.factory.createTrue()
+                          ),
+                          ts.factory.createBindingElement(
+                            undefined,
+                            'allowConvertForArrayType',
+                            'bodyAllowConvertForArrayType',
+                            ts.factory.createTrue()
+                          ),
+                          ts.factory.createBindingElement(
+                            ts.factory.createToken(ts.SyntaxKind.DotDotDotToken),
+                            undefined,
+                            'bodyRest'
+                          )
+                        ]),
+                        ts.factory.createObjectLiteralExpression()
+                      ),
+                      ts.factory.createBindingElement(
                         ts.factory.createToken(ts.SyntaxKind.DotDotDotToken),
                         undefined,
                         'validationOptionsRest'
@@ -565,7 +601,29 @@ export function generateCreateRouter() {
                           ts.factory.createIdentifier('paramsParseNumericStrings')
                         )
                       ])
-                    )
+                    ),
+                    ts.factory.createPropertyAssignment(
+                      'body',
+                      ts.factory.createObjectLiteralExpression([
+                        ts.factory.createSpreadAssignment(ts.factory.createIdentifier('bodyRest')),
+                        ts.factory.createPropertyAssignment(
+                          'unknownField',
+                          ts.factory.createIdentifier('bodyUnknownField')
+                        ),
+                        ts.factory.createPropertyAssignment(
+                          'parseBooleanStrings',
+                          ts.factory.createIdentifier('bodyParseBooleanStrings')
+                        ),
+                        ts.factory.createPropertyAssignment(
+                          'parseNumericStrings',
+                          ts.factory.createIdentifier('bodyParseNumericStrings')
+                        ),
+                        ts.factory.createPropertyAssignment(
+                          'allowConvertForArrayType',
+                          ts.factory.createIdentifier('bodyAllowConvertForArrayType')
+                        )
+                      ])
+                    ),
                   ])
                 )
               ])
@@ -608,6 +666,48 @@ export function generateClient() {
   );
 }
 
+export function generateCreateClient() {
+  return ts.factory.createFunctionDeclaration(
+    [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+    undefined,
+    'createClient',
+    [],
+    [
+      ts.factory.createParameterDeclaration(
+        undefined,
+        undefined,
+        'handlerOptions',
+        undefined,
+        ts.factory.createTypeReferenceNode(
+          ts.factory.createIdentifier('oar.server.HandlerOptions')
+        ),
+        ts.factory.createObjectLiteralExpression()
+      )
+    ],
+    ts.factory.createTypeReferenceNode(ts.factory.createIdentifier('oar.client.ClientFactory'),
+      [ts.factory.createTypeReferenceNode('ClientSpec', [])] 
+    ),
+    ts.factory.createBlock(
+      [
+        ts.factory.createReturnStatement(
+          ts.factory.createCallExpression(
+            ts.factory.createPropertyAccessExpression(
+              ts.factory.createIdentifier('oar'),
+              'client.createClientFactory'
+            ),
+            undefined,
+            [
+              ts.factory.createIdentifier('endpointHandlers'),
+              ts.factory.createIdentifier('handlerOptions')
+            ]
+          )
+        )
+      ],
+      false
+    )
+  );
+}
+
 interface Options {
   oas: oas.OpenAPIObject;
   runtimePath: string;
@@ -633,6 +733,7 @@ export function run(opts: Options) {
   const router = generateRouter();
   const createRouter = generateCreateRouter();
   const client = generateClient();
+  const createClient = generateCreateClient();
 
   const sourceFile: ts.SourceFile = ts.createSourceFile(
     'test.ts',
@@ -654,7 +755,8 @@ export function run(opts: Options) {
         routerJSDoc,
         router,
         createRouter,
-        client
+        client,
+        createClient
       ]),
       sourceFile
     );

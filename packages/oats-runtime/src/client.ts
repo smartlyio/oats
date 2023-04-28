@@ -180,7 +180,7 @@ function fillInPathParams(params: { [key: string]: string }, path: string) {
   });
 }
 
-function makeMethod(adapter: ClientAdapter, handler: server.Handler, pathParams: string[]) {
+function makeMethod(adapter: ClientAdapter, handler: server.Handler, pathParams: string[], opts?: server.HandlerOptions) {
   const params = paramObject(pathParams, handler.path);
   const call = server.safe<any, any, any, any, any, RequestContext>(
     handler.headers,
@@ -190,7 +190,7 @@ function makeMethod(adapter: ClientAdapter, handler: server.Handler, pathParams:
     handler.response,
     ctx =>
       adapter({ ...ctx, path: fillInPathParams(params, handler.path), servers: handler.servers }),
-    { mode: 'client' }
+    { ...opts, mode: 'client' }
   );
   return (ctx: ClientArg<any, any, any>) =>
     call({
@@ -208,25 +208,26 @@ function makeMethod(adapter: ClientAdapter, handler: server.Handler, pathParams:
 function fromTree(
   adapter: ClientAdapter,
   tree: OpTree<server.Handler>,
-  pathParams: string[]
+  pathParams: string[],
+  opts?: server.HandlerOptions
 ): ClientSpec {
   const node: any = tree.param ? makeParam(adapter, tree.param, pathParams) : {};
   Object.keys(tree.methods).forEach(key => {
     assert(!node[key], 'duplicate path part ' + key);
-    node[key] = makeMethod(adapter, tree.methods[key], pathParams);
+    node[key] = makeMethod(adapter, tree.methods[key], pathParams, opts);
   });
   Object.keys(tree.parts).forEach(key => {
     assert(!node[key], 'duplicate path part ' + key);
-    node[key] = fromTree(adapter, tree.parts[key], pathParams);
+    node[key] = fromTree(adapter, tree.parts[key], pathParams, opts);
   });
   return node;
 }
 
-export function createClientFactory<Spec>(handlers: server.Handler[]): ClientFactory<Spec> {
+export function createClientFactory<Spec>(handlers: server.Handler[], opts?: server.HandlerOptions): ClientFactory<Spec> {
   return (adapter: ClientAdapter): Spec => {
     const tree: OpTree<server.Handler> = handlers.reduce((memo, handler) => {
       return addPath(memo, handler.path, handler.method, handler);
     }, emptyTree<server.Handler>());
-    return fromTree(adapter, tree, []) as unknown as Spec;
+    return fromTree(adapter, tree, [], opts) as unknown as Spec;
   };
 }
