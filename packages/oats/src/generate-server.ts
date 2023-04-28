@@ -509,24 +509,6 @@ export function generateCreateRouter() {
                             ts.factory.createStringLiteral('fail')
                           ),
                           ts.factory.createBindingElement(
-                            undefined,
-                            'parseBooleanStrings',
-                            'bodyParseBooleanStrings',
-                            ts.factory.createTrue()
-                          ),
-                          ts.factory.createBindingElement(
-                            undefined,
-                            'parseNumericStrings',
-                            'bodyParseNumericStrings',
-                            ts.factory.createTrue()
-                          ),
-                          ts.factory.createBindingElement(
-                            undefined,
-                            'allowConvertForArrayType',
-                            'bodyAllowConvertForArrayType',
-                            ts.factory.createTrue()
-                          ),
-                          ts.factory.createBindingElement(
                             ts.factory.createToken(ts.SyntaxKind.DotDotDotToken),
                             undefined,
                             'bodyRest'
@@ -609,18 +591,6 @@ export function generateCreateRouter() {
                         ts.factory.createPropertyAssignment(
                           'unknownField',
                           ts.factory.createIdentifier('bodyUnknownField')
-                        ),
-                        ts.factory.createPropertyAssignment(
-                          'parseBooleanStrings',
-                          ts.factory.createIdentifier('bodyParseBooleanStrings')
-                        ),
-                        ts.factory.createPropertyAssignment(
-                          'parseNumericStrings',
-                          ts.factory.createIdentifier('bodyParseNumericStrings')
-                        ),
-                        ts.factory.createPropertyAssignment(
-                          'allowConvertForArrayType',
-                          ts.factory.createIdentifier('bodyAllowConvertForArrayType')
                         )
                       ])
                     )
