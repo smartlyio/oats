@@ -204,7 +204,7 @@ export function safe<
       ),
       body: getOutBody<Body>(
         mode,
-        body(voidify(ctx.body), internalMakeOptions).success(
+        body(voidify(ctx.body), { ...validationOptions.body, ...internalMakeOptions }).success(
           throwRequestValidationError.bind(null, 'body')
         )
       ),
@@ -323,6 +323,7 @@ export interface HandlerOptions {
   validationOptions?: {
     query?: MakeOptions;
     params?: MakeOptions;
+    body?: MakeOptions;
   };
 }
 

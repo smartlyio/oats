@@ -1,0 +1,31 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: example service
+servers:
+  - url: http://localhost:12000
+paths:
+  /item:
+    post:
+      description: create an item
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                requiredField:
+                  type: string
+                optionalField:
+                  type: string
+              required:
+                - requiredField
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
