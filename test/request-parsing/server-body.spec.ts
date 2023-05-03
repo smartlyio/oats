@@ -77,4 +77,57 @@ describe('server body', () => {
       }
     });
   });
+
+  it('should drop unknown fields and match to closest schema', async () => {
+    const actual = await axios.post(
+      '/item',
+      JSON.stringify({
+        requiredField: 'xxx',
+        optionalField: 'yyy',
+        typeUnion: {
+          field_a: 'a',
+          field_b: 'b',
+          unknownField: true
+        }
+      }),
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    expect(actual.status).toBe(200);
+    expect(JSON.parse(actual.data)).toEqual({
+      body: {
+        requiredField: 'xxx',
+        optionalField: 'yyy',
+        typeUnion: {
+          field_a: 'a',
+          field_b: 'b'
+        }
+      }
+    });
+  });
+
+  it('should return error when request would match two different schemas with same amount of properties', async () => {
+    const actual = await axios.post(
+      '/item',
+      JSON.stringify({
+        requiredField: 'xxx',
+        optionalField: 'yyy',
+        typeUnion: {
+          field_a: 'a',
+          unknownField: true
+        }
+      }),
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    expect(actual.status).toBe(500);
+  });
 });

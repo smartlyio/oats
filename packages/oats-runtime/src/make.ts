@@ -342,7 +342,7 @@ export function makeOneOf(...options: any[]) {
     if (options.length === 0) {
       errors.push(error('no options given for oneof'));
     }
-    let success;
+    const success = [];
     let preferredSuccess;
     for (const option of options) {
       const mapped = option(value, opts);
@@ -352,22 +352,54 @@ export function makeOneOf(...options: any[]) {
             return error('multiple preferred options match');
           }
           preferredSuccess = mapped;
-        } else if (success) {
-          return error('multiple options match');
+        } else if (0 < success.length) {
+          if (opts?.unknownField === 'drop') {
+            success.push(mapped);
+          } else {
+            return error('multiple options match');
+          }
         } else {
-          success = mapped;
+          success.push(mapped);
         }
       } else {
         errors = [...errors, mapped];
       }
     }
-    if (preferredSuccess || success) {
-      return preferredSuccess || success;
+    if (preferredSuccess) {
+      return preferredSuccess;
     }
+
+    if (success.length === 1) {
+      return success[0];
+    }
+
+    if (isMultipleMatchesFound(success)) {
+      return findBestMatch(success);
+    }
+
     return Make.error(errors.map((error, i) => error.group('- option ' + (i + 1)).errors[0])).group(
       'no option of oneOf matched'
     );
   };
+}
+
+function isMultipleMatchesFound(mapped: any[]): boolean {
+  return 1 < mapped.length;
+}
+
+function findBestMatch(mapped: any[]): any {
+  const bestMatchOrder = _.orderBy(mapped, obj => definedObjectValuesLength(obj), 'desc');
+  const hasSameAmountOfPropertiesMatched =
+    definedObjectValuesLength(bestMatchOrder[0]) === definedObjectValuesLength(bestMatchOrder[1]);
+  if (hasSameAmountOfPropertiesMatched) {
+    return error('multiple options match');
+  }
+
+  return bestMatchOrder[0];
+}
+
+function definedObjectValuesLength(obj: { value: any }): number {
+  return Object.values(obj.value).filter(value => value !== undefined).length;
 }
 
 export function makeAllOf(...all: Maker<any, any>[]) {

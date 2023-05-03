@@ -4,6 +4,26 @@ info:
   title: example service
 servers:
   - url: http://localhost:12000
+components:
+  schemas:
+    typeA:
+      type: object
+      additionalProperties: false
+      properties:
+        field_a:
+          type: string
+        field_b:
+          type: string
+    typeB:
+      type: object
+      additionalProperties: false
+      properties:
+        field_a:
+          type: string
+    typeUnion:
+      oneOf:
+        - $ref: '#/components/schemas/typeA'
+        - $ref: '#/components/schemas/typeB'
 paths:
   /item:
     post:
@@ -20,6 +40,8 @@ paths:
                   type: string
                 optionalField:
                   type: string
+                typeUnion:
+                  $ref: "#/components/schemas/typeUnion"
               required:
                 - requiredField
       responses:

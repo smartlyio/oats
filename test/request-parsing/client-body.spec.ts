@@ -63,6 +63,7 @@ describe('client body', () => {
       requiredField: 'xxx',
       optionalField: 'yyy'
     } as any;
+
     const actual = await clientSpec.item.post({
       body: runtime.client.json(body)
     });
@@ -74,5 +75,50 @@ describe('client body', () => {
         optionalField: 'yyy'
       }
     });
+  });
+
+  it('should drop unknown fields and match to closest schema', async () => {
+    const body = {
+      requiredField: 'yyy',
+      optionalField: 'xxx',
+      typeUnion: {
+        field_a: 'a',
+        field_b: 'b',
+        unknownField: true
+      }
+    } as any;
+
+    const actual = await clientSpec.item.post({
+      body: runtime.client.json(body)
+    });
+
+    expect(actual.status).toBe(200);
+    expect(actual.value.value).toEqual({
+      body: {
+        requiredField: 'yyy',
+        optionalField: 'xxx',
+        typeUnion: {
+          field_a: 'a',
+          field_b: 'b'
+        }
+      }
+    });
+  });
+
+  it('should throw error when object would match two different schemas with same amount of properties', async () => {
+    const body = {
+      requiredField: 'yyy',
+      optionalField: 'xxx',
+      typeUnion: {
+        field_a: 'a',
+        unknownField: true
+      }
+    } as any;
+
+    await expect(() =>
+      clientSpec.item.post({
+        body: runtime.client.json(body)
+      })
+    ).rejects.toThrow(/typeUnion: multiple options match/);
   });
 });
