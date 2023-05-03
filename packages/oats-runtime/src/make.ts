@@ -352,7 +352,7 @@ export function makeOneOf(...options: any[]) {
             return error('multiple preferred options match');
           }
           preferredSuccess = mapped;
-        } else if (0 < success.length) {
+        } else if (success.length > 0) {
           if (opts?.unknownField === 'drop') {
             success.push(mapped);
           } else {
@@ -384,7 +384,7 @@ export function makeOneOf(...options: any[]) {
 }
 
 function isMultipleMatchesFound(mapped: any[]): boolean {
-  return 1 < mapped.length;
+  return mapped.length > 1;
 }
 
 function findBestMatch(mapped: any[]): any {
