@@ -344,7 +344,7 @@ export function makeArray(
 export function defaultMergeOneOf(value: any, results: readonly Make<any>[]): Make<any> {
   let success;
   let preferredSuccess;
-  let errors = [];
+  let errors: Make<any>[] = [];
   for (const mapped of results) {
     if (mapped.isSuccess()) {
       if (value instanceof ValueClass && mapped.success() === value) {
@@ -361,8 +361,9 @@ export function defaultMergeOneOf(value: any, results: readonly Make<any>[]): Ma
       errors = [...errors, mapped];
     }
   }
-  if (preferredSuccess || success) {
-    return preferredSuccess || success;
+  const found = preferredSuccess || success;
+  if (found) {
+    return found;
   }
   return Make.error(errors.map((error, i) => error.group('- option ' + (i + 1)).errors[0])).group(
     'no option of oneOf matched'
@@ -371,15 +372,15 @@ export function defaultMergeOneOf(value: any, results: readonly Make<any>[]): Ma
 
 export function makeOneOf(...options: any[]) {
   return (value: any, opts?: MakeOptions) => {
-    let errors = [];
+    let errors : Make<any>[] = [];
     if (options.length === 0) {
       errors.push(error('no options given for oneof'));
     }
     const results = options.map(option => option(value, opts));
     if (opts?.make?.mergeOneOf) {
-      return opts.make.mergeOneOf(value, results);
+      return opts.make.mergeOneOf(value, [...errors, ...results]);
     }
-    return defaultMergeOneOf(value, results);
+    return defaultMergeOneOf(value, [...errors, ...results]);
   };
 }
 
