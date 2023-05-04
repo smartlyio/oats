@@ -111,7 +111,7 @@ export interface MakeOptions {
     // select result from multiple succeeded or failed oneof branches
     // defaults to defaultMergeOneOf
     mergeOneOf?: (value: any, results: readonly Make<any>[]) => Make<any>;
-  },
+  };
   unknownField?: 'drop' | 'fail';
   /**
    * If enabled, "number" ans "integer" schemas will accept strings and try to parse them.
@@ -372,7 +372,7 @@ export function defaultMergeOneOf(value: any, results: readonly Make<any>[]): Ma
 
 export function makeOneOf(...options: any[]) {
   return (value: any, opts?: MakeOptions) => {
-    let errors : Make<any>[] = [];
+    const errors: Make<any>[] = [];
     if (options.length === 0) {
       errors.push(error('no options given for oneof'));
     }
