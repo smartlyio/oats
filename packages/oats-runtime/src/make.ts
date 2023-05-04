@@ -107,6 +107,11 @@ export class Make<V> {
 }
 
 export interface MakeOptions {
+  make?: {
+    // select result from multiple succeeded or failed oneof branches
+    // defaults to defaultMergeOneOf
+    mergeOneOf?: (value: any, results: readonly Make<any>[]) => Make<any>;
+  },
   unknownField?: 'drop' | 'fail';
   /**
    * If enabled, "number" ans "integer" schemas will accept strings and try to parse them.
@@ -336,37 +341,45 @@ export function makeArray(
   };
 }
 
+export function defaultMergeOneOf(value: any, results: readonly Make<any>[]): Make<any> {
+  let success;
+  let preferredSuccess;
+  let errors = [];
+  for (const mapped of results) {
+    if (mapped.isSuccess()) {
+      if (value instanceof ValueClass && mapped.success() === value) {
+        if (preferredSuccess) {
+          return error('multiple preferred options match');
+        }
+        preferredSuccess = mapped;
+      } else if (success) {
+        return error('multiple options match');
+      } else {
+        success = mapped;
+      }
+    } else {
+      errors = [...errors, mapped];
+    }
+  }
+  if (preferredSuccess || success) {
+    return preferredSuccess || success;
+  }
+  return Make.error(errors.map((error, i) => error.group('- option ' + (i + 1)).errors[0])).group(
+    'no option of oneOf matched'
+  );
+}
+
 export function makeOneOf(...options: any[]) {
   return (value: any, opts?: MakeOptions) => {
     let errors = [];
     if (options.length === 0) {
       errors.push(error('no options given for oneof'));
     }
-    let success;
-    let preferredSuccess;
-    for (const option of options) {
-      const mapped = option(value, opts);
-      if (mapped.isSuccess()) {
-        if (value instanceof ValueClass && mapped.success() === value) {
-          if (preferredSuccess) {
-            return error('multiple preferred options match');
-          }
-          preferredSuccess = mapped;
-        } else if (success) {
-          return error('multiple options match');
-        } else {
-          success = mapped;
-        }
-      } else {
-        errors = [...errors, mapped];
-      }
+    const results = options.map(option => option(value, opts));
+    if (opts?.make?.mergeOneOf) {
+      return opts.make.mergeOneOf(value, results);
     }
-    if (preferredSuccess || success) {
-      return preferredSuccess || success;
-    }
-    return Make.error(errors.map((error, i) => error.group('- option ' + (i + 1)).errors[0])).group(
-      'no option of oneOf matched'
-    );
+    return defaultMergeOneOf(value, results);
   };
 }
 
