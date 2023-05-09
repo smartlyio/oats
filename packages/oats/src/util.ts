@@ -1,4 +1,4 @@
-import * as oas from 'openapi3-ts';
+import { oas31 as oas } from 'openapi3-ts';
 import * as assert from 'assert';
 import * as _ from 'lodash';
 

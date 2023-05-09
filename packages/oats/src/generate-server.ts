@@ -1,4 +1,4 @@
-import * as oas from 'openapi3-ts';
+import { oas31 as oas } from 'openapi3-ts';
 import * as ts from 'typescript';
 import * as assert from 'assert';
 import * as oautil from './util';
