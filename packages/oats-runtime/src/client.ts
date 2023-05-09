@@ -155,9 +155,10 @@ export interface OpTree<T> {
 function makeParam(
   adapter: ClientAdapter,
   param: { name: string; tree: OpTree<server.Handler> },
-  pathParams: string[]
+  pathParams: string[],
+  opts: server.HandlerOptions | undefined
 ) {
-  return (value: string) => fromTree(adapter, param.tree, [...pathParams, value]);
+  return (value: string) => fromTree(adapter, param.tree, [...pathParams, value], opts);
 }
 
 function paramObject(pathParams: string[], path: string) {
@@ -214,9 +215,9 @@ function fromTree(
   adapter: ClientAdapter,
   tree: OpTree<server.Handler>,
   pathParams: string[],
-  opts?: server.HandlerOptions
+  opts: server.HandlerOptions | undefined
 ): ClientSpec {
-  const node: any = tree.param ? makeParam(adapter, tree.param, pathParams) : {};
+  const node: any = tree.param ? makeParam(adapter, tree.param, pathParams, opts) : {};
   Object.keys(tree.methods).forEach(key => {
     assert(!node[key], 'duplicate path part ' + key);
     node[key] = makeMethod(adapter, tree.methods[key], pathParams, opts);
