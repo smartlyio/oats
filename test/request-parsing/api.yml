@@ -51,3 +51,21 @@ paths:
             application/json:
               schema:
                 type: object
+    get:
+      description: get an item
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  existingField:
+                    type: string
+                  newField:
+                    type: string
+                required:
+                  - existingField
+

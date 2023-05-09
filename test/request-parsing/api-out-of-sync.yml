@@ -1,0 +1,24 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: example service
+servers:
+  - url: http://localhost:12000
+paths:
+  /item:
+    get:
+      description: get an item
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  existingField:
+                    type: string
+                required:
+                  - existingField
+

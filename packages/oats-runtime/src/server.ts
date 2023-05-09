@@ -210,7 +210,9 @@ export function safe<
       ),
       requestContext: ctx.requestContext as any
     });
-    const responseValue = response(result, { convertFromNetwork: mode === 'client' }).success(
+    const isClientMode = mode === 'client';
+    const responseMakeOptions = isClientMode ? validationOptions.body : {};
+    const responseValue = response(result, { ...responseMakeOptions, convertFromNetwork: isClientMode }).success(
       throwResponseValidationError.bind(null, `body ${ctx.path}`, result.value.value)
     );
     if (mode === 'client' || !responseValue) {

@@ -11,6 +11,14 @@ driver.generate({
 });
 
 driver.generate({
+  generatedValueClassFile: './tmp/client-out-of-sync/types.generated.ts',
+  generatedClientFile: './tmp/client-out-of-sync/generated.ts',
+  header: '/* tslint:disable variable-name only-arrow-functions*/',
+  openapiFilePath: './api-out-of-sync.yml',
+  resolve: driver.compose(driver.generateFile(), driver.localResolve)
+});
+
+driver.generate({
   generatedValueClassFile: './tmp/server/types.generated.ts',
   generatedServerFile: './tmp/server/generated.ts',
   header: '/* tslint:disable variable-name only-arrow-functions*/',
