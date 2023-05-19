@@ -39,10 +39,8 @@ function getContentType(response: Response) {
 }
 
 function getResponseData(contentType: string, response: Response) {
-  if (contentType === runtime.noContentContentType) {
-    if (!response.body) {
-      return null;
-    }
+  if (contentType === runtime.noContentContentType || !response.body) {
+    return null;
   }
   if (response.status === 204) {
     return '';
