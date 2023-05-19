@@ -57,7 +57,7 @@ function getResponseData(contentType: string, response: Response) {
 /**
  * @returns oats runtime client adapter.
  */
-export function create(): runtime.client.ClientAdapter {
+export function create(init?: RequestInit): runtime.client.ClientAdapter {
   return async arg => {
     if (arg.servers.length !== 1) {
       return fail('cannot decide which server to use from ' + arg.servers.join(', '));
@@ -77,6 +77,7 @@ export function create(): runtime.client.ClientAdapter {
 
     const response = await fetch(
       new Request(url.toString(), {
+        ...init,
         method: arg.method,
         headers: {
           ...(requestContentType ? { 'content-type': requestContentType } : {}),
