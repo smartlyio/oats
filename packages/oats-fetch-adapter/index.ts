@@ -78,7 +78,7 @@ export function create(init?: RequestInit): runtime.client.ClientAdapter {
     const response = await fetch(
       new Request(url.toString(), {
         ...init,
-        method: arg.method,
+        method: arg.method.toUpperCase(),
         headers: {
           ...(requestContentType ? { 'content-type': requestContentType } : {}),
           ...arg.headers

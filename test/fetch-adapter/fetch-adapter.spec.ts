@@ -149,4 +149,26 @@ describe('fetch adapter', () => {
       value: { one: 'the loneliest number' }
     });
   });
+
+  it('correctly calls PATCH request', async () => {
+    const response = await apiClient['with-patch'].patch({
+      body: {
+        contentType: 'application/json',
+        value: { one: 'the loneliest number' }
+      }
+    });
+
+    expect(response.status).toBe(200);
+    expect(response.value.contentType).toBe('text/plain');
+    expect(response.value.value).toBe('done');
+
+    expect(receivedContext).toBeDefined();
+    expect(receivedContext.method).toEqual('patch');
+    expect(receivedContext.path).toEqual('/with-patch');
+    expect(receivedContext.headers).toEqual(null);
+    expect(receivedContext.body).toEqual({
+      contentType: 'application/json',
+      value: { one: 'the loneliest number' }
+    });
+  });
 });
