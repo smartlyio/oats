@@ -1,6 +1,6 @@
 {
   "name": "@smartlyio/oats-fetch-adapter",
-  "version": "7.2.0",
+  "version": "7.3.0",
   "license": "MIT",
   "description": "Fetch adapter for Oats a Openapi3 based generator for typescript aware servers and clients",
   "private": false,
