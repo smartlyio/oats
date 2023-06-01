@@ -115,4 +115,11 @@ describe('optional queries', () => {
       expect(item.value.value.ok).toEqual('something');
     });
   });
+
+  it('drops undeclared parameters', async () => {
+    const item = await apiClient.item.get({
+      query: { field: 'something', toot: 'doot' } as any
+    });
+    expect(item.value.value.ok).toEqual('something');
+  });
 });
