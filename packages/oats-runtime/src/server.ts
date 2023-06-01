@@ -198,9 +198,11 @@ export function safe<
       }).success(throwRequestValidationError.bind(null, 'params')),
       query: serializeWhenClient(
         mode,
-        query(ctx.query || {}, { ...validationOptions.query, ...internalMakeOptions, unknownField: 'drop' }).success(
-          throwRequestValidationError.bind(null, 'query')
-        )
+        query(ctx.query || {}, {
+          ...validationOptions.query,
+          ...internalMakeOptions,
+          unknownField: 'drop'
+        }).success(throwRequestValidationError.bind(null, 'query'))
       ),
       body: getOutBody<Body>(
         mode,

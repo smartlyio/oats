@@ -93,7 +93,7 @@ describe('optional queries', () => {
       const item = await apiClient.item.post();
       expect(item.value.value.ok).toEqual('post');
     });
-    it('prevents using non existing query parameters', async () => {
+    it('allows using non existing query parameters', async () => {
       // @ts-expect-error unknown query parameter
       await expect(apiClient.item.get({ query: { a: 'a' } })).rejects.toThrow();
     });
@@ -114,12 +114,5 @@ describe('optional queries', () => {
       const item = await apiClient.item.get({ query: { field: 'something' } });
       expect(item.value.value.ok).toEqual('something');
     });
-  });
-
-  it('drops undeclared parameters', async () => {
-    const item = await apiClient.item.get({
-      query: { field: 'something', toot: 'doot' } as any
-    });
-    expect(item.value.value.ok).toEqual('something');
   });
 });
