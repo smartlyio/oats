@@ -36,8 +36,8 @@
   ],
   "devDependencies": {
     "@smartlyio/oats-runtime": "^7.2.0",
-    "@types/lodash": "4.14.194",
-    "@types/node": "18.16.13",
+    "@types/lodash": "4.14.195",
+    "@types/node": "18.16.16",
     "miragejs": "0.1.47",
     "nodemon": "2.0.22",
     "ts-node": "10.9.1",
