@@ -415,3 +415,28 @@ function calculateReachInType(
     });
   }
 }
+
+export const isValidPath = (type: Type, path: readonly string[]): boolean => {
+  if (path.length === 0) return true;
+
+  if (type.type === 'object') {
+    if (type.additionalProperties) {
+      if (typeof type.additionalProperties === 'boolean') return true;
+      return isValidPath(type.additionalProperties, path.slice(1));
+    }
+
+    if (path[0] in type.properties) {
+      return isValidPath(type.properties[path[0]].value, path.slice(1));
+    }
+  } else if (type.type === 'array') {
+    if (path[0] === '[]' || path[0] === '0') {
+      return isValidPath(type.items, path.slice(1));
+    }
+  } else if (type.type === 'union' || type.type === 'intersection') {
+    return type.options.some(option => isValidPath(option, path));
+  } else if (type.type === 'named') {
+    return isValidPath(type.reference().definition, path);
+  }
+
+  return false;
+};
