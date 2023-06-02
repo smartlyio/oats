@@ -429,7 +429,7 @@ export const isValidPath = (type: Type, path: readonly string[]): boolean => {
       return isValidPath(type.properties[path[0]].value, path.slice(1));
     }
   } else if (type.type === 'array') {
-    if (path[0] === '[]' || path[0] === '0') {
+    if (path[0] === '[]') {
       return isValidPath(type.items, path.slice(1));
     }
   } else if (type.type === 'union' || type.type === 'intersection') {
