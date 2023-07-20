@@ -13,7 +13,7 @@ import {
 describe('safe', () => {
   it('validates request and response', async () => {
     const endpoint = server.safe<any, any, any, any, any, any>(
-      makeVoid(),
+      makeObject({}),
       makeVoid(),
       makeObject({ param: makeNumber() }) as Maker<any, any>,
       makeVoid(),
@@ -47,7 +47,7 @@ describe('safe', () => {
 
   it('accepts empty array as body', async () => {
     const endpoint = server.safe<any, any, any, any, any, any>(
-      makeVoid(),
+      makeObject({}),
       makeVoid(),
       makeObject({ param: makeNumber() }) as Maker<any, any>,
       makeArray(makeString()),
