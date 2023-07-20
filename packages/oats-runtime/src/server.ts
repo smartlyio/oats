@@ -131,11 +131,8 @@ function voidify(value: object | undefined | null) {
 function cleanHeaders<H>(mode: Mode, maker: Maker<any, H>, headers: object) {
   // note: we now expect that on client side headers are type conforming so do not need to lowercase those
   // this is slightly breaking change is somebody has subverted the type checker
-  const normalized = voidify(mode === 'server' ? lowercaseObject(headers) : headers);
-  const acceptsNull = maker(null);
-  if (acceptsNull.isSuccess()) {
-    return acceptsNull.success();
-  }
+  const normalized = mode === 'server' ? lowercaseObject(headers) : headers;
+
   return maker(normalized, {
     unknownField: 'drop',
     convertFromNetwork: mode === 'server'
@@ -189,7 +186,7 @@ export function safe<
       method: ctx.method,
       servers: ctx.servers,
       op: ctx.op,
-      headers: serializeWhenClient(mode, cleanHeaders(mode, headers, ctx.headers)),
+      headers: serializeWhenClient(mode, cleanHeaders(mode, headers, ctx.headers ?? {})),
       // note: path params come to the adapter in network format always as those are gleaned from the path definition
       params: params(voidify(ctx.params), {
         ...validationOptions.params,

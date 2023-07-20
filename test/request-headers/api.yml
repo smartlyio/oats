@@ -1,0 +1,37 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: example service
+servers:
+  - url: http://localhost:12000
+paths:
+  /send-required-header:
+    get:
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: x-request-id
+          in: header
+          schema:
+            type: string
+      responses:
+        '204':
+          description: ok
+  /send-optional-header:
+    get:
+      parameters:
+        - name: x-request-id
+          in: header
+          schema:
+            type: string
+      responses:
+        '204':
+          description: ok
+  /send-no-headers:
+    get:
+      responses:
+        '204':
+          description: ok
