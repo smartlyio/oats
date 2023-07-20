@@ -53,12 +53,12 @@ describe('client send headers', () => {
     const endpointUrl = 'send-required-header';
 
     it('should fail to send a request without the required headers', async () => {
-      expect(() =>
+      await expect(() =>
         clientSpec[endpointUrl].get({
           // @ts-expect-error required header is missing
           headers: { 'x-request-id': 'testrequestid' }
         })
-      ).rejects.toThrowError(
+      ).rejects.toThrow(
         new Error(
           'invalid request headers authorization: expected a string, but got `undefined` instead.'
         )
