@@ -106,11 +106,11 @@ describe('client send headers', () => {
 
     it('should send optional headers', async () => {
       const response = await clientSpec[endpointUrl].get({
-        headers: { 'x-request-id': 'basic auth' }
+        headers: { 'x-request-id': 'testrequestid' }
       });
 
       expect(response.status).toBe(204);
-      expect(receivedHeaders).toEqual(expect.objectContaining({ 'x-request-id': 'basic auth' }));
+      expect(receivedHeaders).toEqual(expect.objectContaining({ 'x-request-id': 'testrequestid' }));
     });
   });
 

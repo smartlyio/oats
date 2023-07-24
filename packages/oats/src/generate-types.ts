@@ -16,8 +16,11 @@ interface ImportDefinition {
 }
 
 // bit of a lie here really
-const voidSchema: oas.SchemaObject = { type: 'void' as any };
-const emptyObjectSchema: oas.SchemaObject = { type: 'object', additionalProperties: false };
+const VOID_SCHEMA: oas.SchemaObject = Object.freeze({ type: 'void' as any });
+const EMPTY_OBJECT_SCHEMA: oas.SchemaObject = Object.freeze({
+  type: 'object',
+  additionalProperties: false
+});
 
 export type Resolve = (
   ref: string,
@@ -244,14 +247,14 @@ export function run(options: Options) {
     oasSchema: oas.OpenAPIObject
   ) {
     if (!paramSchema) {
-      return generateTopLevelType(op, emptyObjectSchema);
+      return generateTopLevelType(op, EMPTY_OBJECT_SCHEMA);
     }
     const schema = oautil.deref(paramSchema, oasSchema);
     const queryParams = schema
       .map(schema => oautil.deref(schema, oasSchema))
       .filter(schema => schema.in === 'query');
     if (queryParams.length === 0) {
-      return generateTopLevelType(op, emptyObjectSchema);
+      return generateTopLevelType(op, EMPTY_OBJECT_SCHEMA);
     }
     if (queryParams.some(param => !!param.explode)) {
       assert(queryParams.length === 1, 'only one explode: true parameter is supported');
@@ -277,7 +280,7 @@ export function run(options: Options) {
     oasSchema: oas.OpenAPIObject,
     normalize = (name: string) => name
   ) {
-    const empty = generateTopLevelType(op, type === 'header' ? emptyObjectSchema : voidSchema);
+    const empty = generateTopLevelType(op, type === 'header' ? EMPTY_OBJECT_SCHEMA : VOID_SCHEMA);
 
     if (!paramSchema) {
       return empty;
@@ -359,7 +362,7 @@ export function run(options: Options) {
     requestBody: undefined | oas.ReferenceObject | oas.RequestBodyObject
   ) {
     if (requestBody == null) {
-      return generateTopLevelType(op, voidSchema);
+      return generateTopLevelType(op, VOID_SCHEMA);
     }
     if (oautil.isReferenceObject(requestBody)) {
       return generateTopLevelType(op, { $ref: requestBody.$ref });
@@ -369,7 +372,7 @@ export function run(options: Options) {
       return generateTopLevelType(op, generateContentSchemaType(requestBody.content));
     }
     return generateTopLevelType(op, {
-      oneOf: [generateContentSchemaType(requestBody.content), voidSchema]
+      oneOf: [generateContentSchemaType(requestBody.content), VOID_SCHEMA]
     });
   }
 
@@ -416,7 +419,7 @@ export function run(options: Options) {
       }
     });
     if (responseSchemas.length === 0) {
-      return generateTopLevelType(op, voidSchema);
+      return generateTopLevelType(op, VOID_SCHEMA);
     }
     return generateTopLevelType(op, {
       oneOf: responseSchemas
