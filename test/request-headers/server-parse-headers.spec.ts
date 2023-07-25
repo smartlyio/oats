@@ -8,10 +8,10 @@ import { AddressInfo } from 'net';
 import { Axios } from 'axios';
 
 describe('server parse headers', () => {
-  let parsedHeaders: object | null = null;
+  let parsedHeadersRef: { current: object | void } | null = null;
 
   beforeEach(() => {
-    parsedHeaders = null;
+    parsedHeadersRef = null;
   });
 
   const getRoutes = () =>
@@ -20,21 +20,21 @@ describe('server parse headers', () => {
       {
         '/send-required-header': {
           get: async ctx => {
-            parsedHeaders = ctx.headers;
+            parsedHeadersRef = { current: ctx.headers };
 
             return runtime.noContent(204);
           }
         },
         '/send-optional-header': {
           get: async ctx => {
-            parsedHeaders = ctx.headers;
+            parsedHeadersRef = { current: ctx.headers };
 
             return runtime.noContent(204);
           }
         },
         '/send-no-headers': {
           get: async ctx => {
-            parsedHeaders = ctx.headers;
+            parsedHeadersRef = { current: ctx.headers };
 
             return runtime.noContent(204);
           }
@@ -100,7 +100,7 @@ describe('server parse headers', () => {
       expect(response.data).toContain(
         'invalid request headers authorization: expected a string, but got `undefined` instead.'
       );
-      expect(parsedHeaders).toBeNull();
+      expect(parsedHeadersRef).toBeNull();
     });
 
     it('should drop unknown headers', async () => {
@@ -109,8 +109,7 @@ describe('server parse headers', () => {
       });
 
       expect(response.status).toBe(204);
-      expect(parsedHeaders).toEqual({ authorization: 'basic auth' });
-      expect('unknown' in parsedHeaders!).toBe(false);
+      expect(parsedHeadersRef).toEqual({ current: { authorization: 'basic auth' } });
     });
 
     it('should accept request with required headers', async () => {
@@ -119,7 +118,7 @@ describe('server parse headers', () => {
       });
 
       expect(response.status).toBe(204);
-      expect(parsedHeaders).toEqual({ authorization: 'basic auth' });
+      expect(parsedHeadersRef).toEqual({ current: { authorization: 'basic auth' } });
     });
   });
 
@@ -130,7 +129,7 @@ describe('server parse headers', () => {
       const response = await axios.get(endpointUrl);
 
       expect(response.status).toBe(204);
-      expect(parsedHeaders).toEqual({});
+      expect(parsedHeadersRef).toEqual({ current: {} });
     });
 
     it('should include optional headers', async () => {
@@ -139,7 +138,7 @@ describe('server parse headers', () => {
       });
 
       expect(response.status).toBe(204);
-      expect(parsedHeaders).toEqual({ 'x-request-id': 'testrequestid' });
+      expect(parsedHeadersRef).toEqual({ current: { 'x-request-id': 'testrequestid' } });
     });
   });
 
@@ -152,14 +151,14 @@ describe('server parse headers', () => {
       });
 
       expect(response.status).toBe(204);
-      expect(parsedHeaders).toEqual({});
+      expect(parsedHeadersRef).toEqual({ current: null });
     });
 
     it('should accept request without headers', async () => {
       const response = await axios.get(endpointUrl);
 
       expect(response.status).toBe(204);
-      expect(parsedHeaders).toEqual({});
+      expect(parsedHeadersRef).toEqual({ current: null });
     });
   });
 });

@@ -78,7 +78,7 @@ describe('fetch adapter', () => {
     expect(receivedContext.method).toEqual('get');
     expect(receivedContext.path).toEqual('/');
     expect(receivedContext.query).toEqual({});
-    expect(receivedContext.headers).toEqual({});
+    expect(receivedContext.headers).toEqual(null);
     expect(receivedContext.body).toEqual(null);
   });
 
@@ -94,7 +94,7 @@ describe('fetch adapter', () => {
     expect(receivedContext.method).toEqual('get');
     expect(receivedContext.path).toEqual('/with-query');
     expect(receivedContext.query).toEqual({ one: 'the loneliest number' });
-    expect(receivedContext.headers).toEqual({});
+    expect(receivedContext.headers).toEqual(null);
     expect(receivedContext.body).toEqual(null);
   });
 
@@ -110,7 +110,7 @@ describe('fetch adapter', () => {
     expect(receivedContext.method).toEqual('get');
     expect(receivedContext.path).toEqual('/with-array-query');
     expect(receivedContext.query).toEqual({ numbers: ['one', 'two'] });
-    expect(receivedContext.headers).toEqual({});
+    expect(receivedContext.headers).toEqual(null);
     expect(receivedContext.body).toEqual(null);
   });
 
@@ -143,7 +143,7 @@ describe('fetch adapter', () => {
     expect(receivedContext).toBeDefined();
     expect(receivedContext.method).toEqual('post');
     expect(receivedContext.path).toEqual('/json-body');
-    expect(receivedContext.headers).toEqual({});
+    expect(receivedContext.headers).toEqual(null);
     expect(receivedContext.body).toEqual({
       contentType: 'application/json',
       value: { one: 'the loneliest number' }
@@ -165,7 +165,7 @@ describe('fetch adapter', () => {
     expect(receivedContext).toBeDefined();
     expect(receivedContext.method).toEqual('patch');
     expect(receivedContext.path).toEqual('/with-patch');
-    expect(receivedContext.headers).toEqual({});
+    expect(receivedContext.headers).toEqual(null);
     expect(receivedContext.body).toEqual({
       contentType: 'application/json',
       value: { one: 'the loneliest number' }
