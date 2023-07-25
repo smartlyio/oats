@@ -129,6 +129,11 @@ function voidify(value: object | undefined | null) {
 }
 
 function cleanHeaders<H>(mode: Mode, maker: Maker<any, H>, headers: object) {
+  // If headers are not declared in the spec, return null.
+  const acceptsNull = maker(null);
+  if (acceptsNull.isSuccess()) {
+    return acceptsNull.success();
+  }
   // note: we now expect that on client side headers are type conforming so do not need to lowercase those
   // this is slightly breaking change is somebody has subverted the type checker
   const normalized = mode === 'server' ? lowercaseObject(headers) : headers;

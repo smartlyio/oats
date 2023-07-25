@@ -17,7 +17,6 @@ interface ImportDefinition {
 
 // bit of a lie here really
 const voidSchema: oas.SchemaObject = { type: 'void' as any };
-const emptyObjectSchema: oas.SchemaObject = { type: 'object', additionalProperties: false };
 
 export type Resolve = (
   ref: string,
@@ -243,15 +242,16 @@ export function run(options: Options) {
     paramSchema: undefined | ReadonlyArray<oas.ParameterObject | oas.ReferenceObject>,
     oasSchema: oas.OpenAPIObject
   ) {
+    const noQueryParams = { type: 'object' as const, additionalProperties: false };
     if (!paramSchema) {
-      return generateTopLevelType(op, emptyObjectSchema);
+      return generateTopLevelType(op, noQueryParams);
     }
     const schema = oautil.deref(paramSchema, oasSchema);
     const queryParams = schema
       .map(schema => oautil.deref(schema, oasSchema))
       .filter(schema => schema.in === 'query');
     if (queryParams.length === 0) {
-      return generateTopLevelType(op, emptyObjectSchema);
+      return generateTopLevelType(op, noQueryParams);
     }
     if (queryParams.some(param => !!param.explode)) {
       assert(queryParams.length === 1, 'only one explode: true parameter is supported');
@@ -277,8 +277,7 @@ export function run(options: Options) {
     oasSchema: oas.OpenAPIObject,
     normalize = (name: string) => name
   ) {
-    const empty = generateTopLevelType(op, type === 'header' ? emptyObjectSchema : voidSchema);
-
+    const empty = generateTopLevelType(op, voidSchema);
     if (!paramSchema) {
       return empty;
     }
