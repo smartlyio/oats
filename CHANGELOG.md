@@ -1,3 +1,21 @@
+#
+
+Bug fix for network mapping when a value was made with different makers. 
+
+```
+   const value = Amake(input).success();
+   const value2 = Bmake(value).success();
+```
+
+value2 had both A and B types and network mapping tried to use mapping also from A type when it should have only used mappings from type B if any.
+Now value2 does not have a linkage anymore to type A and will not be considered when network mapping. 
+
+Note: because value2 does not have type A anymore any `getType` or `getTypeSet` reflection calls will return different
+results to what was previously returned.
+
+There may be a performance downside to this as we might end up doing extra work as we lose the type information. 
+Even without doing double `.make` by hand allOf parsing may result in more work being done as we clear the extra type information before parsing.
+
 # 6.2.0
 
 Bug fix that changes aliasing of objects returned by Oats. Now re-making an object with the same maker will return the

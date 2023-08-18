@@ -153,6 +153,22 @@ components:
           properties:
             prop:
               $ref: "#/components/schemas/NestedNamed"
+    allOfWithAny:
+      allOf:
+        - $ref: "#/components/schemas/ObjectWithSpecifiedField"
+        - $ref: "#/components/schemas/ObjectWithAnyField"
+    ObjectWithAnyField:
+      type: object
+      properties:
+        field: {}
+    ObjectWithSpecifiedField:
+      type: object
+      properties:
+        field:
+          type: object
+          properties:
+            foo_bar:
+              type: string
     AllOfSchema:
       allOf:
         - $ref: "#/components/schemas/Item"
