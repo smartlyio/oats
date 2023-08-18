@@ -107,6 +107,12 @@ export class Make<V> {
 }
 
 export interface MakeOptions {
+  /**
+   * if 'true' merge types between successive '.make' calls for the object
+   * RECOMMEND not to set this unless you have thought things through
+   */
+  mergeTypes?: boolean;
+
   unknownField?: 'drop' | 'fail';
   /**
    * If enabled, "number" ans "integer" schemas will accept strings and try to parse them.
@@ -250,10 +256,10 @@ function makeFloatOrInteger(
   };
 }
 
-function checkAny(value: any) {
+function checkAny(value: any, opts?: MakeOptions) {
   const type = getType(value);
-  if (type && type.length > 0) {
-    return Make.ok(withType(_.cloneDeep(value), type));
+  if (opts?.mergeTypes && type && type.length > 0) {
+    return Make.ok(value);
   }
   return Make.ok(_.cloneDeep(value));
 }
@@ -406,7 +412,12 @@ export function makeAllOf(...all: Maker<any, any>[]) {
   return (value: any, opts?: MakeOptions) => {
     const types = [];
     for (const make of all) {
+      // first allOf make clears the previously set types
+      // the following makes merge types to the previous rounds
+      // If value has type A, B and we have allOf A and B. If makeA is called first
+      // we lose type B from value and have to do extra work in makeB.
       const result: Make<any> = make(value, opts);
+      opts = { ...opts, mergeTypes: true };
       if (result.isError()) {
         return result.errorPath('(allOf)');
       }
@@ -472,7 +483,13 @@ export function makeObject<
 
     // if the value been parsed already using the given object type
     // return the value as is
-    if (type && getTypeSet(value)?.has(type)) {
+    if (
+      type &&
+      getTypeSet(value)?.has(type) &&
+      // if mergeTypes is not set we may need to construct a new object
+      // to avoid returning more than the asked for type for the value
+      (opts?.mergeTypes || getTypeSet(value)?.size === 1)
+    ) {
       return Make.ok(value);
     }
     comparisorOrder ||= Object.keys(props);
@@ -535,9 +552,11 @@ export function makeObject<
       }
       result[index] = propResult.success();
     }
-    const oldType = getType(value);
-    if (oldType) {
-      withType(result, oldType);
+    if (opts?.mergeTypes) {
+      const oldType = getType(value);
+      if (oldType) {
+        withType(result, oldType);
+      }
     }
     return Make.ok(withType(result, type ? [type] : []));
   };
