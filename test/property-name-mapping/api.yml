@@ -161,6 +161,16 @@ components:
       type: object
       properties:
         field: {}
+    NamedField:
+      type: object
+      properties:
+        foo_bar:
+          type: string
+    ObjectWithNamedField:
+      type: object
+      properties:
+        field:
+          $ref: '#/components/schemas/NamedField'
     ObjectWithSpecifiedField:
       type: object
       properties:

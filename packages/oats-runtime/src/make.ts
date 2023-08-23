@@ -261,7 +261,7 @@ function checkAny(value: any, opts?: MakeOptions) {
   if (opts?.mergeTypes && type && type.length > 0) {
     return Make.ok(value);
   }
-  return Make.ok(_.cloneDeep(value));
+  return Make.ok(structuredClone(value));
 }
 
 export function makeAny() {

@@ -102,6 +102,13 @@ describe('network ts mapping', () => {
       const serialized = runtime.serialize(value);
       expect(serialized).toEqual(input);
     });
+    it('forgets about mapping from previous make with nested objects', () => {
+      const previousValue = types.typeObjectWithNamedField
+        .maker({ field: { fooBar: 'a' } })
+        .success();
+      const value = types.typeObjectWithAnyField.maker(previousValue).success();
+      expect(runtime.serialize(value)).toEqual({ field: { fooBar: 'a' } });
+    });
     it('forgets about mapping from previous make', () => {
       const previousValue = types.typeObjectWithSpecifiedField
         .maker({ field: { fooBar: 'a' } })
