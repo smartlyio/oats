@@ -45,6 +45,7 @@ export interface EndpointArg<
   params: P;
   query: Q;
   body: Body;
+  signal?: AbortSignal;
 }
 
 export type ServerEndpointArg<
@@ -210,6 +211,7 @@ export function safe<
           throwRequestValidationError.bind(null, 'body')
         )
       ),
+      signal: ctx.signal,
       requestContext: ctx.requestContext as any
     });
     const isClientMode = mode === 'client';
