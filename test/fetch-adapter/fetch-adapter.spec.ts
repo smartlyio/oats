@@ -7,12 +7,15 @@ import * as Koa from 'koa';
 import { koaBody } from 'koa-body';
 import * as fetchAdapter from '@smartlyio/oats-fetch-adapter';
 import * as http from 'http';
-import { setTimeout } from 'timers/promises';
 
 describe('fetch adapter', () => {
   let apiClient: client.ClientSpec;
   let httpServer: http.Server | undefined;
   let receivedContext: any;
+  let callback: (...args: any[]) => Promise<void>;
+  beforeEach(() => {
+    callback = async () => { return };
+  });
 
   const spec: server.Endpoints = Object.fromEntries(
     server.endpointHandlers.map(handler => [
@@ -20,7 +23,7 @@ describe('fetch adapter', () => {
       {
         [handler.method]: async (ctx: any) => {
           receivedContext = ctx;
-          await setTimeout(100);
+          await callback(ctx);
           return runtime.text(200, 'done');
         }
       }
@@ -86,8 +89,10 @@ describe('fetch adapter', () => {
 
   it('aborts signal', async () => {
     const abort = new AbortController();
+    callback = async () => {
+      abort.abort();
+    };
     const promise = apiClient.get({ signal: abort.signal });
-    abort.abort();
     await expect(promise).rejects.toThrow('This operation was aborted');
   });
 
