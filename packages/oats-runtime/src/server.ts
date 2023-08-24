@@ -53,7 +53,7 @@ export type ServerEndpointArg<
   Q extends Query | void,
   Body extends RequestBody<any> | void,
   RC extends RequestContext
-> = EndpointArg<H, P, Q, Body> & { readonly requestContext: RC };
+> = EndpointArg<H, P, Q, Body> & { readonly requestContext: RC; readonly signal?: AbortSignal };
 
 export type Endpoint<
   H extends Headers | void,

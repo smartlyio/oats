@@ -11,7 +11,9 @@ export type ClientArg<
   H extends server.Headers | void,
   Q extends server.Query | void,
   B extends server.RequestBody<any> | void
-> = MakeOptional<H, 'headers'> & MakeOptional<Q, 'query'> & MakeOptional<B, 'body'>;
+> = MakeOptional<H, 'headers'> &
+  MakeOptional<Q, 'query'> &
+  MakeOptional<B, 'body'> & { readonly signal?: AbortSignal };
 
 export type ClientEndpoint<
   H extends server.Headers | void,
@@ -207,6 +209,7 @@ function makeMethod(
       headers: ctx?.headers,
       query: ctx?.query,
       body: ctx?.body,
+      signal: ctx?.signal,
       requestContext: { path: handler.path }
     });
 }

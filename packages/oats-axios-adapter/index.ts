@@ -101,6 +101,7 @@ function createAxiosAdapter({
       params,
       paramsSerializer: preserveQueryArrayParamNames ? urlSearchParamsSerializer : undefined,
       data,
+      signal: arg.signal,
       validateStatus: () => true
     });
     const contentType = getContentType(response);
