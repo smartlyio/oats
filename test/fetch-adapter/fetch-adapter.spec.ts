@@ -82,6 +82,16 @@ describe('fetch adapter', () => {
     expect(receivedContext.body).toEqual(null);
   });
 
+  it('aborts signal', async () => {
+    const abort = new AbortController();
+    setTimeout(() => abort.abort(), 1);
+    await expect(apiClient.get({ signal: abort.signal })).rejects.toThrow(
+      'This operation was aborted'
+    );
+
+    expect(abort.signal.aborted).toBeTruthy();
+  });
+
   it('correctly calls GET request with query parameters', async () => {
     const response = await apiClient['with-query'].get({
       query: { one: 'the loneliest number' }
