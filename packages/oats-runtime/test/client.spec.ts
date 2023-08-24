@@ -102,4 +102,10 @@ describe('ClientEndpoint', () => {
       query: { a: 'foo' }
     });
   });
+
+  it('allows passing CancelSignal', () => {
+    void mock<client.ClientEndpoint<void, { a?: string }, void, typeof response>>()({
+      signal: new AbortController().signal
+    });
+  });
 });
