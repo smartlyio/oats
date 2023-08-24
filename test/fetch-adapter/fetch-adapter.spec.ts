@@ -7,6 +7,7 @@ import * as Koa from 'koa';
 import { koaBody } from 'koa-body';
 import * as fetchAdapter from '@smartlyio/oats-fetch-adapter';
 import * as http from 'http';
+import { setTimeout } from 'timers/promises';
 
 describe('fetch adapter', () => {
   let apiClient: client.ClientSpec;
@@ -19,6 +20,7 @@ describe('fetch adapter', () => {
       {
         [handler.method]: async (ctx: any) => {
           receivedContext = ctx;
+          await setTimeout(100);
           return runtime.text(200, 'done');
         }
       }
@@ -84,12 +86,9 @@ describe('fetch adapter', () => {
 
   it('aborts signal', async () => {
     const abort = new AbortController();
-    setTimeout(() => abort.abort(), 1);
-    await expect(apiClient.get({ signal: abort.signal })).rejects.toThrow(
-      'This operation was aborted'
-    );
-
-    expect(abort.signal.aborted).toBeTruthy();
+    const promise = apiClient.get({ signal: abort.signal });
+    abort.abort();
+    await expect(promise).rejects.toThrow('This operation was aborted');
   });
 
   it('correctly calls GET request with query parameters', async () => {
