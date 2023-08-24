@@ -256,12 +256,28 @@ function makeFloatOrInteger(
   };
 }
 
+function cloneWithoutTypes(value: unknown): any {
+  if (Array.isArray(value)) {
+    return value.map(item => cloneWithoutTypes(item));
+  }
+  if (value && typeof value === 'object') {
+    const types = getTypeSet(value);
+    if (types && types.size > 0) {
+      return Object.entries(value).reduce<Record<string, any>>((memo, [prop, value]) => {
+        memo[prop] = cloneWithoutTypes(value);
+        return memo;
+      }, {});
+    }
+  }
+  return value;
+}
+
 function checkAny(value: any, opts?: MakeOptions) {
   const type = getType(value);
   if (opts?.mergeTypes && type && type.length > 0) {
     return Make.ok(value);
   }
-  return Make.ok(structuredClone(value));
+  return Make.ok(cloneWithoutTypes(value));
 }
 
 export function makeAny() {
