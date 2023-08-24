@@ -81,6 +81,7 @@ export function create(init?: RequestInit): runtime.client.ClientAdapter {
           ...(requestContentType ? { 'content-type': requestContentType } : {}),
           ...arg.headers
         },
+        signal: arg.signal,
         body: data
       })
     );
