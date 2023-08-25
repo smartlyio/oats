@@ -5,6 +5,7 @@ import * as classWithAdditional from './test-class-with-additional-props';
 import { Type } from '../src/reflection-type';
 import { serialize } from '../src/serialize';
 import { getType, withType } from '../src/type-tag';
+import { File, FormBinary } from '../src/make';
 
 describe('union differentation', () => {
   it('handles cases where union children are missing the tag', () => {
@@ -407,6 +408,30 @@ describe('unknown', () => {
     const item = new TestClass({ a: ['a'], b: 'b' });
     expect(fun(item).success()).toEqual(item);
     expect(fun(item).success() !== item).toBeTruthy();
+  });
+  it('keeps Buffer instances', async () => {
+    const fun = make.fromReflection({ type: 'unknown' });
+    const item = Buffer.alloc(1, 'x', 'utf-8');
+    expect(fun(item).success()).toEqual(item);
+    expect(fun(item).success() === item).toBeTruthy();
+  });
+  it('keeps File instances', async () => {
+    const fun = make.fromReflection({ type: 'unknown' });
+    const item = new File('path', 10, 'name');
+    expect(fun(item).success()).toEqual(item);
+    expect(fun(item).success() === item).toBeTruthy();
+  });
+  it('keeps FormBinary instances', async () => {
+    const fun = make.fromReflection({ type: 'unknown' });
+    const item = new FormBinary({ binary: Buffer.alloc(1, 'x', 'utf-8') });
+    expect(fun(item).success()).toEqual(item);
+    expect(fun(item).success() === item).toBeTruthy();
+  });
+  it('keeps FormBinary instances', async () => {
+    const fun = make.fromReflection({ type: 'unknown' });
+    const item = new FormBinary({ binary: Buffer.alloc(1, 'x', 'utf-8') });
+    expect(fun(item).success()).toEqual(item);
+    expect(fun(item).success() === item).toBeTruthy();
   });
   it('keeps custom instances', async () => {
     const fun = make.fromReflection({ type: 'unknown' });
