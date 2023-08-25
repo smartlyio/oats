@@ -4,7 +4,7 @@ import { TestClass } from './test-class';
 import * as classWithAdditional from './test-class-with-additional-props';
 import { Type } from '../src/reflection-type';
 import { serialize } from '../src/serialize';
-import { getType } from '../src/type-tag';
+import { getType, withType } from '../src/type-tag';
 
 describe('union differentation', () => {
   it('handles cases where union children are missing the tag', () => {
@@ -399,12 +399,32 @@ describe('intersection', () => {
 });
 
 describe('unknown', () => {
+  it('keeps instances', async () => {
+    const fun = make.fromReflection({ type: 'unknown' });
+    const item = new Date();
+    expect(fun(item).success()).toEqual(item);
+    expect(fun(item).success() === item).toBeTruthy();
+  });
+
+  it('loses deep reflection types', async () => {
+    const fun = make.fromReflection({ type: 'unknown' });
+    const item = [{ prop: withType({}, [{ type: 'boolean' }]) }];
+    expect(item[0].prop).not.toEqual(undefined);
+    expect(fun(item).success()).toEqual(item);
+    expect(getType(fun(item[0].prop))).toEqual(undefined);
+  });
+
+  it('loses reflection types', async () => {
+    const fun = make.fromReflection({ type: 'unknown' });
+    const item = withType({}, [{ type: 'boolean' }]);
+    expect(item).not.toEqual(undefined);
+    expect(fun(item).success()).toEqual(item);
+    expect(getType(fun(item))).toEqual(undefined);
+  });
+
   jsc.property('allows anything', jsc.json, async item => {
     const fun = make.fromReflection({ type: 'unknown' });
     expect(fun(item).success()).toEqual(item);
-    if (item && typeof item === 'object') {
-      expect(fun(item).success() !== item).toBeTruthy();
-    }
     return true;
   });
 });
