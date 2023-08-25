@@ -400,7 +400,7 @@ describe('intersection', () => {
 });
 
 class SomeClass {
-  a: 1;
+  a = 1;
 }
 describe('unknown', () => {
   it('redoes value classes', async () => {
