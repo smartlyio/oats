@@ -14,7 +14,9 @@ describe('fetch adapter', () => {
   let receivedContext: any;
   let callback: (...args: any[]) => Promise<void>;
   beforeEach(() => {
-    callback = async () => { return };
+    callback = async () => {
+      return;
+    };
   });
 
   const spec: server.Endpoints = Object.fromEntries(
