@@ -398,7 +398,22 @@ describe('intersection', () => {
   });
 });
 
+class SomeClass {
+  a: 1;
+}
 describe('unknown', () => {
+  it('redoes value classes', async () => {
+    const fun = make.fromReflection({ type: 'unknown' });
+    const item = new TestClass({ a: ['a'], b: 'b' });
+    expect(fun(item).success()).toEqual(item);
+    expect(fun(item).success() !== item).toBeTruthy();
+  });
+  it('keeps custom instances', async () => {
+    const fun = make.fromReflection({ type: 'unknown' });
+    const item = new SomeClass();
+    expect(fun(item).success()).toEqual(item);
+    expect(fun(item).success() === item).toBeTruthy();
+  });
   it('keeps instances', async () => {
     const fun = make.fromReflection({ type: 'unknown' });
     const item = new Date();
