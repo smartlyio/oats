@@ -7,6 +7,8 @@ Bug fix for network mapping when a value was made with different makers.
    const value2 = Bmake(value).success();
 ```
 
+# 7.4.0
+
 value2 had both A and B types and network mapping tried to use mapping also from A type when it should have only used mappings from type B if any.
 Now value2 does not have a linkage anymore to type A and will not be considered when network mapping. 
 
