@@ -92,3 +92,21 @@ paths:
             text/plain:
               schema:
                 type: string
+  /with-no-content:
+    patch:
+      description: endpoint
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        204:
+          description: endpoint
+        500:
+          description: endpoint
+          content:
+            text/plain:
+              schema:
+                type: string

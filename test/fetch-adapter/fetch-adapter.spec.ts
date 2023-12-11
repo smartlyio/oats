@@ -26,6 +26,11 @@ describe('fetch adapter', () => {
         [handler.method]: async (ctx: any) => {
           receivedContext = ctx;
           await callback(ctx);
+
+          if (handler.path === '/with-no-content') {
+            return runtime.noContent(204);
+          }
+
           return runtime.text(200, 'done');
         }
       }
@@ -188,26 +193,25 @@ describe('fetch adapter', () => {
     });
   });
 
-  it('correctly calls PATCH(or any) request with noContentType', async () => {
-    const response = await apiClient['with-patch'].patch({
-      status: 204,
+  it('correctly calls PATCH(or any) request with noContentType content-type response', async () => {
+    const response = await apiClient['with-no-content'].patch({
       body: {
-        contentType: runtime.noContentContentType,
-        value: null
+        contentType: 'application/json',
+        value: { one: 'the loneliest number' }
       }
     });
 
     expect(response.status).toBe(204);
     expect(response.value.contentType).toBe(runtime.noContentContentType);
-    expect(response.value.value).toBe('done');
+    expect(response.value.value).toBe(null);
 
     expect(receivedContext).toBeDefined();
     expect(receivedContext.method).toEqual('patch');
-    expect(receivedContext.path).toEqual('/with-patch');
+    expect(receivedContext.path).toEqual('/with-no-content');
     expect(receivedContext.headers).toEqual(null);
     expect(receivedContext.body).toEqual({
-      contentType: runtime.noContentContentType,
-      value: null
+      contentType: 'application/json',
+      value: { one: 'the loneliest number' }
     });
   });
 });
