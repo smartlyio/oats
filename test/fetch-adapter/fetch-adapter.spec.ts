@@ -193,7 +193,7 @@ describe('fetch adapter', () => {
       status: 204,
       body: {
         contentType: runtime.noContentContentType,
-        value: { one: 'the loneliest number' }
+        value: null
       }
     });
 
