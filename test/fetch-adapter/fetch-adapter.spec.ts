@@ -207,7 +207,7 @@ describe('fetch adapter', () => {
     expect(receivedContext.headers).toEqual(null);
     expect(receivedContext.body).toEqual({
       contentType: runtime.noContentContentType,
-      value: { one: 'the loneliest number' }
+      value: null
     });
   });
 });
