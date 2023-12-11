@@ -29,7 +29,7 @@ function toRequestData(data: runtime.server.RequestBody<any> | undefined) {
 
 function getContentType(response: Response) {
   const type = response.headers.get('content-type');
-  if (!type) {
+  if (!type || type === runtime.noContentContentType) {
     return runtime.noContentContentType;
   }
   if (response.status === 204) {

@@ -187,4 +187,27 @@ describe('fetch adapter', () => {
       value: { one: 'the loneliest number' }
     });
   });
+
+  it('correctly calls PATCH(or any) request with noContentType', async () => {
+    const response = await apiClient['with-patch'].patch({
+      status: 204,
+      body: {
+        contentType: runtime.noContentContentType,
+        value: { one: 'the loneliest number' }
+      }
+    });
+
+    expect(response.status).toBe(204);
+    expect(response.value.contentType).toBe(runtime.noContentContentType);
+    expect(response.value.value).toBe('done');
+
+    expect(receivedContext).toBeDefined();
+    expect(receivedContext.method).toEqual('patch');
+    expect(receivedContext.path).toEqual('/with-patch');
+    expect(receivedContext.headers).toEqual(null);
+    expect(receivedContext.body).toEqual({
+      contentType: runtime.noContentContentType,
+      value: { one: 'the loneliest number' }
+    });
+  });
 });
