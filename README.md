@@ -235,6 +235,28 @@ app.createApp().listen(port, async () => {
 
 ```
 
+## Developing and releasing
+
+To initialize the project:
+```bash
+yarn lerna bootstrap
+```
+
+To publish a canary (to test your changes in the depending service)
+
+```bash
+yarn build
+yarn publish:canary
+```
+
+To publish a new release
+
+```bash
+yarn build
+yarn publish:patch # or minor or major
+```
+
+
 ## Testing
 
 We support also property based testing and test data generation with 
