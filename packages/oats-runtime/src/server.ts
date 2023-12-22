@@ -89,12 +89,14 @@ export interface Endpoints {
 }
 
 export class RequestValidationError extends Error {
+  readonly name = 'RequestValidationError';
   constructor(public tag: string, public errors: ValidationError[]) {
     super('invalid request ' + tag + ' ' + errors.map(validationErrorPrinter).join('\n'));
   }
 }
 
 export class ResponseValidationError extends Error {
+  readonly name = 'ResponseValidationError';
   constructor(public tag: string, public originalResponse: any, public errors: ValidationError[]) {
     super('invalid response ' + tag + ' ' + errors.map(validationErrorPrinter).join('\n'));
   }

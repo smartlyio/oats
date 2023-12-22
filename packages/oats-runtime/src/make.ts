@@ -7,6 +7,7 @@ import { discriminateUnion } from './union-discriminator';
 import { getType, getTypeSet, withType } from './type-tag';
 
 export class MakeError extends Error {
+  readonly name = 'MakeError';
   constructor(readonly errors: ValidationError[]) {
     super(
       'tried to get success value from error: ' + errors.map(validationErrorPrinter).join('\n')
