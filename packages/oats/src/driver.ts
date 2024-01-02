@@ -4,7 +4,7 @@ import * as types from './generate-types';
 import { AdditionalPropertiesIndexSignature, Resolve } from './generate-types';
 import * as server from './generate-server';
 import * as path from 'path';
-import * as oas from 'openapi3-ts';
+import { oas31 as oas } from 'openapi3-ts';
 import {
   capitalize,
   NameKind,
