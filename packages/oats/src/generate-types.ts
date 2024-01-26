@@ -1,3 +1,4 @@
+import { debuglog } from 'node:util';
 import * as oas from 'openapi3-ts';
 import * as ts from 'typescript';
 import * as _ from 'lodash';
@@ -7,6 +8,8 @@ import { NameKind, UnsupportedFeatureBehaviour } from './util';
 import * as path from 'path';
 import { resolvedStatusCodes } from './status-codes';
 import { buildMethod } from './builder';
+
+const info = debuglog('oats');
 
 const valueClassIndexSignatureKey = 'instanceIndexSignatureKey';
 const scalarTypes = ['string', 'integer', 'number', 'boolean'];
@@ -57,11 +60,6 @@ export interface Options {
    * */
   propertyNameMapper?: (openapiPropertyName: string) => string;
   nameMapper: oautil.NameMapper;
-}
-
-export function info(message: string) {
-  // eslint-disable-next-line no-console
-  console.log('info: ' + message);
 }
 
 export function deprecated(condition: any, message: string) {
