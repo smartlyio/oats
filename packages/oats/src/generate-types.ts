@@ -54,6 +54,10 @@ export interface Options {
    * `[key: string]: unknown`
    * for objects with `additionalProperties: true` or no additionalProperties set */
   unknownAdditionalPropertiesIndexSignature?: AdditionalPropertiesIndexSignature;
+  /** If 'emitQueryParameters' is set emit query parameter name as a top level property for the query parameter type when explode = true.
+   *  This matches the OpenAPI3 specification. Opt in as this is also a breaking change due to the addition of the query parameter name getting added
+   */
+  emitQueryParameterNames?: boolean;
   /** property name mapper for object properties
    *  ex. to map 'snake_case' property in network format to property 'camelCase' usable in ts code provide mapper
    *  > propertyNameMapper: (p) => p === 'snake_case ? 'camelCase' : p
@@ -251,7 +255,7 @@ export function run(options: Options) {
     if (queryParams.length === 0) {
       return generateTopLevelType(op, noQueryParams);
     }
-    if (queryParams.some(param => !!param.explode)) {
+    if (!options.emitQueryParameterNames && queryParams.some(param => !!param.explode)) {
       assert(queryParams.length === 1, 'only one explode: true parameter is supported');
       const param = queryParams[0];
       return generateTopLevelType(op, param.schema || {});
