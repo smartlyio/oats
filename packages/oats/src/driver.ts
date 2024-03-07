@@ -185,7 +185,10 @@ export function generate(driver: Driver) {
   const spec: oas.OpenAPIObject = yaml.load(file) as any;
   const header = driver.header ? driver.header + '\n' : '';
 
-  types.deprecated(!driver.emitQueryParameterNames, 'emitQueryParameters is not set. Please set it to true as the behaviour when unset is deprecated and prone to change');
+  types.deprecated(
+    !driver.emitQueryParameterNames,
+    'emitQueryParameters is not set. Please set it to true as the behaviour when unset is deprecated and prone to change'
+  );
   fs.mkdirSync(path.dirname(driver.generatedValueClassFile), { recursive: true });
   const typeSource = types.run({
     forceGenerateTypes: driver.forceGenerateTypes,
