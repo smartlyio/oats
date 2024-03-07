@@ -7,6 +7,53 @@ Bug fix for network mapping when a value was made with different makers.
    const value2 = Bmake(value).success();
 ```
 
+# Next
+
+Added driver option emitQueryParameters to emit better types when using query parameters with explode=true. Previously
+only one query parameter was accepted when explode=true was set for a query parameter. This also prevented using
+explode=true with schemas other than objects. This was due to incorrect reading
+of the OpenAPI3 specification.
+
+With emitQueryParameters we generate a top level property using the query parameter name for the explode=true query
+parameter like we do for other query parameters already. 
+
+As an example with query parameter defined as
+
+```
+name: someParameter
+explode: true
+schema:
+  type: object
+  properties:
+    someProperty: ...
+```
+
+Oats generated a query object 
+
+```
+{
+  someProperty: ...
+}
+```
+
+With the flag the query object with have `someParameter` as the top level property.
+
+```
+{
+  someParameter: { someProperty: ... }
+}
+```
+
+The properties are still parsed and serialized as before. In the above case
+
+```
+http://path?someProperty=...
+```
+
+If your api specification does not use explode=true setting emitQueryParameters does not result in changes. We recommend
+setting the option as leaving the option unset is prone to being deprecated. The option is provided to enable callers to
+migrate to the newest oats version without extra hassle and later when they have time setting the option and doing the necessary code changes.
+
 # 7.4.0
 
 value2 had both A and B types and network mapping tried to use mapping also from A type when it should have only used mappings from type B if any.

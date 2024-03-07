@@ -66,6 +66,10 @@ export interface Driver {
    *  index signature accesses to have implicit undefined type so we can let the caller decide on the level of safety they want.
    * */
   emitUndefinedForIndexTypes?: boolean;
+  /** If 'emitQueryParameters' is set emit query parameter name as a top level property for the query parameter type when explode = true.
+   *  This matches the OpenAPI3 specification. Opt in as this is also a breaking change due to the addition of the query parameter name getting added
+   */
+  emitQueryParameterNames?: boolean;
   /** If 'AdditionalPropertiesIndexSignature.emit' or not set emit
    * `[key: string]: unknown`
    * for objects with `additionalProperties: true` or no additionalProperties set
@@ -163,6 +167,7 @@ export function generateFile(opts?: GenerateFileOptions): types.Resolve {
           generatedValueClassFile: generatedFile + '.ts',
           resolve: options.resolve,
           emitStatusCode: options.emitStatusCode,
+          emitQueryParameterNames: options.emitQueryParameterNames,
           emitUndefinedForIndexTypes: options.emitUndefinedForIndexTypes,
           unknownAdditionalPropertiesIndexSignature:
             options.unknownAdditionalPropertiesIndexSignature,
@@ -180,10 +185,7 @@ export function generate(driver: Driver) {
   const spec: oas.OpenAPIObject = yaml.load(file) as any;
   const header = driver.header ? driver.header + '\n' : '';
 
-  types.deprecated(
-    driver.generatedServerFile && driver.generatedClientFile,
-    'generating both server and client files from the same definition is frowned upon and will be prevented later on'
-  );
+  types.deprecated(!driver.emitQueryParameterNames, 'emitQueryParameters is not set. Please set it to true as the behaviour when unset is deprecated and prone to change');
   fs.mkdirSync(path.dirname(driver.generatedValueClassFile), { recursive: true });
   const typeSource = types.run({
     forceGenerateTypes: driver.forceGenerateTypes,
@@ -194,6 +196,7 @@ export function generate(driver: Driver) {
     oas: spec,
     runtimeModule: modulePath(driver.generatedValueClassFile, driver.runtimeFilePath),
     emitStatusCode: driver.emitStatusCode || emitAllStatusCodes,
+    emitQueryParameterNames: driver.emitQueryParameterNames,
     nameMapper: driver.nameMapper || localNameMapper,
     propertyNameMapper: driver.propertyNameMapper,
     emitUndefinedForIndexTypes: driver.emitUndefinedForIndexTypes ?? true,
