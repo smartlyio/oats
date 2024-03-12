@@ -1,6 +1,6 @@
 {
   "name": "@smartlyio/oats-fetch-adapter",
-  "version": "7.4.2",
+  "version": "7.4.3",
   "license": "MIT",
   "description": "Fetch adapter for Oats a Openapi3 based generator for typescript aware servers and clients",
   "private": false,
@@ -34,7 +34,7 @@
     "client"
   ],
   "devDependencies": {
-    "@smartlyio/oats-runtime": "^7.4.2",
+    "@smartlyio/oats-runtime": "^7.4.3",
     "@types/node": "18.16.18",
     "@typescript-eslint/eslint-plugin": "5.59.11",
     "@typescript-eslint/parser": "5.59.11",
