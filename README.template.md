@@ -104,7 +104,7 @@ yarn build
 yarn publish:canary
 ```
 
-To publish a new release
+To publish a new release (you would need admin access to the repo)
 
 ```bash
 yarn build
