@@ -62,7 +62,7 @@ export function create(init?: RequestInit): runtime.client.ClientAdapter {
     }
     const server = arg.servers[0];
     const data = toRequestData(arg.body);
-    const url = new URL(server + arg.path);
+    const url = new URL(server + arg.path, globalThis.location?.origin);
     const requestContentType = arg.body?.contentType;
 
     Object.entries(arg.query ?? {})
