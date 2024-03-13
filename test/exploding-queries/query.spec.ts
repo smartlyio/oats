@@ -10,6 +10,11 @@ import * as http from 'http';
 
 // 'api.EndpointsWithContext' is the generated type of the server
 const spec: server.Endpoints = {
+  '/item/array': {
+    post: async ctx => {
+      return runtime.json(200, { ok: 'post', query: ctx.query });
+    }
+  },
   '/item': {
     post: async ctx => {
       return runtime.json(200, { ok: 'post', query: ctx.query });
@@ -18,7 +23,9 @@ const spec: server.Endpoints = {
 };
 
 const routes = koaAdapter.bind(
-  runtime.server.createHandlerFactory<server.Endpoints>(server.endpointHandlers),
+  runtime.server.createHandlerFactory<server.Endpoints>(server.endpointHandlers, {
+    validationOptions: { query: { allowConvertForArrayType: true } }
+  }),
   spec
 );
 
@@ -67,6 +74,20 @@ describe('queries', () => {
     });
   });
 
+  describe('arrays with explode', () => {
+    it('allows arrays with single value', async () => {
+      const item = await apiClient.item.array.post({
+        query: { field: ['value'], otherfield: 'other' }
+      });
+      expect(item.value.value.query).toEqual({ field: ['value'], otherfield: 'other' });
+    });
+    it('allows arrays with multiple values and explode', async () => {
+      const item = await apiClient.item.array.post({
+        query: { field: ['value', 'foo'], otherfield: 'other' }
+      });
+      expect(item.value.value.query).toEqual({ field: ['value', 'foo'], otherfield: 'other' });
+    });
+  });
   describe('with additionalProperties', () => {
     it('allows calling with specified query property', async () => {
       const item = await apiClient.item.post({ query: { foo: 'abc' } });

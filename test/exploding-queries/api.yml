@@ -5,6 +5,30 @@ info:
 servers:
   - url: http://localhost:12000
 paths:
+  /item/array:
+    post:
+      parameters:
+        - in: query
+          name: otherfield
+          required: false
+          explode: true
+          schema:
+            type: string
+        - in: query
+          name: field
+          required: false
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
   /item:
     post:
       parameters:
