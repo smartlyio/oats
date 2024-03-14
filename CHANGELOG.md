@@ -1,6 +1,7 @@
-# Next
+# 7.4.4
 
-Allow expand=true with multiple query parameters when the query parameter schemas are not 
+
+## Bug fig: allow expand=true with multiple query parameters when the query parameter schemas are not 
 
  * references
  * objects
