@@ -1,4 +1,4 @@
-# 7.4.4
+# 7.4.5
 
 
 ## Bug fig: allow expand=true with multiple query parameters when the query parameter schemas are not 
