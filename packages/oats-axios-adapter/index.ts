@@ -92,7 +92,7 @@ function createAxiosAdapter({
     const url = server + arg.path;
     const headers = removeUndefined({
       ...arg.headers,
-      ...(data instanceof FormData ? data.getHeaders() : {})
+      ...(data instanceof FormData && data.getHeaders ? data.getHeaders() : {})
     });
     const response = await axiosInstance.request({
       method: arg.method,
