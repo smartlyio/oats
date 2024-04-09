@@ -498,9 +498,18 @@ export function run(options: Options) {
     if (e === null) return ts.factory.createNull();
     if (type === 'string') return ts.factory.createStringLiteral(e);
     if (type === 'bigint') return ts.factory.createBigIntLiteral(e);
-    if (type === 'number') return ts.factory.createNumericLiteral(e);
-
+    if (type === 'number') return generateNumericLiteral(e);
     throw new Error(`unsupported enum value: "${e}"`);
+  }
+  function generateNumericLiteral(value: number | string): ts.LiteralTypeNode['literal'] {
+    value = Number(value);
+    if (value < 0) {
+      return ts.factory.createPrefixUnaryExpression(
+        ts.SyntaxKind.MinusToken,
+        ts.factory.createNumericLiteral(Math.abs(value))
+      );
+    }
+    return ts.factory.createNumericLiteral(value);
   }
 
   function generateType(
@@ -883,7 +892,7 @@ export function run(options: Options) {
           ? [
               ts.factory.createPropertyAssignment(
                 'minLength',
-                ts.factory.createNumericLiteral(schema.minLength)
+                generateNumericLiteral(schema.minLength)
               )
             ]
           : [];
@@ -892,7 +901,7 @@ export function run(options: Options) {
           ? [
               ts.factory.createPropertyAssignment(
                 'maxLength',
-                ts.factory.createNumericLiteral(schema.maxLength)
+                generateNumericLiteral(schema.maxLength)
               )
             ]
           : [];
@@ -915,7 +924,7 @@ export function run(options: Options) {
             ts.factory.createPropertyAssignment(
               'enum',
               ts.factory.createArrayLiteralExpression(
-                schema.enum.map(i => ts.factory.createNumericLiteral('' + i))
+                schema.enum.map(i => generateNumericLiteral('' + i))
               )
             )
           ]
@@ -928,7 +937,7 @@ export function run(options: Options) {
         properties.push(
           ts.factory.createPropertyAssignment(
             'minimum',
-            ts.factory.createNumericLiteral(schema.minimum + '')
+            generateNumericLiteral(schema.minimum + '')
           )
         );
       }
@@ -936,7 +945,7 @@ export function run(options: Options) {
         properties.push(
           ts.factory.createPropertyAssignment(
             'maximum',
-            ts.factory.createNumericLiteral(schema.maximum + '')
+            generateNumericLiteral(schema.maximum + '')
           )
         );
       }
@@ -976,7 +985,7 @@ export function run(options: Options) {
         properties.push(
           ts.factory.createPropertyAssignment(
             'minItems',
-            ts.factory.createNumericLiteral(schema.minItems + '')
+            generateNumericLiteral(schema.minItems + '')
           )
         );
       }
@@ -984,7 +993,7 @@ export function run(options: Options) {
         properties.push(
           ts.factory.createPropertyAssignment(
             'maxItems',
-            ts.factory.createNumericLiteral(schema.maxItems + '')
+            generateNumericLiteral(schema.maxItems + '')
           )
         );
       }

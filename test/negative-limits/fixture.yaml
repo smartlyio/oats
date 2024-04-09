@@ -1,0 +1,11 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: fixtures for runtime test
+paths: {}
+components:
+  schemas:
+    test:
+      type: number
+      minimum: -2
+
