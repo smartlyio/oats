@@ -104,6 +104,7 @@ export interface Props {
 }
 
 export type AdditionalProp = boolean | Type;
+export type WebFile = File;
 
 export interface ObjectType {
   readonly type: 'object';

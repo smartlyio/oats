@@ -2,7 +2,7 @@ import { assert, fail } from './assert';
 import * as _ from 'lodash';
 import { isEqual, uniq } from 'lodash';
 import { ValueClass } from './value-class';
-import { NamedTypeDefinition, ObjectType, Type } from './reflection-type';
+import { NamedTypeDefinition, ObjectType, Type, WebFile } from './reflection-type';
 import { discriminateUnion } from './union-discriminator';
 import { getType, getTypeSet, withType } from './type-tag';
 
@@ -584,7 +584,7 @@ interface FormDataArguments {
   options: string | undefined | { [key: string]: string };
 }
 
-export type Binary = File | Buffer | FormBinary;
+export type Binary = WebFile | File | Buffer | FormBinary;
 
 export class FormBinary {
   constructor(readonly binary: Binary, readonly options?: FormDataArguments['options']) {}
