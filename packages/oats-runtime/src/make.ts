@@ -2,7 +2,7 @@ import { assert, fail } from './assert';
 import * as _ from 'lodash';
 import { isEqual, uniq } from 'lodash';
 import { ValueClass } from './value-class';
-import { NamedTypeDefinition, ObjectType, Type } from './reflection-type';
+import { NamedTypeDefinition, ObjectType, Type, WebFile } from './reflection-type';
 import { discriminateUnion } from './union-discriminator';
 import { getType, getTypeSet, withType } from './type-tag';
 
@@ -598,12 +598,6 @@ export class File {
 
   constructor(readonly path: string, readonly size: number, readonly name?: string) {}
 }
-
-export interface WebFile extends Blob {
-  readonly lastModified: number;
-  readonly name: string;
-  readonly webkitRelativePath: string;
-};
 
 function checkBinary(value: any) {
   if (value instanceof File) {
