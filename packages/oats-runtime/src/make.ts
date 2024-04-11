@@ -603,7 +603,7 @@ export interface WebFile extends Blob {
   readonly lastModified: number;
   readonly name: string;
   readonly webkitRelativePath: string;
-};
+}
 
 function checkBinary(value: any) {
   if (value instanceof File) {
