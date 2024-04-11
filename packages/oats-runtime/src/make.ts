@@ -615,14 +615,7 @@ function checkBinary(value: any) {
   if (value instanceof FormBinary) {
     return Make.ok(value);
   }
-  if (isWebFile(value)) {
-    return Make.ok(value);
-  }
   return getErrorWithValueMsg('expected a binary value', value);
-}
-
-function isWebFile(value: any): value is WebFile {
-  return 'lastModified' in value && 'name' in value && 'webkitRelativePath' in value;
 }
 
 export function makeBinary() {
