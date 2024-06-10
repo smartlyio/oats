@@ -524,6 +524,14 @@ export function run(options: Options) {
         : typeMapper(resolved.member);
       return ts.factory.createTypeReferenceNode(type, undefined);
     }
+
+    if (schema.nullable) {
+      return ts.factory.createUnionTypeNode([
+        generateType({ ...schema, nullable: false }, typeMapper),
+        ts.factory.createLiteralTypeNode(ts.factory.createNull())
+      ]);
+    }
+
     if (schema.oneOf) {
       return ts.factory.createUnionTypeNode(
         schema.oneOf.map(schema => generateType(schema, typeMapper))
@@ -537,13 +545,6 @@ export function run(options: Options) {
     }
 
     assert(!schema.anyOf, 'anyOf is not supported');
-
-    if (schema.nullable) {
-      return ts.factory.createUnionTypeNode([
-        generateType({ ...schema, nullable: false }, typeMapper),
-        ts.factory.createLiteralTypeNode(ts.factory.createNull())
-      ]);
-    }
 
     if (schema.type === 'object') {
       return ts.factory.createTypeLiteralNode(
