@@ -123,7 +123,7 @@ function generateEndpoint(path: string, schema: oas.PathItemObject, opts: Option
           const endpoint = ts.factory.createPropertySignature(
             readonly,
             ts.factory.createStringLiteral(method),
-            undefined,
+            ts.factory.createToken(ts.SyntaxKind.QuestionToken),
             generateMethod(path, method, methodHandler, opts)
           );
           signatures.push(endpoint);
