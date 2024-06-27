@@ -19,6 +19,11 @@ paths:
       responses:
         201:
           description: Test response
+    put:
+      description: Test PUT endpoint
+      responses:
+        204:
+          description: No response
   /test-redirect:
     get:
       description: Redirect to root

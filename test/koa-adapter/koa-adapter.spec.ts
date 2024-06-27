@@ -10,7 +10,7 @@ import * as http from 'http';
 import { IMiddleware } from 'koa-router';
 import axios from 'axios';
 
-const spec: server.Endpoints = {
+const spec1: server.Endpoints = {
   '/test': {
     get: async () => {
       return runtime.noContent(201);
@@ -27,12 +27,19 @@ const spec: server.Endpoints = {
     }
   }
 };
+const spec2: server.Endpoints = {
+  '/test': {
+    put: async () => {
+      return runtime.noContent(204);
+    }
+  }
+};
 
-function createRoutes(middleware: IMiddleware<any, any>) {
+function createRoutes(spec: server.Endpoints, middlewares: IMiddleware<any, any>[]) {
   return koaAdapter.bind({
     handler: runtime.server.createHandlerFactory<server.Endpoints>(server.endpointHandlers),
     spec,
-    middlewares: [middleware]
+    middlewares
   });
 }
 
@@ -43,7 +50,8 @@ function createApp(middleware: IMiddleware<any, any>) {
       multipart: true
     })
   );
-  app.use(createRoutes(middleware).routes());
+  app.use(createRoutes(spec1, [middleware]).routes());
+  app.use(createRoutes(spec2, []).routes());
   return app;
 }
 
@@ -104,8 +112,15 @@ describe('Koa adapter', () => {
   });
 
   it('hits the given middleware', async () => {
-    await apiClient.test.get();
-    expect(middlewareHit).toBeTruthy();
+    const result = await apiClient.test.get();
+    expect(result.status).toBe(201);
+    expect(middlewareHit).toBe(true);
+  });
+
+  it('does not hit the middleware if the endpoint with the same path is defined in another router', async () => {
+    const result = await apiClient.test.put();
+    expect(result.status).toBe(204);
+    expect(middlewareHit).toBe(false);
   });
 
   it('redirects to "/"', async () => {
