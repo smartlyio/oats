@@ -1,0 +1,3799 @@
+
+
+
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: example service
+servers:
+  - url: http://localhost:12000
+paths: {}
+components:
+  schemas:
+    taggedObjectUnion:
+      oneOf:
+
+        - $ref: "#/components/schemas/taggedObject0"
+
+        - $ref: "#/components/schemas/taggedObject1"
+
+        - $ref: "#/components/schemas/taggedObject2"
+
+        - $ref: "#/components/schemas/taggedObject3"
+
+        - $ref: "#/components/schemas/taggedObject4"
+
+        - $ref: "#/components/schemas/taggedObject5"
+
+        - $ref: "#/components/schemas/taggedObject6"
+
+        - $ref: "#/components/schemas/taggedObject7"
+
+        - $ref: "#/components/schemas/taggedObject8"
+
+        - $ref: "#/components/schemas/taggedObject9"
+
+        - $ref: "#/components/schemas/taggedObject10"
+
+
+    taggedObject0:
+      type: object
+      required:
+        - tag
+      properties:
+        tag:
+          type: string
+          enum:
+            - tag0
+
+        prop0:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop1:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop2:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop3:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop4:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop5:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop6:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop7:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop8:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop9:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop10:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop11:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop12:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop13:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop14:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop15:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop16:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop17:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop18:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop19:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop20:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop21:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop22:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop23:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop24:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop25:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop26:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop27:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop28:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop29:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop30:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop31:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop32:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop33:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop34:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop35:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop36:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop37:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop38:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop39:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop40:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop41:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop42:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop43:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop44:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop45:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop46:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop47:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop48:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop49:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop50:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop51:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop52:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop53:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop54:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop55:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop56:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop57:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop58:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop59:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop60:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop61:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop62:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop63:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop64:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop65:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop66:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop67:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop68:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop69:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop70:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop71:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop72:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop73:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop74:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop75:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop76:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop77:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop78:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop79:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop80:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop81:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop82:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop83:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop84:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop85:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop86:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop87:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop88:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop89:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop90:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop91:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop92:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop93:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop94:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop95:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop96:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop97:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop98:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop99:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop100:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+
+    taggedObject1:
+      type: object
+      required:
+        - tag
+      properties:
+        tag:
+          type: string
+          enum:
+            - tag1
+
+        prop0:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop1:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop2:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop3:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop4:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop5:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop6:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop7:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop8:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop9:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop10:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop11:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop12:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop13:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop14:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop15:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop16:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop17:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop18:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop19:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop20:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop21:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop22:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop23:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop24:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop25:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop26:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop27:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop28:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop29:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop30:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop31:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop32:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop33:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop34:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop35:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop36:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop37:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop38:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop39:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop40:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop41:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop42:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop43:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop44:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop45:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop46:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop47:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop48:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop49:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop50:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop51:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop52:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop53:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop54:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop55:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop56:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop57:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop58:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop59:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop60:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop61:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop62:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop63:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop64:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop65:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop66:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop67:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop68:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop69:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop70:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop71:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop72:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop73:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop74:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop75:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop76:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop77:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop78:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop79:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop80:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop81:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop82:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop83:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop84:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop85:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop86:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop87:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop88:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop89:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop90:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop91:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop92:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop93:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop94:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop95:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop96:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop97:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop98:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop99:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop100:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+
+    taggedObject2:
+      type: object
+      required:
+        - tag
+      properties:
+        tag:
+          type: string
+          enum:
+            - tag2
+
+        prop0:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop1:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop2:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop3:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop4:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop5:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop6:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop7:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop8:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop9:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop10:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop11:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop12:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop13:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop14:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop15:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop16:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop17:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop18:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop19:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop20:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop21:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop22:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop23:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop24:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop25:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop26:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop27:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop28:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop29:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop30:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop31:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop32:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop33:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop34:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop35:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop36:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop37:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop38:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop39:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop40:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop41:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop42:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop43:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop44:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop45:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop46:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop47:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop48:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop49:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop50:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop51:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop52:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop53:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop54:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop55:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop56:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop57:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop58:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop59:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop60:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop61:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop62:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop63:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop64:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop65:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop66:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop67:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop68:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop69:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop70:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop71:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop72:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop73:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop74:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop75:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop76:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop77:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop78:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop79:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop80:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop81:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop82:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop83:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop84:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop85:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop86:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop87:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop88:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop89:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop90:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop91:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop92:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop93:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop94:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop95:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop96:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop97:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop98:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop99:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop100:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+
+    taggedObject3:
+      type: object
+      required:
+        - tag
+      properties:
+        tag:
+          type: string
+          enum:
+            - tag3
+
+        prop0:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop1:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop2:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop3:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop4:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop5:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop6:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop7:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop8:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop9:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop10:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop11:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop12:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop13:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop14:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop15:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop16:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop17:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop18:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop19:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop20:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop21:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop22:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop23:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop24:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop25:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop26:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop27:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop28:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop29:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop30:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop31:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop32:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop33:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop34:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop35:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop36:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop37:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop38:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop39:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop40:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop41:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop42:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop43:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop44:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop45:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop46:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop47:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop48:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop49:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop50:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop51:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop52:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop53:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop54:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop55:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop56:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop57:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop58:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop59:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop60:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop61:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop62:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop63:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop64:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop65:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop66:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop67:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop68:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop69:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop70:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop71:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop72:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop73:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop74:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop75:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop76:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop77:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop78:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop79:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop80:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop81:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop82:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop83:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop84:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop85:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop86:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop87:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop88:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop89:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop90:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop91:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop92:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop93:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop94:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop95:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop96:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop97:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop98:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop99:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop100:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+
+    taggedObject4:
+      type: object
+      required:
+        - tag
+      properties:
+        tag:
+          type: string
+          enum:
+            - tag4
+
+        prop0:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop1:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop2:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop3:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop4:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop5:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop6:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop7:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop8:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop9:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop10:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop11:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop12:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop13:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop14:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop15:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop16:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop17:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop18:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop19:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop20:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop21:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop22:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop23:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop24:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop25:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop26:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop27:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop28:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop29:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop30:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop31:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop32:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop33:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop34:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop35:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop36:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop37:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop38:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop39:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop40:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop41:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop42:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop43:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop44:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop45:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop46:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop47:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop48:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop49:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop50:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop51:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop52:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop53:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop54:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop55:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop56:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop57:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop58:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop59:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop60:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop61:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop62:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop63:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop64:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop65:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop66:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop67:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop68:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop69:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop70:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop71:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop72:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop73:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop74:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop75:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop76:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop77:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop78:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop79:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop80:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop81:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop82:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop83:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop84:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop85:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop86:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop87:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop88:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop89:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop90:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop91:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop92:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop93:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop94:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop95:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop96:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop97:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop98:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop99:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop100:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+
+    taggedObject5:
+      type: object
+      required:
+        - tag
+      properties:
+        tag:
+          type: string
+          enum:
+            - tag5
+
+        prop0:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop1:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop2:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop3:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop4:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop5:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop6:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop7:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop8:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop9:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop10:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop11:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop12:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop13:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop14:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop15:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop16:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop17:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop18:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop19:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop20:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop21:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop22:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop23:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop24:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop25:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop26:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop27:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop28:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop29:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop30:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop31:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop32:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop33:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop34:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop35:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop36:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop37:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop38:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop39:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop40:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop41:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop42:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop43:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop44:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop45:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop46:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop47:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop48:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop49:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop50:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop51:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop52:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop53:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop54:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop55:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop56:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop57:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop58:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop59:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop60:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop61:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop62:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop63:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop64:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop65:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop66:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop67:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop68:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop69:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop70:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop71:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop72:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop73:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop74:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop75:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop76:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop77:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop78:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop79:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop80:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop81:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop82:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop83:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop84:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop85:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop86:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop87:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop88:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop89:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop90:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop91:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop92:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop93:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop94:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop95:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop96:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop97:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop98:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop99:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop100:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+
+    taggedObject6:
+      type: object
+      required:
+        - tag
+      properties:
+        tag:
+          type: string
+          enum:
+            - tag6
+
+        prop0:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop1:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop2:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop3:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop4:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop5:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop6:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop7:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop8:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop9:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop10:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop11:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop12:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop13:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop14:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop15:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop16:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop17:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop18:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop19:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop20:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop21:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop22:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop23:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop24:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop25:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop26:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop27:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop28:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop29:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop30:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop31:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop32:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop33:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop34:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop35:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop36:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop37:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop38:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop39:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop40:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop41:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop42:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop43:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop44:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop45:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop46:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop47:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop48:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop49:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop50:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop51:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop52:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop53:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop54:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop55:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop56:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop57:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop58:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop59:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop60:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop61:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop62:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop63:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop64:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop65:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop66:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop67:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop68:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop69:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop70:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop71:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop72:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop73:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop74:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop75:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop76:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop77:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop78:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop79:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop80:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop81:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop82:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop83:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop84:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop85:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop86:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop87:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop88:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop89:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop90:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop91:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop92:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop93:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop94:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop95:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop96:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop97:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop98:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop99:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop100:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+
+    taggedObject7:
+      type: object
+      required:
+        - tag
+      properties:
+        tag:
+          type: string
+          enum:
+            - tag7
+
+        prop0:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop1:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop2:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop3:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop4:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop5:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop6:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop7:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop8:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop9:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop10:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop11:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop12:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop13:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop14:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop15:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop16:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop17:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop18:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop19:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop20:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop21:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop22:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop23:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop24:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop25:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop26:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop27:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop28:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop29:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop30:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop31:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop32:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop33:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop34:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop35:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop36:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop37:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop38:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop39:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop40:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop41:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop42:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop43:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop44:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop45:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop46:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop47:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop48:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop49:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop50:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop51:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop52:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop53:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop54:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop55:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop56:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop57:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop58:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop59:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop60:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop61:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop62:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop63:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop64:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop65:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop66:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop67:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop68:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop69:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop70:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop71:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop72:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop73:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop74:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop75:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop76:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop77:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop78:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop79:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop80:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop81:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop82:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop83:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop84:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop85:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop86:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop87:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop88:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop89:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop90:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop91:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop92:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop93:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop94:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop95:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop96:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop97:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop98:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop99:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop100:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+
+    taggedObject8:
+      type: object
+      required:
+        - tag
+      properties:
+        tag:
+          type: string
+          enum:
+            - tag8
+
+        prop0:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop1:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop2:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop3:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop4:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop5:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop6:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop7:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop8:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop9:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop10:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop11:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop12:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop13:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop14:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop15:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop16:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop17:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop18:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop19:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop20:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop21:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop22:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop23:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop24:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop25:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop26:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop27:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop28:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop29:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop30:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop31:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop32:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop33:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop34:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop35:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop36:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop37:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop38:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop39:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop40:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop41:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop42:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop43:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop44:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop45:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop46:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop47:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop48:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop49:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop50:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop51:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop52:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop53:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop54:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop55:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop56:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop57:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop58:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop59:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop60:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop61:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop62:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop63:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop64:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop65:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop66:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop67:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop68:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop69:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop70:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop71:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop72:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop73:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop74:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop75:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop76:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop77:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop78:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop79:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop80:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop81:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop82:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop83:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop84:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop85:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop86:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop87:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop88:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop89:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop90:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop91:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop92:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop93:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop94:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop95:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop96:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop97:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop98:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop99:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop100:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+
+    taggedObject9:
+      type: object
+      required:
+        - tag
+      properties:
+        tag:
+          type: string
+          enum:
+            - tag9
+
+        prop0:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop1:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop2:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop3:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop4:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop5:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop6:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop7:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop8:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop9:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop10:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop11:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop12:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop13:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop14:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop15:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop16:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop17:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop18:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop19:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop20:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop21:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop22:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop23:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop24:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop25:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop26:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop27:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop28:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop29:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop30:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop31:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop32:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop33:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop34:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop35:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop36:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop37:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop38:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop39:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop40:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop41:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop42:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop43:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop44:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop45:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop46:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop47:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop48:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop49:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop50:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop51:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop52:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop53:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop54:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop55:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop56:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop57:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop58:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop59:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop60:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop61:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop62:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop63:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop64:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop65:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop66:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop67:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop68:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop69:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop70:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop71:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop72:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop73:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop74:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop75:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop76:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop77:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop78:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop79:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop80:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop81:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop82:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop83:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop84:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop85:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop86:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop87:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop88:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop89:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop90:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop91:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop92:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop93:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop94:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop95:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop96:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop97:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop98:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop99:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop100:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+
+    taggedObject10:
+      type: object
+      required:
+        - tag
+      properties:
+        tag:
+          type: string
+          enum:
+            - tag10
+
+        prop0:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop1:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop2:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop3:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop4:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop5:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop6:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop7:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop8:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop9:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop10:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop11:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop12:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop13:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop14:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop15:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop16:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop17:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop18:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop19:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop20:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop21:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop22:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop23:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop24:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop25:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop26:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop27:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop28:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop29:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop30:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop31:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop32:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop33:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop34:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop35:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop36:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop37:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop38:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop39:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop40:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop41:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop42:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop43:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop44:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop45:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop46:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop47:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop48:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop49:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop50:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop51:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop52:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop53:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop54:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop55:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop56:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop57:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop58:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop59:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop60:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop61:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop62:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop63:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop64:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop65:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop66:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop67:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop68:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop69:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop70:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop71:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop72:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop73:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop74:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop75:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop76:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop77:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop78:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop79:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop80:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop81:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop82:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop83:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop84:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop85:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop86:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop87:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop88:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop89:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop90:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop91:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop92:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop93:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop94:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop95:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop96:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop97:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop98:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop99:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+        prop100:
+          $ref: "#/components/schemas/taggedObjectUnion"
+
+
+    nestedObject:
+      type: object
+      properties:
+  
+        prop0:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop1:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop2:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop3:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop4:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop5:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop6:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop7:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop8:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop9:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop10:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop11:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop12:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop13:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop14:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop15:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop16:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop17:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop18:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop19:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop20:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop21:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop22:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop23:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop24:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop25:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop26:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop27:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop28:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop29:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop30:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop31:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop32:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop33:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop34:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop35:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop36:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop37:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop38:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop39:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop40:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop41:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop42:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop43:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop44:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop45:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop46:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop47:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop48:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop49:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop50:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop51:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop52:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop53:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop54:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop55:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop56:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop57:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop58:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop59:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop60:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop61:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop62:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop63:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop64:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop65:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop66:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop67:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop68:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop69:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop70:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop71:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop72:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop73:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop74:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop75:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop76:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop77:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop78:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop79:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop80:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop81:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop82:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop83:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop84:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop85:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop86:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop87:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop88:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop89:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop90:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop91:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop92:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop93:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop94:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop95:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop96:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop97:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop98:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop99:
+          $ref: "#/components/schemas/nestedObject"
+  
+        prop100:
+          $ref: "#/components/schemas/nestedObject"
+  
