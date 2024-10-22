@@ -66,6 +66,7 @@ describe('ajv comparison', () => {
       });
     await bench.warmup();
     await bench.run();
+    // eslint-disable-next-line no-console
     console.table(bench.table());
   });
   it('nestedTypes bench', async () => {
@@ -82,6 +83,7 @@ describe('ajv comparison', () => {
       });
     await bench.warmup();
     await bench.run();
+    // eslint-disable-next-line no-console
     console.table(bench.table());
   });
 });
