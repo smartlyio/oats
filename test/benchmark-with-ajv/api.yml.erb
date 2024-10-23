@@ -1,0 +1,39 @@
+<% props = 100 %>
+<% taggedObjects = 10 %>
+
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: example service
+servers:
+  - url: http://localhost:12000
+paths: {}
+components:
+  schemas:
+    taggedObjectUnion:
+      oneOf:
+<% (0..taggedObjects).map do |tag| %>
+        - $ref: "#/components/schemas/taggedObject<%= tag %>"
+<% end %>
+<% (0..taggedObjects).map do |tag| %>
+    taggedObject<%= tag %>:
+      type: object
+      required:
+        - tag
+      properties:
+        tag:
+          type: string
+          enum:
+            - tag<%= tag %>
+<% (0..props).map do |i| %>
+        prop<%= i %>:
+          $ref: "#/components/schemas/taggedObjectUnion"
+<% end %>
+<% end %>
+    nestedObject:
+      type: object
+      properties:
+  <% (0..props).map do |i| %>
+        prop<%= i %>:
+          $ref: "#/components/schemas/nestedObject"
+  <% end %>
