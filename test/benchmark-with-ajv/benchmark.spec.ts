@@ -51,11 +51,20 @@ function createNode(props: number, remaining: number, tag?: string) {
   return node;
 }
 
-describe('ajv comparison', () => {
+function printTable(title: string, bench: Bench) {
+  // eslint-disable-next-line no-console
+  console.log(`# ${title}`);
+  // eslint-disable-next-line no-console
+  console.table(bench.table());
+}
+describe.each([
+  { props: 100, levels: 2 },
+  { props: 2, levels: 5 }
+])('Against AJV with props %props, levels %levels', ({ props, levels }) => {
   it('taggedTypes bench', async () => {
     const jsonSchema = jsonSchemafy('taggedObject', schema);
     const validate = ajv.compile(jsonSchema);
-    const data = createNode(2, 5, 'tag5');
+    const data = createNode(props, levels, 'tag5');
     const bench = new Bench();
     bench
       .add('ajv nested types', () => {
@@ -66,13 +75,12 @@ describe('ajv comparison', () => {
       });
     await bench.warmup();
     await bench.run();
-    // eslint-disable-next-line no-console
-    console.table(bench.table());
+    printTable(`TaggedObjectUnion with props ${props} levels ${levels}`, bench);
   });
   it('nestedTypes bench', async () => {
     const jsonSchema = jsonSchemafy('nestedObject', schema);
     const validate = ajv.compile(jsonSchema);
-    const data = createNode(2, 10);
+    const data = createNode(props, levels);
     const bench = new Bench();
     bench
       .add('ajv nested types', () => {
@@ -83,7 +91,6 @@ describe('ajv comparison', () => {
       });
     await bench.warmup();
     await bench.run();
-    // eslint-disable-next-line no-console
-    console.table(bench.table());
+    printTable(`NestedObject with props ${props} levels ${levels}`, bench);
   });
 });
