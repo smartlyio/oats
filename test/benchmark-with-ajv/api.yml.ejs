@@ -1,5 +1,5 @@
-<% props = 100 %>
-<% taggedObjects = 10 %>
+<% const props = 100 %>
+<% const taggedObjects = 10 %>
 
 openapi: 3.0.0
 info:
@@ -12,10 +12,10 @@ components:
   schemas:
     taggedObjectUnion:
       oneOf:
-<% (0..taggedObjects).map do |tag| %>
+<% for (let tag = 0; tag < taggedObjects; tag++) { %>
         - $ref: "#/components/schemas/taggedObject<%= tag %>"
-<% end %>
-<% (0..taggedObjects).map do |tag| %>
+<% } %>
+<% for (let tag = 0; tag < taggedObjects; tag++) { %>
     taggedObject<%= tag %>:
       type: object
       required:
@@ -25,15 +25,15 @@ components:
           type: string
           enum:
             - tag<%= tag %>
-<% (0..props).map do |i| %>
-        prop<%= i %>:
+<% for (let propIndex = 0; propIndex < props; propIndex++) { %>
+        prop<%= propIndex %>:
           $ref: "#/components/schemas/taggedObjectUnion"
-<% end %>
-<% end %>
+<% } %>
+<% } %>
     nestedObject:
       type: object
       properties:
-  <% (0..props).map do |i| %>
-        prop<%= i %>:
+<% for (let propIndex = 0; propIndex < props; propIndex++) { %>
+        prop<%= propIndex %>:
           $ref: "#/components/schemas/nestedObject"
-  <% end %>
+<% } %>
