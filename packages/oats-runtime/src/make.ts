@@ -1,4 +1,5 @@
 import { assert, fail } from './assert';
+import { Buffer } from 'buffer';
 import * as _ from 'lodash';
 import { isEqual, uniq } from 'lodash';
 import { ValueClass } from './value-class';
