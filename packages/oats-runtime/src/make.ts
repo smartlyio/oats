@@ -1,4 +1,5 @@
 import { assert, fail } from './assert';
+// eslint-disable-next-line import/no-nodejs-modules
 import { Buffer } from 'buffer';
 import * as _ from 'lodash';
 import { isEqual, uniq } from 'lodash';
