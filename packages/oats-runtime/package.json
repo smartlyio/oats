@@ -26,6 +26,7 @@
     "@smartlyio/safe-navigation": "^5.1.0",
     "@types/encodeurl": "1.0.0",
     "@types/escape-html": "1.0.2",
+    "buffer": "6.0.3",
     "encodeurl": "1.0.2",
     "escape-html": "1.0.3",
     "lodash": "^4.17.20"
