@@ -12,6 +12,7 @@
     "clean:dist": "rm -rf ./dist",
     "prebuild": "yarn clean && yarn tsc --project tsconfig.test.json --noEmit",
     "build": "yarn tsc",
+    "postbuild": "sed -i bak 1d dist/make.d.ts && rm dist/make.d.tsbak",
     "lint": "eslint --max-warnings=0 --ext .ts src test",
     "lint:fix": "eslint --max-warnings=0 --ext .ts src test --fix"
   },
