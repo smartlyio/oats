@@ -1,12 +1,15 @@
+import type { server as serverRuntime } from '@smartlyio/oats-runtime';
 import * as fs from 'fs';
 import * as yaml from 'js-yaml';
 import * as types from './generate-types';
 import { AdditionalPropertiesIndexSignature, Resolve } from './generate-types';
 import * as server from './generate-server';
+
 import * as path from 'path';
 import * as oas from 'openapi3-ts';
 import {
   capitalize,
+  createIncludeEndpointFilter,
   NameKind,
   NameMapper,
   refToTypeName,
@@ -48,6 +51,7 @@ export interface Driver {
   generatedClientFile?: string;
   runtimeFilePath?: string; // set path to runtime directly for testing
   emitStatusCode?: (statusCode: number) => boolean;
+  includeEndpoints?: Record<string, Uppercase<serverRuntime.Methods>[]>;
   unsupportedFeatures?: {
     security?: UnsupportedFeatureBehaviour;
   };
@@ -199,6 +203,7 @@ export function generate(driver: Driver) {
   if (typeSource) {
     fs.writeFileSync(driver.generatedValueClassFile, header + typeSource);
   }
+  const includeEndpoint = createIncludeEndpointFilter(driver.includeEndpoints, spec);
 
   if (driver.generatedClientFile) {
     fs.mkdirSync(path.dirname(driver.generatedClientFile), { recursive: true });
@@ -214,7 +219,8 @@ export function generate(driver: Driver) {
           unsupportedFeatures: {
             security: driver.unsupportedFeatures?.security ?? UnsupportedFeatureBehaviour.reject
           },
-          nameMapper: driver.nameMapper || localNameMapper
+          nameMapper: driver.nameMapper || localNameMapper,
+          includeEndpoint
         })
     );
   }
@@ -232,7 +238,8 @@ export function generate(driver: Driver) {
           unsupportedFeatures: {
             security: driver.unsupportedFeatures?.security ?? UnsupportedFeatureBehaviour.reject
           },
-          nameMapper: driver.nameMapper || localNameMapper
+          nameMapper: driver.nameMapper || localNameMapper,
+          includeEndpoint
         })
     );
   }

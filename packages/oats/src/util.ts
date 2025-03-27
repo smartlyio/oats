@@ -1,8 +1,34 @@
 import * as oas from 'openapi3-ts';
 import * as assert from 'assert';
 import * as _ from 'lodash';
+import type { IncludeEndpointFilter } from './generate-server';
+import type { Driver } from './driver';
 
 export type SchemaObject = oas.ReferenceObject | oas.SchemaObject;
+
+export function createIncludeEndpointFilter(
+  includeEndpoints: Driver['includeEndpoints'],
+  spec: oas.OpenAPIObject
+): IncludeEndpointFilter {
+  if (includeEndpoints === undefined) {
+    return () => true;
+  }
+  const includeEndpointsMap = new Map(
+    Object.entries(includeEndpoints).map(([path, includeMethods]) => {
+      const methods = includeMethods.map(method => method.toLowerCase());
+
+      for (const method of methods) {
+        if (!spec.paths[path]?.[method]?.responses) {
+          throw new Error(
+            `Cannot include endpoint "${method.toUpperCase()} ${path}" - not found in the provided OpenApi spec.`
+          );
+        }
+      }
+      return [path, new Set(methods)] as const;
+    })
+  );
+  return (path, method) => includeEndpointsMap.get(path)?.has(method) ?? false;
+}
 
 export function isReferenceObject(schema: any): schema is oas.ReferenceObject {
   return !!schema.$ref;
