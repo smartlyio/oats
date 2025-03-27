@@ -4,12 +4,11 @@ import * as yaml from 'js-yaml';
 import * as types from './generate-types';
 import { AdditionalPropertiesIndexSignature, Resolve } from './generate-types';
 import * as server from './generate-server';
-
 import * as path from 'path';
 import * as oas from 'openapi3-ts';
 import {
   capitalize,
-  createIncludeEndpointFilter,
+  filterEndpointsInSpec,
   NameKind,
   NameMapper,
   refToTypeName,
@@ -181,7 +180,7 @@ export function generateFile(opts?: GenerateFileOptions): types.Resolve {
 
 export function generate(driver: Driver) {
   const file = fs.readFileSync(driver.openapiFilePath, 'utf8');
-  const spec: oas.OpenAPIObject = yaml.load(file) as any;
+  const spec = filterEndpointsInSpec(yaml.load(file) as oas.OpenAPIObject, driver.includeEndpoints);
   const header = driver.header ? driver.header + '\n' : '';
 
   fs.mkdirSync(path.dirname(driver.generatedValueClassFile), { recursive: true });
@@ -203,7 +202,6 @@ export function generate(driver: Driver) {
   if (typeSource) {
     fs.writeFileSync(driver.generatedValueClassFile, header + typeSource);
   }
-  const includeEndpoint = createIncludeEndpointFilter(driver.includeEndpoints, spec);
 
   if (driver.generatedClientFile) {
     fs.mkdirSync(path.dirname(driver.generatedClientFile), { recursive: true });
@@ -219,8 +217,7 @@ export function generate(driver: Driver) {
           unsupportedFeatures: {
             security: driver.unsupportedFeatures?.security ?? UnsupportedFeatureBehaviour.reject
           },
-          nameMapper: driver.nameMapper || localNameMapper,
-          includeEndpoint
+          nameMapper: driver.nameMapper || localNameMapper
         })
     );
   }
@@ -238,8 +235,7 @@ export function generate(driver: Driver) {
           unsupportedFeatures: {
             security: driver.unsupportedFeatures?.security ?? UnsupportedFeatureBehaviour.reject
           },
-          nameMapper: driver.nameMapper || localNameMapper,
-          includeEndpoint
+          nameMapper: driver.nameMapper || localNameMapper
         })
     );
   }

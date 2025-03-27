@@ -119,7 +119,7 @@ function generateEndpoint(path: string, schema: oas.PathItemObject, opts: Option
     method =>
       oautil.errorTag('in method ' + method.toUpperCase(), () => {
         const methodHandler = schema[method];
-        if (methodHandler && opts.includeEndpoint(path, method)) {
+        if (methodHandler) {
           const endpoint = ts.factory.createPropertySignature(
             readonly,
             ts.factory.createStringLiteral(method),
@@ -131,9 +131,6 @@ function generateEndpoint(path: string, schema: oas.PathItemObject, opts: Option
       }),
     []
   );
-  if (signatures.length === 0) {
-    return null;
-  }
   return ts.factory.createTypeLiteralNode(signatures);
 }
 
@@ -244,7 +241,7 @@ function generateClientSpec(opts: Options) {
   const tree: client.OpTree<ts.TypeNode> = Object.keys(opts.oas.paths).reduce((memo, path) => {
     const endpoint = opts.oas.paths[path];
     return server.supportedMethods.reduce((memo, method) => {
-      if (endpoint[method] && opts.includeEndpoint(path, method)) {
+      if (endpoint[method]) {
         return client.addPath(
           memo,
           path,
@@ -266,22 +263,16 @@ function generateClientSpec(opts: Options) {
 }
 
 function generateEndpointsType(opts: Options) {
-  const members = Object.keys(opts.oas.paths).flatMap(path => {
+  const members = Object.keys(opts.oas.paths).map(path => {
     const endpoint: oas.PathItemObject = opts.oas.paths[path];
     return oautil.errorTag('in endpoint ' + path, () => {
       const type = generateEndpoint(path, endpoint, opts);
-
-      if (type === null) {
-        return [];
-      }
-      return [
-        ts.factory.createPropertySignature(
-          readonly,
-          ts.factory.createStringLiteral(path),
-          ts.factory.createToken(ts.SyntaxKind.QuestionToken),
-          type
-        )
-      ];
+      return ts.factory.createPropertySignature(
+        readonly,
+        ts.factory.createStringLiteral(path),
+        ts.factory.createToken(ts.SyntaxKind.QuestionToken),
+        type
+      );
     });
   });
   return ts.factory.createNodeArray([
@@ -343,12 +334,12 @@ function generateMaker(
   );
 }
 
-function flattenPathAndMethod(paths: oas.PathsObject, includeEndpoint: IncludeEndpointFilter) {
+function flattenPathAndMethod(paths: oas.PathsObject) {
   const flattened = [];
   for (const path of Object.keys(paths)) {
     for (const method of server.supportedMethods) {
       const object = paths[path][method];
-      if (object && includeEndpoint(path, method)) {
+      if (object) {
         flattened.push({ path, method, object });
       }
     }
@@ -359,7 +350,6 @@ function flattenPathAndMethod(paths: oas.PathsObject, includeEndpoint: IncludeEn
 function generateHandler(opts: Options) {
   const schema = opts.oas;
   const servers = (schema?.servers ?? []).map(server => server.url);
-
   return ts.factory.createVariableStatement(
     [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
     ts.factory.createVariableDeclarationList(
@@ -374,7 +364,7 @@ function generateHandler(opts: Options) {
             )
           ),
           ts.factory.createArrayLiteralExpression(
-            flattenPathAndMethod(schema.paths, opts.includeEndpoint).map(p =>
+            flattenPathAndMethod(schema.paths).map(p =>
               generateMaker(servers, opts, p.path, p.method, p.object)
             )
           )
@@ -688,8 +678,6 @@ export function generateCreateClient() {
   );
 }
 
-export type IncludeEndpointFilter = (path: string, method: server.Methods) => boolean;
-
 interface Options {
   oas: oas.OpenAPIObject;
   runtimePath: string;
@@ -700,7 +688,6 @@ interface Options {
     security?: UnsupportedFeatureBehaviour;
   };
   nameMapper: NameMapper;
-  includeEndpoint: IncludeEndpointFilter;
 }
 
 export function run(opts: Options) {

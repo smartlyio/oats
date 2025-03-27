@@ -1,33 +1,47 @@
 import * as oas from 'openapi3-ts';
 import * as assert from 'assert';
 import * as _ from 'lodash';
-import type { IncludeEndpointFilter } from './generate-server';
 import type { Driver } from './driver';
+import { server } from '@smartlyio/oats-runtime';
 
 export type SchemaObject = oas.ReferenceObject | oas.SchemaObject;
 
-export function createIncludeEndpointFilter(
-  includeEndpoints: Driver['includeEndpoints'],
-  spec: oas.OpenAPIObject
-): IncludeEndpointFilter {
+export function filterEndpointsInSpec(
+  spec: oas.OpenAPIObject,
+  includeEndpoints: Driver['includeEndpoints']
+): oas.OpenAPIObject {
   if (includeEndpoints === undefined) {
-    return () => true;
+    return spec;
   }
-  const includeEndpointsMap = new Map(
-    Object.entries(includeEndpoints).map(([path, includeMethods]) => {
-      const methods = includeMethods.map(method => method.toLowerCase());
+  const { paths, ...restSpec } = spec;
+  const filteredPathEntries = Object.entries(includeEndpoints).flatMap(
+    ([path, methodsUpperCase]): [string, oas.PathItemObject][] => {
+      const pathObject: oas.PathItemObject = spec.paths[path];
+      const includeMethods = methodsUpperCase.map(
+        method => method.toLowerCase() as Lowercase<typeof method>
+      );
 
-      for (const method of methods) {
-        if (!spec.paths[path]?.[method]?.responses) {
+      for (const method of includeMethods) {
+        if (!pathObject?.[method]?.responses) {
           throw new Error(
             `Cannot include endpoint "${method.toUpperCase()} ${path}" - not found in the provided OpenApi spec.`
           );
         }
       }
-      return [path, new Set(methods)] as const;
-    })
+      const filteredPathObjectEntries = Object.entries(pathObject).filter(
+        ([key]) =>
+          !server.supportedMethods.includes(key as server.Methods) ||
+          includeMethods.includes(key as server.Methods)
+      );
+
+      if (filteredPathObjectEntries.length === 0) {
+        return [];
+      }
+
+      return [[path, Object.fromEntries(filteredPathObjectEntries)]];
+    }
   );
-  return (path, method) => includeEndpointsMap.get(path)?.has(method) ?? false;
+  return { ...restSpec, paths: Object.fromEntries(filteredPathEntries) };
 }
 
 export function isReferenceObject(schema: any): schema is oas.ReferenceObject {
