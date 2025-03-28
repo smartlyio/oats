@@ -50,6 +50,13 @@ export interface Driver {
   generatedClientFile?: string;
   runtimeFilePath?: string; // set path to runtime directly for testing
   emitStatusCode?: (statusCode: number) => boolean;
+  /**
+   * Generate types, client or server only for the provided endpoints.
+   * @example
+   * includeEndpoints: {
+   *   '/user/{user_id}': ['GET', 'PUT']
+   * }
+   */
   includeEndpoints?: Record<string, Uppercase<serverRuntime.Methods>[]>;
   unsupportedFeatures?: {
     security?: UnsupportedFeatureBehaviour;
@@ -180,7 +187,7 @@ export function generateFile(opts?: GenerateFileOptions): types.Resolve {
 
 export function generate(driver: Driver) {
   const file = fs.readFileSync(driver.openapiFilePath, 'utf8');
-  const spec = filterEndpointsInSpec(yaml.load(file) as oas.OpenAPIObject, driver.includeEndpoints);
+  const spec = filterEndpointsInSpec(yaml.load(file) as oas.OpenAPIObject, driver);
   const header = driver.header ? driver.header + '\n' : '';
 
   fs.mkdirSync(path.dirname(driver.generatedValueClassFile), { recursive: true });

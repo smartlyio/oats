@@ -8,15 +8,15 @@ export type SchemaObject = oas.ReferenceObject | oas.SchemaObject;
 
 export function filterEndpointsInSpec(
   spec: oas.OpenAPIObject,
-  includeEndpoints: Driver['includeEndpoints']
+  { includeEndpoints }: Pick<Driver, 'includeEndpoints'>
 ): oas.OpenAPIObject {
   if (includeEndpoints === undefined) {
     return spec;
   }
-  const { paths, ...restSpec } = spec;
+  const { paths: specPaths, ...restSpec } = spec;
   const filteredPathEntries = Object.entries(includeEndpoints).flatMap(
     ([path, methodsUpperCase]): [string, oas.PathItemObject][] => {
-      const pathObject: oas.PathItemObject = spec.paths[path];
+      const pathObject: oas.PathItemObject = specPaths[path];
       const includeMethods = methodsUpperCase.map(
         method => method.toLowerCase() as Lowercase<typeof method>
       );
@@ -37,7 +37,6 @@ export function filterEndpointsInSpec(
       if (filteredPathObjectEntries.length === 0) {
         return [];
       }
-
       return [[path, Object.fromEntries(filteredPathObjectEntries)]];
     }
   );
