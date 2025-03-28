@@ -1,4 +1,3 @@
-import type { server as serverRuntime } from '@smartlyio/oats-runtime';
 import * as fs from 'fs';
 import * as yaml from 'js-yaml';
 import * as types from './generate-types';
@@ -7,8 +6,12 @@ import * as server from './generate-server';
 import * as path from 'path';
 import * as oas from 'openapi3-ts';
 import {
+  assertEndpointsAreInSpec,
   capitalize,
+  createIncludeEndpointFilter,
+  EndpointsRecord,
   filterEndpointsInSpec,
+  IncludeEndpointFilter,
   NameKind,
   NameMapper,
   refToTypeName,
@@ -57,7 +60,7 @@ export interface Driver {
    *   '/user/{user_id}': ['GET', 'PUT']
    * }
    */
-  includeEndpoints?: Record<string, Uppercase<serverRuntime.Methods>[]>;
+  includeEndpoints?: EndpointsRecord | IncludeEndpointFilter;
   unsupportedFeatures?: {
     security?: UnsupportedFeatureBehaviour;
   };
@@ -187,7 +190,19 @@ export function generateFile(opts?: GenerateFileOptions): types.Resolve {
 
 export function generate(driver: Driver) {
   const file = fs.readFileSync(driver.openapiFilePath, 'utf8');
-  const spec = filterEndpointsInSpec(yaml.load(file) as oas.OpenAPIObject, driver);
+  let spec = yaml.load(file) as oas.OpenAPIObject;
+  const { includeEndpoints } = driver;
+
+  if (includeEndpoints !== undefined) {
+    if (typeof includeEndpoints === 'function') {
+      spec = filterEndpointsInSpec(spec, includeEndpoints);
+    } else {
+      assertEndpointsAreInSpec(includeEndpoints, spec);
+
+      spec = filterEndpointsInSpec(spec, createIncludeEndpointFilter(includeEndpoints));
+    }
+  }
+
   const header = driver.header ? driver.header + '\n' : '';
 
   fs.mkdirSync(path.dirname(driver.generatedValueClassFile), { recursive: true });

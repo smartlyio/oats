@@ -1,46 +1,56 @@
 import * as oas from 'openapi3-ts';
 import * as assert from 'assert';
 import * as _ from 'lodash';
-import type { Driver } from './driver';
 import { server } from '@smartlyio/oats-runtime';
 
 export type SchemaObject = oas.ReferenceObject | oas.SchemaObject;
 
-export function filterEndpointsInSpec(
-  spec: oas.OpenAPIObject,
-  { includeEndpoints }: Pick<Driver, 'includeEndpoints'>
-): oas.OpenAPIObject {
-  if (includeEndpoints === undefined) {
-    return spec;
-  }
-  const { paths: specPaths, ...restSpec } = spec;
-  const filteredPathEntries = Object.entries(includeEndpoints).flatMap(
-    ([path, methodsUpperCase]): [string, oas.PathItemObject][] => {
-      const pathObject: oas.PathItemObject = specPaths[path];
-      const includeMethods = methodsUpperCase.map(
-        method => method.toLowerCase() as Lowercase<typeof method>
-      );
+export type EndpointMethod = Uppercase<server.Methods>;
+export type EndpointsRecord = Record<string, EndpointMethod[]>;
+export type IncludeEndpointFilter = (path: string, method: EndpointMethod) => boolean;
 
-      for (const method of includeMethods) {
-        if (!pathObject?.[method]?.responses) {
-          throw new Error(
-            `Cannot include endpoint "${method.toUpperCase()} ${path}" - not found in the provided OpenApi spec.`
-          );
-        }
+export function assertEndpointsAreInSpec(endpoints: EndpointsRecord, spec: oas.OpenAPIObject) {
+  for (const [path, methods] of Object.entries(endpoints)) {
+    const pathObject: oas.PathItemObject = spec.paths[path];
+
+    for (const method of methods) {
+      if (pathObject[method.toLowerCase() as Lowercase<typeof method>]?.responses === undefined) {
+        throw new Error(`Endpoint "${method} ${path}" not found in the provided OpenApi spec.`);
       }
-      const filteredPathObjectEntries = Object.entries(pathObject).filter(
-        ([key]) =>
-          !server.supportedMethods.includes(key as server.Methods) ||
-          includeMethods.includes(key as server.Methods)
-      );
+    }
+  }
+}
 
-      if (filteredPathObjectEntries.length === 0) {
+export function createIncludeEndpointFilter(
+  includeEndpoints: EndpointsRecord
+): IncludeEndpointFilter {
+  return (path, method) => includeEndpoints[path]?.includes(method) ?? false;
+}
+
+export function filterEndpointsInSpec(
+  { paths: specPaths, ...restSpec }: oas.OpenAPIObject,
+  includeEndpoint: IncludeEndpointFilter
+): oas.OpenAPIObject {
+  const filteredPathEntries = Object.entries(specPaths).flatMap(
+    ([path, pathObject]: [string, oas.PathItemObject]) => {
+      const filteredPathObject: oas.PathItemObject = Object.fromEntries(
+        Object.entries(pathObject).filter(
+          ([key]) =>
+            !server.supportedMethods.includes(key as server.Methods) ||
+            includeEndpoint(path, key.toUpperCase() as Uppercase<server.Methods>)
+        )
+      );
+      const hasMethods = server.supportedMethods.some(method => filteredPathObject[method]);
+
+      if (!hasMethods) {
         return [];
       }
-      return [[path, Object.fromEntries(filteredPathObjectEntries)]];
+      return [[path, filteredPathObject]] as const;
     }
   );
-  return { ...restSpec, paths: Object.fromEntries(filteredPathEntries) };
+  const filteredPaths = Object.fromEntries(filteredPathEntries);
+
+  return { ...restSpec, paths: filteredPaths };
 }
 
 export function isReferenceObject(schema: any): schema is oas.ReferenceObject {
