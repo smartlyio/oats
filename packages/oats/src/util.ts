@@ -31,26 +31,23 @@ export function filterEndpointsInSpec(
   { paths: specPaths, ...restSpec }: oas.OpenAPIObject,
   includeEndpoint: IncludeEndpointFilter
 ): oas.OpenAPIObject {
-  const filteredPathEntries = Object.entries(specPaths).flatMap(
-    ([path, pathObject]: [string, oas.PathItemObject]) => {
-      const filteredPathObject: oas.PathItemObject = Object.fromEntries(
-        Object.entries(pathObject).filter(
-          ([key]) =>
-            !server.supportedMethods.includes(key as server.Methods) ||
-            includeEndpoint(path, key.toUpperCase() as Uppercase<server.Methods>)
-        )
-      );
-      const hasMethods = server.supportedMethods.some(method => filteredPathObject[method]);
-
-      if (!hasMethods) {
-        return [];
-      }
-      return [[path, filteredPathObject]] as const;
-    }
-  );
-  const filteredPaths = Object.fromEntries(filteredPathEntries);
-
-  return { ...restSpec, paths: filteredPaths };
+  return {
+    ...restSpec,
+    paths: Object.fromEntries(
+      Object.entries(specPaths)
+        .map(([path, pathObject]): [string, oas.PathItemObject] => [
+          path,
+          Object.fromEntries(
+            Object.entries(pathObject).filter(
+              ([key]) =>
+                !server.supportedMethods.includes(key as server.Methods) ||
+                includeEndpoint(path, key.toUpperCase() as Uppercase<server.Methods>)
+            )
+          )
+        ])
+        .filter(([, pathObject]) => server.supportedMethods.some(method => pathObject[method]))
+    )
+  };
 }
 
 export function isReferenceObject(schema: any): schema is oas.ReferenceObject {
