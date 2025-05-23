@@ -235,7 +235,8 @@ export class Server<Spec> {
           });
           const status = result.status;
           const responseBody = result.value.value;
-          cb(null, [status, responseBody]);
+          const responseHeaders = result.headers;
+          cb(null, [status, responseBody, responseHeaders]);
         } catch (e: any) {
           cb(e, [400, e.message]);
         }
