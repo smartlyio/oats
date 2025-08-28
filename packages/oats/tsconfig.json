@@ -9,7 +9,6 @@
     "sourceMap": true,
     "removeComments": false,
     "alwaysStrict": true,
-    "typeRoots": ["./src/types", "./node_modules/@types"],
     "baseUrl": ".",
     "forceConsistentCasingInFileNames": true,
     "outDir": "dist",
