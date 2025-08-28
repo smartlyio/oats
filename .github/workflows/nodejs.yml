@@ -25,6 +25,6 @@ jobs:
       - name: build
         run: yarn ci:build
       - name: lint
-        run: yarn ci:lint
+        run: yarn lint
       - name: test
         run: yarn ci:test

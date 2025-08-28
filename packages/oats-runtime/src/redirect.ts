@@ -1,5 +1,7 @@
 import type { Response } from './server';
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 import escapeHtml = require('escape-html');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 import encodeUrl = require('encodeurl');
 
 const REDIRECT_STATUSES = [300, 301, 302, 303, 305, 307, 308] as const;

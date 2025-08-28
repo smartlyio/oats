@@ -7,6 +7,7 @@ describe('mapping works', () => {
     const b = types.ReflectionItemTypeWithSuffix;
     const a: types.ShapeOfItemTypeWithSuffix = something;
     const r = types.ReflectionNullableObjectWithSuffix;
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     a || b || c || r;
   });
 

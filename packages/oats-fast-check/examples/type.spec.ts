@@ -5,7 +5,7 @@ import * as runtime from '@smartlyio/oats-runtime';
 import * as types from '../tmp/openapi.types.generated';
 
 describe('value generation', () => {
-  it ('generates valid values', () =>
+  it('generates valid values', () =>
     fc.assert(
       fc.property(
         // create a fast-check Arbitrary from the type structure
@@ -16,5 +16,5 @@ describe('value generation', () => {
           types.typeTestObject.maker(json).success();
         }
       )
-  ))
+    ));
 });

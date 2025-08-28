@@ -1,6 +1,3 @@
-/* eslint-disable no-console */
-/* eslint-disable @typescript-eslint/no-floating-promises */
-
 import * as fs from 'fs';
 import * as child from 'child_process';
 import * as assert from 'assert';
@@ -12,8 +9,8 @@ fs.writeFileSync(
   'README.md',
   md.replace(/^>>(.*)/gm, (match, file) => {
     const m = file.trim();
-    const example: any = fs.readFileSync('./' + m, 'utf8');
-    const runner = example.split('\n')[0].match(/\/\/(.*)/)[1];
+    const example = fs.readFileSync('./' + m, 'utf8');
+    const runner = example.split('\n')[0].match(/\/\/(.*)/)?.[1];
     assert(runner, 'missing runner command');
     examples.push(runner.trim());
     return example;
@@ -26,8 +23,8 @@ Promise.all(
     try {
       await util.promisify(child.exec)(example);
       return example + ': ok';
-    } catch (e: any) {
-      return example + ': error ' + e.message;
+    } catch (e: unknown) {
+      return example + ': error ' + (e as Error).message;
     }
   })
 ).then(results => {

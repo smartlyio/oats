@@ -1,6 +1,3 @@
-/* eslint-disable no-console */
-/* eslint-disable @typescript-eslint/no-floating-promises */
-
 // eslint-disable-next-line import/no-nodejs-modules
 import * as fs from 'fs';
 

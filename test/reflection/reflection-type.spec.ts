@@ -390,7 +390,7 @@ describe('reflection-type', () => {
       const root: reflectionType.NamedTypeDefinition<any> = {
         maker: 1 as any,
         name: 'X',
-        isA: ((v: any) => v && v.hasOwnProperty('options')) as any,
+        isA: ((v: any) => v && Object.prototype.hasOwnProperty.call(v, 'options')) as any,
         definition: {
           type: 'object',
           additionalProperties: false,

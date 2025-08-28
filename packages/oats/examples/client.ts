@@ -35,6 +35,7 @@ app.createApp().listen(port, async () => {
     await runClient();
     process.exit(0);
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.log(e);
     process.exit(1);
   }

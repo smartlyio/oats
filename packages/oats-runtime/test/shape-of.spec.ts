@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-unused-expressions */
 import * as runtime from '../src/runtime';
 
 const tag = Symbol();

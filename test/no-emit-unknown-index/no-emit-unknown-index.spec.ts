@@ -7,6 +7,7 @@ describe('unknown index signatures', () => {
     // @ts-expect-error extra prop
     const nok2: server.ShapeOfExplicitAdditional = { foo: 'a', a: 'a' };
     const nok3: server.ShapeOfTypedAdditional = { foo: 'a', a: 'a' };
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     nok && nok2 && nok3;
   });
 });

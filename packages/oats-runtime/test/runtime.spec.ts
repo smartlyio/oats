@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import * as jsc from 'jsverify';
 import * as _ from 'lodash';
 // eslint-disable-next-line import/no-nodejs-modules

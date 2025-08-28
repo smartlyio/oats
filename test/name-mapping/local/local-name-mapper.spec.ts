@@ -7,6 +7,7 @@ describe('mapping works', () => {
     const b = types.typeItem;
     const a: types.ShapeOfItemType = something;
     const r = types.typeNullableObject;
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     a || b || c || r;
   });
 
