@@ -10,6 +10,7 @@
     "removeComments": false,
     "alwaysStrict": true,
     "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
     "outDir": "dist"
   },
   "exclude": ["adapters/", "runtime/", "examples/", "test-app/"]
