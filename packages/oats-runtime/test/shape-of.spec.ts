@@ -82,9 +82,13 @@ describe('ShapeOf', () => {
   });
 
   it('works with nested branded types', () => {
+    // @ts-expect-error -- does not work with nested branded types
     assignableTo<runtime.ShapeOf<NestedValue>>('a');
+    // @ts-expect-error -- does not work with nested branded types
     assignableTo<runtime.ShapeOf<NestedValue>>('b');
+    // @ts-expect-error -- does not work with nested branded types
     assignableTo<runtime.ShapeOf<NestedValue>>('c');
+    // @ts-expect-error -- does not work with nested branded types
     assignableTo<runtime.ShapeOf<NestedValue>>('d');
   });
 
