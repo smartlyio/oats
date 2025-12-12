@@ -42,11 +42,26 @@ function generateMethod<S extends oas.OperationObject>(
   const kind = opts.shapesAsRequests ? 'shape' : 'value';
   const responseKind = opts.shapesAsResponses ? 'shape' : 'value';
 
-  const headers = `types.${opts.nameMapper(oautil.endpointTypeName(schema, path, method, 'headers'), kind)}`;
-  const params = `types.${opts.nameMapper(oautil.endpointTypeName(schema, path, method, 'parameters'), kind)}`;
-  const query = `types.${opts.nameMapper(oautil.endpointTypeName(schema, path, method, 'query'), kind)}`;
-  const body = `types.${opts.nameMapper(oautil.endpointTypeName(schema, path, method, 'requestBody'), kind)}`;
-  const response = `types.${opts.nameMapper(oautil.endpointTypeName(schema, path, method, 'response'), responseKind)}`;
+  const headers = `types.${opts.nameMapper(
+    oautil.endpointTypeName(schema, path, method, 'headers'),
+    kind
+  )}`;
+  const params = `types.${opts.nameMapper(
+    oautil.endpointTypeName(schema, path, method, 'parameters'),
+    kind
+  )}`;
+  const query = `types.${opts.nameMapper(
+    oautil.endpointTypeName(schema, path, method, 'query'),
+    kind
+  )}`;
+  const body = `types.${opts.nameMapper(
+    oautil.endpointTypeName(schema, path, method, 'requestBody'),
+    kind
+  )}`;
+  const response = `types.${opts.nameMapper(
+    oautil.endpointTypeName(schema, path, method, 'response'),
+    responseKind
+  )}`;
 
   return `oar.server.Endpoint<${headers}, ${params}, ${query}, ${body}, ${response}, RequestContext>`;
 }
@@ -91,10 +106,22 @@ function generateClientMethod(
   const kind = opts.shapesAsRequests ? 'shape' : 'value';
   const responseKind = opts.shapesAsResponses ? 'shape' : 'value';
 
-  const headers = `types.${opts.nameMapper(oautil.endpointTypeName(op, path, method, 'headers'), kind)}`;
-  const query = `types.${opts.nameMapper(oautil.endpointTypeName(op, path, method, 'query'), kind)}`;
-  const body = `types.${opts.nameMapper(oautil.endpointTypeName(op, path, method, 'requestBody'), kind)}`;
-  const response = `types.${opts.nameMapper(oautil.endpointTypeName(op, path, method, 'response'), responseKind)}`;
+  const headers = `types.${opts.nameMapper(
+    oautil.endpointTypeName(op, path, method, 'headers'),
+    kind
+  )}`;
+  const query = `types.${opts.nameMapper(
+    oautil.endpointTypeName(op, path, method, 'query'),
+    kind
+  )}`;
+  const body = `types.${opts.nameMapper(
+    oautil.endpointTypeName(op, path, method, 'requestBody'),
+    kind
+  )}`;
+  const response = `types.${opts.nameMapper(
+    oautil.endpointTypeName(op, path, method, 'response'),
+    responseKind
+  )}`;
 
   return `oar.client.ClientEndpoint<${headers}, ${query}, ${body}, ${response}>`;
 }
@@ -102,10 +129,7 @@ function generateClientMethod(
 /**
  * Recursively generates the client tree type members.
  */
-function generateClientTree(
-  opts: Options,
-  tree: client.OpTree<string>
-): string[] {
+function generateClientTree(opts: Options, tree: client.OpTree<string>): string[] {
   const members: string[] = [];
 
   if (tree.param) {
@@ -210,7 +234,9 @@ function generateMaker(
   const response = makeMaker(oautil.endpointTypeName(object, path, method, 'response'), opts);
   const serversStr = servers.map(s => str(s)).join(', ');
 
-  return raw`{ path: ${str(path)}, method: ${str(method)}, servers: [${serversStr}], headers: ${headers}, query: ${query}, body: ${body}, params: ${params}, response: ${response} }`;
+  return raw`{ path: ${str(path)}, method: ${str(
+    method
+  )}, servers: [${serversStr}], headers: ${headers}, query: ${query}, body: ${body}, params: ${params}, response: ${response} }`;
 }
 
 /**

@@ -9,10 +9,7 @@ import { ts } from '../template';
 import { fromLib, isScalar } from './helpers';
 import { generateType, scalarTypeWithBrand } from './types';
 import { generateValueClass } from './classes';
-import {
-  generateReflectionMaker,
-  generateNamedTypeDefinitionDeclaration
-} from './reflection';
+import { generateReflectionMaker, generateNamedTypeDefinitionDeclaration } from './reflection';
 
 /**
  * Generates the ShapeOf type alias.
@@ -23,7 +20,9 @@ export function generateTypeShape(
   ctx: GenerationContext
 ): string {
   const { options } = ctx;
-  return ts`export type ${options.nameMapper(key, 'shape')} = ${fromLib('ShapeOf')}<${valueIdentifier}>;`;
+  return ts`export type ${options.nameMapper(key, 'shape')} = ${fromLib(
+    'ShapeOf'
+  )}<${valueIdentifier}>;`;
 }
 
 /**
@@ -56,7 +55,10 @@ export function generateTopLevelClassMaker(
   const { options } = ctx;
   const shapeName = options.nameMapper(key, 'shape');
 
-  return ts`export const make${valueIdentifier}: ${fromLib('make', 'Maker')}<${shapeName}, ${valueIdentifier}> = ${valueIdentifier}.make;`;
+  return ts`export const make${valueIdentifier}: ${fromLib(
+    'make',
+    'Maker'
+  )}<${shapeName}, ${valueIdentifier}> = ${valueIdentifier}.make;`;
 }
 
 /**
@@ -74,7 +76,13 @@ export function generateTopLevelMaker(
   const makerName = name + options.nameMapper(key, 'value');
   const reflectionMaker = generateReflectionMaker(key, ctx);
 
-  return ts`export const ${makerName}: ${fromLib('make', 'Maker')}<${shapeName}, ${resultType}> = ${fromLib('make', 'createMaker')}(function () { return ${reflectionMaker}; });`;
+  return ts`export const ${makerName}: ${fromLib(
+    'make',
+    'Maker'
+  )}<${shapeName}, ${resultType}> = ${fromLib(
+    'make',
+    'createMaker'
+  )}(function () { return ${reflectionMaker}; });`;
 }
 
 /**
@@ -89,9 +97,13 @@ export function generateTopLevelClass(
 
   if (schema.nullable) {
     const classKey = nonNullableClass(key);
-    const proxy = generateTopLevelType(key, {
-      oneOf: [{ type: 'null' }, { $ref: '#/components/schemas/' + classKey }]
-    }, ctx);
+    const proxy = generateTopLevelType(
+      key,
+      {
+        oneOf: [{ type: 'null' }, { $ref: '#/components/schemas/' + classKey }]
+      },
+      ctx
+    );
     return [...generateTopLevelClass(classKey, { ...schema, nullable: false }, ctx), ...proxy];
   }
 
@@ -118,9 +130,7 @@ export function generateTopLevelType(
 
   if (isReferenceObject(schema)) {
     const resolved = ctx.resolveRefToTypeName(schema.$ref, 'value');
-    const type = resolved.qualified
-      ? `${resolved.qualified}.${resolved.member}`
-      : resolved.member;
+    const type = resolved.qualified ? `${resolved.qualified}.${resolved.member}` : resolved.member;
 
     return [
       ts`export type ${valueIdentifier} = ${type};`,

@@ -78,9 +78,7 @@ export function generateQueryType(
   }
 
   const schema = deref(paramSchema, oasSchema);
-  const queryParams = schema
-    .map(s => deref(s, oasSchema))
-    .filter(s => s.in === 'query');
+  const queryParams = schema.map(s => deref(s, oasSchema)).filter(s => s.in === 'query');
 
   if (queryParams.length === 0) {
     return generateTopLevelType(op, noQueryParams, ctx);
@@ -109,12 +107,15 @@ export function generateQueryType(
     type: 'object',
     additionalProperties: false,
     required: queryParams.filter(param => param.required).map(param => param.name),
-    properties: queryParams.reduce((memo: Record<string, oas.SchemaObject | oas.ReferenceObject>, param) => {
-      if (param.schema) {
-        memo[param.name] = param.schema;
-      }
-      return memo;
-    }, {})
+    properties: queryParams.reduce(
+      (memo: Record<string, oas.SchemaObject | oas.ReferenceObject>, param) => {
+        if (param.schema) {
+          memo[param.name] = param.schema;
+        }
+        return memo;
+      },
+      {}
+    )
   };
 
   return generateTopLevelType(op, jointSchema, ctx);
@@ -138,9 +139,7 @@ export function generateParameterType(
   }
 
   const schema = deref(paramSchema, oasSchema);
-  const pathParams = schema
-    .map(s => deref(s, oasSchema))
-    .filter(s => s.in === type);
+  const pathParams = schema.map(s => deref(s, oasSchema)).filter(s => s.in === type);
 
   if (pathParams.length === 0) {
     return empty;
@@ -158,12 +157,15 @@ export function generateParameterType(
     type: 'object',
     additionalProperties: false,
     required,
-    properties: pathParams.reduce((memo: Record<string, oas.SchemaObject | oas.ReferenceObject>, param) => {
-      if (param.schema) {
-        memo[normalize(param.name)] = param.schema;
-      }
-      return memo;
-    }, {})
+    properties: pathParams.reduce(
+      (memo: Record<string, oas.SchemaObject | oas.ReferenceObject>, param) => {
+        if (param.schema) {
+          memo[normalize(param.name)] = param.schema;
+        }
+        return memo;
+      },
+      {}
+    )
   };
 
   return generateTopLevelType(op, jointSchema, ctx);
@@ -190,9 +192,13 @@ export function generateRequestBodyType(
     return generateTopLevelType(op, generateContentSchemaType(requestBody.content), ctx);
   }
 
-  return generateTopLevelType(op, {
-    oneOf: [generateContentSchemaType(requestBody.content), voidSchema]
-  }, ctx);
+  return generateTopLevelType(
+    op,
+    {
+      oneOf: [generateContentSchemaType(requestBody.content), voidSchema]
+    },
+    ctx
+  );
 }
 
 /**

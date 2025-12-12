@@ -117,6 +117,7 @@ export function addIndexSignatureIgnores(src: string): string {
  * Resolves module path for imports.
  */
 export function resolveModule(fromModule: string, toModule: string): string {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const path = require('path');
   if (!toModule.startsWith('.')) {
     return toModule;
