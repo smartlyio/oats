@@ -1,83 +1,53 @@
 /**
  * Tagged template literal utilities for TypeScript code generation.
- * Provides dedent behavior and array joining for cleaner code generation.
+ * Uses Prettier for consistent formatting of complete statements.
  */
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const prettier = require('prettier') as {
+  format: (source: string, options: Record<string, unknown>) => string;
+};
+
+/** Fixed Prettier config to ensure consistent output regardless of project settings. */
+const PRETTIER_CONFIG = {
+  parser: 'typescript',
+  singleQuote: true,
+  printWidth: 100,
+  tabWidth: 4,
+  trailingComma: 'none'
+};
+
 /**
- * Tagged template that normalizes indentation (dedent) and handles array interpolation.
- * Strips common leading whitespace from all lines and joins arrays with newlines.
- *
- * @example
- * ```ts
- * const members = ['a: string', 'b: number'];
- * const code = ts`
- *   interface Foo {
- *     ${members}
- *   }
- * `;
- * // Results in:
- * // interface Foo {
- * //   a: string
- * //   b: number
- * // }
- * ```
+ * Tagged template that builds strings with array interpolation.
+ * Does NOT run Prettier - use for code fragments that aren't complete statements.
  */
-export function ts(
+export function raw(
   strings: TemplateStringsArray,
-  ...values: (string | string[] | undefined | null)[]
+  ...values: (string | readonly string[] | undefined | null)[]
 ): string {
-  // Build the raw string with placeholders replaced
   let result = strings[0];
   for (let i = 0; i < values.length; i++) {
     const value = values[i];
     if (Array.isArray(value)) {
-      // Detect indentation from the position in the template
-      const lastNewline = result.lastIndexOf('\n');
-      const currentLineStart = lastNewline >= 0 ? result.slice(lastNewline + 1) : result;
-      const indent = currentLineStart.match(/^(\s*)/)?.[1] ?? '';
-      result += value.join('\n' + indent);
+      result += value.join('\n');
     } else if (value != null) {
       result += value;
     }
     result += strings[i + 1];
   }
-
-  return dedent(result);
+  return result;
 }
 
 /**
- * Removes common leading whitespace from all lines.
- * Also trims the first line if empty and the last line if only whitespace.
+ * Tagged template that formats TypeScript code using Prettier.
+ * Use for complete statements/declarations that can be parsed as valid TypeScript.
  */
-function dedent(text: string): string {
-  const lines = text.split('\n');
-
-  // Remove first line if empty (common with template literals starting with newline)
-  if (lines[0].trim() === '') {
-    lines.shift();
-  }
-
-  // Remove last line if only whitespace
-  if (lines.length > 0 && lines[lines.length - 1].trim() === '') {
-    lines.pop();
-  }
-
-  if (lines.length === 0) return '';
-
-  // Find minimum indentation (ignoring empty lines)
-  let minIndent = Infinity;
-  for (const line of lines) {
-    if (line.trim() === '') continue;
-    const match = line.match(/^(\s*)/);
-    if (match) {
-      minIndent = Math.min(minIndent, match[1].length);
-    }
-  }
-
-  if (minIndent === Infinity) minIndent = 0;
-
-  // Strip the common indentation
-  return lines.map(line => line.slice(minIndent)).join('\n');
+export function ts(
+  strings: TemplateStringsArray,
+  ...values: (string | readonly string[] | undefined | null)[]
+): string {
+  const result = raw(strings, ...values);
+  return prettier.format(result, PRETTIER_CONFIG).trim();
 }
 
 /**
@@ -110,4 +80,3 @@ export function when(condition: boolean | undefined | null, content: string): st
 export function join(items: (string | undefined | null)[], separator: string): string {
   return items.filter(item => item != null && item !== '').join(separator);
 }
-

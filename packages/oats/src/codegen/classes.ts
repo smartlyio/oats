@@ -2,12 +2,11 @@
  * Value class generation for TypeScript output.
  */
 
-import * as ts from 'typescript';
 import * as oas from 'openapi3-ts';
 import { GenerationContext } from './context';
-import { runtime, runtimeLibrary, fromLib } from './helpers';
+import { ts, raw } from '../template';
+import { runtime, fromLib } from './helpers';
 import { generateClassMembers } from './types';
-import { buildMethod } from '../builder';
 
 /**
  * Generates a complete value class declaration.
@@ -17,7 +16,7 @@ export function generateValueClass(
   valueIdentifier: string,
   schema: oas.SchemaObject,
   ctx: GenerationContext
-): ts.ClassDeclaration {
+): string {
   const members = generateClassMembers(
     schema.properties,
     schema.required,
@@ -25,76 +24,20 @@ export function generateValueClass(
     ctx
   );
 
-  const brand = ts.factory.createExpressionWithTypeArguments(
-    ts.factory.createPropertyAccessExpression(runtimeLibrary, 'valueClass.ValueClass'),
-    []
-  );
+  const builtinMembers = generateClassBuiltinMembers(key, ctx);
 
-  return ts.factory.createClassDeclaration(
-    [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-    valueIdentifier,
-    [],
-    [ts.factory.createHeritageClause(ts.SyntaxKind.ExtendsKeyword, [brand])],
-    [...members, ...generateClassBuiltinMembers(key, ctx)]
-  );
+  return ts`export class ${valueIdentifier} extends ${fromLib('valueClass', 'ValueClass')} { ${[...members, ...builtinMembers].join(' ')} }`;
 }
 
 /**
  * Generates the class constructor method.
  */
-export function generateClassConstructor(key: string, ctx: GenerationContext): ts.MethodDeclaration {
+export function generateClassConstructor(key: string, ctx: GenerationContext): string {
   const { options } = ctx;
+  const shapeName = options.nameMapper(key, 'shape');
+  const valueName = options.nameMapper(key, 'value');
 
-  return ts.factory.createMethodDeclaration(
-    [ts.factory.createModifier(ts.SyntaxKind.PublicKeyword)],
-    undefined,
-    'constructor',
-    undefined,
-    undefined,
-    [
-      ts.factory.createParameterDeclaration(
-        undefined,
-        undefined,
-        'value',
-        undefined,
-        ts.factory.createTypeReferenceNode(options.nameMapper(key, 'shape'), [])
-      ),
-      ts.factory.createParameterDeclaration(
-        undefined,
-        undefined,
-        'opts',
-        ts.factory.createToken(ts.SyntaxKind.QuestionToken),
-        ts.factory.createUnionTypeNode([
-          ts.factory.createTypeReferenceNode(fromLib('make', 'MakeOptions'), []),
-          ts.factory.createTypeReferenceNode(
-            ts.factory.createIdentifier('InternalUnsafeConstructorOption'),
-            undefined
-          )
-        ])
-      )
-    ],
-    undefined,
-    ts.factory.createBlock([
-      ts.factory.createExpressionStatement(
-        ts.factory.createCallExpression(ts.factory.createIdentifier('super'), [], [])
-      ),
-      ts.factory.createExpressionStatement(
-        ts.factory.createCallExpression(
-          ts.factory.createPropertyAccessExpression(
-            ts.factory.createIdentifier('oar'),
-            'instanceAssign'
-          ),
-          [],
-          [
-            ts.factory.createThis(),
-            ts.factory.createIdentifier('value'),
-            ts.factory.createIdentifier('opts'),
-            ts.factory.createIdentifier('build' + options.nameMapper(key, 'value'))
-          ]
-        )
-      )
-    ])
-  );
+  return raw`public constructor(value: ${shapeName}, opts?: ${fromLib('make', 'MakeOptions')} | InternalUnsafeConstructorOption) { super(); ${runtime}.instanceAssign(this, value, opts, build${valueName}); }`;
 }
 
 /**
@@ -103,61 +46,23 @@ export function generateClassConstructor(key: string, ctx: GenerationContext): t
 export function generateReflectionProperty(
   key: string,
   ctx: GenerationContext
-): ts.PropertyDeclaration {
+): string {
   const { options } = ctx;
+  const valueName = options.nameMapper(key, 'value');
+  const reflectionName = options.nameMapper(key, 'reflection');
 
-  return ts.factory.createPropertyDeclaration(
-    [
-      ts.factory.createModifier(ts.SyntaxKind.PublicKeyword),
-      ts.factory.createModifier(ts.SyntaxKind.StaticKeyword)
-    ],
-    ts.factory.createIdentifier('reflection'),
-    undefined,
-    ts.factory.createTypeReferenceNode(fromLib('reflection', 'NamedTypeDefinitionDeferred'), [
-      ts.factory.createTypeReferenceNode(
-        ts.factory.createIdentifier(options.nameMapper(key, 'value')),
-        []
-      )
-    ]),
-    ts.factory.createArrowFunction(
-      undefined,
-      undefined,
-      [],
-      undefined,
-      ts.factory.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
-      ts.factory.createBlock(
-        [
-          ts.factory.createReturnStatement(
-            ts.factory.createIdentifier(options.nameMapper(key, 'reflection'))
-          )
-        ],
-        false
-      )
-    )
-  );
+  return raw`public static reflection: ${fromLib('reflection', 'NamedTypeDefinitionDeferred')}<${valueName}> = () => { return ${reflectionName}; };`;
 }
 
 /**
- * Generates the static make method using a template.
+ * Generates the static make method.
  */
-export function generateClassMakeMethod(key: string, ctx: GenerationContext): ts.MethodDeclaration {
+export function generateClassMakeMethod(key: string, ctx: GenerationContext): string {
   const { options } = ctx;
   const className = options.nameMapper(key, 'value');
   const shapeName = options.nameMapper(key, 'shape');
 
-  return buildMethod(`
-    static make(value: ${shapeName}, opts?: ${runtime}.make.MakeOptions): ${runtime}.make.Make<${className}> {
-      if (value instanceof ${className}) { 
-        return ${runtime}.make.Make.ok(value);
-      }
-      const make = build${className}(value, opts); 
-      if (make.isError()) {
-        return ${runtime}.make.Make.error(make.errors);
-      } else {
-        return ${runtime}.make.Make.ok(new ${className}(make.success(), { unSafeSet: true }));
-      }
-    }
-  `);
+  return raw`static make(value: ${shapeName}, opts?: ${runtime}.make.MakeOptions): ${runtime}.make.Make<${className}> { if (value instanceof ${className}) { return ${runtime}.make.Make.ok(value); } const make = build${className}(value, opts); if (make.isError()) { return ${runtime}.make.Make.error(make.errors); } else { return ${runtime}.make.Make.ok(new ${className}(make.success(), { unSafeSet: true })); } }`;
 }
 
 /**
@@ -166,11 +71,10 @@ export function generateClassMakeMethod(key: string, ctx: GenerationContext): ts
 export function generateClassBuiltinMembers(
   key: string,
   ctx: GenerationContext
-): ts.ClassElement[] {
+): string[] {
   return [
     generateClassConstructor(key, ctx),
     generateReflectionProperty(key, ctx),
     generateClassMakeMethod(key, ctx)
   ];
 }
-

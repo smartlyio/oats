@@ -1,4 +1,3 @@
-import * as ts from 'typescript';
 import {
   quotedProp,
   generateLiteral,
@@ -12,86 +11,72 @@ import {
   oatsBrandFieldName
 } from '../../src/codegen/helpers';
 
-function printNode(node: ts.Node): string {
-  const printer = ts.createPrinter();
-  const sourceFile = ts.createSourceFile('test.ts', '', ts.ScriptTarget.Latest);
-  return printer.printNode(ts.EmitHint.Unspecified, node, sourceFile);
+function printNode(node: string): string {
+  return node;
 }
 
 describe('codegen/helpers', () => {
   describe('quotedProp', () => {
     it('returns identifier for simple property names', () => {
       const result = quotedProp('foo');
-      expect(ts.isIdentifier(result)).toBe(true);
       expect(printNode(result)).toBe('foo');
     });
 
     it('returns identifier for names with underscores', () => {
       const result = quotedProp('foo_bar');
-      expect(ts.isIdentifier(result)).toBe(true);
       expect(printNode(result)).toBe('foo_bar');
     });
 
     it('returns identifier for names with numbers', () => {
       const result = quotedProp('foo123');
-      expect(ts.isIdentifier(result)).toBe(true);
       expect(printNode(result)).toBe('foo123');
     });
 
     it('returns string literal for names with dashes', () => {
       const result = quotedProp('foo-bar');
-      expect(ts.isStringLiteral(result)).toBe(true);
       expect(printNode(result)).toBe('"foo-bar"');
     });
 
     it('returns string literal for names with spaces', () => {
       const result = quotedProp('foo bar');
-      expect(ts.isStringLiteral(result)).toBe(true);
       expect(printNode(result)).toBe('"foo bar"');
-    });
-
-    it('returns identifier for names starting with numbers', () => {
-      // Note: quotedProp only quotes based on \W (non-word chars), not leading digits
-      // TypeScript identifiers can't start with digits but that's a separate concern
-      const result = quotedProp('123foo');
-      expect(ts.isIdentifier(result)).toBe(true);
     });
   });
 
   describe('generateLiteral', () => {
     it('generates true literal', () => {
       const result = generateLiteral(true);
-      expect(printNode(result as ts.Node)).toBe('true');
+      expect(printNode(result)).toBe('true');
     });
 
     it('generates false literal', () => {
       const result = generateLiteral(false);
-      expect(printNode(result as ts.Node)).toBe('false');
+      expect(printNode(result)).toBe('false');
     });
 
     it('generates null literal', () => {
       const result = generateLiteral(null);
-      expect(printNode(result as ts.Node)).toBe('null');
+      expect(printNode(result)).toBe('null');
     });
 
     it('generates string literal', () => {
       const result = generateLiteral('hello');
-      expect(printNode(result as ts.Node)).toBe('"hello"');
+      expect(printNode(result)).toBe('"hello"');
     });
 
     it('generates positive number literal', () => {
       const result = generateLiteral(42);
-      expect(printNode(result as ts.Node)).toBe('42');
+      expect(printNode(result)).toBe('42');
     });
 
     it('generates negative number literal', () => {
       const result = generateLiteral(-42);
-      expect(printNode(result as ts.Node)).toBe('-42');
+      expect(printNode(result)).toBe('-42');
     });
 
     it('generates zero literal', () => {
       const result = generateLiteral(0);
-      expect(printNode(result as ts.Node)).toBe('0');
+      expect(printNode(result)).toBe('0');
     });
 
     it('throws for unsupported types', () => {
@@ -104,27 +89,27 @@ describe('codegen/helpers', () => {
   describe('generateNumericLiteral', () => {
     it('generates positive integer', () => {
       const result = generateNumericLiteral(123);
-      expect(printNode(result as ts.Node)).toBe('123');
+      expect(printNode(result)).toBe('123');
     });
 
     it('generates negative integer with prefix', () => {
       const result = generateNumericLiteral(-123);
-      expect(printNode(result as ts.Node)).toBe('-123');
+      expect(printNode(result)).toBe('-123');
     });
 
     it('generates zero', () => {
       const result = generateNumericLiteral(0);
-      expect(printNode(result as ts.Node)).toBe('0');
+      expect(printNode(result)).toBe('0');
     });
 
     it('handles string input', () => {
       const result = generateNumericLiteral('456');
-      expect(printNode(result as ts.Node)).toBe('456');
+      expect(printNode(result)).toBe('456');
     });
 
     it('handles negative string input', () => {
       const result = generateNumericLiteral('-789');
-      expect(printNode(result as ts.Node)).toBe('-789');
+      expect(printNode(result)).toBe('-789');
     });
   });
 
@@ -263,4 +248,3 @@ describe('codegen/helpers', () => {
     });
   });
 });
-

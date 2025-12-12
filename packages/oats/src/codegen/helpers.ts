@@ -2,16 +2,12 @@
  * Pure utility functions for code generation with no context dependency.
  */
 
-import * as ts from 'typescript';
 import * as oas from 'openapi3-ts';
 import { NameMapper } from '../util';
+import { quoteProp, str } from '../template';
 
 /** Runtime library identifier used in generated code. */
 export const runtime = 'oar';
-export const runtimeLibrary = ts.factory.createIdentifier(runtime);
-
-/** Readonly modifier array for reuse. */
-export const readonlyModifier = [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)];
 
 /** Key used for index signatures in value classes. */
 export const valueClassIndexSignatureKey = 'instanceIndexSignatureKey';
@@ -25,71 +21,53 @@ export const scalarTypes = ['string', 'integer', 'number', 'boolean'];
 /**
  * Quotes a property name if it contains special characters.
  */
-export function quotedProp(prop: string): ts.StringLiteral | ts.Identifier {
-  if (/\W/.test(prop)) {
-    return ts.factory.createStringLiteral(prop);
-  }
-  return ts.factory.createIdentifier(prop);
+export function quotedProp(prop: string): string {
+  return quoteProp(prop);
 }
 
 /**
- * Generates a literal AST node from a JavaScript value.
+ * Generates a literal value as code string from a JavaScript value.
  */
-export function generateLiteral(e: unknown): ts.LiteralTypeNode['literal'] {
-  const type = typeof e;
-  if (e === true) return ts.factory.createTrue();
-  if (e === false) return ts.factory.createFalse();
-  if (e === null) return ts.factory.createNull();
-  if (type === 'string') return ts.factory.createStringLiteral(e as string);
-  if (type === 'bigint') return ts.factory.createBigIntLiteral(e as string);
-  if (type === 'number') return generateNumericLiteral(e as number);
+export function generateLiteral(e: unknown): string {
+  if (e === true) return 'true';
+  if (e === false) return 'false';
+  if (e === null) return 'null';
+  if (typeof e === 'string') return str(e);
+  if (typeof e === 'bigint') return `${e}n`;
+  if (typeof e === 'number') return generateNumericLiteral(e);
   throw new Error(`unsupported enum value: "${e}"`);
 }
 
 /**
  * Generates a numeric literal, handling negative numbers with prefix.
  */
-export function generateNumericLiteral(value: number | string): ts.LiteralTypeNode['literal'] {
-  value = Number(value);
-  if (value < 0) {
-    return ts.factory.createPrefixUnaryExpression(
-      ts.SyntaxKind.MinusToken,
-      ts.factory.createNumericLiteral(Math.abs(value))
-    );
+export function generateNumericLiteral(value: number | string): string {
+  const n = Number(value);
+  if (n < 0) {
+    return String(n);
   }
-  return ts.factory.createNumericLiteral(value);
+  return String(n);
 }
 
 /**
  * Creates a qualified name from the runtime library.
  */
-export function fromLib(...names: string[]): ts.QualifiedName {
-  return ts.factory.createQualifiedName(runtimeLibrary, names.join('.'));
+export function fromLib(...names: string[]): string {
+  return `${runtime}.${names.join('.')}`;
 }
 
 /**
  * Creates a call expression to a runtime make function.
  */
-export function makeCall(fun: string, args: readonly ts.Expression[]): ts.CallExpression {
-  return ts.factory.createCallExpression(
-    ts.factory.createPropertyAccessExpression(runtimeLibrary, 'make.' + fun),
-    undefined,
-    args
-  );
+export function makeCall(fun: string, args: readonly string[]): string {
+  return `${runtime}.make.${fun}(${args.join(', ')})`;
 }
 
 /**
  * Creates an any-typed parameter declaration.
  */
-export function makeAnyProperty(name: string): ts.ParameterDeclaration {
-  return ts.factory.createParameterDeclaration(
-    undefined,
-    undefined,
-    ts.factory.createIdentifier(name),
-    undefined,
-    ts.factory.createKeywordTypeNode(ts.SyntaxKind.AnyKeyword),
-    undefined
-  );
+export function makeAnyProperty(name: string): string {
+  return `${name}: any`;
 }
 
 /**
@@ -149,4 +127,3 @@ export function resolveModule(fromModule: string, toModule: string): string {
   }
   return './' + p;
 }
-

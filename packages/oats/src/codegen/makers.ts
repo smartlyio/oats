@@ -2,11 +2,11 @@
  * Maker function and top-level type generation.
  */
 
-import * as ts from 'typescript';
 import * as oas from 'openapi3-ts';
 import { isReferenceObject, nonNullableClass } from '../util';
 import { GenerationContext } from './context';
-import { fromLib, makeCall, isScalar } from './helpers';
+import { ts } from '../template';
+import { fromLib, isScalar } from './helpers';
 import { generateType, scalarTypeWithBrand } from './types';
 import { generateValueClass } from './classes';
 import {
@@ -21,25 +21,17 @@ export function generateTypeShape(
   key: string,
   valueIdentifier: string,
   ctx: GenerationContext
-): ts.TypeAliasDeclaration {
+): string {
   const { options } = ctx;
-
-  return ts.factory.createTypeAliasDeclaration(
-    [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-    options.nameMapper(key, 'shape'),
-    undefined,
-    ts.factory.createTypeReferenceNode(fromLib('ShapeOf'), [
-      ts.factory.createTypeReferenceNode(valueIdentifier, [])
-    ])
-  );
+  return ts`export type ${options.nameMapper(key, 'shape')} = ${fromLib('ShapeOf')}<${valueIdentifier}>;`;
 }
 
 /**
  * Generates an empty enum for branding scalar types.
  */
-export function generateBrand(key: string, ctx: GenerationContext): ts.EnumDeclaration {
+export function generateBrand(key: string, ctx: GenerationContext): string {
   const brandName = 'BrandOf' + ctx.options.nameMapper(key, 'value');
-  return ts.factory.createEnumDeclaration(undefined, brandName, []);
+  return ts`enum ${brandName} {}`;
 }
 
 /**
@@ -49,7 +41,7 @@ export function generateTopLevelClassBuilder(
   key: string,
   valueIdentifier: string,
   ctx: GenerationContext
-): ts.VariableStatement {
+): string {
   return generateTopLevelMaker(key, ctx, 'build', valueIdentifier);
 }
 
@@ -60,30 +52,11 @@ export function generateTopLevelClassMaker(
   key: string,
   valueIdentifier: string,
   ctx: GenerationContext
-): ts.VariableStatement {
+): string {
   const { options } = ctx;
-  const shape = options.nameMapper(key, 'shape');
+  const shapeName = options.nameMapper(key, 'shape');
 
-  return ts.factory.createVariableStatement(
-    [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-    ts.factory.createVariableDeclarationList(
-      [
-        ts.factory.createVariableDeclaration(
-          'make' + valueIdentifier,
-          undefined,
-          ts.factory.createTypeReferenceNode(fromLib('make', 'Maker'), [
-            ts.factory.createTypeReferenceNode(shape, []),
-            ts.factory.createTypeReferenceNode(valueIdentifier, [])
-          ]),
-          ts.factory.createPropertyAccessExpression(
-            ts.factory.createIdentifier(valueIdentifier),
-            'make'
-          )
-        )
-      ],
-      ts.NodeFlags.Const
-    )
-  );
+  return ts`export const make${valueIdentifier}: ${fromLib('make', 'Maker')}<${shapeName}, ${valueIdentifier}> = ${valueIdentifier}.make;`;
 }
 
 /**
@@ -94,41 +67,14 @@ export function generateTopLevelMaker(
   ctx: GenerationContext,
   name = 'make',
   resultType?: string
-): ts.VariableStatement {
+): string {
   const { options } = ctx;
-  const makerFun = 'createMaker';
-  const shape = options.nameMapper(key, 'shape');
+  const shapeName = options.nameMapper(key, 'shape');
   resultType = resultType || options.nameMapper(key, 'value');
+  const makerName = name + options.nameMapper(key, 'value');
+  const reflectionMaker = generateReflectionMaker(key, ctx);
 
-  return ts.factory.createVariableStatement(
-    [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-    ts.factory.createVariableDeclarationList(
-      [
-        ts.factory.createVariableDeclaration(
-          name + options.nameMapper(key, 'value'),
-          undefined,
-          ts.factory.createTypeReferenceNode(fromLib('make', 'Maker'), [
-            ts.factory.createTypeReferenceNode(shape, []),
-            ts.factory.createTypeReferenceNode(resultType, [])
-          ]),
-          makeCall(makerFun, [
-            ts.factory.createFunctionExpression(
-              undefined,
-              undefined,
-              undefined,
-              undefined,
-              [],
-              undefined,
-              ts.factory.createBlock([
-                ts.factory.createReturnStatement(generateReflectionMaker(key, ctx))
-              ])
-            )
-          ])
-        )
-      ],
-      ts.NodeFlags.Const
-    )
-  );
+  return ts`export const ${makerName}: ${fromLib('make', 'Maker')}<${shapeName}, ${resultType}> = ${fromLib('make', 'createMaker')}(function () { return ${reflectionMaker}; });`;
 }
 
 /**
@@ -138,7 +84,7 @@ export function generateTopLevelClass(
   key: string,
   schema: oas.SchemaObject,
   ctx: GenerationContext
-): readonly ts.Node[] {
+): readonly string[] {
   const { options } = ctx;
 
   if (schema.nullable) {
@@ -166,23 +112,18 @@ export function generateTopLevelType(
   key: string,
   schema: oas.SchemaObject | oas.ReferenceObject,
   ctx: GenerationContext
-): readonly ts.Node[] {
+): readonly string[] {
   const { options } = ctx;
   const valueIdentifier = options.nameMapper(key, 'value');
 
   if (isReferenceObject(schema)) {
     const resolved = ctx.resolveRefToTypeName(schema.$ref, 'value');
     const type = resolved.qualified
-      ? ts.factory.createQualifiedName(resolved.qualified, resolved.member)
+      ? `${resolved.qualified}.${resolved.member}`
       : resolved.member;
 
     return [
-      ts.factory.createTypeAliasDeclaration(
-        [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-        valueIdentifier,
-        undefined,
-        ts.factory.createTypeReferenceNode(type, undefined)
-      ),
+      ts`export type ${valueIdentifier} = ${type};`,
       generateTypeShape(key, valueIdentifier, ctx),
       generateTopLevelMaker(key, ctx),
       generateNamedTypeDefinitionDeclaration(key, schema, ctx)
@@ -194,14 +135,10 @@ export function generateTopLevelType(
   }
 
   if (isScalar(schema)) {
+    const baseType = generateType(schema, ctx);
     return [
       generateBrand(key, ctx),
-      ts.factory.createTypeAliasDeclaration(
-        [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-        options.nameMapper(key, 'value'),
-        undefined,
-        scalarTypeWithBrand(key, generateType(schema, ctx), ctx)
-      ),
+      ts`export type ${valueIdentifier} = ${scalarTypeWithBrand(key, baseType, ctx)};`,
       generateTypeShape(key, valueIdentifier, ctx),
       generateTopLevelMaker(key, ctx),
       generateNamedTypeDefinitionDeclaration(key, schema, ctx)
@@ -209,15 +146,9 @@ export function generateTopLevelType(
   }
 
   return [
-    ts.factory.createTypeAliasDeclaration(
-      [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-      options.nameMapper(key, 'value'),
-      undefined,
-      generateType(schema, ctx)
-    ),
+    ts`export type ${valueIdentifier} = ${generateType(schema, ctx)};`,
     generateTypeShape(key, valueIdentifier, ctx),
     generateTopLevelMaker(key, ctx),
     generateNamedTypeDefinitionDeclaration(key, schema, ctx)
   ];
 }
-

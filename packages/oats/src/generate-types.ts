@@ -4,14 +4,14 @@
 
 import { debuglog } from 'node:util';
 import * as oas from 'openapi3-ts';
-import * as ts from 'typescript';
 import * as path from 'path';
 import { errorTag, isReferenceObject, NameKind, NameMapper, UnsupportedFeatureBehaviour } from './util';
+import { ts } from './template';
 import {
   createContext,
   GenerationState,
   AdditionalPropertiesIndexSignature,
-  runtimeLibrary,
+  runtime,
   addIndexSignatureIgnores,
   resolveModule,
   generateTopLevelType,
@@ -68,52 +68,28 @@ function isGenerating(file: string): boolean {
 /**
  * Generates an import declaration for external modules.
  */
-function generateExternalImport(external: { importAs: string; importFile: string }): ts.ImportDeclaration {
-  return ts.factory.createImportDeclaration(
-    undefined,
-    ts.factory.createImportClause(
-      false,
-      undefined,
-      ts.factory.createNamespaceImport(ts.factory.createIdentifier(external.importAs))
-    ),
-    ts.factory.createStringLiteral(external.importFile)
-  );
+function generateExternalImport(external: { importAs: string; importFile: string }): string {
+  return `import * as ${external.importAs} from ${JSON.stringify(external.importFile)};`;
 }
 
 /**
  * Generates builtin imports and types.
  */
-function generateBuiltins(options: Options): ts.Node[] {
+function generateBuiltins(options: Options): string[] {
   return [
-    ts.factory.createImportDeclaration(
-      undefined,
-      ts.factory.createImportClause(
-        false,
-        undefined,
-        ts.factory.createNamespaceImport(runtimeLibrary)
-      ),
-      ts.factory.createStringLiteral(options.runtimeModule)
-    ),
-    ts.factory.createTypeAliasDeclaration(
-      undefined,
-      'InternalUnsafeConstructorOption',
-      undefined,
-      ts.factory.createTypeLiteralNode([
-        ts.factory.createPropertySignature(
-          undefined,
-          ts.factory.createIdentifier('unSafeSet'),
-          undefined,
-          ts.factory.createLiteralTypeNode(ts.factory.createTrue())
-        )
-      ])
-    )
+    `import * as ${runtime} from ${JSON.stringify(options.runtimeModule)};`,
+    ts`
+      type InternalUnsafeConstructorOption = {
+          unSafeSet: true;
+      };
+    `
   ];
 }
 
 /**
  * Generates component schemas from the OpenAPI spec.
  */
-function generateComponentSchemas(ctx: ReturnType<typeof createContext>): ts.Node[] {
+function generateComponentSchemas(ctx: ReturnType<typeof createContext>): string[] {
   const { options } = ctx;
   const schemas = options.oas.components?.schemas;
 
@@ -121,14 +97,14 @@ function generateComponentSchemas(ctx: ReturnType<typeof createContext>): ts.Nod
     return [];
   }
 
-  const nodes: ts.Node[] = [];
+  const result: string[] = [];
   Object.keys(schemas).forEach(key => {
     const schema = schemas[key];
     const types = generateTopLevelType(key, schema, ctx);
-    types.forEach(t => nodes.push(t));
+    result.push(...types);
   });
 
-  return nodes;
+  return result;
 }
 
 /**
@@ -137,8 +113,8 @@ function generateComponentSchemas(ctx: ReturnType<typeof createContext>): ts.Nod
 function generateComponentRequestsAndResponses(
   components: { [key: string]: oas.ResponseObject | oas.RequestBodyObject | oas.ReferenceObject } | undefined,
   ctx: ReturnType<typeof createContext>
-): ts.Node[] {
-  const nodes: ts.Node[] = [];
+): string[] {
+  const result: string[] = [];
 
   if (components) {
     Object.keys(components).forEach(key => {
@@ -155,33 +131,33 @@ function generateComponentRequestsAndResponses(
         schema = generateContentSchemaType(content);
       }
 
-      nodes.push(...generateTopLevelType(key, schema, ctx));
+      result.push(...generateTopLevelType(key, schema, ctx));
     });
   }
 
-  return nodes;
+  return result;
 }
 
 /**
  * Generates all components from the OpenAPI spec.
  */
-function generateComponents(ctx: ReturnType<typeof createContext>): ts.Node[] {
+function generateComponents(ctx: ReturnType<typeof createContext>): string[] {
   const { options } = ctx;
-  const nodes: ts.Node[] = [];
+  const result: string[] = [];
 
-  nodes.push(...errorTag('in component.schemas', () => generateComponentSchemas(ctx)));
-  nodes.push(
+  result.push(...errorTag('in component.schemas', () => generateComponentSchemas(ctx)));
+  result.push(
     ...errorTag('in component.responses', () =>
       generateComponentRequestsAndResponses(options.oas.components?.responses, ctx)
     )
   );
-  nodes.push(
+  result.push(
     ...errorTag('in component.requestBodies', () =>
       generateComponentRequestsAndResponses(options.oas.components?.requestBodies, ctx)
     )
   );
 
-  return nodes;
+  return result;
 }
 
 /**
@@ -216,21 +192,7 @@ export function run(options: Options): string | undefined {
 
   state.actions.forEach(action => action());
 
-  const sourceFile: ts.SourceFile = ts.createSourceFile(
-    'test.ts',
-    '',
-    ts.ScriptTarget.ES2015,
-    true,
-    ts.ScriptKind.TS
-  );
-
-  const src = ts
-    .createPrinter()
-    .printList(
-      ts.ListFormat.MultiLine,
-      ts.factory.createNodeArray([...builtins, ...externals, ...types, ...queryTypes]),
-      sourceFile
-    );
+  const src = [...builtins, ...externals, ...types, ...queryTypes].join('\n');
 
   return addIndexSignatureIgnores(src);
 }

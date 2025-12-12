@@ -2,7 +2,6 @@
  * Query, parameter, and response type generators for API endpoints.
  */
 
-import * as ts from 'typescript';
 import * as oas from 'openapi3-ts';
 import * as assert from 'assert';
 import { deref, isReferenceObject, endpointTypeName, errorTag } from '../util';
@@ -71,7 +70,7 @@ export function generateQueryType(
   paramSchema: undefined | ReadonlyArray<oas.ParameterObject | oas.ReferenceObject>,
   oasSchema: oas.OpenAPIObject,
   ctx: GenerationContext
-): readonly ts.Node[] {
+): readonly string[] {
   const noQueryParams = { type: 'object' as const, additionalProperties: false };
 
   if (!paramSchema) {
@@ -131,7 +130,7 @@ export function generateParameterType(
   oasSchema: oas.OpenAPIObject,
   ctx: GenerationContext,
   normalize = (name: string) => name
-): readonly ts.Node[] {
+): readonly string[] {
   const empty = generateTopLevelType(op, voidSchema, ctx);
 
   if (!paramSchema) {
@@ -177,7 +176,7 @@ export function generateRequestBodyType(
   op: string,
   requestBody: undefined | oas.ReferenceObject | oas.RequestBodyObject,
   ctx: GenerationContext
-): readonly ts.Node[] {
+): readonly string[] {
   if (requestBody == null) {
     return generateTopLevelType(op, voidSchema, ctx);
   }
@@ -203,7 +202,7 @@ export function generateResponseType(
   op: string,
   responses: oas.ResponsesObject,
   ctx: GenerationContext
-): readonly ts.Node[] {
+): readonly string[] {
   const { options } = ctx;
 
   if (!responses) {
@@ -261,10 +260,10 @@ export function generateResponseType(
 /**
  * Generates all query/parameter/body/response types for all endpoints.
  */
-export function generateQueryTypes(ctx: GenerationContext): ts.Node[] {
+export function generateQueryTypes(ctx: GenerationContext): string[] {
   const { options } = ctx;
   const schema = options.oas;
-  const response: ts.Node[] = [];
+  const response: string[] = [];
 
   Object.keys(schema.paths).forEach(path => {
     Object.keys(schema.paths[path]).forEach(method => {
@@ -330,4 +329,3 @@ export function generateQueryTypes(ctx: GenerationContext): ts.Node[] {
 
   return response;
 }
-
