@@ -3,7 +3,6 @@
  * Passed explicitly to all code generation functions.
  */
 
-import * as ts from 'typescript';
 import * as oas from 'openapi3-ts';
 import * as path from 'path';
 import { NameKind, NameMapper, UnsupportedFeatureBehaviour } from '../util';
@@ -61,7 +60,7 @@ export interface GenerationContext {
   /**
    * Resolve a $ref to a type name, potentially from an external module.
    */
-  resolveRefToTypeName(ref: string, kind: NameKind): { qualified?: ts.Identifier; member: string };
+  resolveRefToTypeName(ref: string, kind: NameKind): { qualified?: string; member: string };
 }
 
 /**
@@ -100,13 +99,13 @@ export function createContext(
     resolveRefToTypeName(
       ref: string,
       kind: NameKind
-    ): { qualified?: ts.Identifier; member: string } {
+    ): { qualified?: string; member: string } {
       const external = options.resolve(ref, options, kind);
       if (external) {
         if ('importAs' in external) {
           const importAs = external.importAs;
           this.addImport(importAs, external.importFrom, external.generate);
-          return { member: external.name, qualified: ts.factory.createIdentifier(importAs) };
+          return { member: external.name, qualified: importAs };
         }
         return { member: external.name };
       }
@@ -121,4 +120,3 @@ export function createContext(
     }
   };
 }
-

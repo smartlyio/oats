@@ -2,80 +2,38 @@
  * Reflection metadata generation for runtime type information.
  */
 
-import * as ts from 'typescript';
 import * as oas from 'openapi3-ts';
 import * as assert from 'assert';
 import { isReferenceObject } from '../util';
 import { GenerationContext } from './context';
-import {
-  generateNumericLiteral,
-  fromLib,
-  makeAnyProperty,
-  isScalar
-} from './helpers';
+import { ts, str } from '../template';
+import { fromLib, isScalar } from './helpers';
 
 /**
  * Generates reflection type metadata from a schema.
  * This is recursive and handles all schema types.
+ * Returns an object literal expression string (not a complete statement).
  */
 export function generateReflectionType(
   schema: oas.SchemaObject | oas.ReferenceObject,
   ctx: GenerationContext
-): ts.ObjectLiteralExpression {
+): string {
   if (isReferenceObject(schema)) {
     const resolved = ctx.resolveRefToTypeName(schema.$ref, 'reflection');
-    const type: ts.Expression = resolved.qualified
-      ? ts.factory.createPropertyAccessExpression(resolved.qualified, resolved.member)
-      : ts.factory.createIdentifier(resolved.member);
-    return ts.factory.createObjectLiteralExpression(
-      [
-        ts.factory.createPropertyAssignment('type', ts.factory.createStringLiteral('named')),
-        ts.factory.createPropertyAssignment(
-          'reference',
-          ts.factory.createArrowFunction(
-            undefined,
-            undefined,
-            [],
-            undefined,
-            ts.factory.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
-            ts.factory.createBlock([ts.factory.createReturnStatement(type)], false)
-          )
-        )
-      ],
-      true
-    );
+    const type = resolved.qualified
+      ? `${resolved.qualified}.${resolved.member}`
+      : resolved.member;
+    return `{ type: "named", reference: () => { return ${type}; } }`;
   }
 
   if (schema.oneOf) {
-    return ts.factory.createObjectLiteralExpression(
-      [
-        ts.factory.createPropertyAssignment('type', ts.factory.createStringLiteral('union')),
-        ts.factory.createPropertyAssignment(
-          'options',
-          ts.factory.createArrayLiteralExpression(
-            schema.oneOf.map(s => generateReflectionType(s, ctx)),
-            true
-          )
-        )
-      ],
-      true
-    );
+    const options = schema.oneOf.map(s => generateReflectionType(s, ctx)).join(', ');
+    return `{ type: "union", options: [${options}] }`;
   }
 
   if (schema.allOf) {
-    return ts.factory.createObjectLiteralExpression(
-      [
-        ts.factory.createPropertyAssignment('type', ts.factory.createStringLiteral('intersection')),
-        ts.factory.createPropertyAssignment(
-          'options',
-          ts.factory.createArrayLiteralExpression(
-            schema.allOf.map(s => generateReflectionType(s, ctx)),
-            true
-          )
-        )
-      ],
-      true
-    );
+    const options = schema.allOf.map(s => generateReflectionType(s, ctx)).join(', ');
+    return `{ type: "intersection", options: [${options}] }`;
   }
 
   assert(!schema.anyOf, 'anyOf is not supported');
@@ -89,167 +47,60 @@ export function generateReflectionType(
 
   // @ts-expect-error schemas really do not have void type. but we do
   if (schema.type === 'void') {
-    return ts.factory.createObjectLiteralExpression(
-      [ts.factory.createPropertyAssignment('type', ts.factory.createStringLiteral('void'))],
-      true
-    );
+    return `{ type: "void" }`;
   }
 
   if (schema.type === 'null') {
-    return ts.factory.createObjectLiteralExpression(
-      [ts.factory.createPropertyAssignment('type', ts.factory.createStringLiteral('null'))],
-      true
-    );
+    return `{ type: "null" }`;
   }
 
   if (schema.type === 'string') {
-    const enumValues = schema.enum
-      ? [
-          ts.factory.createPropertyAssignment(
-            'enum',
-            ts.factory.createArrayLiteralExpression(
-              schema.enum.map(value => ts.factory.createStringLiteral(value))
-            )
-          )
-        ]
-      : [];
-
     if (schema.format === 'binary') {
-      return ts.factory.createObjectLiteralExpression(
-        [ts.factory.createPropertyAssignment('type', ts.factory.createStringLiteral('binary'))],
-        true
-      );
+      return `{ type: "binary" }`;
     }
 
-    const format = schema.format
-      ? [
-          ts.factory.createPropertyAssignment(
-            'format',
-            ts.factory.createStringLiteral(schema.format)
-          )
-        ]
-      : [];
+    const props = [
+      'type: "string"',
+      schema.enum ? `enum: [${schema.enum.map(v => str(v)).join(', ')}]` : '',
+      schema.format ? `format: ${str(schema.format)}` : '',
+      schema.pattern ? `pattern: ${str(schema.pattern)}` : '',
+      schema.minLength != null ? `minLength: ${schema.minLength}` : '',
+      schema.maxLength != null ? `maxLength: ${schema.maxLength}` : ''
+    ].filter(p => p !== '');
 
-    const pattern = schema.pattern
-      ? [
-          ts.factory.createPropertyAssignment(
-            'pattern',
-            ts.factory.createStringLiteral(schema.pattern)
-          )
-        ]
-      : [];
-
-    const minLength =
-      schema.minLength != null
-        ? [
-            ts.factory.createPropertyAssignment(
-              'minLength',
-              generateNumericLiteral(schema.minLength)
-            )
-          ]
-        : [];
-
-    const maxLength =
-      schema.maxLength != null
-        ? [
-            ts.factory.createPropertyAssignment(
-              'maxLength',
-              generateNumericLiteral(schema.maxLength)
-            )
-          ]
-        : [];
-
-    return ts.factory.createObjectLiteralExpression(
-      [
-        ts.factory.createPropertyAssignment('type', ts.factory.createStringLiteral('string')),
-        ...enumValues,
-        ...format,
-        ...pattern,
-        ...minLength,
-        ...maxLength
-      ],
-      true
-    );
+    return `{ ${props.join(', ')} }`;
   }
 
   if (schema.type === 'number' || schema.type === 'integer') {
-    const enumValues = schema.enum
-      ? [
-          ts.factory.createPropertyAssignment(
-            'enum',
-            ts.factory.createArrayLiteralExpression(
-              schema.enum.map(i => generateNumericLiteral('' + i))
-            )
-          )
-        ]
-      : [];
+    const props = [
+      `type: ${str(schema.type)}`,
+      schema.enum ? `enum: [${schema.enum.join(', ')}]` : '',
+      schema.minimum != null ? `minimum: ${schema.minimum}` : '',
+      schema.maximum != null ? `maximum: ${schema.maximum}` : ''
+    ].filter(p => p !== '');
 
-    const properties = [
-      ts.factory.createPropertyAssignment('type', ts.factory.createStringLiteral(schema.type)),
-      ...enumValues
-    ];
-
-    if (schema.minimum != null) {
-      properties.push(
-        ts.factory.createPropertyAssignment('minimum', generateNumericLiteral(schema.minimum + ''))
-      );
-    }
-
-    if (schema.maximum != null) {
-      properties.push(
-        ts.factory.createPropertyAssignment('maximum', generateNumericLiteral(schema.maximum + ''))
-      );
-    }
-
-    return ts.factory.createObjectLiteralExpression(properties, true);
+    return `{ ${props.join(', ')} }`;
   }
 
   if (schema.type === 'boolean') {
-    const enumValues = schema.enum
-      ? [
-          ts.factory.createPropertyAssignment(
-            'enum',
-            ts.factory.createArrayLiteralExpression(
-              schema.enum.map(i =>
-                i === true
-                  ? ts.factory.createTrue()
-                  : i === false
-                  ? ts.factory.createFalse()
-                  : assert.fail('unknown enum ' + i)
-              )
-            )
-          )
-        ]
-      : [];
+    const props = [
+      'type: "boolean"',
+      schema.enum ? `enum: [${schema.enum.join(', ')}]` : ''
+    ].filter(p => p !== '');
 
-    return ts.factory.createObjectLiteralExpression(
-      [
-        ts.factory.createPropertyAssignment('type', ts.factory.createStringLiteral('boolean')),
-        ...enumValues
-      ],
-      true
-    );
+    return `{ ${props.join(', ')} }`;
   }
 
   if (schema.type === 'array') {
-    const properties = [
-      ts.factory.createPropertyAssignment('type', ts.factory.createStringLiteral('array')),
-      ts.factory.createPropertyAssignment('items', generateReflectionType(schema.items || {}, ctx))
-    ];
+    const items = generateReflectionType(schema.items || {}, ctx);
+    const props = [
+      'type: "array"',
+      `items: ${items}`,
+      schema.minItems != null ? `minItems: ${schema.minItems}` : '',
+      schema.maxItems != null ? `maxItems: ${schema.maxItems}` : ''
+    ].filter(p => p !== '');
 
-    if (schema.minItems != null) {
-      properties.push(
-        ts.factory.createPropertyAssignment('minItems', generateNumericLiteral(schema.minItems + ''))
-      );
-    }
-
-    if (schema.maxItems != null) {
-      properties.push(
-        ts.factory.createPropertyAssignment('maxItems', generateNumericLiteral(schema.maxItems + ''))
-      );
-    }
-
-    return ts.factory.createObjectLiteralExpression(properties, true);
+    return `{ ${props.join(', ')} }`;
   }
 
   if (schema.type === 'object') {
@@ -257,10 +108,7 @@ export function generateReflectionType(
   }
 
   if (!schema.type) {
-    return ts.factory.createObjectLiteralExpression(
-      [ts.factory.createPropertyAssignment('type', ts.factory.createStringLiteral('unknown'))],
-      true
-    );
+    return `{ type: "unknown" }`;
   }
 
   assert.fail('todo generateReflectionType', schema);
@@ -273,12 +121,12 @@ export function generateReflectionType(
 export function generateAdditionalPropsReflectionType(
   props: oas.SchemaObject['additionalProperties'],
   ctx: GenerationContext
-): ts.Expression {
+): string {
   if (props === false) {
-    return ts.factory.createFalse();
+    return 'false';
   }
   if (props === true || !props || (props && typeof props === 'object' && Object.keys(props).length === 0)) {
-    return ts.factory.createTrue();
+    return 'true';
   }
   return generateReflectionType(props, ctx);
 }
@@ -289,80 +137,38 @@ export function generateAdditionalPropsReflectionType(
 export function generateObjectReflectionType(
   schema: oas.SchemaObject,
   ctx: GenerationContext
-): ts.ObjectLiteralExpression {
+): string {
   const { options } = ctx;
   const additionalProps = generateAdditionalPropsReflectionType(schema.additionalProperties, ctx);
 
-  return ts.factory.createObjectLiteralExpression(
-    [
-      ts.factory.createPropertyAssignment('type', ts.factory.createStringLiteral('object')),
-      ts.factory.createPropertyAssignment('additionalProperties', additionalProps),
-      ts.factory.createPropertyAssignment(
-        'properties',
-        ts.factory.createObjectLiteralExpression(
-          Object.keys(schema.properties || {}).map((propertyName: string) => {
-            return ts.factory.createPropertyAssignment(
-              ts.factory.createStringLiteral(
-                options.propertyNameMapper
-                  ? options.propertyNameMapper(propertyName)
-                  : propertyName
-              ),
-              ts.factory.createObjectLiteralExpression(
-                [
-                  ts.factory.createPropertyAssignment(
-                    'required',
-                    (schema.required || []).indexOf(propertyName) >= 0
-                      ? ts.factory.createTrue()
-                      : ts.factory.createFalse()
-                  ),
-                  ...(options.propertyNameMapper
-                    ? [
-                        ts.factory.createPropertyAssignment(
-                          'networkName',
-                          ts.factory.createStringLiteral(propertyName)
-                        )
-                      ]
-                    : []),
-                  ts.factory.createPropertyAssignment(
-                    'value',
-                    generateReflectionType(
-                      (schema.properties as Record<string, oas.SchemaObject | oas.ReferenceObject>)[
-                        propertyName
-                      ],
-                      ctx
-                    )
-                  )
-                ],
-                true
-              )
-            );
-          }),
-          true
-        )
-      )
-    ],
-    true
-  );
+  const propertyEntries = Object.keys(schema.properties || {}).map((propertyName: string) => {
+    const mappedName = options.propertyNameMapper
+      ? options.propertyNameMapper(propertyName)
+      : propertyName;
+    const isRequired = (schema.required || []).indexOf(propertyName) >= 0;
+    const valueReflection = generateReflectionType(
+      (schema.properties as Record<string, oas.SchemaObject | oas.ReferenceObject>)[propertyName],
+      ctx
+    );
+
+    const networkNameProp = options.propertyNameMapper
+      ? `, networkName: ${str(propertyName)}`
+      : '';
+
+    return `${str(mappedName)}: { required: ${isRequired}${networkNameProp}, value: ${valueReflection} }`;
+  });
+
+  const propsStr = propertyEntries.length > 0 ? `{ ${propertyEntries.join(', ')} }` : '{}';
+
+  return `{ type: "object", additionalProperties: ${additionalProps}, properties: ${propsStr} }`;
 }
 
 /**
  * Creates the fromReflection call for a maker.
  */
-export function generateReflectionMaker(key: string, ctx: GenerationContext): ts.Expression {
+export function generateReflectionMaker(key: string, ctx: GenerationContext): string {
   const { options } = ctx;
-  return ts.factory.createCallExpression(
-    ts.factory.createPropertyAccessExpression(
-      ts.factory.createIdentifier('oar'),
-      ts.factory.createIdentifier('fromReflection')
-    ),
-    undefined,
-    [
-      ts.factory.createPropertyAccessExpression(
-        ts.factory.createIdentifier(options.nameMapper(key, 'reflection')),
-        ts.factory.createIdentifier('definition')
-      )
-    ]
-  );
+  return `oar.fromReflection(${options.nameMapper(key, 'reflection')}.definition)`;
 }
 
 /**
@@ -372,44 +178,15 @@ export function generateNamedTypeDefinitionDeclaration(
   key: string,
   schema: oas.SchemaObject | oas.ReferenceObject,
   ctx: GenerationContext
-): ts.VariableStatement {
+): string {
   const { options } = ctx;
   const isA = inventIsA(key, schema, ctx);
+  const valueName = options.nameMapper(key, 'value');
+  const shapeName = options.nameMapper(key, 'shape');
+  const reflectionName = options.nameMapper(key, 'reflection');
+  const definition = generateReflectionType(schema, ctx);
 
-  return ts.factory.createVariableStatement(
-    [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-    ts.factory.createVariableDeclarationList(
-      [
-        ts.factory.createVariableDeclaration(
-          options.nameMapper(key, 'reflection'),
-          undefined,
-          ts.factory.createTypeReferenceNode(fromLib('reflection', 'NamedTypeDefinition'), [
-            ts.factory.createTypeReferenceNode(options.nameMapper(key, 'value'), []),
-            ts.factory.createTypeReferenceNode(options.nameMapper(key, 'shape'), [])
-          ]),
-          ts.factory.createAsExpression(
-            ts.factory.createObjectLiteralExpression(
-              [
-                ts.factory.createPropertyAssignment(
-                  'name',
-                  ts.factory.createStringLiteral(options.nameMapper(key, 'value'))
-                ),
-                ts.factory.createPropertyAssignment('definition', generateReflectionType(schema, ctx)),
-                ts.factory.createPropertyAssignment(
-                  'maker',
-                  ts.factory.createIdentifier('make' + options.nameMapper(key, 'value'))
-                ),
-                ts.factory.createPropertyAssignment('isA', isA ?? ts.factory.createNull())
-              ],
-              true
-            ),
-            ts.factory.createKeywordTypeNode(ts.SyntaxKind.AnyKeyword)
-          )
-        )
-      ],
-      ts.NodeFlags.Const
-    )
-  );
+  return ts`export const ${reflectionName}: ${fromLib('reflection', 'NamedTypeDefinition')}<${valueName}, ${shapeName}> = { name: ${str(valueName)}, definition: ${definition}, maker: make${valueName}, isA: ${isA ?? 'null'} } as any;`;
 }
 
 /**
@@ -419,7 +196,7 @@ export function inventIsA(
   key: string,
   schema: oas.SchemaObject | oas.ReferenceObject,
   ctx: GenerationContext
-): ts.ArrowFunction | undefined {
+): string | undefined {
   if (isReferenceObject(schema)) return undefined;
 
   if (schema.type === 'object') {
@@ -434,44 +211,14 @@ export function inventIsA(
 /**
  * Generates an instanceof-based isA function.
  */
-export function generateIsA(type: string): ts.ArrowFunction {
-  return ts.factory.createArrowFunction(
-    undefined,
-    undefined,
-    [makeAnyProperty('value')],
-    undefined,
-    ts.factory.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
-    ts.factory.createBinaryExpression(
-      ts.factory.createIdentifier('value'),
-      ts.factory.createToken(ts.SyntaxKind.InstanceOfKeyword),
-      ts.factory.createIdentifier(type)
-    )
-  );
+export function generateIsA(type: string): string {
+  return `(value: any) => value instanceof ${type}`;
 }
 
 /**
  * Generates a maker-based isA function for scalar types.
  */
-export function generateIsAForScalar(key: string, ctx: GenerationContext): ts.ArrowFunction {
+export function generateIsAForScalar(key: string, ctx: GenerationContext): string {
   const { options } = ctx;
-  return ts.factory.createArrowFunction(
-    undefined,
-    undefined,
-    [makeAnyProperty('value')],
-    undefined,
-    ts.factory.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
-    ts.factory.createCallExpression(
-      ts.factory.createPropertyAccessExpression(
-        ts.factory.createCallExpression(
-          ts.factory.createIdentifier('make' + options.nameMapper(key, 'value')),
-          undefined,
-          [ts.factory.createIdentifier('value')]
-        ),
-        'isSuccess'
-      ),
-      undefined,
-      []
-    )
-  );
+  return `(value: any) => make${options.nameMapper(key, 'value')}(value).isSuccess()`;
 }
-

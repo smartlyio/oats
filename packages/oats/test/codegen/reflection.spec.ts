@@ -1,4 +1,3 @@
-import * as ts from 'typescript';
 import { createContext, GenerationState, Options } from '../../src/codegen/context';
 import {
   generateReflectionType,
@@ -6,12 +5,9 @@ import {
   generateIsA,
   inventIsA
 } from '../../src/codegen/reflection';
-import { ts as dedent } from '../../src/template';
 
-function printNode(node: ts.Node): string {
-  const printer = ts.createPrinter({ newLine: ts.NewLineKind.LineFeed });
-  const sourceFile = ts.createSourceFile('test.ts', '', ts.ScriptTarget.Latest);
-  return printer.printNode(ts.EmitHint.Unspecified, node, sourceFile);
+function printNode(node: string): string {
+  return node;
 }
 
 function createTestContext(optionOverrides: Partial<Options> = {}) {
@@ -46,145 +42,79 @@ describe('codegen/reflection', () => {
     it('generates string reflection', () => {
       const ctx = createTestContext();
       const result = generateReflectionType({ type: 'string' }, ctx);
-      expect(printNode(result)).toBe(dedent`
-        {
-            type: "string"
-        }
-      `);
+      expect(printNode(result)).toBe('{ type: "string" }');
     });
 
     it('generates string reflection with enum', () => {
       const ctx = createTestContext();
       const result = generateReflectionType({ type: 'string', enum: ['a', 'b'] }, ctx);
-      expect(printNode(result)).toBe(dedent`
-        {
-            type: "string",
-            enum: ["a", "b"]
-        }
-      `);
+      expect(printNode(result)).toBe('{ type: "string", enum: ["a", "b"] }');
     });
 
     it('generates string reflection with format', () => {
       const ctx = createTestContext();
       const result = generateReflectionType({ type: 'string', format: 'date-time' }, ctx);
-      expect(printNode(result)).toBe(dedent`
-        {
-            type: "string",
-            format: "date-time"
-        }
-      `);
+      expect(printNode(result)).toBe('{ type: "string", format: "date-time" }');
     });
 
     it('generates string reflection with pattern', () => {
       const ctx = createTestContext();
       const result = generateReflectionType({ type: 'string', pattern: '^[a-z]+$' }, ctx);
-      expect(printNode(result)).toBe(dedent`
-        {
-            type: "string",
-            pattern: "^[a-z]+$"
-        }
-      `);
+      expect(printNode(result)).toBe('{ type: "string", pattern: "^[a-z]+$" }');
     });
 
     it('generates string reflection with length constraints', () => {
       const ctx = createTestContext();
       const result = generateReflectionType({ type: 'string', minLength: 1, maxLength: 100 }, ctx);
-      expect(printNode(result)).toBe(dedent`
-        {
-            type: "string",
-            minLength: 1,
-            maxLength: 100
-        }
-      `);
+      expect(printNode(result)).toBe('{ type: "string", minLength: 1, maxLength: 100 }');
     });
 
     it('generates binary reflection for binary format', () => {
       const ctx = createTestContext();
       const result = generateReflectionType({ type: 'string', format: 'binary' }, ctx);
-      expect(printNode(result)).toBe(dedent`
-        {
-            type: "binary"
-        }
-      `);
+      expect(printNode(result)).toBe('{ type: "binary" }');
     });
 
     it('generates integer reflection', () => {
       const ctx = createTestContext();
       const result = generateReflectionType({ type: 'integer' }, ctx);
-      expect(printNode(result)).toBe(dedent`
-        {
-            type: "integer"
-        }
-      `);
+      expect(printNode(result)).toBe('{ type: "integer" }');
     });
 
     it('generates integer reflection with enum', () => {
       const ctx = createTestContext();
       const result = generateReflectionType({ type: 'integer', enum: [1, 2, 3] }, ctx);
-      expect(printNode(result)).toBe(dedent`
-        {
-            type: "integer",
-            enum: [1, 2, 3]
-        }
-      `);
+      expect(printNode(result)).toBe('{ type: "integer", enum: [1, 2, 3] }');
     });
 
     it('generates number reflection with bounds', () => {
       const ctx = createTestContext();
       const result = generateReflectionType({ type: 'number', minimum: 0, maximum: 100 }, ctx);
-      expect(printNode(result)).toBe(dedent`
-        {
-            type: "number",
-            minimum: 0,
-            maximum: 100
-        }
-      `);
+      expect(printNode(result)).toBe('{ type: "number", minimum: 0, maximum: 100 }');
     });
 
     it('generates number reflection with negative minimum', () => {
       const ctx = createTestContext();
       const result = generateReflectionType({ type: 'number', minimum: -10, maximum: 10 }, ctx);
-      expect(printNode(result)).toBe(dedent`
-        {
-            type: "number",
-            minimum: -10,
-            maximum: 10
-        }
-      `);
+      expect(printNode(result)).toBe('{ type: "number", minimum: -10, maximum: 10 }');
     });
 
     it('generates boolean reflection', () => {
       const ctx = createTestContext();
       const result = generateReflectionType({ type: 'boolean' }, ctx);
-      expect(printNode(result)).toBe(dedent`
-        {
-            type: "boolean"
-        }
-      `);
+      expect(printNode(result)).toBe('{ type: "boolean" }');
     });
 
     it('generates boolean reflection with enum', () => {
       const ctx = createTestContext();
       const result = generateReflectionType({ type: 'boolean', enum: [true] }, ctx);
-      expect(printNode(result)).toBe(dedent`
-        {
-            type: "boolean",
-            enum: [true]
-        }
-      `);
+      expect(printNode(result)).toBe('{ type: "boolean", enum: [true] }');
     });
 
     it('generates array reflection', () => {
       const ctx = createTestContext();
       const result = generateReflectionType({ type: 'array', items: { type: 'string' } }, ctx);
-      expect(printNode(result)).toBe(dedent`
-        {
-            type: "array",
-            items: {
-                type: "string"
-            }
-        }
-      `);
+      expect(printNode(result)).toBe('{ type: "array", items: { type: "string" } }');
     });
 
     it('generates array reflection with min/max items', () => {
@@ -195,16 +125,7 @@ describe('codegen/reflection', () => {
         minItems: 1,
         maxItems: 10
       }, ctx);
-      expect(printNode(result)).toBe(dedent`
-        {
-            type: "array",
-            items: {
-                type: "string"
-            },
-            minItems: 1,
-            maxItems: 10
-        }
-      `);
+      expect(printNode(result)).toBe('{ type: "array", items: { type: "string" }, minItems: 1, maxItems: 10 }');
     });
 
     it('generates object reflection with required property', () => {
@@ -214,20 +135,7 @@ describe('codegen/reflection', () => {
         properties: { name: { type: 'string' } },
         required: ['name']
       }, ctx);
-      expect(printNode(result)).toBe(dedent`
-        {
-            type: "object",
-            additionalProperties: true,
-            properties: {
-                "name": {
-                    required: true,
-                    value: {
-                        type: "string"
-                    }
-                }
-            }
-        }
-      `);
+      expect(printNode(result)).toBe('{ type: "object", additionalProperties: true, properties: { "name": { required: true, value: { type: "string" } } } }');
     });
 
     it('generates object reflection with optional property', () => {
@@ -236,20 +144,7 @@ describe('codegen/reflection', () => {
         type: 'object',
         properties: { name: { type: 'string' } }
       }, ctx);
-      expect(printNode(result)).toBe(dedent`
-        {
-            type: "object",
-            additionalProperties: true,
-            properties: {
-                "name": {
-                    required: false,
-                    value: {
-                        type: "string"
-                    }
-                }
-            }
-        }
-      `);
+      expect(printNode(result)).toBe('{ type: "object", additionalProperties: true, properties: { "name": { required: false, value: { type: "string" } } } }');
     });
 
     it('generates object reflection with additionalProperties false', () => {
@@ -260,20 +155,7 @@ describe('codegen/reflection', () => {
         required: ['name'],
         additionalProperties: false
       }, ctx);
-      expect(printNode(result)).toBe(dedent`
-        {
-            type: "object",
-            additionalProperties: false,
-            properties: {
-                "name": {
-                    required: true,
-                    value: {
-                        type: "string"
-                    }
-                }
-            }
-        }
-      `);
+      expect(printNode(result)).toBe('{ type: "object", additionalProperties: false, properties: { "name": { required: true, value: { type: "string" } } } }');
     });
 
     it('generates object reflection with propertyNameMapper', () => {
@@ -285,21 +167,7 @@ describe('codegen/reflection', () => {
         properties: { snake_case: { type: 'string' } },
         required: ['snake_case']
       }, ctx);
-      expect(printNode(result)).toBe(dedent`
-        {
-            type: "object",
-            additionalProperties: true,
-            properties: {
-                "snakeCase": {
-                    required: true,
-                    networkName: "snake_case",
-                    value: {
-                        type: "string"
-                    }
-                }
-            }
-        }
-      `);
+      expect(printNode(result)).toBe('{ type: "object", additionalProperties: true, properties: { "snakeCase": { required: true, networkName: "snake_case", value: { type: "string" } } } }');
     });
 
     it('generates union reflection for oneOf', () => {
@@ -307,19 +175,7 @@ describe('codegen/reflection', () => {
       const result = generateReflectionType({
         oneOf: [{ type: 'string' }, { type: 'number' }]
       }, ctx);
-      expect(printNode(result)).toBe(dedent`
-        {
-            type: "union",
-            options: [
-                {
-                    type: "string"
-                },
-                {
-                    type: "number"
-                }
-            ]
-        }
-      `);
+      expect(printNode(result)).toBe('{ type: "union", options: [{ type: "string" }, { type: "number" }] }');
     });
 
     it('generates intersection reflection for allOf', () => {
@@ -327,78 +183,37 @@ describe('codegen/reflection', () => {
       const result = generateReflectionType({
         allOf: [{ type: 'string' }, { type: 'number' }]
       }, ctx);
-      expect(printNode(result)).toBe(dedent`
-        {
-            type: "intersection",
-            options: [
-                {
-                    type: "string"
-                },
-                {
-                    type: "number"
-                }
-            ]
-        }
-      `);
+      expect(printNode(result)).toBe('{ type: "intersection", options: [{ type: "string" }, { type: "number" }] }');
     });
 
     it('generates named reference reflection', () => {
       const ctx = createTestContext();
       const result = generateReflectionType({ $ref: '#/components/schemas/User' }, ctx);
-      expect(printNode(result)).toBe(dedent`
-        {
-            type: "named",
-            reference: () => { return typeUser; }
-        }
-      `);
+      expect(printNode(result)).toBe('{ type: "named", reference: () => { return typeUser; } }');
     });
 
     it('generates nullable reflection as union', () => {
       const ctx = createTestContext();
       const result = generateReflectionType({ type: 'string', nullable: true }, ctx);
-      expect(printNode(result)).toBe(dedent`
-        {
-            type: "union",
-            options: [
-                {
-                    type: "string"
-                },
-                {
-                    type: "null"
-                }
-            ]
-        }
-      `);
+      expect(printNode(result)).toBe('{ type: "union", options: [{ type: "string" }, { type: "null" }] }');
     });
 
     it('generates void reflection', () => {
       const ctx = createTestContext();
       const result = generateReflectionType({ type: 'void' as any }, ctx);
-      expect(printNode(result)).toBe(dedent`
-        {
-            type: "void"
-        }
-      `);
+      expect(printNode(result)).toBe('{ type: "void" }');
     });
 
     it('generates null reflection', () => {
       const ctx = createTestContext();
       const result = generateReflectionType({ type: 'null' }, ctx);
-      expect(printNode(result)).toBe(dedent`
-        {
-            type: "null"
-        }
-      `);
+      expect(printNode(result)).toBe('{ type: "null" }');
     });
 
     it('generates unknown reflection for missing type', () => {
       const ctx = createTestContext();
       const result = generateReflectionType({}, ctx);
-      expect(printNode(result)).toBe(dedent`
-        {
-            type: "unknown"
-        }
-      `);
+      expect(printNode(result)).toBe('{ type: "unknown" }');
     });
   });
 
@@ -430,11 +245,7 @@ describe('codegen/reflection', () => {
     it('returns reflection type for schema', () => {
       const ctx = createTestContext();
       const result = generateAdditionalPropsReflectionType({ type: 'string' }, ctx);
-      expect(printNode(result)).toBe(dedent`
-        {
-            type: "string"
-        }
-      `);
+      expect(printNode(result)).toBe('{ type: "string" }');
     });
   });
 
@@ -442,11 +253,6 @@ describe('codegen/reflection', () => {
     it('generates instanceof check', () => {
       const result = generateIsA('MyClass');
       expect(printNode(result)).toBe('(value: any) => value instanceof MyClass');
-    });
-
-    it('generates arrow function', () => {
-      const result = generateIsA('MyClass');
-      expect(ts.isArrowFunction(result)).toBe(true);
     });
   });
 

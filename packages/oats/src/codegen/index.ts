@@ -15,8 +15,6 @@ export {
 // Helpers
 export {
   runtime,
-  runtimeLibrary,
-  readonlyModifier,
   valueClassIndexSignatureKey,
   oatsBrandFieldName,
   scalarTypes,
@@ -85,4 +83,3 @@ export {
   generateResponseType,
   generateQueryTypes
 } from './query-types';
-

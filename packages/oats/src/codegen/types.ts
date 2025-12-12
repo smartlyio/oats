@@ -2,17 +2,16 @@
  * Type generation functions for converting OpenAPI schemas to TypeScript types.
  */
 
-import * as ts from 'typescript';
 import * as oas from 'openapi3-ts';
 import * as assert from 'assert';
 import * as _ from 'lodash';
 import { isReferenceObject, SchemaObject, errorTag } from '../util';
 import { GenerationContext, AdditionalPropertiesIndexSignature } from './context';
+import { ts, quoteProp, str } from '../template';
 import {
   quotedProp,
   generateLiteral,
   fromLib,
-  readonlyModifier,
   valueClassIndexSignatureKey,
   oatsBrandFieldName
 } from './helpers';
@@ -23,7 +22,7 @@ import {
 export function generateAdditionalPropType(
   additional: boolean | oas.SchemaObject['additionalProperties'],
   ctx: GenerationContext
-): ts.TypeNode | undefined {
+): string | undefined {
   const { options } = ctx;
 
   if (additional === false) {
@@ -35,13 +34,10 @@ export function generateAdditionalPropType(
     ) {
       return;
     }
-    return ts.factory.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword);
+    return 'unknown';
   }
   if (options.emitUndefinedForIndexTypes || options.emitUndefinedForIndexTypes == null) {
-    return ts.factory.createUnionTypeNode([
-      generateType(additional, ctx),
-      ts.factory.createKeywordTypeNode(ts.SyntaxKind.UndefinedKeyword)
-    ]);
+    return `${generateType(additional, ctx)} | undefined`;
   }
   return generateType(additional, ctx);
 }
@@ -54,40 +50,21 @@ export function generateClassMembers(
   required: oas.SchemaObject['required'],
   additional: oas.SchemaObject['additionalProperties'],
   ctx: GenerationContext
-): readonly ts.ClassElement[] {
+): readonly string[] {
   const { options } = ctx;
 
-  const proptypes: ts.ClassElement[] = _.map(properties, (value, key) => {
-    return ts.factory.createPropertyDeclaration(
-      [ts.factory.createToken(ts.SyntaxKind.ReadonlyKeyword)],
-      quotedProp(options.propertyNameMapper ? options.propertyNameMapper(key) : key),
-      required && required.indexOf(key) >= 0
-        ? ts.factory.createToken(ts.SyntaxKind.ExclamationToken)
-        : ts.factory.createToken(ts.SyntaxKind.QuestionToken),
-      generateType(value, ctx),
-      undefined
-    );
+  const proptypes: string[] = _.map(properties, (value, key) => {
+    const propName = quotedProp(options.propertyNameMapper ? options.propertyNameMapper(key) : key);
+    const isRequired = required && required.indexOf(key) >= 0;
+    const modifier = isRequired ? '!' : '?';
+    return `readonly ${propName}${modifier}: ${generateType(value, ctx)};`;
   });
 
   proptypes.push(generateOatsBrandProperty());
 
   const additionalType = generateAdditionalPropType(additional, ctx);
   if (additionalType) {
-    proptypes.push(
-      ts.factory.createIndexSignature(
-        [ts.factory.createToken(ts.SyntaxKind.ReadonlyKeyword)],
-        [
-          ts.factory.createParameterDeclaration(
-            undefined,
-            undefined,
-            valueClassIndexSignatureKey,
-            undefined,
-            ts.factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword)
-          )
-        ],
-        additionalType
-      ) as unknown as ts.ClassElement
-    );
+    proptypes.push(`readonly [${valueClassIndexSignatureKey}: string]: ${additionalType};`);
   }
   return proptypes;
 }
@@ -95,14 +72,8 @@ export function generateClassMembers(
 /**
  * Generates the private brand property for value classes.
  */
-export function generateOatsBrandProperty(): ts.PropertyDeclaration {
-  return ts.factory.createPropertyDeclaration(
-    [ts.factory.createToken(ts.SyntaxKind.ReadonlyKeyword)],
-    ts.factory.createPrivateIdentifier(`#${oatsBrandFieldName}`),
-    ts.factory.createToken(ts.SyntaxKind.ExclamationToken),
-    ts.factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword),
-    undefined
-  );
+export function generateOatsBrandProperty(): string {
+  return `readonly #${oatsBrandFieldName}!: string;`;
 }
 
 /**
@@ -114,106 +85,79 @@ export function generateObjectMembers(
   additional: oas.SchemaObject['additionalProperties'],
   ctx: GenerationContext,
   typeMapper: (typeName: string) => string = n => n
-): ts.TypeElement[] {
+): string[] {
   const { options } = ctx;
 
-  const proptypes: ts.TypeElement[] = _.map(properties, (value, key) =>
-    errorTag(`property '${key}'`, () =>
-      ts.factory.createPropertySignature(
-        readonlyModifier,
-        quotedProp(options.propertyNameMapper ? options.propertyNameMapper(key) : key),
-        required && required.indexOf(key) >= 0
-          ? undefined
-          : ts.factory.createToken(ts.SyntaxKind.QuestionToken),
-        generateType(value, ctx, typeMapper)
-      )
-    )
+  const proptypes: string[] = _.map(properties, (value, key) =>
+    errorTag(`property '${key}'`, () => {
+      const propName = quotedProp(options.propertyNameMapper ? options.propertyNameMapper(key) : key);
+      const isRequired = required && required.indexOf(key) >= 0;
+      const modifier = isRequired ? '' : '?';
+      return `readonly ${propName}${modifier}: ${generateType(value, ctx, typeMapper)};`;
+    })
   );
 
   const additionalType = generateAdditionalPropType(additional, ctx);
   if (additionalType) {
-    proptypes.push(
-      ts.factory.createIndexSignature(
-        readonlyModifier,
-        [
-          ts.factory.createParameterDeclaration(
-            undefined,
-            undefined,
-            'key',
-            undefined,
-            ts.factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword)
-          )
-        ],
-        additionalType
-      ) as unknown as ts.TypeElement
-    );
+    proptypes.push(`readonly [key: string]: ${additionalType};`);
   }
   return proptypes;
 }
 
 /**
- * Generates a TypeScript type node from an OpenAPI schema.
+ * Generates a TypeScript type string from an OpenAPI schema.
  * This is the main recursive type generator.
  */
 export function generateType(
   schema: SchemaObject,
   ctx: GenerationContext,
   typeMapper: (name: string) => string = n => n
-): ts.TypeNode {
+): string {
   assert(schema, 'missing schema');
 
   if (isReferenceObject(schema)) {
     const resolved = ctx.resolveRefToTypeName(schema.$ref, 'value');
     const type = resolved.qualified
-      ? ts.factory.createQualifiedName(resolved.qualified, typeMapper(resolved.member))
+      ? `${resolved.qualified}.${typeMapper(resolved.member)}`
       : typeMapper(resolved.member);
-    return ts.factory.createTypeReferenceNode(type, undefined);
+    return type;
   }
 
   if (schema.oneOf) {
-    return ts.factory.createUnionTypeNode(
-      schema.oneOf.map(s => generateType(s, ctx, typeMapper))
-    );
+    return schema.oneOf.map(s => generateType(s, ctx, typeMapper)).join(' | ');
   }
 
   if (schema.allOf) {
-    return ts.factory.createIntersectionTypeNode(
-      schema.allOf.map(s => generateType(s, ctx, typeMapper))
-    );
+    return schema.allOf.map(s => generateType(s, ctx, typeMapper)).join(' & ');
   }
 
   assert(!schema.anyOf, 'anyOf is not supported');
 
   if (schema.nullable) {
-    return ts.factory.createUnionTypeNode([
-      generateType({ ...schema, nullable: false }, ctx, typeMapper),
-      ts.factory.createLiteralTypeNode(ts.factory.createNull())
-    ]);
+    return `${generateType({ ...schema, nullable: false }, ctx, typeMapper)} | null`;
   }
 
   if (schema.type === 'object') {
-    return ts.factory.createTypeLiteralNode(
-      generateObjectMembers(
-        schema.properties,
-        schema.required,
-        schema.additionalProperties,
-        ctx,
-        typeMapper
-      )
+    const members = generateObjectMembers(
+      schema.properties,
+      schema.required,
+      schema.additionalProperties,
+      ctx,
+      typeMapper
     );
+    if (members.length === 0) {
+      return '{}';
+    }
+    return `{ ${members.join(' ')} }`;
   }
 
   if (schema.enum) {
-    return ts.factory.createUnionTypeNode(
-      schema.enum.map(e => {
-        return ts.factory.createLiteralTypeNode(generateLiteral(e));
-      })
-    );
+    return schema.enum.map(e => generateLiteral(e)).join(' | ');
   }
 
   if (schema.type === 'array') {
     const itemType = generateType(schema.items || {}, ctx, typeMapper);
-    return ts.factory.createTypeReferenceNode('ReadonlyArray', [itemType]);
+    return `ReadonlyArray<${itemType}>`;
   }
 
   if (schema.type === 'string') {
@@ -221,24 +165,24 @@ export function generateType(
   }
 
   if (schema.type === 'integer' || schema.type === 'number') {
-    return ts.factory.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword);
+    return 'number';
   }
 
   if (schema.type === 'boolean') {
-    return ts.factory.createKeywordTypeNode(ts.SyntaxKind.BooleanKeyword);
+    return 'boolean';
   }
 
   // @ts-expect-error schemas really do not have void type. but we do
   if (schema.type === 'void') {
-    return ts.factory.createKeywordTypeNode(ts.SyntaxKind.VoidKeyword);
+    return 'void';
   }
 
   if (schema.type === 'null') {
-    return ts.factory.createLiteralTypeNode(ts.factory.createNull());
+    return 'null';
   }
 
   if (!schema.type) {
-    return ts.factory.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword);
+    return 'unknown';
   }
 
   return assert.fail('unknown schema type: ' + schema.type);
@@ -247,11 +191,11 @@ export function generateType(
 /**
  * Generates a string type, handling binary format specially.
  */
-export function generateStringType(format: string | undefined): ts.TypeNode {
+export function generateStringType(format: string | undefined): string {
   if (format === 'binary') {
-    return ts.factory.createTypeReferenceNode(fromLib('make', 'Binary'), []);
+    return fromLib('make', 'Binary');
   }
-  return ts.factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword);
+  return 'string';
 }
 
 /**
@@ -259,13 +203,9 @@ export function generateStringType(format: string | undefined): ts.TypeNode {
  */
 export function scalarTypeWithBrand(
   key: string,
-  type: ts.TypeNode,
+  type: string,
   ctx: GenerationContext
-): ts.TypeNode {
+): string {
   const brandName = 'BrandOf' + ctx.options.nameMapper(key, 'value');
-  return ts.factory.createTypeReferenceNode(fromLib('BrandedScalar'), [
-    type,
-    ts.factory.createTypeReferenceNode(brandName, [])
-  ]);
+  return `${fromLib('BrandedScalar')}<${type}, ${brandName}>`;
 }
-

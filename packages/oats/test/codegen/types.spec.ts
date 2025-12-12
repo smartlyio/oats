@@ -1,4 +1,3 @@
-import * as ts from 'typescript';
 import { createContext, GenerationState, Options, AdditionalPropertiesIndexSignature } from '../../src/codegen/context';
 import {
   generateType,
@@ -6,12 +5,9 @@ import {
   generateAdditionalPropType,
   generateObjectMembers
 } from '../../src/codegen/types';
-import { ts as dedent } from '../../src/template';
 
-function printNode(node: ts.Node): string {
-  const printer = ts.createPrinter({ newLine: ts.NewLineKind.LineFeed });
-  const sourceFile = ts.createSourceFile('test.ts', '', ts.ScriptTarget.Latest);
-  return printer.printNode(ts.EmitHint.Unspecified, node, sourceFile);
+function printNode(node: string): string {
+  return node;
 }
 
 function createTestContext(optionOverrides: Partial<Options> = {}) {
@@ -146,13 +142,7 @@ describe('codegen/types', () => {
           { type: 'object', properties: { b: { type: 'number' } }, additionalProperties: false }
         ]
       }, ctx);
-      expect(printNode(result)).toBe(dedent`
-        {
-            readonly a?: string;
-        } & {
-            readonly b?: number;
-        }
-      `);
+      expect(printNode(result)).toBe('{ readonly a?: string; } & { readonly b?: number; }');
     });
 
     it('generates nullable type', () => {
@@ -169,11 +159,7 @@ describe('codegen/types', () => {
         required: ['name'],
         additionalProperties: false
       }, ctx);
-      expect(printNode(result)).toBe(dedent`
-        {
-            readonly name: string;
-        }
-      `);
+      expect(printNode(result)).toBe('{ readonly name: string; }');
     });
 
     it('generates object type literal with optional property', () => {
@@ -183,11 +169,7 @@ describe('codegen/types', () => {
         properties: { name: { type: 'string' } },
         additionalProperties: false
       }, ctx);
-      expect(printNode(result)).toBe(dedent`
-        {
-            readonly name?: string;
-        }
-      `);
+      expect(printNode(result)).toBe('{ readonly name?: string; }');
     });
 
     it('generates object type literal with index signature', () => {
@@ -198,12 +180,7 @@ describe('codegen/types', () => {
         required: ['name'],
         additionalProperties: true
       }, ctx);
-      expect(printNode(result)).toBe(dedent`
-        {
-            readonly name: string;
-            readonly [key: string]: unknown;
-        }
-      `);
+      expect(printNode(result)).toBe('{ readonly name: string; readonly [key: string]: unknown; }');
     });
 
     it('generates reference type', () => {

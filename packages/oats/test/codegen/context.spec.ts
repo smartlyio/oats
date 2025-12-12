@@ -1,4 +1,3 @@
-import * as ts from 'typescript';
 import { createContext, GenerationState, Options } from '../../src/codegen/context';
 
 function createTestOptions(overrides: Partial<Options> = {}): Options {
@@ -159,8 +158,7 @@ describe('codegen/context', () => {
         const result = ctx.resolveRefToTypeName('./external.yaml#/components/schemas/Foo', 'value');
 
         expect(result.member).toBe('ExternalType');
-        expect(result.qualified).toBeDefined();
-        expect(ts.isIdentifier(result.qualified!)).toBe(true);
+        expect(result.qualified).toBe('external');
         expect(state.imports['external']).toBe('./external.generated.ts');
       });
 
@@ -196,4 +194,3 @@ describe('codegen/context', () => {
     });
   });
 });
-
