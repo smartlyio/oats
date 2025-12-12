@@ -26,7 +26,10 @@ export function generateValueClass(
 
   const builtinMembers = generateClassBuiltinMembers(key, ctx);
 
-  return ts`export class ${valueIdentifier} extends ${fromLib('valueClass', 'ValueClass')} { ${[...members, ...builtinMembers].join(' ')} }`;
+  return ts`export class ${valueIdentifier} extends ${fromLib('valueClass', 'ValueClass')} { ${[
+    ...members,
+    ...builtinMembers
+  ].join(' ')} }`;
 }
 
 /**
@@ -37,21 +40,24 @@ export function generateClassConstructor(key: string, ctx: GenerationContext): s
   const shapeName = options.nameMapper(key, 'shape');
   const valueName = options.nameMapper(key, 'value');
 
-  return raw`public constructor(value: ${shapeName}, opts?: ${fromLib('make', 'MakeOptions')} | InternalUnsafeConstructorOption) { super(); ${runtime}.instanceAssign(this, value, opts, build${valueName}); }`;
+  return raw`public constructor(value: ${shapeName}, opts?: ${fromLib(
+    'make',
+    'MakeOptions'
+  )} | InternalUnsafeConstructorOption) { super(); ${runtime}.instanceAssign(this, value, opts, build${valueName}); }`;
 }
 
 /**
  * Generates the static reflection property.
  */
-export function generateReflectionProperty(
-  key: string,
-  ctx: GenerationContext
-): string {
+export function generateReflectionProperty(key: string, ctx: GenerationContext): string {
   const { options } = ctx;
   const valueName = options.nameMapper(key, 'value');
   const reflectionName = options.nameMapper(key, 'reflection');
 
-  return raw`public static reflection: ${fromLib('reflection', 'NamedTypeDefinitionDeferred')}<${valueName}> = () => { return ${reflectionName}; };`;
+  return raw`public static reflection: ${fromLib(
+    'reflection',
+    'NamedTypeDefinitionDeferred'
+  )}<${valueName}> = () => { return ${reflectionName}; };`;
 }
 
 /**
@@ -68,10 +74,7 @@ export function generateClassMakeMethod(key: string, ctx: GenerationContext): st
 /**
  * Generates all built-in class members (constructor, reflection, make).
  */
-export function generateClassBuiltinMembers(
-  key: string,
-  ctx: GenerationContext
-): string[] {
+export function generateClassBuiltinMembers(key: string, ctx: GenerationContext): string[] {
   return [
     generateClassConstructor(key, ctx),
     generateReflectionProperty(key, ctx),

@@ -7,7 +7,6 @@ import * as assert from 'assert';
 import * as _ from 'lodash';
 import { isReferenceObject, SchemaObject, errorTag } from '../util';
 import { GenerationContext, AdditionalPropertiesIndexSignature } from './context';
-import { ts, quoteProp, str } from '../template';
 import {
   quotedProp,
   generateLiteral,
@@ -90,7 +89,9 @@ export function generateObjectMembers(
 
   const proptypes: string[] = _.map(properties, (value, key) =>
     errorTag(`property '${key}'`, () => {
-      const propName = quotedProp(options.propertyNameMapper ? options.propertyNameMapper(key) : key);
+      const propName = quotedProp(
+        options.propertyNameMapper ? options.propertyNameMapper(key) : key
+      );
       const isRequired = required && required.indexOf(key) >= 0;
       const modifier = isRequired ? '' : '?';
       return `readonly ${propName}${modifier}: ${generateType(value, ctx, typeMapper)};`;
@@ -201,11 +202,7 @@ export function generateStringType(format: string | undefined): string {
 /**
  * Wraps a type with a brand for scalar types.
  */
-export function scalarTypeWithBrand(
-  key: string,
-  type: string,
-  ctx: GenerationContext
-): string {
+export function scalarTypeWithBrand(key: string, type: string, ctx: GenerationContext): string {
   const brandName = 'BrandOf' + ctx.options.nameMapper(key, 'value');
   return `${fromLib('BrandedScalar')}<${type}, ${brandName}>`;
 }

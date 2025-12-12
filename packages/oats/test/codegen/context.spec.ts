@@ -127,7 +127,7 @@ describe('codegen/context', () => {
 
       it('uses nameMapper for local references', () => {
         const options = createTestOptions({
-          nameMapper: (name, kind) => kind === 'shape' ? 'Shape' + name : name
+          nameMapper: (name, kind) => (kind === 'shape' ? 'Shape' + name : name)
         });
         const state = createTestState();
         const generatedFiles = new Set<string>();
@@ -140,7 +140,7 @@ describe('codegen/context', () => {
 
       it('resolves external reference via resolve function', () => {
         const options = createTestOptions({
-          resolve: (ref, opts, kind) => {
+          resolve: (ref, _opts, _kind) => {
             if (ref.startsWith('./external')) {
               return {
                 importAs: 'external',
@@ -164,7 +164,7 @@ describe('codegen/context', () => {
 
       it('resolves reference with name only (no import)', () => {
         const options = createTestOptions({
-          resolve: (ref) => {
+          resolve: ref => {
             if (ref === '#/components/schemas/Local') {
               return { name: 'LocalType' };
             }

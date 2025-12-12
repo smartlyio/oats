@@ -20,9 +20,7 @@ export function generateReflectionType(
 ): string {
   if (isReferenceObject(schema)) {
     const resolved = ctx.resolveRefToTypeName(schema.$ref, 'reflection');
-    const type = resolved.qualified
-      ? `${resolved.qualified}.${resolved.member}`
-      : resolved.member;
+    const type = resolved.qualified ? `${resolved.qualified}.${resolved.member}` : resolved.member;
     return `{ type: "named", reference: () => { return ${type}; } }`;
   }
 
@@ -125,7 +123,11 @@ export function generateAdditionalPropsReflectionType(
   if (props === false) {
     return 'false';
   }
-  if (props === true || !props || (props && typeof props === 'object' && Object.keys(props).length === 0)) {
+  if (
+    props === true ||
+    !props ||
+    (props && typeof props === 'object' && Object.keys(props).length === 0)
+  ) {
     return 'true';
   }
   return generateReflectionType(props, ctx);
@@ -151,11 +153,11 @@ export function generateObjectReflectionType(
       ctx
     );
 
-    const networkNameProp = options.propertyNameMapper
-      ? `, networkName: ${str(propertyName)}`
-      : '';
+    const networkNameProp = options.propertyNameMapper ? `, networkName: ${str(propertyName)}` : '';
 
-    return `${str(mappedName)}: { required: ${isRequired}${networkNameProp}, value: ${valueReflection} }`;
+    return `${str(
+      mappedName
+    )}: { required: ${isRequired}${networkNameProp}, value: ${valueReflection} }`;
   });
 
   const propsStr = propertyEntries.length > 0 ? `{ ${propertyEntries.join(', ')} }` : '{}';
@@ -186,7 +188,12 @@ export function generateNamedTypeDefinitionDeclaration(
   const reflectionName = options.nameMapper(key, 'reflection');
   const definition = generateReflectionType(schema, ctx);
 
-  return ts`export const ${reflectionName}: ${fromLib('reflection', 'NamedTypeDefinition')}<${valueName}, ${shapeName}> = { name: ${str(valueName)}, definition: ${definition}, maker: make${valueName}, isA: ${isA ?? 'null'} } as any;`;
+  return ts`export const ${reflectionName}: ${fromLib(
+    'reflection',
+    'NamedTypeDefinition'
+  )}<${valueName}, ${shapeName}> = { name: ${str(
+    valueName
+  )}, definition: ${definition}, maker: make${valueName}, isA: ${isA ?? 'null'} } as any;`;
 }
 
 /**

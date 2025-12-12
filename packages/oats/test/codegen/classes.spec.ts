@@ -50,7 +50,7 @@ describe('codegen/classes', () => {
 
     it('uses name mapper for shape type', () => {
       const ctx = createTestContext({
-        nameMapper: (name, kind) => kind === 'shape' ? `${name}Input` : name
+        nameMapper: (name, kind) => (kind === 'shape' ? `${name}Input` : name)
       });
       const result = generateClassConstructor('User', ctx);
       expect(printNode(result)).toContain('value: UserInput');
@@ -84,7 +84,7 @@ describe('codegen/classes', () => {
       const ctx = createTestContext();
       const result = generateClassBuiltinMembers('User', ctx);
       expect(result).toHaveLength(3);
-      
+
       const printed = result.map(printNode);
       expect(printed[0]).toContain('constructor');
       expect(printed[1]).toContain('static reflection');
@@ -95,12 +95,17 @@ describe('codegen/classes', () => {
   describe('generateValueClass', () => {
     it('generates class with single required property', () => {
       const ctx = createTestContext();
-      const result = generateValueClass('User', 'User', {
-        type: 'object',
-        properties: { name: { type: 'string' } },
-        required: ['name'],
-        additionalProperties: false
-      }, ctx);
+      const result = generateValueClass(
+        'User',
+        'User',
+        {
+          type: 'object',
+          properties: { name: { type: 'string' } },
+          required: ['name'],
+          additionalProperties: false
+        },
+        ctx
+      );
       const printed = printNode(result);
       expect(printed).toContain('export class User extends oar.valueClass.ValueClass');
       expect(printed).toContain('readonly name!: string');
@@ -111,27 +116,37 @@ describe('codegen/classes', () => {
 
     it('generates class with optional property', () => {
       const ctx = createTestContext();
-      const result = generateValueClass('User', 'User', {
-        type: 'object',
-        properties: { name: { type: 'string' } },
-        additionalProperties: false
-      }, ctx);
+      const result = generateValueClass(
+        'User',
+        'User',
+        {
+          type: 'object',
+          properties: { name: { type: 'string' } },
+          additionalProperties: false
+        },
+        ctx
+      );
       const printed = printNode(result);
       expect(printed).toContain('readonly name?: string');
     });
 
     it('generates class with multiple properties', () => {
       const ctx = createTestContext();
-      const result = generateValueClass('User', 'User', {
-        type: 'object',
-        properties: {
-          id: { type: 'integer' },
-          name: { type: 'string' },
-          active: { type: 'boolean' }
+      const result = generateValueClass(
+        'User',
+        'User',
+        {
+          type: 'object',
+          properties: {
+            id: { type: 'integer' },
+            name: { type: 'string' },
+            active: { type: 'boolean' }
+          },
+          required: ['id', 'name'],
+          additionalProperties: false
         },
-        required: ['id', 'name'],
-        additionalProperties: false
-      }, ctx);
+        ctx
+      );
       const printed = printNode(result);
       expect(printed).toContain('readonly id!: number');
       expect(printed).toContain('readonly name!: string');
@@ -140,12 +155,17 @@ describe('codegen/classes', () => {
 
     it('generates class with index signature for additionalProperties', () => {
       const ctx = createTestContext();
-      const result = generateValueClass('User', 'User', {
-        type: 'object',
-        properties: { name: { type: 'string' } },
-        required: ['name'],
-        additionalProperties: true
-      }, ctx);
+      const result = generateValueClass(
+        'User',
+        'User',
+        {
+          type: 'object',
+          properties: { name: { type: 'string' } },
+          required: ['name'],
+          additionalProperties: true
+        },
+        ctx
+      );
       const printed = printNode(result);
       expect(printed).toContain('readonly name!: string');
       expect(printed).toContain('[instanceIndexSignatureKey: string]: unknown');
@@ -153,10 +173,15 @@ describe('codegen/classes', () => {
 
     it('generates class with no properties', () => {
       const ctx = createTestContext();
-      const result = generateValueClass('Empty', 'Empty', {
-        type: 'object',
-        additionalProperties: false
-      }, ctx);
+      const result = generateValueClass(
+        'Empty',
+        'Empty',
+        {
+          type: 'object',
+          additionalProperties: false
+        },
+        ctx
+      );
       const printed = printNode(result);
       expect(printed).toContain('export class Empty extends oar.valueClass.ValueClass');
       expect(printed).toContain('constructor');
@@ -164,11 +189,16 @@ describe('codegen/classes', () => {
 
     it('includes brand tag property', () => {
       const ctx = createTestContext();
-      const result = generateValueClass('User', 'User', {
-        type: 'object',
-        properties: { name: { type: 'string' } },
-        additionalProperties: false
-      }, ctx);
+      const result = generateValueClass(
+        'User',
+        'User',
+        {
+          type: 'object',
+          properties: { name: { type: 'string' } },
+          additionalProperties: false
+        },
+        ctx
+      );
       const printed = printNode(result);
       expect(printed).toContain('#__oats_value_class_brand_tag');
     });

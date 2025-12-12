@@ -119,71 +119,106 @@ describe('codegen/reflection', () => {
 
     it('generates array reflection with min/max items', () => {
       const ctx = createTestContext();
-      const result = generateReflectionType({ 
-        type: 'array', 
-        items: { type: 'string' },
-        minItems: 1,
-        maxItems: 10
-      }, ctx);
-      expect(printNode(result)).toBe('{ type: "array", items: { type: "string" }, minItems: 1, maxItems: 10 }');
+      const result = generateReflectionType(
+        {
+          type: 'array',
+          items: { type: 'string' },
+          minItems: 1,
+          maxItems: 10
+        },
+        ctx
+      );
+      expect(printNode(result)).toBe(
+        '{ type: "array", items: { type: "string" }, minItems: 1, maxItems: 10 }'
+      );
     });
 
     it('generates object reflection with required property', () => {
       const ctx = createTestContext();
-      const result = generateReflectionType({
-        type: 'object',
-        properties: { name: { type: 'string' } },
-        required: ['name']
-      }, ctx);
-      expect(printNode(result)).toBe('{ type: "object", additionalProperties: true, properties: { "name": { required: true, value: { type: "string" } } } }');
+      const result = generateReflectionType(
+        {
+          type: 'object',
+          properties: { name: { type: 'string' } },
+          required: ['name']
+        },
+        ctx
+      );
+      expect(printNode(result)).toBe(
+        '{ type: "object", additionalProperties: true, properties: { "name": { required: true, value: { type: "string" } } } }'
+      );
     });
 
     it('generates object reflection with optional property', () => {
       const ctx = createTestContext();
-      const result = generateReflectionType({
-        type: 'object',
-        properties: { name: { type: 'string' } }
-      }, ctx);
-      expect(printNode(result)).toBe('{ type: "object", additionalProperties: true, properties: { "name": { required: false, value: { type: "string" } } } }');
+      const result = generateReflectionType(
+        {
+          type: 'object',
+          properties: { name: { type: 'string' } }
+        },
+        ctx
+      );
+      expect(printNode(result)).toBe(
+        '{ type: "object", additionalProperties: true, properties: { "name": { required: false, value: { type: "string" } } } }'
+      );
     });
 
     it('generates object reflection with additionalProperties false', () => {
       const ctx = createTestContext();
-      const result = generateReflectionType({
-        type: 'object',
-        properties: { name: { type: 'string' } },
-        required: ['name'],
-        additionalProperties: false
-      }, ctx);
-      expect(printNode(result)).toBe('{ type: "object", additionalProperties: false, properties: { "name": { required: true, value: { type: "string" } } } }');
+      const result = generateReflectionType(
+        {
+          type: 'object',
+          properties: { name: { type: 'string' } },
+          required: ['name'],
+          additionalProperties: false
+        },
+        ctx
+      );
+      expect(printNode(result)).toBe(
+        '{ type: "object", additionalProperties: false, properties: { "name": { required: true, value: { type: "string" } } } }'
+      );
     });
 
     it('generates object reflection with propertyNameMapper', () => {
       const ctx = createTestContext({
-        propertyNameMapper: (name) => name === 'snake_case' ? 'snakeCase' : name
+        propertyNameMapper: name => (name === 'snake_case' ? 'snakeCase' : name)
       });
-      const result = generateReflectionType({
-        type: 'object',
-        properties: { snake_case: { type: 'string' } },
-        required: ['snake_case']
-      }, ctx);
-      expect(printNode(result)).toBe('{ type: "object", additionalProperties: true, properties: { "snakeCase": { required: true, networkName: "snake_case", value: { type: "string" } } } }');
+      const result = generateReflectionType(
+        {
+          type: 'object',
+          properties: { snake_case: { type: 'string' } },
+          required: ['snake_case']
+        },
+        ctx
+      );
+      expect(printNode(result)).toBe(
+        '{ type: "object", additionalProperties: true, properties: { "snakeCase": { required: true, networkName: "snake_case", value: { type: "string" } } } }'
+      );
     });
 
     it('generates union reflection for oneOf', () => {
       const ctx = createTestContext();
-      const result = generateReflectionType({
-        oneOf: [{ type: 'string' }, { type: 'number' }]
-      }, ctx);
-      expect(printNode(result)).toBe('{ type: "union", options: [{ type: "string" }, { type: "number" }] }');
+      const result = generateReflectionType(
+        {
+          oneOf: [{ type: 'string' }, { type: 'number' }]
+        },
+        ctx
+      );
+      expect(printNode(result)).toBe(
+        '{ type: "union", options: [{ type: "string" }, { type: "number" }] }'
+      );
     });
 
     it('generates intersection reflection for allOf', () => {
       const ctx = createTestContext();
-      const result = generateReflectionType({
-        allOf: [{ type: 'string' }, { type: 'number' }]
-      }, ctx);
-      expect(printNode(result)).toBe('{ type: "intersection", options: [{ type: "string" }, { type: "number" }] }');
+      const result = generateReflectionType(
+        {
+          allOf: [{ type: 'string' }, { type: 'number' }]
+        },
+        ctx
+      );
+      expect(printNode(result)).toBe(
+        '{ type: "intersection", options: [{ type: "string" }, { type: "number" }] }'
+      );
     });
 
     it('generates named reference reflection', () => {
@@ -195,7 +230,9 @@ describe('codegen/reflection', () => {
     it('generates nullable reflection as union', () => {
       const ctx = createTestContext();
       const result = generateReflectionType({ type: 'string', nullable: true }, ctx);
-      expect(printNode(result)).toBe('{ type: "union", options: [{ type: "string" }, { type: "null" }] }');
+      expect(printNode(result)).toBe(
+        '{ type: "union", options: [{ type: "string" }, { type: "null" }] }'
+      );
     });
 
     it('generates void reflection', () => {

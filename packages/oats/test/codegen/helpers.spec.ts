@@ -132,9 +132,9 @@ describe('codegen/helpers', () => {
 
   describe('brandTypeName', () => {
     it('generates brand type name with nameMapper', () => {
-      const nameMapper = (name: string, kind: string) => 
+      const nameMapper = (name: string, kind: string) =>
         kind === 'value' ? name.charAt(0).toUpperCase() + name.slice(1) : name;
-      
+
       const result = brandTypeName('myType', nameMapper);
       expect(result).toBe('BrandOfMyType');
     });
@@ -190,7 +190,9 @@ describe('codegen/helpers', () => {
     readonly [${valueClassIndexSignatureKey}: string]: SomeType;
 }`;
       const result = addIndexSignatureIgnores(input);
-      expect(result).toContain('// @ts-ignore tsc does not like the branding type in index signatures');
+      expect(result).toContain(
+        '// @ts-ignore tsc does not like the branding type in index signatures'
+      );
       expect(result).toContain(valueClassIndexSignatureKey);
     });
 
@@ -229,7 +231,9 @@ describe('codegen/helpers', () => {
 
   describe('resolveModule', () => {
     it('returns package imports unchanged', () => {
-      expect(resolveModule('./output.ts', '@smartlyio/oats-runtime')).toBe('@smartlyio/oats-runtime');
+      expect(resolveModule('./output.ts', '@smartlyio/oats-runtime')).toBe(
+        '@smartlyio/oats-runtime'
+      );
     });
 
     it('resolves relative path in same directory', () => {

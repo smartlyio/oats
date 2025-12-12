@@ -9,10 +9,6 @@ import {
   generateResponseType
 } from '../../src/codegen/query-types';
 
-function printNode(node: string): string {
-  return node;
-}
-
 function printNodes(nodes: readonly string[]): string {
   return nodes.join('\n');
 }
@@ -57,15 +53,17 @@ describe('codegen/query-types', () => {
         'application/json': { schema: { type: 'object' } }
       });
       expect(result).toEqual({
-        oneOf: [{
-          type: 'object',
-          properties: {
-            contentType: { type: 'string', enum: ['application/json'] },
-            value: { type: 'object' }
-          },
-          required: ['contentType', 'value'],
-          additionalProperties: false
-        }]
+        oneOf: [
+          {
+            type: 'object',
+            properties: {
+              contentType: { type: 'string', enum: ['application/json'] },
+              value: { type: 'object' }
+            },
+            required: ['contentType', 'value'],
+            additionalProperties: false
+          }
+        ]
       });
     });
 
@@ -104,7 +102,9 @@ describe('codegen/query-types', () => {
       const result = generateHeadersSchemaType({
         'X-Request-Id': { $ref: '#/components/headers/RequestId' }
       });
-      expect(result.properties?.['X-Request-Id']).toEqual({ $ref: '#/components/headers/RequestId' });
+      expect(result.properties?.['X-Request-Id']).toEqual({
+        $ref: '#/components/headers/RequestId'
+      });
       expect(result.required).toContain('X-Request-Id');
     });
   });
@@ -142,16 +142,18 @@ describe('codegen/query-types', () => {
 
     it('handles exploded object parameter', () => {
       const ctx = createTestContext();
-      const params: oas.ParameterObject[] = [{
-        name: 'filter',
-        in: 'query',
-        explode: true,
-        schema: {
-          type: 'object',
-          properties: { name: { type: 'string' } },
-          additionalProperties: false
+      const params: oas.ParameterObject[] = [
+        {
+          name: 'filter',
+          in: 'query',
+          explode: true,
+          schema: {
+            type: 'object',
+            properties: { name: { type: 'string' } },
+            additionalProperties: false
+          }
         }
-      }];
+      ];
       const result = generateQueryType('SearchQuery', params, ctx.options.oas, ctx);
       const printed = printNodes(result);
       expect(printed).toContain('readonly name?: string');
@@ -161,7 +163,13 @@ describe('codegen/query-types', () => {
   describe('generateParameterType', () => {
     it('generates void for no parameters', () => {
       const ctx = createTestContext();
-      const result = generateParameterType('path', 'GetUsersParams', undefined, ctx.options.oas, ctx);
+      const result = generateParameterType(
+        'path',
+        'GetUsersParams',
+        undefined,
+        ctx.options.oas,
+        ctx
+      );
       const printed = printNodes(result);
       expect(printed).toContain('export type GetUsersParams = void');
     });
@@ -229,19 +237,29 @@ describe('codegen/query-types', () => {
 
     it('generates reference type for reference request body', () => {
       const ctx = createTestContext();
-      const result = generateRequestBodyType('CreateUserBody', { $ref: '#/components/requestBodies/UserInput' }, ctx);
+      const result = generateRequestBodyType(
+        'CreateUserBody',
+        { $ref: '#/components/requestBodies/UserInput' },
+        ctx
+      );
       const printed = printNodes(result);
       expect(printed).toContain('export type CreateUserBody = UserInput');
     });
 
     it('generates content schema for required request body', () => {
       const ctx = createTestContext();
-      const result = generateRequestBodyType('CreateUserBody', {
-        required: true,
-        content: {
-          'application/json': { schema: { type: 'object', properties: { name: { type: 'string' } } } }
-        }
-      }, ctx);
+      const result = generateRequestBodyType(
+        'CreateUserBody',
+        {
+          required: true,
+          content: {
+            'application/json': {
+              schema: { type: 'object', properties: { name: { type: 'string' } } }
+            }
+          }
+        },
+        ctx
+      );
       const printed = printNodes(result);
       expect(printed).toContain('contentType');
       expect(printed).toContain("'application/json'");
@@ -249,11 +267,15 @@ describe('codegen/query-types', () => {
 
     it('generates optional union for non-required request body', () => {
       const ctx = createTestContext();
-      const result = generateRequestBodyType('UpdateUserBody', {
-        content: {
-          'application/json': { schema: { type: 'object' } }
-        }
-      }, ctx);
+      const result = generateRequestBodyType(
+        'UpdateUserBody',
+        {
+          content: {
+            'application/json': { schema: { type: 'object' } }
+          }
+        },
+        ctx
+      );
       const printed = printNodes(result);
       expect(printed).toContain("type: 'union'");
     });
@@ -262,14 +284,20 @@ describe('codegen/query-types', () => {
   describe('generateResponseType', () => {
     it('generates response type for single status code', () => {
       const ctx = createTestContext();
-      const result = generateResponseType('GetUserResponse', {
-        '200': {
-          description: 'Success',
-          content: {
-            'application/json': { schema: { type: 'object', properties: { id: { type: 'string' } } } }
+      const result = generateResponseType(
+        'GetUserResponse',
+        {
+          '200': {
+            description: 'Success',
+            content: {
+              'application/json': {
+                schema: { type: 'object', properties: { id: { type: 'string' } } }
+              }
+            }
           }
-        }
-      }, ctx);
+        },
+        ctx
+      );
       const printed = printNodes(result);
       expect(printed).toContain('status');
       expect(printed).toContain('value');
@@ -278,59 +306,83 @@ describe('codegen/query-types', () => {
 
     it('generates union response type for multiple status codes', () => {
       const ctx = createTestContext();
-      const result = generateResponseType('CreateUserResponse', {
-        '200': {
-          description: 'Success',
-          content: { 'application/json': { schema: { type: 'object' } } }
+      const result = generateResponseType(
+        'CreateUserResponse',
+        {
+          '200': {
+            description: 'Success',
+            content: { 'application/json': { schema: { type: 'object' } } }
+          },
+          '400': {
+            description: 'Bad request',
+            content: {
+              'application/json': {
+                schema: { type: 'object', properties: { error: { type: 'string' } } }
+              }
+            }
+          }
         },
-        '400': {
-          description: 'Bad request',
-          content: { 'application/json': { schema: { type: 'object', properties: { error: { type: 'string' } } } } }
-        }
-      }, ctx);
+        ctx
+      );
       const printed = printNodes(result);
       expect(printed).toContain("type: 'union'");
     });
 
     it('generates void for empty responses', () => {
       const ctx = createTestContext({ emitStatusCode: () => false });
-      const result = generateResponseType('DeleteUserResponse', {
-        '204': { description: 'No content' }
-      }, ctx);
+      const result = generateResponseType(
+        'DeleteUserResponse',
+        {
+          '204': { description: 'No content' }
+        },
+        ctx
+      );
       const printed = printNodes(result);
       expect(printed).toContain('export type DeleteUserResponse = void');
     });
 
     it('generates null content for response without content', () => {
       const ctx = createTestContext();
-      const result = generateResponseType('NoContentResponse', {
-        '204': { description: 'No content' }
-      }, ctx);
+      const result = generateResponseType(
+        'NoContentResponse',
+        {
+          '204': { description: 'No content' }
+        },
+        ctx
+      );
       const printed = printNodes(result);
       expect(printed).toContain('oatsNoContent');
     });
 
     it('handles reference response', () => {
       const ctx = createTestContext();
-      const result = generateResponseType('GetUserResponse', {
-        '200': { $ref: '#/components/responses/UserResponse' }
-      }, ctx);
+      const result = generateResponseType(
+        'GetUserResponse',
+        {
+          '200': { $ref: '#/components/responses/UserResponse' }
+        },
+        ctx
+      );
       const printed = printNodes(result);
       expect(printed).toContain("type: 'named'");
     });
 
     it('respects emitStatusCode filter', () => {
       const ctx = createTestContext({ emitStatusCode: code => code < 400 });
-      const result = generateResponseType('GetUserResponse', {
-        '200': {
-          description: 'Success',
-          content: { 'application/json': { schema: { type: 'object' } } }
+      const result = generateResponseType(
+        'GetUserResponse',
+        {
+          '200': {
+            description: 'Success',
+            content: { 'application/json': { schema: { type: 'object' } } }
+          },
+          '500': {
+            description: 'Error',
+            content: { 'application/json': { schema: { type: 'object' } } }
+          }
         },
-        '500': {
-          description: 'Error',
-          content: { 'application/json': { schema: { type: 'object' } } }
-        }
-      }, ctx);
+        ctx
+      );
       const printed = printNodes(result);
       expect(printed).toContain('200');
       expect(printed).not.toContain('500');

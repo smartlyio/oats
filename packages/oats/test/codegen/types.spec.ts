@@ -1,4 +1,9 @@
-import { createContext, GenerationState, Options, AdditionalPropertiesIndexSignature } from '../../src/codegen/context';
+import {
+  createContext,
+  GenerationState,
+  Options,
+  AdditionalPropertiesIndexSignature
+} from '../../src/codegen/context';
 import {
   generateType,
   generateStringType,
@@ -95,10 +100,13 @@ describe('codegen/types', () => {
 
     it('generates nested array type', () => {
       const ctx = createTestContext();
-      const result = generateType({ 
-        type: 'array', 
-        items: { type: 'array', items: { type: 'number' } } 
-      }, ctx);
+      const result = generateType(
+        {
+          type: 'array',
+          items: { type: 'array', items: { type: 'number' } }
+        },
+        ctx
+      );
       expect(printNode(result)).toBe('ReadonlyArray<ReadonlyArray<number>>');
     });
 
@@ -128,20 +136,26 @@ describe('codegen/types', () => {
 
     it('generates union type for oneOf', () => {
       const ctx = createTestContext();
-      const result = generateType({
-        oneOf: [{ type: 'string' }, { type: 'number' }]
-      }, ctx);
+      const result = generateType(
+        {
+          oneOf: [{ type: 'string' }, { type: 'number' }]
+        },
+        ctx
+      );
       expect(printNode(result)).toBe('string | number');
     });
 
     it('generates intersection type for allOf', () => {
       const ctx = createTestContext();
-      const result = generateType({
-        allOf: [
-          { type: 'object', properties: { a: { type: 'string' } }, additionalProperties: false },
-          { type: 'object', properties: { b: { type: 'number' } }, additionalProperties: false }
-        ]
-      }, ctx);
+      const result = generateType(
+        {
+          allOf: [
+            { type: 'object', properties: { a: { type: 'string' } }, additionalProperties: false },
+            { type: 'object', properties: { b: { type: 'number' } }, additionalProperties: false }
+          ]
+        },
+        ctx
+      );
       expect(printNode(result)).toBe('{ readonly a?: string; } & { readonly b?: number; }');
     });
 
@@ -153,33 +167,42 @@ describe('codegen/types', () => {
 
     it('generates object type literal with required property', () => {
       const ctx = createTestContext();
-      const result = generateType({
-        type: 'object',
-        properties: { name: { type: 'string' } },
-        required: ['name'],
-        additionalProperties: false
-      }, ctx);
+      const result = generateType(
+        {
+          type: 'object',
+          properties: { name: { type: 'string' } },
+          required: ['name'],
+          additionalProperties: false
+        },
+        ctx
+      );
       expect(printNode(result)).toBe('{ readonly name: string; }');
     });
 
     it('generates object type literal with optional property', () => {
       const ctx = createTestContext();
-      const result = generateType({
-        type: 'object',
-        properties: { name: { type: 'string' } },
-        additionalProperties: false
-      }, ctx);
+      const result = generateType(
+        {
+          type: 'object',
+          properties: { name: { type: 'string' } },
+          additionalProperties: false
+        },
+        ctx
+      );
       expect(printNode(result)).toBe('{ readonly name?: string; }');
     });
 
     it('generates object type literal with index signature', () => {
       const ctx = createTestContext();
-      const result = generateType({
-        type: 'object',
-        properties: { name: { type: 'string' } },
-        required: ['name'],
-        additionalProperties: true
-      }, ctx);
+      const result = generateType(
+        {
+          type: 'object',
+          properties: { name: { type: 'string' } },
+          required: ['name'],
+          additionalProperties: true
+        },
+        ctx
+      );
       expect(printNode(result)).toBe('{ readonly name: string; readonly [key: string]: unknown; }');
     });
 
@@ -260,26 +283,16 @@ describe('codegen/types', () => {
   describe('generateObjectMembers', () => {
     it('generates required property without question mark', () => {
       const ctx = createTestContext();
-      const result = generateObjectMembers(
-        { name: { type: 'string' } },
-        ['name'],
-        false,
-        ctx
-      );
-      
+      const result = generateObjectMembers({ name: { type: 'string' } }, ['name'], false, ctx);
+
       expect(result).toHaveLength(1);
       expect(printNode(result[0])).toBe('readonly name: string;');
     });
 
     it('generates optional property with question mark', () => {
       const ctx = createTestContext();
-      const result = generateObjectMembers(
-        { name: { type: 'string' } },
-        [],
-        false,
-        ctx
-      );
-      
+      const result = generateObjectMembers({ name: { type: 'string' } }, [], false, ctx);
+
       expect(result).toHaveLength(1);
       expect(printNode(result[0])).toBe('readonly name?: string;');
     });
@@ -287,7 +300,7 @@ describe('codegen/types', () => {
     it('generates multiple properties', () => {
       const ctx = createTestContext();
       const result = generateObjectMembers(
-        { 
+        {
           id: { type: 'integer' },
           name: { type: 'string' },
           active: { type: 'boolean' }
@@ -296,7 +309,7 @@ describe('codegen/types', () => {
         false,
         ctx
       );
-      
+
       expect(result).toHaveLength(3);
       expect(printNode(result[0])).toBe('readonly id: number;');
       expect(printNode(result[1])).toBe('readonly name: string;');
@@ -305,13 +318,8 @@ describe('codegen/types', () => {
 
     it('adds index signature for additional properties true', () => {
       const ctx = createTestContext();
-      const result = generateObjectMembers(
-        { name: { type: 'string' } },
-        ['name'],
-        true,
-        ctx
-      );
-      
+      const result = generateObjectMembers({ name: { type: 'string' } }, ['name'], true, ctx);
+
       expect(result).toHaveLength(2);
       expect(printNode(result[0])).toBe('readonly name: string;');
       expect(printNode(result[1])).toBe('readonly [key: string]: unknown;');
@@ -325,14 +333,14 @@ describe('codegen/types', () => {
         { type: 'number' },
         ctx
       );
-      
+
       expect(result).toHaveLength(2);
       expect(printNode(result[1])).toBe('readonly [key: string]: number;');
     });
 
     it('applies propertyNameMapper', () => {
       const ctx = createTestContext({
-        propertyNameMapper: (name) => name === 'snake_case' ? 'snakeCase' : name
+        propertyNameMapper: name => (name === 'snake_case' ? 'snakeCase' : name)
       });
       const result = generateObjectMembers(
         { snake_case: { type: 'string' } },
@@ -340,7 +348,7 @@ describe('codegen/types', () => {
         false,
         ctx
       );
-      
+
       expect(printNode(result[0])).toBe('readonly snakeCase: string;');
     });
 
@@ -352,7 +360,7 @@ describe('codegen/types', () => {
         false,
         ctx
       );
-      
+
       expect(printNode(result[0])).toBe('readonly "content-type": string;');
     });
   });

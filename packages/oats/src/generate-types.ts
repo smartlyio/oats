@@ -2,10 +2,15 @@
  * Type generation entry point for OpenAPI schemas.
  */
 
-import { debuglog } from 'node:util';
 import * as oas from 'openapi3-ts';
 import * as path from 'path';
-import { errorTag, isReferenceObject, NameKind, NameMapper, UnsupportedFeatureBehaviour } from './util';
+import {
+  errorTag,
+  isReferenceObject,
+  NameKind,
+  NameMapper,
+  UnsupportedFeatureBehaviour
+} from './util';
 import { ts } from './template';
 import {
   createContext,
@@ -18,8 +23,6 @@ import {
   generateQueryTypes,
   generateContentSchemaType
 } from './codegen';
-
-const info = debuglog('oats');
 
 // Re-export types that are part of the public API
 export { AdditionalPropertiesIndexSignature };
@@ -111,7 +114,9 @@ function generateComponentSchemas(ctx: ReturnType<typeof createContext>): string
  * Generates component request bodies and responses.
  */
 function generateComponentRequestsAndResponses(
-  components: { [key: string]: oas.ResponseObject | oas.RequestBodyObject | oas.ReferenceObject } | undefined,
+  components:
+    | { [key: string]: oas.ResponseObject | oas.RequestBodyObject | oas.ReferenceObject }
+    | undefined,
   ctx: ReturnType<typeof createContext>
 ): string[] {
   const result: string[] = [];

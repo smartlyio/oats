@@ -81,9 +81,7 @@ export function createContext(
     ): void {
       if (!state.imports[importAs]) {
         if (importFile) {
-          importFile = /^(\.|\/)/.test(importFile)
-            ? './' + path.normalize(importFile)
-            : importFile;
+          importFile = /^(\.|\/)/.test(importFile) ? './' + path.normalize(importFile) : importFile;
           state.imports[importAs] = importFile;
           if (action) {
             if (generatedFiles.has(importFile)) {
@@ -96,10 +94,7 @@ export function createContext(
       }
     },
 
-    resolveRefToTypeName(
-      ref: string,
-      kind: NameKind
-    ): { qualified?: string; member: string } {
+    resolveRefToTypeName(ref: string, kind: NameKind): { qualified?: string; member: string } {
       const external = options.resolve(ref, options, kind);
       if (external) {
         if ('importAs' in external) {

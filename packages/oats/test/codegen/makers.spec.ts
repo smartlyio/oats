@@ -54,7 +54,7 @@ describe('codegen/makers', () => {
 
     it('uses custom name mapper', () => {
       const ctx = createTestContext({
-        nameMapper: (name, kind) => kind === 'shape' ? `${name}Shape` : name
+        nameMapper: (name, kind) => (kind === 'shape' ? `${name}Shape` : name)
       });
       const result = generateTypeShape('User', 'User', ctx);
       expect(printNode(result)).toBe('export type UserShape = oar.ShapeOf<User>;');
@@ -73,7 +73,9 @@ describe('codegen/makers', () => {
     it('generates maker function', () => {
       const ctx = createTestContext();
       const result = generateTopLevelMaker('User', ctx);
-      expect(printNode(result)).toContain('export const makeUser: oar.make.Maker<ShapeOfUser, User>');
+      expect(printNode(result)).toContain(
+        'export const makeUser: oar.make.Maker<ShapeOfUser, User>'
+      );
       expect(printNode(result)).toContain('oar.make.createMaker');
       expect(printNode(result)).toContain('return oar.fromReflection(typeUser.definition);');
     });
@@ -81,7 +83,9 @@ describe('codegen/makers', () => {
     it('generates builder function with custom name', () => {
       const ctx = createTestContext();
       const result = generateTopLevelMaker('User', ctx, 'build', 'User');
-      expect(printNode(result)).toContain('export const buildUser: oar.make.Maker<ShapeOfUser, User>');
+      expect(printNode(result)).toContain(
+        'export const buildUser: oar.make.Maker<ShapeOfUser, User>'
+      );
       expect(printNode(result)).toContain('return oar.fromReflection(typeUser.definition);');
     });
   });
@@ -90,7 +94,9 @@ describe('codegen/makers', () => {
     it('generates class maker referencing static make method', () => {
       const ctx = createTestContext();
       const result = generateTopLevelClassMaker('User', 'User', ctx);
-      expect(printNode(result)).toBe('export const makeUser: oar.make.Maker<ShapeOfUser, User> = User.make;');
+      expect(printNode(result)).toBe(
+        'export const makeUser: oar.make.Maker<ShapeOfUser, User> = User.make;'
+      );
     });
   });
 
@@ -98,7 +104,9 @@ describe('codegen/makers', () => {
     it('generates class builder function', () => {
       const ctx = createTestContext();
       const result = generateTopLevelClassBuilder('User', 'User', ctx);
-      expect(printNode(result)).toContain('export const buildUser: oar.make.Maker<ShapeOfUser, User>');
+      expect(printNode(result)).toContain(
+        'export const buildUser: oar.make.Maker<ShapeOfUser, User>'
+      );
       expect(printNode(result)).toContain('return oar.fromReflection(typeUser.definition);');
     });
   });
@@ -135,7 +143,11 @@ describe('codegen/makers', () => {
 
     it('generates plain type alias for array', () => {
       const ctx = createTestContext();
-      const result = generateTopLevelType('Items', { type: 'array', items: { type: 'string' } }, ctx);
+      const result = generateTopLevelType(
+        'Items',
+        { type: 'array', items: { type: 'string' } },
+        ctx
+      );
       const printed = printNodes(result);
       expect(printed).toContain('export type Items = ReadonlyArray<string>;');
       expect(printed).toContain('export type ShapeOfItems = oar.ShapeOf<Items>;');
@@ -146,7 +158,11 @@ describe('codegen/makers', () => {
 
     it('generates plain type alias for union', () => {
       const ctx = createTestContext();
-      const result = generateTopLevelType('Mixed', { oneOf: [{ type: 'string' }, { type: 'number' }] }, ctx);
+      const result = generateTopLevelType(
+        'Mixed',
+        { oneOf: [{ type: 'string' }, { type: 'number' }] },
+        ctx
+      );
       const printed = printNodes(result);
       expect(printed).toContain('export type Mixed = string | number;');
       expect(printed).toContain("type: 'union'");
@@ -154,12 +170,16 @@ describe('codegen/makers', () => {
 
     it('generates class for object type', () => {
       const ctx = createTestContext();
-      const result = generateTopLevelType('User', {
-        type: 'object',
-        properties: { name: { type: 'string' } },
-        required: ['name'],
-        additionalProperties: false
-      }, ctx);
+      const result = generateTopLevelType(
+        'User',
+        {
+          type: 'object',
+          properties: { name: { type: 'string' } },
+          required: ['name'],
+          additionalProperties: false
+        },
+        ctx
+      );
       const printed = printNodes(result);
       expect(printed).toContain('export type ShapeOfUser = oar.ShapeOf<User>;');
       expect(printed).toContain('export class User extends oar.valueClass.ValueClass');
