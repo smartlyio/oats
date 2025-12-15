@@ -4,7 +4,7 @@
 
 import * as oas from 'openapi3-ts';
 import { GenerationContext } from './context';
-import { ts, raw } from '../template';
+import { ts } from '../template';
 import { runtime, fromLib } from './helpers';
 import { generateClassMembers } from './types';
 
@@ -40,7 +40,7 @@ export function generateClassConstructor(key: string, ctx: GenerationContext): s
   const shapeName = options.nameMapper(key, 'shape');
   const valueName = options.nameMapper(key, 'value');
 
-  return raw`public constructor(value: ${shapeName}, opts?: ${fromLib(
+  return ts`public constructor(value: ${shapeName}, opts?: ${fromLib(
     'make',
     'MakeOptions'
   )} | InternalUnsafeConstructorOption) { super(); ${runtime}.instanceAssign(this, value, opts, build${valueName}); }`;
@@ -54,7 +54,7 @@ export function generateReflectionProperty(key: string, ctx: GenerationContext):
   const valueName = options.nameMapper(key, 'value');
   const reflectionName = options.nameMapper(key, 'reflection');
 
-  return raw`public static reflection: ${fromLib(
+  return ts`public static reflection: ${fromLib(
     'reflection',
     'NamedTypeDefinitionDeferred'
   )}<${valueName}> = () => { return ${reflectionName}; };`;
@@ -68,7 +68,7 @@ export function generateClassMakeMethod(key: string, ctx: GenerationContext): st
   const className = options.nameMapper(key, 'value');
   const shapeName = options.nameMapper(key, 'shape');
 
-  return raw`static make(value: ${shapeName}, opts?: ${runtime}.make.MakeOptions): ${runtime}.make.Make<${className}> { if (value instanceof ${className}) { return ${runtime}.make.Make.ok(value); } const make = build${className}(value, opts); if (make.isError()) { return ${runtime}.make.Make.error(make.errors); } else { return ${runtime}.make.Make.ok(new ${className}(make.success(), { unSafeSet: true })); } }`;
+  return ts`static make(value: ${shapeName}, opts?: ${runtime}.make.MakeOptions): ${runtime}.make.Make<${className}> { if (value instanceof ${className}) { return ${runtime}.make.Make.ok(value); } const make = build${className}(value, opts); if (make.isError()) { return ${runtime}.make.Make.error(make.errors); } else { return ${runtime}.make.Make.ok(new ${className}(make.success(), { unSafeSet: true })); } }`;
 }
 
 /**

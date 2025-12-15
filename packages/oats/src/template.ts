@@ -1,27 +1,12 @@
 /**
  * Tagged template literal utilities for TypeScript code generation.
- * Uses Prettier for consistent formatting of complete statements.
  */
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const prettier = require('prettier') as {
-  format: (source: string, options: Record<string, unknown>) => string;
-};
-
-/** Fixed Prettier config to ensure consistent output regardless of project settings. */
-const PRETTIER_CONFIG = {
-  parser: 'typescript',
-  singleQuote: true,
-  printWidth: 100,
-  tabWidth: 4,
-  trailingComma: 'none'
-};
 
 /**
  * Tagged template that builds strings with array interpolation.
- * Does NOT run Prettier - use for code fragments that aren't complete statements.
+ * Arrays are joined with newlines, null/undefined values are omitted.
  */
-export function raw(
+export function ts(
   strings: TemplateStringsArray,
   ...values: (string | readonly string[] | undefined | null)[]
 ): string {
@@ -36,18 +21,6 @@ export function raw(
     result += strings[i + 1];
   }
   return result;
-}
-
-/**
- * Tagged template that formats TypeScript code using Prettier.
- * Use for complete statements/declarations that can be parsed as valid TypeScript.
- */
-export function ts(
-  strings: TemplateStringsArray,
-  ...values: (string | readonly string[] | undefined | null)[]
-): string {
-  const result = raw(strings, ...values);
-  return prettier.format(result, PRETTIER_CONFIG).trim();
 }
 
 /**
