@@ -151,9 +151,8 @@ describe('codegen/makers', () => {
       const printed = printNodes(result);
       expect(printed).toContain('export type Items = ReadonlyArray<string>;');
       expect(printed).toContain('export type ShapeOfItems = oar.ShapeOf<Items>;');
-      // Prettier uses single quotes for strings in object literals
-      expect(printed).toContain("type: 'array'");
-      expect(printed).toContain("type: 'string'");
+      expect(printed).toContain('type: "array"');
+      expect(printed).toContain('type: "string"');
     });
 
     it('generates plain type alias for union', () => {
@@ -165,7 +164,7 @@ describe('codegen/makers', () => {
       );
       const printed = printNodes(result);
       expect(printed).toContain('export type Mixed = string | number;');
-      expect(printed).toContain("type: 'union'");
+      expect(printed).toContain('type: "union"');
     });
 
     it('generates class for object type', () => {
