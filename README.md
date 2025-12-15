@@ -262,4 +262,3 @@ yarn publish:patch # or minor or major
 We support also property based testing and test data generation with 
 [fast-check](https://github.com/dubzzz/fast-check) through 
 [oats-fast-check](https://github.com/smartlyio/oats/tree/master/packages/oats-fast-check)
- 

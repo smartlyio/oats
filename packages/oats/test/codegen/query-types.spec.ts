@@ -203,8 +203,7 @@ describe('codegen/query-types', () => {
       ];
       const result = generateParameterType('header', 'AuthHeaders', params, ctx.options.oas, ctx);
       const printed = printNodes(result);
-      // Prettier uses single quotes for property names with special chars
-      expect(printed).toContain("'X-Api-Key'");
+      expect(printed).toContain('"X-Api-Key"');
       expect(printed).toContain('string');
     });
 
@@ -222,8 +221,7 @@ describe('codegen/query-types', () => {
         name => name.toLowerCase()
       );
       const printed = printNodes(result);
-      // Prettier uses single quotes for property names with special chars
-      expect(printed).toContain("'x-api-key'");
+      expect(printed).toContain('"x-api-key"');
     });
   });
 
@@ -262,7 +260,7 @@ describe('codegen/query-types', () => {
       );
       const printed = printNodes(result);
       expect(printed).toContain('contentType');
-      expect(printed).toContain("'application/json'");
+      expect(printed).toContain('"application/json"');
     });
 
     it('generates optional union for non-required request body', () => {
@@ -277,7 +275,7 @@ describe('codegen/query-types', () => {
         ctx
       );
       const printed = printNodes(result);
-      expect(printed).toContain("type: 'union'");
+      expect(printed).toContain('type: "union"');
     });
   });
 
@@ -325,7 +323,7 @@ describe('codegen/query-types', () => {
         ctx
       );
       const printed = printNodes(result);
-      expect(printed).toContain("type: 'union'");
+      expect(printed).toContain('type: "union"');
     });
 
     it('generates void for empty responses', () => {
@@ -364,7 +362,7 @@ describe('codegen/query-types', () => {
         ctx
       );
       const printed = printNodes(result);
-      expect(printed).toContain("type: 'named'");
+      expect(printed).toContain('type: "named"');
     });
 
     it('respects emitStatusCode filter', () => {
