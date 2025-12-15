@@ -27,8 +27,7 @@
   "dependencies": {
     "js-yaml": "^4.0.0",
     "lodash": "^4.17.20",
-    "openapi3-ts": "^3.0.0",
-    "prettier": "^2.8.0"
+    "openapi3-ts": "^3.0.0"
   },
   "keywords": [
     "oats",
@@ -41,6 +40,7 @@
   ],
   "devDependencies": {
     "@smartlyio/oats-axios-adapter": "^7.6.1",
+    "prettier": "^3.0.0",
     "@smartlyio/oats-fetch-adapter": "^7.6.1",
     "@smartlyio/oats-koa-adapter": "^7.6.1",
     "@smartlyio/oats-runtime": "^7.6.1",

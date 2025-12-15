@@ -3,7 +3,7 @@ import * as assert from 'assert';
 import * as oautil from './util';
 import { server, client } from '@smartlyio/oats-runtime';
 import { NameMapper, UnsupportedFeatureBehaviour } from './util';
-import { ts, raw, quoteProp, str, join } from './template';
+import { ts, quoteProp, str, join } from './template';
 
 /**
  * Generates an import statement for the runtime module.
@@ -84,7 +84,7 @@ function generateEndpoint(path: string, schema: oas.PathItemObject, opts: Option
     })
   );
 
-  return raw`{ ${signatures.join(' ')} }`;
+  return ts`{ ${signatures.join(' ')} }`;
 }
 
 /**
@@ -156,7 +156,7 @@ function generateClientTree(opts: Options, tree: client.OpTree<string>): string[
  */
 function generateClientSpecType(opts: Options, tree: client.OpTree<string>): string {
   const members = generateClientTree(opts, tree);
-  return raw`{ ${members.join(' ')} }`;
+  return ts`{ ${members.join(' ')} }`;
 }
 
 /**
@@ -234,7 +234,7 @@ function generateMaker(
   const response = makeMaker(oautil.endpointTypeName(object, path, method, 'response'), opts);
   const serversStr = servers.map(s => str(s)).join(', ');
 
-  return raw`{ path: ${str(path)}, method: ${str(
+  return ts`{ path: ${str(path)}, method: ${str(
     method
   )}, servers: [${serversStr}], headers: ${headers}, query: ${query}, body: ${body}, params: ${params}, response: ${response} }`;
 }

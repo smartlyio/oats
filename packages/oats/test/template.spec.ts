@@ -1,23 +1,10 @@
-import { ts, raw, quoteProp, str, when, join } from '../src/template';
+import { ts, quoteProp, str, when, join } from '../src/template';
 
 describe('template utilities', () => {
   describe('ts tagged template', () => {
-    it('formats code with Prettier', () => {
+    it('concatenates strings', () => {
       const result = ts`const x = 1; const y = 2;`;
-      // Prettier formats as separate lines
-      expect(result).toBe('const x = 1;\nconst y = 2;');
-    });
-
-    it('handles single declaration', () => {
-      const result = ts`const x = 1;`;
-      expect(result).toBe('const x = 1;');
-    });
-
-    it('formats function declarations', () => {
-      const result = ts`function foo() { return 1; }`;
-      // Prettier will format multi-line
-      expect(result).toContain('function foo()');
-      expect(result).toContain('return 1;');
+      expect(result).toBe('const x = 1; const y = 2;');
     });
 
     it('interpolates string values', () => {
@@ -29,80 +16,30 @@ describe('template utilities', () => {
     it('interpolates arrays by joining with newlines', () => {
       const members = ['a: string;', 'b: number;'];
       const result = ts`interface Foo { ${members} }`;
-      // Prettier formats interface members
-      expect(result).toContain('interface Foo');
-      expect(result).toContain('a: string;');
-      expect(result).toContain('b: number;');
+      expect(result).toBe('interface Foo { a: string;\nb: number; }');
     });
 
     it('handles empty arrays', () => {
       const members: string[] = [];
       const result = ts`interface Foo { ${members} }`;
-      expect(result).toBe('interface Foo {}');
-    });
-
-    it('handles null and undefined values by omitting them', () => {
-      const maybeValue: string | null = null;
-      const maybeUndefined: string | undefined = undefined;
-      const result = ts`const x = "prefix${maybeValue}${maybeUndefined}suffix";`;
-      expect(result).toContain('prefixsuffix');
-    });
-
-    it('handles nested templates', () => {
-      const inner = 'nested: true,';
-      const result = ts`const obj = { ${inner} outer: false };`;
-      expect(result).toContain('nested: true');
-      expect(result).toContain('outer: false');
-    });
-
-    it('formats type definitions', () => {
-      const typeName = 'MyType';
-      const result = ts`type ${typeName} = { x: number; y: number; };`;
-      expect(result).toContain('type MyType');
-      expect(result).toContain('x: number');
-      expect(result).toContain('y: number');
-    });
-
-    it('uses single quotes by default', () => {
-      const result = ts`const x = { name: "foo" };`;
-      // Prettier config uses singleQuote: true
-      expect(result).toContain("name: 'foo'");
-    });
-  });
-
-  describe('raw tagged template', () => {
-    it('concatenates without formatting', () => {
-      const result = raw`const x = 1; const y = 2;`;
-      expect(result).toBe('const x = 1; const y = 2;');
-    });
-
-    it('interpolates string values', () => {
-      const name = 'myVar';
-      const result = raw`const ${name} = 1;`;
-      expect(result).toBe('const myVar = 1;');
-    });
-
-    it('interpolates arrays by joining with newlines', () => {
-      const members = ['a: string', 'b: number'];
-      const result = raw`interface Foo { ${members} }`;
-      expect(result).toBe('interface Foo { a: string\nb: number }');
-    });
-
-    it('handles empty arrays', () => {
-      const members: string[] = [];
-      const result = raw`interface Foo { ${members} }`;
       expect(result).toBe('interface Foo {  }');
     });
 
     it('handles null and undefined values by omitting them', () => {
       const maybeValue: string | null = null;
       const maybeUndefined: string | undefined = undefined;
-      const result = raw`prefix${maybeValue}${maybeUndefined}suffix`;
-      expect(result).toBe('prefixsuffix');
+      const result = ts`const x = "prefix${maybeValue}${maybeUndefined}suffix";`;
+      expect(result).toBe('const x = "prefixsuffix";');
+    });
+
+    it('handles nested templates', () => {
+      const inner = 'nested: true,';
+      const result = ts`const obj = { ${inner} outer: false };`;
+      expect(result).toBe('const obj = { nested: true, outer: false };');
     });
 
     it('preserves whitespace exactly', () => {
-      const result = raw`
+      const result = ts`
         some
         indented
         content
