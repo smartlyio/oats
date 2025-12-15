@@ -30,4 +30,3 @@ export async function expectCodeEqual(actual: string, expected: string): Promise
   const formattedExpected = await format(expected);
   expect(formattedActual).toBe(formattedExpected);
 }
-
