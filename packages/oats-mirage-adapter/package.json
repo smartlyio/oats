@@ -1,6 +1,6 @@
 {
   "name": "@smartlyio/oats-mirage-adapter",
-  "version": "7.6.2",
+  "version": "7.6.3",
   "description": "Mirage.js adapter for Oats",
   "licence": "MIT",
   "private": false,
@@ -35,12 +35,13 @@
     "server"
   ],
   "devDependencies": {
-    "@smartlyio/oats-runtime": "^7.6.2",
+    "@smartlyio/oats-runtime": "^7.6.3",
     "@types/lodash": "4.14.195",
     "@types/node": "18.16.18",
     "miragejs": "0.1.47",
     "nodemon": "2.0.22",
     "ts-node": "10.9.1",
     "typescript": "5.9.2"
-  }
+  },
+  "gitHead": "6afcbb2c8491c594374a82f06c1df5f858ed7681"
 }

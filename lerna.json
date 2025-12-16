@@ -3,7 +3,7 @@
     "packages/*"
   ],
   "useWorkspaces": true,
-  "version": "7.6.2",
+  "version": "7.6.3",
   "npmClient": "yarn",
   "ignoreChanges": [
     "packages/**/*.story.tsx",

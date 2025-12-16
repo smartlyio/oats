@@ -1,6 +1,6 @@
 {
   "name": "@smartlyio/oats-nock-adapter",
-  "version": "7.6.2",
+  "version": "7.6.3",
   "license": "MIT",
   "description": "nock server adapter for smartlyio/oats s",
   "private": false,
@@ -37,9 +37,9 @@
     "client"
   ],
   "devDependencies": {
-    "@smartlyio/oats": "^7.6.2",
-    "@smartlyio/oats-axios-adapter": "^7.6.2",
-    "@smartlyio/oats-runtime": "^7.6.2",
+    "@smartlyio/oats": "^7.6.3",
+    "@smartlyio/oats-axios-adapter": "^7.6.3",
+    "@smartlyio/oats-runtime": "^7.6.3",
     "@types/jest": "29.5.2",
     "@types/lodash": "4.14.195",
     "@types/node": "18.16.18",
@@ -71,5 +71,6 @@
     ],
     "preset": "ts-jest",
     "testMatch": null
-  }
+  },
+  "gitHead": "6afcbb2c8491c594374a82f06c1df5f858ed7681"
 }

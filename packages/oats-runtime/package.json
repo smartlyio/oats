@@ -1,6 +1,6 @@
 {
   "name": "@smartlyio/oats-runtime",
-  "version": "7.6.2",
+  "version": "7.6.3",
   "license": "MIT",
   "description": "Runtime for Oats a Openapi3 based generator for typescript aware servers and clients",
   "private": false,
@@ -54,5 +54,6 @@
     "ts-node": "10.9.1",
     "tsconfig-paths": "4.2.0",
     "typescript": "5.9.2"
-  }
+  },
+  "gitHead": "6afcbb2c8491c594374a82f06c1df5f858ed7681"
 }
