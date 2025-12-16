@@ -44,13 +44,13 @@
   ],
   "devDependencies": {
     "@types/jest": "29.5.2",
-    "@types/lodash": "4.14.195",
-    "@types/node": "18.16.18",
+    "@types/lodash": "4.17.21",
+    "@types/node": "18.19.130",
     "fast-check": "2.25.0",
-    "jest": "29.5.0",
+    "jest": "29.7.0",
     "jsverify": "0.8.4",
     "prettier": "2.8.8",
-    "ts-jest": "29.1.0",
+    "ts-jest": "29.4.6",
     "ts-node": "10.9.1",
     "tsconfig-paths": "4.2.0",
     "typescript": "5.9.2"
