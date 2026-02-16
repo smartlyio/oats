@@ -217,29 +217,25 @@ export class Server<Spec> {
     const nocked = this.getNock(server, method, path);
     nock(server)
       [method](getPathRegex(path))
-      .reply(async function (uri, requestBody, cb) {
+      .reply(async function (uri, requestBody) {
         const headers = normalizeHeaders(this.req.headers);
         const body = getBody(headers['content-type'], requestBody);
         const url = new URL('http://host-for-nock' + uri);
-        try {
-          const result = await nocked({
-            path,
-            method,
-            servers: [server],
-            op,
-            headers,
-            params: getParams(path, uri),
-            query: getQuery(url),
-            body,
-            requestContext: null
-          });
-          const status = result.status;
-          const responseBody = result.value.value;
-          const responseHeaders = result.headers;
-          cb(null, [status, responseBody, responseHeaders]);
-        } catch (e: any) {
-          cb(e, [400, e.message]);
-        }
+        const result = await nocked({
+          path,
+          method,
+          servers: [server],
+          op,
+          headers,
+          params: getParams(path, uri),
+          query: getQuery(url),
+          body,
+          requestContext: null
+        });
+        const status = result.status;
+        const responseBody = result.value.value;
+        const responseHeaders = result.headers;
+        return [status, responseBody, responseHeaders];
       })
       .persist(true);
   }
