@@ -235,7 +235,32 @@ export class Server<Spec> {
         const status = result.status;
         const responseBody = result.value.value;
         const responseHeaders = result.headers;
-        return [status, responseBody, responseHeaders];
+        .reply(function (uri, requestBody, cb) {
+        const headers = normalizeHeaders(this.req.headers);
+        const body = getBody(headers['content-type'], requestBody);
+        const url = new URL('http://host-for-nock' + uri);
+
+        nocked({
+          path,
+          method,
+          servers: [server],
+          op,
+          headers,
+          params: getParams(path, uri),
+          query: getQuery(url),
+          body,
+          requestContext: null
+        })
+          .then(result => {
+            const status = result.status;
+            const responseBody = result.value.value;
+            const responseHeaders = result.headers;
+            cb(null, [status, responseBody, responseHeaders]);
+          })
+          .catch(e => {
+            cb(e, [400, e.message]);
+          });
+      })
       })
       .persist(true);
   }
