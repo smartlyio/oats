@@ -217,25 +217,7 @@ export class Server<Spec> {
     const nocked = this.getNock(server, method, path);
     nock(server)
       [method](getPathRegex(path))
-      .reply(async function (uri, requestBody) {
-        const headers = normalizeHeaders(this.req.headers);
-        const body = getBody(headers['content-type'], requestBody);
-        const url = new URL('http://host-for-nock' + uri);
-        const result = await nocked({
-          path,
-          method,
-          servers: [server],
-          op,
-          headers,
-          params: getParams(path, uri),
-          query: getQuery(url),
-          body,
-          requestContext: null
-        });
-        const status = result.status;
-        const responseBody = result.value.value;
-        const responseHeaders = result.headers;
-        .reply(function (uri, requestBody, cb) {
+      .reply(function (uri, requestBody, cb) {
         const headers = normalizeHeaders(this.req.headers);
         const body = getBody(headers['content-type'], requestBody);
         const url = new URL('http://host-for-nock' + uri);
@@ -260,7 +242,6 @@ export class Server<Spec> {
           .catch(e => {
             cb(e, [400, e.message]);
           });
-      })
       })
       .persist(true);
   }
