@@ -1,0 +1,43 @@
+name: Release Label Check
+
+on:
+  pull_request:
+    types: [opened, labeled, unlabeled, synchronize]
+    branches: [master]
+
+jobs:
+  check-label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify release label
+        env:
+          LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+        run: |
+          HAS_PATCH=$(echo "$LABELS" | grep -c '"patch"' || true)
+          HAS_MINOR=$(echo "$LABELS" | grep -c '"minor"' || true)
+          HAS_MAJOR=$(echo "$LABELS" | grep -c '"major"' || true)
+          HAS_NO_RELEASE=$(echo "$LABELS" | grep -c '"no-release"' || true)
+
+          COUNT=$((HAS_PATCH + HAS_MINOR + HAS_MAJOR))
+
+          if [ "$HAS_NO_RELEASE" -gt 0 ] && [ "$COUNT" -gt 0 ]; then
+            echo "::error::Cannot combine 'no-release' with a version label (patch/minor/major)."
+            exit 1
+          fi
+
+          if [ "$HAS_NO_RELEASE" -gt 0 ]; then
+            echo "Skipping release — 'no-release' label is set."
+            exit 0
+          fi
+
+          if [ "$COUNT" -eq 0 ]; then
+            echo "::error::Missing release label. Add one of: patch, minor, major, or no-release."
+            exit 1
+          fi
+
+          if [ "$COUNT" -gt 1 ]; then
+            echo "::error::Multiple version labels found. Use exactly one of: patch, minor, major."
+            exit 1
+          fi
+
+          echo "Release label check passed."

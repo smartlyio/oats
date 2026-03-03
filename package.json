@@ -31,10 +31,9 @@
     "ci:lint": "yarn lint",
     "ci:test": "yarn test",
     "ci:build": "yarn run --silent build",
-    "publish:canary": "lerna publish --canary --no-private",
-    "publish:patch": "lerna publish patch --no-private",
-    "publish:minor": "lerna publish minor --no-private",
-    "publish:major": "lerna publish major --no-private"
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "publish-packages": "changeset publish"
   },
   "repository": {
     "type": "git",
@@ -50,6 +49,7 @@
     "client"
   ],
   "devDependencies": {
+    "@changesets/cli": "^2.30.0",
     "@types/jest": "29.5.2",
     "@types/js-yaml": "^4.0.9",
     "@types/koa": "2.13.6",

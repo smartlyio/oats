@@ -1,0 +1,22 @@
+{
+  "$schema": "https://unpkg.com/@changesets/config@3.1.1/schema.json",
+  "changelog": "@changesets/cli/changelog",
+  "commit": false,
+  "fixed": [
+    [
+      "@smartlyio/oats",
+      "@smartlyio/oats-runtime",
+      "@smartlyio/oats-axios-adapter",
+      "@smartlyio/oats-fast-check",
+      "@smartlyio/oats-fetch-adapter",
+      "@smartlyio/oats-koa-adapter",
+      "@smartlyio/oats-mirage-adapter",
+      "@smartlyio/oats-nock-adapter"
+    ]
+  ],
+  "linked": [],
+  "access": "public",
+  "baseBranch": "master",
+  "updateInternalDependencies": "patch",
+  "ignore": []
+}
