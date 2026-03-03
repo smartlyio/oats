@@ -24,6 +24,8 @@ jobs:
         run: npm install -g yarn
       - name: Install dependencies
         run: yarn install --frozen-lockfile
+      - name: Verify changeset config
+        run: node scripts/sync-changeset-config.js --check
       - name: Build
         run: yarn ci:build
       - name: Lint
