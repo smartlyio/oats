@@ -35,6 +35,9 @@ jobs:
             echo "type=patch" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Sync changeset config
+        run: node scripts/sync-changeset-config.js
+
       - name: Create changeset file
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}

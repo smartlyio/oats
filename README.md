@@ -237,24 +237,48 @@ app.createApp().listen(port, async () => {
 
 ## Developing and releasing
 
-To initialize the project:
-```bash
-yarn lerna bootstrap
-```
+### Setup
 
-To publish a canary (to test your changes in the depending service)
+Install dependencies (Yarn workspaces will link all packages automatically):
 
 ```bash
-yarn build
-yarn publish:canary
+yarn install
 ```
 
-To publish a new release (you would need admin access to the repo)
+Build all packages:
 
 ```bash
 yarn build
-yarn publish:patch # or minor or major
 ```
+
+### Release workflow
+
+This project uses [Changesets](https://github.com/changesets/changesets) with GitHub Actions for automated versioning and publishing. All packages are versioned together — a change in any package bumps all packages to the same version.
+
+#### How to release
+
+1. **Open a pull request** with your changes against `master`.
+2. **Add a release label** to the PR: `patch`, `minor`, or `major`.
+   - `patch` — bug fixes, small non-breaking changes
+   - `minor` — new features, non-breaking additions
+   - `major` — breaking changes
+   - `no-release` — changes that should not trigger a release (docs, CI, refactors)
+3. **The label is required.** A CI check will block merging if no release label is set.
+4. **Merge the PR.** A GitHub Action will automatically create a changeset and commit it to `master`.
+5. **A "chore: version packages" PR will be opened** by the bot. This PR bumps all package versions and updates changelogs.
+6. **Merge the "Version Packages" PR** to publish all packages to NPM.
+
+Multiple PRs can be merged before the "Version Packages" PR is merged — all changes will be batched into a single version bump.
+
+#### Manual changeset (optional)
+
+If you need finer control over the changelog description, you can create a changeset manually instead of relying on the label automation:
+
+```bash
+npx changeset
+```
+
+This will prompt you to select the bump type and write a summary. Commit the generated file in `.changeset/` with your PR, and use the `no-release` label to skip automatic changeset creation.
 
 
 ## Testing
