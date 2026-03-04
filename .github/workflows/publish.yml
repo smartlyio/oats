@@ -16,17 +16,90 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
           registry-url: "https://registry.npmjs.org"
+
       - name: Install yarn
         run: npm install -g yarn
+
       - name: Install dependencies
         run: yarn install --frozen-lockfile
+
+      - name: Sync changeset config
+        run: node scripts/sync-changeset-config.js
+
       - name: Build
         run: yarn ci:build
+
+      - name: Generate changesets from merged PRs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          LAST_VERSION_SHA=$(git log --grep="^chore: version packages$" -1 --format=%H)
+
+          if [ -n "$LAST_VERSION_SHA" ]; then
+            SINCE_DATE=$(git log -1 --format=%aI "$LAST_VERSION_SHA")
+            echo "Last version commit: $(git log -1 --oneline "$LAST_VERSION_SHA")"
+            echo "Looking for PRs merged after: $SINCE_DATE"
+          else
+            SINCE_DATE="2000-01-01T00:00:00Z"
+            echo "No version commits found — scanning all merged PRs"
+          fi
+
+          PRS=$(gh pr list --state merged --base master --limit 100 \
+            --json number,title,labels,mergedAt)
+
+          FILTERED=$(echo "$PRS" | jq -c --arg since "$SINCE_DATE" \
+            '[.[] | select(.mergedAt > $since)]')
+
+          COUNT=$(echo "$FILTERED" | jq 'length')
+          echo "Found $COUNT merged PR(s) since last version"
+
+          GENERATED=0
+          NUMBERS=$(echo "$FILTERED" | jq -r '.[].number')
+
+          for NUMBER in $NUMBERS; do
+            PR=$(echo "$FILTERED" | jq -c ".[] | select(.number == $NUMBER)")
+            TITLE=$(echo "$PR" | jq -r '.title')
+            LABEL_NAMES=$(echo "$PR" | jq -r '[.labels[].name] | join(" ")')
+
+            if echo "$TITLE" | grep -q "^chore: version packages"; then
+              echo "  skip (version PR): #$NUMBER"
+              continue
+            fi
+
+            if echo "$LABEL_NAMES" | grep -q "no-release"; then
+              echo "  skip (no-release): #$NUMBER — $TITLE"
+              continue
+            fi
+
+            BUMP=""
+            if echo "$LABEL_NAMES" | grep -q "major"; then
+              BUMP="major"
+            elif echo "$LABEL_NAMES" | grep -q "minor"; then
+              BUMP="minor"
+            elif echo "$LABEL_NAMES" | grep -q "patch"; then
+              BUMP="patch"
+            fi
+
+            if [ -z "$BUMP" ]; then
+              echo "  skip (no release label): #$NUMBER — $TITLE"
+              continue
+            fi
+
+            printf '%s\n' "---" "\"@smartlyio/oats\": ${BUMP}" "---" "" "${TITLE} (#${NUMBER})" > ".changeset/pr-${NUMBER}.md"
+            echo "  generated ($BUMP): #$NUMBER — $TITLE"
+            GENERATED=$((GENERATED + 1))
+          done
+
+          echo ""
+          echo "Generated $GENERATED changeset(s)"
 
       - name: Create Release Pull Request or Publish
         id: changesets

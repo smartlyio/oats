@@ -15,11 +15,9 @@ jobs:
         node-version: [20.x]
 
     permissions:
-      contents: write
+      contents: read
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -28,18 +26,8 @@ jobs:
         run: npm install -g yarn
       - name: Install dependencies
         run: yarn install --frozen-lockfile
-      - name: Sync changeset config
-        run: |
-          node scripts/sync-changeset-config.js
-          if git diff --quiet .changeset/config.json; then
-            echo "No changes needed"
-          else
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            git add .changeset/config.json
-            git commit -m "chore: sync changeset config with workspace packages"
-            git push
-          fi
+      - name: Verify changeset config
+        run: node scripts/sync-changeset-config.js --check
       - name: Build
         run: yarn ci:build
       - name: Lint
