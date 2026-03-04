@@ -266,11 +266,14 @@ Contributors do not need to create changeset files manually. The release process
    - `major` — breaking changes
    - `no-release` — changes that should not trigger a release (docs, CI, refactors)
 3. **The label is required.** A CI check will block merging if no release label is set.
-4. **Merge the PR.** That's it from the contributor's side.
-5. A GitHub Action automatically generates changeset files from the merged PR's label and title, then opens (or updates) a **"chore: version packages" PR** that bumps all package versions and updates changelogs.
-6. **A maintainer merges the "Version Packages" PR** to publish all packages to npm.
+4. **Merge the PR.** That's it — the rest is fully automated.
 
-Multiple PRs can be merged before the version PR is merged — all changes will be batched into a single release.
+After merge, a GitHub Action automatically:
+- Generates a changeset from the PR's label and title
+- Bumps all package versions and updates changelogs
+- Commits the version bump to `master`
+- Publishes all packages to npm
+- Creates git tags for the release
 
 #### CI checks on pull requests
 
