@@ -1,3 +1,19 @@
+# Release label check — the primary gate for the release process.
+#
+# Every PR to master must have exactly one release label:
+#   - patch  → bug fixes, small non-breaking changes
+#   - minor  → new features, non-breaking additions
+#   - major  → breaking changes
+#   - no-release → changes that should not trigger a release (docs, CI, etc.)
+#
+# This label drives the entire release automation. After merge, the Publish
+# workflow reads the label to determine the version bump type and generates
+# the CHANGELOG entry from the PR title. No other action is required from
+# contributors.
+#
+# The check re-runs on label changes (labeled/unlabeled) so contributors
+# get immediate feedback when they add or remove labels.
+
 name: Release Label Check
 
 on:
@@ -20,6 +36,8 @@ jobs:
 
           COUNT=$((HAS_PATCH + HAS_MINOR + HAS_MAJOR))
 
+          # Combining no-release with a version label is contradictory and
+          # likely a mistake — fail early to avoid confusion.
           if [ "$HAS_NO_RELEASE" -gt 0 ] && [ "$COUNT" -gt 0 ]; then
             echo "::error::Cannot combine 'no-release' with a version label (patch/minor/major)."
             exit 1
@@ -35,6 +53,7 @@ jobs:
             exit 1
           fi
 
+          # Multiple version labels would make the bump type ambiguous.
           if [ "$COUNT" -gt 1 ]; then
             echo "::error::Multiple version labels found. Use exactly one of: patch, minor, major."
             exit 1

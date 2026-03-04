@@ -1,27 +1,57 @@
+# Publish workflow — automated versioning and npm publishing.
+#
+# This workflow eliminates all manual release steps. Contributors only need to
+# add a label (patch/minor/major) to their PR. After merge, this workflow:
+#   1. Generates changeset files from merged PR metadata (label + title)
+#   2. Bumps package versions and updates CHANGELOGs
+#   3. Commits the version bump directly to master
+#   4. Publishes all packages to npm
+#   5. Creates and pushes git tags
+#
+# Changeset files are ephemeral — they are generated on-the-fly during the
+# workflow and never committed to the repository. The PR label determines the
+# bump type, and the PR title becomes the CHANGELOG entry.
+#
+# All 8 packages are in a "fixed" version group (see .changeset/config.json),
+# meaning they are always released together with the same version number.
+# Only @smartlyio/oats needs to be referenced in the changeset — changesets
+# will automatically bump all packages in the fixed group.
+
 name: Publish
 
 on:
   push:
     branches: [master]
 
+# Prevent concurrent runs. If multiple PRs are merged in quick succession,
+# each triggered run will queue and execute in order, ensuring version bumps
+# don't conflict with each other.
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
   publish:
     runs-on: ubuntu-latest
 
+    # contents:write is needed to push version bump commits and git tags.
+    # No pull-requests permission is needed since we publish directly
+    # (no intermediate "version packages" PR).
     permissions:
       contents: write
 
     steps:
       - uses: actions/checkout@v4
         with:
+          # Full history is required to find the last "chore: version packages"
+          # commit, which serves as the reference point for determining which
+          # merged PRs still need changesets generated.
           fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
+          # registry-url must be set for npm publish authentication to work.
+          # It configures .npmrc so that NODE_AUTH_TOKEN is used automatically.
           registry-url: "https://registry.npmjs.org"
 
       - name: Install yarn
@@ -30,16 +60,37 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
+      # Auto-fix the changeset config so the "fixed" group always matches the
+      # actual workspace packages. This is a safety net — CI runs this in
+      # --check mode to catch drift early, but here we auto-fix in case a new
+      # package was added without updating the config.
       - name: Sync changeset config
         run: node scripts/sync-changeset-config.js
 
       - name: Build
         run: yarn ci:build
 
+      # This step bridges the gap between "PR labels" and "changesets".
+      # Instead of asking developers to create changeset files manually,
+      # we generate them automatically from merged PR metadata.
+      #
+      # How it works:
+      #   1. Find the last "chore: version packages" commit on master — this
+      #      marks the boundary of the last release.
+      #   2. Query the GitHub API for all PRs merged after that point.
+      #   3. For each PR with a release label, generate a .changeset/pr-{N}.md
+      #      file on disk (never committed — consumed by `changeset version`).
+      #   4. Skip version-bump PRs, no-release PRs, and unlabeled PRs.
+      #
+      # The PR title becomes the CHANGELOG entry, and the label determines
+      # the bump type (patch/minor/major).
       - name: Generate changesets from merged PRs
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          # Find the last version bump commit to use as the "since" boundary.
+          # The grep pattern has no "$" anchor so it matches both old-style
+          # commits and newer ones that include "[skip ci]" in the message.
           LAST_VERSION_SHA=$(git log --grep="^chore: version packages" -1 --format=%H)
 
           if [ -n "$LAST_VERSION_SHA" ]; then
@@ -68,6 +119,7 @@ jobs:
             TITLE=$(echo "$PR" | jq -r '.title')
             LABEL_NAMES=$(echo "$PR" | jq -r '[.labels[].name] | join(" ")')
 
+            # Skip automated version bump PRs to avoid infinite loops.
             if echo "$TITLE" | grep -q "^chore: version packages"; then
               echo "  skip (version commit): #$NUMBER"
               continue
@@ -78,6 +130,7 @@ jobs:
               continue
             fi
 
+            # Highest bump type wins: major > minor > patch.
             BUMP=""
             if echo "$LABEL_NAMES" | grep -q "major"; then
               BUMP="major"
@@ -92,6 +145,9 @@ jobs:
               continue
             fi
 
+            # Generate a changeset file on disk. Only @smartlyio/oats is listed
+            # because all packages share a "fixed" version group — changesets
+            # will bump them all together automatically.
             printf '%s\n' "---" "\"@smartlyio/oats\": ${BUMP}" "---" "" "${TITLE} (#${NUMBER})" > ".changeset/pr-${NUMBER}.md"
             echo "  generated ($BUMP): #$NUMBER — $TITLE"
             GENERATED=$((GENERATED + 1))
@@ -100,6 +156,10 @@ jobs:
           echo ""
           echo "Generated $GENERATED changeset(s)"
 
+      # Run `changeset version` to consume the generated changeset files,
+      # bump package.json versions, and update CHANGELOG.md files.
+      # If no changesets were generated (e.g., only no-release PRs were merged),
+      # this step is a no-op and downstream steps are skipped.
       - name: Version packages
         id: version
         run: |
@@ -115,6 +175,9 @@ jobs:
           yarn changeset version
           echo "has_changesets=true" >> "$GITHUB_OUTPUT"
 
+      # Commit version bumps directly to master. The "[skip ci]" marker in the
+      # commit message prevents this push from triggering another workflow run,
+      # which would otherwise cause an infinite loop.
       - name: Commit version bumps
         if: steps.version.outputs.has_changesets == 'true'
         run: |
@@ -124,10 +187,17 @@ jobs:
           git commit -m "chore: version packages [skip ci]"
           git push
 
+      # Publish all packages to npm. This step runs unconditionally because
+      # `changeset publish` is idempotent — it checks each package's version
+      # against npm and only publishes versions that don't exist yet. This
+      # makes it safe to re-run the workflow if a previous run failed mid-publish.
       - name: Publish to npm
         run: yarn changeset publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      # `changeset publish` creates git tags (e.g., @smartlyio/oats@2.18.0)
+      # locally. This step pushes them to the remote. Errors are suppressed
+      # in case there are no new tags (e.g., everything was already published).
       - name: Push git tags
         run: git push --tags 2>/dev/null || true
