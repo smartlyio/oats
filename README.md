@@ -255,6 +255,8 @@ yarn build
 
 This project uses [Changesets](https://github.com/changesets/changesets) with GitHub Actions for automated versioning and publishing. All packages are versioned together — a change in any package bumps all packages to the same version.
 
+Contributors do not need to create changeset files manually. The release process is driven entirely by PR labels.
+
 #### How to release
 
 1. **Open a pull request** with your changes against `master`.
@@ -264,21 +266,18 @@ This project uses [Changesets](https://github.com/changesets/changesets) with Gi
    - `major` — breaking changes
    - `no-release` — changes that should not trigger a release (docs, CI, refactors)
 3. **The label is required.** A CI check will block merging if no release label is set.
-4. **Merge the PR.** A GitHub Action will automatically create a changeset and commit it to `master`.
-5. **A "chore: version packages" PR will be opened** by the bot. This PR bumps all package versions and updates changelogs.
-6. **Merge the "Version Packages" PR** to publish all packages to NPM.
+4. **Merge the PR.** That's it from the contributor's side.
+5. A GitHub Action automatically generates changeset files from the merged PR's label and title, then opens (or updates) a **"chore: version packages" PR** that bumps all package versions and updates changelogs.
+6. **A maintainer merges the "Version Packages" PR** to publish all packages to npm.
 
-Multiple PRs can be merged before the "Version Packages" PR is merged — all changes will be batched into a single version bump.
+Multiple PRs can be merged before the version PR is merged — all changes will be batched into a single release.
 
-#### Manual changeset (optional)
+#### CI checks on pull requests
 
-If you need finer control over the changelog description, you can create a changeset manually instead of relying on the label automation:
-
-```bash
-npx changeset
-```
-
-This will prompt you to select the bump type and write a summary. Commit the generated file in `.changeset/` with your PR, and use the `no-release` label to skip automatic changeset creation.
+| Check | What it does |
+|---|---|
+| **Release Label Check** | Fails if no release label is set. Ensures exactly one of `patch`, `minor`, `major`, or `no-release` is present. |
+| **CI** | Builds, lints, tests, and verifies that the changeset config is in sync with workspace packages. |
 
 
 ## Testing
