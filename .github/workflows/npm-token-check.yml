@@ -1,0 +1,124 @@
+# NPM token validation — ensures the publish token is valid before merge.
+#
+# npm tokens on npmjs.com expire after at most 90 days. If the token expires
+# without being rotated, the Publish workflow will fail silently after merge.
+# This check catches that problem early, during the PR review stage.
+#
+# Two layers of protection:
+#   1. `npm whoami` — verifies the token is currently valid (catches expired
+#      or revoked tokens immediately).
+#   2. Expiry date tracking — uses the NPM_TOKEN_EXPIRY repository variable
+#      to warn BEFORE the token expires, giving maintainers time to rotate it.
+#
+# When rotating the token:
+#   1. Go to https://www.npmjs.com/settings/tokens
+#   2. Generate a new Automation token with publish access
+#   3. Update the NPM_TOKEN secret:
+#      https://github.com/smartlyio/oats/settings/secrets/actions
+#   4. Update the NPM_TOKEN_EXPIRY variable (YYYY-MM-DD format):
+#      https://github.com/smartlyio/oats/settings/variables/actions
+
+name: NPM Token Check
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    branches: [master]
+
+jobs:
+  check-npm-token:
+    runs-on: ubuntu-latest
+    steps:
+      # Verify the token is currently accepted by the npm registry.
+      # `npm whoami` is a read-only call — it only checks authentication,
+      # it does not publish or modify anything.
+      - name: Verify NPM token is valid
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "::error::NPM_TOKEN secret is not configured in this repository."
+            echo ""
+            echo "To fix this:"
+            echo "  1. Go to https://www.npmjs.com/settings/tokens"
+            echo "  2. Generate a new Automation token with publish access"
+            echo "  3. Add it as NPM_TOKEN in repository secrets:"
+            echo "     https://github.com/smartlyio/oats/settings/secrets/actions"
+            exit 1
+          fi
+
+          echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc
+
+          if ! NPM_USER=$(npm whoami --registry https://registry.npmjs.org 2>&1); then
+            echo "::error::NPM token is invalid or expired."
+            echo ""
+            echo "The token stored in the NPM_TOKEN secret no longer works."
+            echo "Please generate a new one:"
+            echo ""
+            echo "  1. Go to https://www.npmjs.com/settings/tokens"
+            echo "  2. Generate a new Automation token with publish access"
+            echo "  3. Update NPM_TOKEN in repository secrets:"
+            echo "     https://github.com/smartlyio/oats/settings/secrets/actions"
+            echo "  4. Update NPM_TOKEN_EXPIRY in repository variables (YYYY-MM-DD):"
+            echo "     https://github.com/smartlyio/oats/settings/variables/actions"
+            exit 1
+          fi
+
+          echo "NPM token is valid (authenticated as: $NPM_USER)"
+          rm -f ~/.npmrc
+
+      # Check how many days remain before the token expires.
+      # This uses the NPM_TOKEN_EXPIRY repository variable (not a secret)
+      # to provide early warnings. The variable should be set to the
+      # expiration date in YYYY-MM-DD format (e.g., 2026-06-01).
+      #
+      # Policy:
+      #   - More than 30 days remaining  → pass
+      #   - 15–30 days remaining         → warning (PR can still merge)
+      #   - Less than 15 days remaining  → fail (rotate before merging)
+      - name: Check token expiry date
+        env:
+          NPM_TOKEN_EXPIRY: ${{ vars.NPM_TOKEN_EXPIRY }}
+        run: |
+          if [ -z "$NPM_TOKEN_EXPIRY" ]; then
+            echo "::warning::NPM_TOKEN_EXPIRY variable is not set. Set it to the token's expiration date (YYYY-MM-DD) in repository variables to enable early expiry warnings."
+            echo "  https://github.com/smartlyio/oats/settings/variables/actions"
+            exit 0
+          fi
+
+          EXPIRY_EPOCH=$(date -d "$NPM_TOKEN_EXPIRY" +%s 2>/dev/null)
+          if [ -z "$EXPIRY_EPOCH" ]; then
+            echo "::warning::Could not parse NPM_TOKEN_EXPIRY value '$NPM_TOKEN_EXPIRY'. Use YYYY-MM-DD format."
+            exit 0
+          fi
+
+          TODAY_EPOCH=$(date +%s)
+          DAYS_LEFT=$(( (EXPIRY_EPOCH - TODAY_EPOCH) / 86400 ))
+
+          if [ "$DAYS_LEFT" -lt 0 ]; then
+            DAYS_AGO=$(( DAYS_LEFT * -1 ))
+            echo "::error::NPM token expired $DAYS_AGO day(s) ago (on $NPM_TOKEN_EXPIRY)."
+            echo ""
+            echo "Please rotate the token immediately:"
+            echo "  1. Go to https://www.npmjs.com/settings/tokens"
+            echo "  2. Generate a new Automation token with publish access"
+            echo "  3. Update NPM_TOKEN in repository secrets:"
+            echo "     https://github.com/smartlyio/oats/settings/secrets/actions"
+            echo "  4. Update NPM_TOKEN_EXPIRY in repository variables (YYYY-MM-DD):"
+            echo "     https://github.com/smartlyio/oats/settings/variables/actions"
+            exit 1
+          elif [ "$DAYS_LEFT" -lt 15 ]; then
+            echo "::error::NPM token expires in $DAYS_LEFT day(s) (on $NPM_TOKEN_EXPIRY). Please rotate it before merging."
+            echo ""
+            echo "  1. Go to https://www.npmjs.com/settings/tokens"
+            echo "  2. Generate a new Automation token with publish access"
+            echo "  3. Update NPM_TOKEN in repository secrets:"
+            echo "     https://github.com/smartlyio/oats/settings/secrets/actions"
+            echo "  4. Update NPM_TOKEN_EXPIRY in repository variables (YYYY-MM-DD):"
+            echo "     https://github.com/smartlyio/oats/settings/variables/actions"
+            exit 1
+          elif [ "$DAYS_LEFT" -lt 30 ]; then
+            echo "::warning::NPM token expires in $DAYS_LEFT day(s) (on $NPM_TOKEN_EXPIRY). Consider rotating it soon."
+          else
+            echo "NPM token expires in $DAYS_LEFT day(s) (on $NPM_TOKEN_EXPIRY)."
+          fi

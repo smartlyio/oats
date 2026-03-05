@@ -283,6 +283,18 @@ If multiple PRs are merged between releases, the highest bump type wins (major >
 |---|---|
 | **Release Label Check** | Fails if no release label is set. Ensures exactly one of `patch`, `minor`, `major`, or `no-release` is present. |
 | **CI** | Builds, lints, and tests the project. |
+| **NPM Token Check** | Verifies the npm publish token is valid and not about to expire. Fails if expired or expiring within 14 days; warns at 30 days. |
+
+#### NPM token rotation
+
+The npm publish token (`NPM_TOKEN`) expires every 90 days. The NPM Token Check workflow catches this early, during PR review rather than at publish time.
+
+When rotating the token:
+
+1. Go to [npmjs.com token settings](https://www.npmjs.com/settings/tokens)
+2. Generate a new **Automation** token with publish access
+3. Update the `NPM_TOKEN` [repository secret](https://github.com/smartlyio/oats/settings/secrets/actions)
+4. Update the `NPM_TOKEN_EXPIRY` [repository variable](https://github.com/smartlyio/oats/settings/variables/actions) with the new expiration date (YYYY-MM-DD format)
 
 
 ## Testing
