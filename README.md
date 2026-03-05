@@ -253,9 +253,9 @@ yarn build
 
 ### Release workflow
 
-This project uses [Changesets](https://github.com/changesets/changesets) with GitHub Actions for automated versioning and publishing. All packages are versioned together — a change in any package bumps all packages to the same version.
+This project uses [Lerna](https://lerna.js.org/) in fixed version mode with GitHub Actions for automated versioning and publishing. All packages are versioned together — a change in any package bumps all packages to the same version.
 
-Contributors do not need to create changeset files manually. The release process is driven entirely by PR labels.
+The release process is driven entirely by PR labels. Contributors do not need to run any versioning or publishing commands.
 
 #### How to release
 
@@ -269,18 +269,20 @@ Contributors do not need to create changeset files manually. The release process
 4. **Merge the PR.** That's it — the rest is fully automated.
 
 After merge, a GitHub Action automatically:
-- Generates a changeset from the PR's label and title
-- Bumps all package versions and updates changelogs
-- Commits the version bump to `master`
-- Publishes all packages to npm
-- Creates git tags for the release
+- Determines the bump type from the PR label
+- Bumps all package versions via `lerna version` (fixed mode)
+- Commits the version bump to `master` with the PR titles as a release log
+- Publishes all packages to npm via `lerna publish`
+- Creates and pushes a `v{VERSION}` git tag
+
+If multiple PRs are merged between releases, the highest bump type wins (major > minor > patch) and all PR titles are included in the version commit.
 
 #### CI checks on pull requests
 
 | Check | What it does |
 |---|---|
 | **Release Label Check** | Fails if no release label is set. Ensures exactly one of `patch`, `minor`, `major`, or `no-release` is present. |
-| **CI** | Builds, lints, tests, and verifies that the changeset config is in sync with workspace packages. |
+| **CI** | Builds, lints, and tests the project. |
 
 
 ## Testing

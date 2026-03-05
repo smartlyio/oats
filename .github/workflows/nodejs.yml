@@ -34,15 +34,6 @@ jobs:
         run: npm install -g yarn
       - name: Install dependencies
         run: yarn install --frozen-lockfile
-
-      # Verify that .changeset/config.json lists all workspace packages in
-      # the "fixed" version group. If a new package is added (or removed)
-      # without updating the config, this step fails with instructions on
-      # how to fix it. The Publish workflow auto-fixes this as a safety net,
-      # but catching it here gives earlier feedback to contributors.
-      - name: Verify changeset config
-        run: node scripts/sync-changeset-config.js --check
-
       - name: Build
         run: yarn ci:build
       - name: Lint
