@@ -2,20 +2,15 @@
 #
 # This workflow eliminates all manual release steps. Contributors only need to
 # add a label (patch/minor/major) to their PR. After merge, this workflow:
-#   1. Generates changeset files from merged PR metadata (label + title)
-#   2. Bumps package versions and updates CHANGELOGs
+#   1. Determines the version bump type from merged PR labels
+#   2. Bumps all package versions using lerna (fixed mode — all packages
+#      share the same version number, configured in lerna.json)
 #   3. Commits the version bump directly to master
 #   4. Publishes all packages to npm
-#   5. Creates and pushes git tags
+#   5. Creates and pushes a git tag
 #
-# Changeset files are ephemeral — they are generated on-the-fly during the
-# workflow and never committed to the repository. The PR label determines the
-# bump type, and the PR title becomes the CHANGELOG entry.
-#
-# All 8 packages are in a "fixed" version group (see .changeset/config.json),
-# meaning they are always released together with the same version number.
-# Only @smartlyio/oats needs to be referenced in the changeset — changesets
-# will automatically bump all packages in the fixed group.
+# The PR label determines the bump type, and the PR titles are included
+# in the version commit message as a lightweight release log.
 
 name: Publish
 
@@ -33,8 +28,6 @@ jobs:
     runs-on: ubuntu-latest
 
     # contents:write is needed to push version bump commits and git tags.
-    # No pull-requests permission is needed since we publish directly
-    # (no intermediate "version packages" PR).
     permissions:
       contents: write
 
@@ -43,7 +36,7 @@ jobs:
         with:
           # Full history is required to find the last "chore: version packages"
           # commit, which serves as the reference point for determining which
-          # merged PRs still need changesets generated.
+          # merged PRs still need to be included in a release.
           fetch-depth: 0
 
       - name: Setup Node.js
@@ -60,31 +53,25 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      # Auto-fix the changeset config so the "fixed" group always matches the
-      # actual workspace packages. This is a safety net — CI runs this in
-      # --check mode to catch drift early, but here we auto-fix in case a new
-      # package was added without updating the config.
-      - name: Sync changeset config
-        run: node scripts/sync-changeset-config.js
-
       - name: Build
         run: yarn ci:build
 
-      # This step bridges the gap between "PR labels" and "changesets".
-      # Instead of asking developers to create changeset files manually,
-      # we generate them automatically from merged PR metadata.
+      # This step bridges the gap between "PR labels" and "lerna version".
+      # Instead of asking developers to run any versioning commands, we
+      # determine the bump type automatically from merged PR metadata.
       #
       # How it works:
       #   1. Find the last "chore: version packages" commit on master — this
       #      marks the boundary of the last release.
       #   2. Query the GitHub API for all PRs merged after that point.
-      #   3. For each PR with a release label, generate a .changeset/pr-{N}.md
-      #      file on disk (never committed — consumed by `changeset version`).
-      #   4. Skip version-bump PRs, no-release PRs, and unlabeled PRs.
+      #   3. For each PR with a release label, record its bump type and title.
+      #   4. The highest bump type wins (major > minor > patch).
+      #   5. PR titles are saved for inclusion in the version commit message.
       #
-      # The PR title becomes the CHANGELOG entry, and the label determines
-      # the bump type (patch/minor/major).
-      - name: Generate changesets from merged PRs
+      # If no qualifying PRs are found (e.g., only no-release PRs were merged),
+      # the bump output is empty and all downstream steps are skipped.
+      - name: Determine version bump from merged PRs
+        id: bump
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -111,7 +98,8 @@ jobs:
           COUNT=$(echo "$FILTERED" | jq 'length')
           echo "Found $COUNT merged PR(s) since last version"
 
-          GENERATED=0
+          BUMP=""
+          rm -f /tmp/pr-entries.txt
           NUMBERS=$(echo "$FILTERED" | jq -r '.[].number')
 
           for NUMBER in $NUMBERS; do
@@ -119,7 +107,7 @@ jobs:
             TITLE=$(echo "$PR" | jq -r '.title')
             LABEL_NAMES=$(echo "$PR" | jq -r '[.labels[].name] | join(" ")')
 
-            # Skip automated version bump PRs to avoid infinite loops.
+            # Skip automated version bump commits to avoid infinite loops.
             if echo "$TITLE" | grep -q "^chore: version packages"; then
               echo "  skip (version commit): #$NUMBER"
               continue
@@ -130,74 +118,79 @@ jobs:
               continue
             fi
 
-            # Highest bump type wins: major > minor > patch.
-            BUMP=""
-            if echo "$LABEL_NAMES" | grep -q "major"; then
-              BUMP="major"
-            elif echo "$LABEL_NAMES" | grep -q "minor"; then
-              BUMP="minor"
-            elif echo "$LABEL_NAMES" | grep -q "patch"; then
-              BUMP="patch"
+            PR_BUMP=""
+            if echo "$LABEL_NAMES" | grep -q "major"; then PR_BUMP="major"
+            elif echo "$LABEL_NAMES" | grep -q "minor"; then PR_BUMP="minor"
+            elif echo "$LABEL_NAMES" | grep -q "patch"; then PR_BUMP="patch"
             fi
 
-            if [ -z "$BUMP" ]; then
+            if [ -z "$PR_BUMP" ]; then
               echo "  skip (no release label): #$NUMBER — $TITLE"
               continue
             fi
 
-            # Generate a changeset file on disk. Only @smartlyio/oats is listed
-            # because all packages share a "fixed" version group — changesets
-            # will bump them all together automatically.
-            printf '%s\n' "---" "\"@smartlyio/oats\": ${BUMP}" "---" "" "${TITLE} (#${NUMBER})" > ".changeset/pr-${NUMBER}.md"
-            echo "  generated ($BUMP): #$NUMBER — $TITLE"
-            GENERATED=$((GENERATED + 1))
+            # Track the highest bump type across all PRs.
+            if [ "$PR_BUMP" = "major" ]; then
+              BUMP="major"
+            elif [ "$PR_BUMP" = "minor" ] && [ "$BUMP" != "major" ]; then
+              BUMP="minor"
+            elif [ "$PR_BUMP" = "patch" ] && [ -z "$BUMP" ]; then
+              BUMP="patch"
+            fi
+
+            echo "- ${TITLE} (#${NUMBER})" >> /tmp/pr-entries.txt
+            echo "  included ($PR_BUMP): #$NUMBER — $TITLE"
           done
 
           echo ""
-          echo "Generated $GENERATED changeset(s)"
+          echo "Resolved bump type: ${BUMP:-none}"
+          echo "bump=$BUMP" >> "$GITHUB_OUTPUT"
 
-      # Run `changeset version` to consume the generated changeset files,
-      # bump package.json versions, and update CHANGELOG.md files.
-      # If no changesets were generated (e.g., only no-release PRs were merged),
-      # this step is a no-op and downstream steps are skipped.
+      # Use lerna's fixed versioning mode to bump ALL packages to the same
+      # new version. The --no-git-tag-version flag prevents lerna from
+      # committing or tagging — we handle that ourselves in the next step
+      # so we can add [skip ci] to the commit message.
+      # --force-publish ensures every package is included even if it has
+      # no direct code changes (important for the fixed version strategy).
       - name: Version packages
-        id: version
+        if: steps.bump.outputs.bump != ''
         run: |
-          CHANGESET_COUNT=$(find .changeset -name '*.md' ! -name 'README.md' 2>/dev/null | wc -l | tr -d ' ')
-
-          if [ "$CHANGESET_COUNT" -eq 0 ]; then
-            echo "No changesets to version"
-            echo "has_changesets=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          echo "Versioning $CHANGESET_COUNT changeset(s)"
-          yarn changeset version
-          echo "has_changesets=true" >> "$GITHUB_OUTPUT"
+          lerna version ${{ steps.bump.outputs.bump }} \
+            --yes \
+            --force-publish \
+            --no-git-tag-version \
+            --no-push
 
       # Commit version bumps directly to master. The "[skip ci]" marker in the
       # commit message prevents this push from triggering another workflow run,
       # which would otherwise cause an infinite loop.
-      - name: Commit version bumps
-        if: steps.version.outputs.has_changesets == 'true'
+      # The commit body includes PR titles as a lightweight release log —
+      # this makes `git log` useful for understanding what each release contains.
+      - name: Commit and tag
+        if: steps.bump.outputs.bump != ''
         run: |
+          VERSION=$(node -p "require('./lerna.json').version")
+
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
-          git commit -m "chore: version packages [skip ci]"
+
+          BODY=""
+          if [ -f /tmp/pr-entries.txt ]; then
+            BODY=$(cat /tmp/pr-entries.txt)
+          fi
+
+          git commit -m "chore: version packages v${VERSION} [skip ci]" -m "$BODY"
+          git tag "v${VERSION}"
           git push
+          git push --tags
 
       # Publish all packages to npm. This step runs unconditionally because
-      # `changeset publish` is idempotent — it checks each package's version
-      # against npm and only publishes versions that don't exist yet. This
-      # makes it safe to re-run the workflow if a previous run failed mid-publish.
+      # `lerna publish from-package` is idempotent — it checks each package's
+      # version against the npm registry and only publishes versions that don't
+      # exist yet. This makes it safe to re-run the workflow if a previous run
+      # failed mid-publish (e.g., 4 of 8 packages published before a timeout).
       - name: Publish to npm
-        run: yarn changeset publish
+        run: lerna publish from-package --yes
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      # `changeset publish` creates git tags (e.g., @smartlyio/oats@2.18.0)
-      # locally. This step pushes them to the remote. Errors are suppressed
-      # in case there are no new tags (e.g., everything was already published).
-      - name: Push git tags
-        run: git push --tags 2>/dev/null || true

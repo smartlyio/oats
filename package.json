@@ -31,9 +31,8 @@
     "ci:lint": "yarn lint",
     "ci:test": "yarn test",
     "ci:build": "yarn run --silent build",
-    "changeset": "changeset",
-    "version-packages": "changeset version",
-    "publish-packages": "changeset publish"
+    "version-packages": "lerna version --yes --force-publish",
+    "publish-packages": "lerna publish from-package --yes"
   },
   "repository": {
     "type": "git",
@@ -49,7 +48,6 @@
     "client"
   ],
   "devDependencies": {
-    "@changesets/cli": "^2.30.0",
     "@types/jest": "29.5.2",
     "@types/js-yaml": "^4.0.9",
     "@types/koa": "2.13.6",
