@@ -1,5 +1,15 @@
 # Oats
 
+## Summary on how to release new versions
+1. Open a PR and slap a label (`patch`/`minor`/`major`/`no-release`)
+2. Wait for CI checks to pass (build, tests, label validation, npm token check)
+3. Get your PR approved
+4. Merge — all packages are automatically versioned and published to npm
+
+> **Note:** The npm token expires every 90 days. If the token check fails, follow the [NPM token rotation](#npm-token-rotation) instructions to generate a new one.
+
+## About Oats
+
 Oats is a generator for TypeScript clients and servers using OpenAPI 3 specs.
 
 For some more context on why Oats came to be, and a more descriptive way of how to use it, check out our blogpost:
