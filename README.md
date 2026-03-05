@@ -301,7 +301,7 @@ The npm publish token (`NPM_TOKEN`) expires every 90 days. The NPM Token Check w
 
 When rotating the token:
 
-1. Go to [npmjs.com token settings](https://www.npmjs.com/settings/tokens)
+1. Go to [npmjs.com token settings](https://docs.npmjs.com/about-access-tokens)
 2. Generate a new **Automation** token with publish access
 3. Update the `NPM_TOKEN` [repository secret](https://github.com/smartlyio/oats/settings/secrets/actions)
 4. Update the `NPM_TOKEN_EXPIRY` [repository variable](https://github.com/smartlyio/oats/settings/variables/actions) with the new expiration date (YYYY-MM-DD format)
