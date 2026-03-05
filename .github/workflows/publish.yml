@@ -152,10 +152,14 @@ jobs:
       # so we can add [skip ci] to the commit message.
       # --force-publish ensures every package is included even if it has
       # no direct code changes (important for the fixed version strategy).
+      #
+      # Running via `yarn lerna` ensures we use the project's local lerna
+      # (pinned in package.json) rather than a globally installed version,
+      # which may be incompatible.
       - name: Version packages
         if: steps.bump.outputs.bump != ''
         run: |
-          lerna version ${{ steps.bump.outputs.bump }} \
+          yarn lerna version ${{ steps.bump.outputs.bump }} \
             --yes \
             --force-publish \
             --no-git-tag-version \
@@ -191,6 +195,6 @@ jobs:
       # exist yet. This makes it safe to re-run the workflow if a previous run
       # failed mid-publish (e.g., 4 of 8 packages published before a timeout).
       - name: Publish to npm
-        run: lerna publish from-package --yes
+        run: yarn lerna publish from-package --yes
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
