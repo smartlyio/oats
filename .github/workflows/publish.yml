@@ -11,6 +11,14 @@
 #
 # The PR label determines the bump type, and the PR titles are included
 # in the version commit message as a lightweight release log.
+#
+# The default GITHUB_TOKEN cannot push to protected branches. This workflow
+# uses the "smartlyio" GitHub App to generate a short-lived token that has
+# permission to bypass branch protection on master. The app must be:
+#   - Installed on this repository with Contents: Read & Write permission
+#   - Listed in the master branch protection rule under "Allow specified
+#     actors to bypass required pull requests"
+# Required secrets: RELEASE_APP_ID, RELEASE_APP_PRIVATE_KEY (from the app).
 
 name: Publish
 
@@ -27,13 +35,28 @@ jobs:
   publish:
     runs-on: ubuntu-latest
 
-    # contents:write is needed to push version bump commits and git tags.
+    # contents:write is needed for the default GITHUB_TOKEN (used by gh CLI).
+    # The actual push to master uses the GitHub App token generated below.
     permissions:
       contents: write
 
     steps:
+      # Generate a short-lived token from the "smartlyio" GitHub App.
+      # This token can bypass branch protection rules on master, unlike
+      # the default GITHUB_TOKEN which is intentionally blocked by GitHub.
+      # The token expires after ~1 hour and is scoped to this repository only.
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+
+      # Checkout using the app token so that subsequent git push commands
+      # authenticate as the GitHub App (which has bypass permissions).
       - uses: actions/checkout@v4
         with:
+          token: ${{ steps.app-token.outputs.token }}
           # Full history is required to find the last "chore: version packages"
           # commit, which serves as the reference point for determining which
           # merged PRs still need to be included in a release.
@@ -170,6 +193,10 @@ jobs:
       # which would otherwise cause an infinite loop.
       # The commit body includes PR titles as a lightweight release log —
       # this makes `git log` useful for understanding what each release contains.
+      #
+      # The git push authenticates as the "smartlyio" GitHub App (via the
+      # token used in actions/checkout), which has permission to bypass
+      # the branch protection rules on master.
       - name: Commit and tag
         if: steps.bump.outputs.bump != ''
         run: |
