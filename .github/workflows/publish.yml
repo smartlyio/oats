@@ -66,9 +66,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
-          # registry-url must be set for npm publish authentication to work.
-          # It configures .npmrc so that NODE_AUTH_TOKEN is used automatically.
-          registry-url: "https://registry.npmjs.org"
 
       - name: Install yarn
         run: npm install -g yarn
@@ -222,11 +219,13 @@ jobs:
       # exist yet. This makes it safe to re-run the workflow if a previous run
       # failed mid-publish (e.g., 4 of 8 packages published before a timeout).
       #
-      # The .npmrc file is written to the project root so that Lerna reliably
-      # picks up the auth token. The default setup from actions/setup-node
-      # places .npmrc in a temp directory, but Lerna running through Yarn may
-      # not find it there (Yarn's registry proxy can interfere). Writing it
-      # to the project root avoids this issue.
+      # Auth setup: we write .npmrc directly instead of using the registry-url
+      # option in actions/setup-node. That option sets NPM_CONFIG_USERCONFIG
+      # to a temp file with a ${NODE_AUTH_TOKEN} variable reference, but Lerna
+      # running through Yarn bypasses npm's config resolution (due to its
+      # "Yarn registry proxy" workaround) and never expands the variable.
+      # Writing the actual token value to .npmrc in the project root ensures
+      # Lerna picks it up regardless of Yarn's registry behavior.
       #
       # Security: this is safe because (1) the runner is an ephemeral VM
       # destroyed after the job, (2) the file is created after the git
