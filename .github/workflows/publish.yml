@@ -221,7 +221,20 @@ jobs:
       # version against the npm registry and only publishes versions that don't
       # exist yet. This makes it safe to re-run the workflow if a previous run
       # failed mid-publish (e.g., 4 of 8 packages published before a timeout).
+      #
+      # The .npmrc file is written to the project root so that Lerna reliably
+      # picks up the auth token. The default setup from actions/setup-node
+      # places .npmrc in a temp directory, but Lerna running through Yarn may
+      # not find it there (Yarn's registry proxy can interfere). Writing it
+      # to the project root avoids this issue.
+      #
+      # Security: this is safe because (1) the runner is an ephemeral VM
+      # destroyed after the job, (2) the file is created after the git
+      # commit/push step so it can never be committed to the repository,
+      # and (3) GitHub Actions automatically masks secrets in log output.
       - name: Publish to npm
-        run: yarn lerna publish from-package --yes
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > .npmrc
+          yarn lerna publish from-package --yes
