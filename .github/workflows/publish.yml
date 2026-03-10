@@ -195,9 +195,9 @@ jobs:
           fi
 
           git commit -m "chore: version packages v${VERSION} [skip ci]" -m "$BODY"
-          git tag "v${VERSION}"
+          git tag -f "v${VERSION}"
           git push
-          git push --tags
+          git push --tags --force
 
       # Publish each package to npm. The logic lives in a separate script
       # for readability. It is idempotent — already-published versions are
