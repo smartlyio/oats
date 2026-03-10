@@ -5,12 +5,12 @@
 #   1. Determines the version bump type from merged PR labels
 #   2. Bumps all package versions with lerna version (fixed mode)
 #   3. Commits the version bump directly to master
-#   4. Publishes each package to npm with `npm publish`
-#   5. Creates and pushes a git tag
-#
-# Publishing uses `npm publish` directly for each package rather than
-# `lerna publish`, which has known issues with Yarn's registry proxy
-# that cause E404 errors during publish.
+#   4. Publishes each package to npm (see .github/scripts/publish-packages.sh)
+ #   5. Creates and pushes a git tag
+ #
+ # Publishing uses `npm publish` directly (via a separate script) rather
+ # than `lerna publish`, which has known issues with Yarn's registry proxy
+ # that cause E404 errors during publish.
 #
 # The default GITHUB_TOKEN cannot push to protected branches. This workflow
 # uses the "smartlyio" GitHub App to generate a short-lived token that has
@@ -199,35 +199,10 @@ jobs:
           git push
           git push --tags
 
-      # Publish each package directly with `npm publish` instead of lerna.
-      # This is idempotent — versions already on the registry are skipped,
-      # so re-running after a partial failure only publishes what's missing.
+      # Publish each package to npm. The logic lives in a separate script
+      # for readability. It is idempotent — already-published versions are
+      # skipped, so re-running after a partial failure is safe.
       - name: Publish to npm
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > .npmrc
-          echo "registry=https://registry.npmjs.org/" >> .npmrc
-
-          FAILED=0
-          for dir in packages/*; do
-            NAME=$(node -p "require('./$dir/package.json').name")
-            VERSION=$(node -p "require('./$dir/package.json').version")
-
-            if npm view "${NAME}@${VERSION}" version >/dev/null 2>&1; then
-              echo "Already published: ${NAME}@${VERSION}"
-            else
-              echo "Publishing ${NAME}@${VERSION}..."
-              if npm publish "./$dir" --access public; then
-                echo "Published ${NAME}@${VERSION}"
-              else
-                echo "::error::Failed to publish ${NAME}@${VERSION}"
-                FAILED=1
-              fi
-            fi
-          done
-
-          if [ "$FAILED" -eq 1 ]; then
-            echo "::error::One or more packages failed to publish. Re-run is safe — already-published versions are skipped."
-            exit 1
-          fi
+        run: ./.github/scripts/publish-packages.sh
