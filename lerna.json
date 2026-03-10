@@ -9,8 +9,5 @@
     "packages/**/*.story.tsx",
     "packages/**/*.spec.tsx",
     "packages/**/.npmignore"
-  ],
-  "publishConfig": {
-    "access": "public"
-  }
+  ]
 }

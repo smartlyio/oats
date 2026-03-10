@@ -282,10 +282,15 @@ After merge, a GitHub Action automatically:
 - Determines the bump type from the PR label
 - Bumps all package versions via `lerna version` (fixed mode)
 - Commits the version bump to `master` with the PR titles as a release log
-- Publishes all packages to npm via `lerna publish`
+- Publishes each package to npm via `npm publish` (idempotent — safe to re-run)
 - Creates and pushes a `v{VERSION}` git tag
 
 If multiple PRs are merged between releases, the highest bump type wins (major > minor > patch) and all PR titles are included in the version commit.
+
+> Publishing uses `npm publish` directly for each package rather than `lerna publish`,
+> which avoids known issues with Lerna's Yarn registry proxy. Each package is published
+> individually, so partial failures show exactly which package failed and re-runs only
+> publish what's missing.
 
 #### CI checks on pull requests
 

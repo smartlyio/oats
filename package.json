@@ -1,6 +1,6 @@
 {
   "name": "@smartlyio/oats",
-  "version": "2.17.0",
+  "version": "7.7.2",
   "license": "MIT",
   "description": "Openapi3 based generator for typescript aware servers and clients",
   "private": true,
@@ -31,8 +31,7 @@
     "ci:lint": "yarn lint",
     "ci:test": "yarn test",
     "ci:build": "yarn run --silent build",
-    "version-packages": "lerna version --yes --force-publish",
-    "publish-packages": "lerna publish from-package --yes"
+    "version-packages": "lerna version --yes --force-publish"
   },
   "repository": {
     "type": "git",
