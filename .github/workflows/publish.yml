@@ -209,7 +209,7 @@ jobs:
             //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
             always-auth = true
         with:
-          npmrc-path: ~/.npmrc
+          npmrc-path: ${{ github.workspace }}/.npmrc
 
       # Publish each package to npm. The script is idempotent — versions
       # already on the registry are skipped, so re-running after a partial
@@ -217,4 +217,5 @@ jobs:
       - name: Publish to npm
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_WORKSPACE: ${{ github.workspace }}
         run: ./.github/scripts/publish-packages.sh
