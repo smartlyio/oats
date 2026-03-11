@@ -20,7 +20,7 @@ for dir in packages/*; do
     echo "Already published: ${NAME}@${VERSION}"
   else
     echo "Publishing ${NAME}@${VERSION}..."
-    if npm publish "./$dir" --access public; then
+    if npm publish "./$dir" --access public --userconfig "$GITHUB_WORKSPACE/.npmrc"; then
       echo "Published ${NAME}@${VERSION}"
     else
       echo "::error::Failed to publish ${NAME}@${VERSION}"
