@@ -199,9 +199,21 @@ jobs:
           git push
           git push --tags --force
 
-      # Publish each package to npm. The logic lives in a separate script
-      # for readability. It is idempotent — already-published versions are
-      # skipped, so re-running after a partial failure is safe.
+
+      # Write ~/.npmrc with the npm auth token. The token value is resolved
+      # at publish time from the NODE_AUTH_TOKEN env var set in the next step.
+      - name: Log in to NPM registry
+        uses: smartlyio/setup-npm-publish-action@v1
+        env:
+          AUTH_TOKEN_STRING: |
+            //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
+            always-auth = true
+        with:
+          npmrc-path: ~/.npmrc
+
+      # Publish each package to npm. The script is idempotent — versions
+      # already on the registry are skipped, so re-running after a partial
+      # failure is safe. See .github/scripts/publish-packages.sh.
       - name: Publish to npm
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
