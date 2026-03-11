@@ -4,17 +4,12 @@
 # Idempotent — versions already on the registry are skipped,
 # so re-running after a partial failure only publishes what's missing.
 #
-# Requires NODE_AUTH_TOKEN to be set in the environment.
+# Expects ~/.npmrc to be configured with registry auth before this
+# script runs (handled by the "Log in to NPM registry" workflow step).
+# Requires NODE_AUTH_TOKEN to be set in the environment (referenced
+# by the ${NODE_AUTH_TOKEN} variable in ~/.npmrc).
 
 set -euo pipefail
-
-if [ -z "${NODE_AUTH_TOKEN:-}" ]; then
-  echo "::error::NODE_AUTH_TOKEN is not set"
-  exit 1
-fi
-
-echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > .npmrc
-echo "registry=https://registry.npmjs.org/" >> .npmrc
 
 FAILED=0
 for dir in packages/*; do
