@@ -1,24 +1,16 @@
-# Publish workflow — automated versioning and npm publishing.
+# Publish workflow — publishes all packages to npm after a version bump PR is merged.
 #
-# Contributors only need to add a label (patch/minor/major) to their PR.
-# After merge, this workflow:
-#   1. Determines the version bump type from merged PR labels
-#   2. Bumps all package versions with lerna version (fixed mode)
-#   3. Commits the version bump directly to master
-#   4. Publishes each package to npm (see .github/scripts/publish-packages.sh)
- #   5. Creates and pushes a git tag
- #
- # Publishing uses `npm publish` directly (via a separate script) rather
- # than `lerna publish`, which has known issues with Yarn's registry proxy
- # that cause E404 errors during publish.
+# This is the second half of the two-step release process:
+#   1. The Version workflow (version.yml) opens a PR with version bumps.
+#   2. A team member reviews and merges the version bump PR.
+#   3. This workflow detects the merge (by matching the commit message),
+#      tags the release, and publishes all packages to npm.
 #
-# The default GITHUB_TOKEN cannot push to protected branches. This workflow
-# uses the "smartlyio" GitHub App to generate a short-lived token that has
-# permission to bypass branch protection on master. The app must be:
-#   - Installed on this repository with Contents: Read & Write permission
-#   - Listed in the master branch protection rule under "Allow specified
-#     actors to bypass required pull requests"
-# Required secrets: RELEASE_APP_ID, RELEASE_APP_PRIVATE_KEY, NPM_TOKEN.
+# The actual publish logic lives in .github/scripts/publish-packages.sh.
+# It is idempotent — already-published versions are skipped, so re-running
+# after a partial failure only publishes what's missing.
+#
+# Required secrets: NPM_TOKEN.
 
 name: Publish
 
@@ -26,41 +18,24 @@ on:
   push:
     branches: [master]
 
-# Prevent concurrent runs. If multiple PRs are merged in quick succession,
-# each triggered run will queue and execute in order, ensuring version bumps
-# don't conflict with each other.
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
   publish:
     runs-on: ubuntu-latest
 
-    # contents:write is needed for the default GITHUB_TOKEN (used by gh CLI).
-    # The actual push to master uses the GitHub App token generated below.
+    # Only run when a version bump PR is merged. The Version workflow
+    # creates commits with this prefix. Using 'contains' instead of
+    # 'startsWith' so it works with all merge strategies (merge commit,
+    # squash, rebase) — merge commits start with "Merge pull request..."
+    # and the actual message appears in the body.
+    if: ${{ contains(github.event.head_commit.message, 'chore: version packages') }}
+
     permissions:
       contents: write
 
     steps:
-      # Generate a short-lived token from the "smartlyio" GitHub App.
-      # This token can bypass branch protection rules on master, unlike
-      # the default GITHUB_TOKEN which is intentionally blocked by GitHub.
-      # The token expires after ~1 hour and is scoped to this repository only.
-      - name: Generate GitHub App token
-        id: app-token
-        uses: actions/create-github-app-token@v1
-        with:
-          app-id: ${{ secrets.RELEASE_APP_ID }}
-          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
-
-      # Checkout using the app token so that subsequent git push commands
-      # authenticate as the GitHub App (which has bypass permissions).
       - uses: actions/checkout@v4
-        with:
-          token: ${{ steps.app-token.outputs.token }}
-          # Full history is required to find the last "chore: version packages"
-          # commit, which serves as the reference point for determining which
-          # merged PRs still need to be included in a release.
-          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -76,132 +51,17 @@ jobs:
       - name: Build
         run: yarn ci:build
 
-      # Determine bump type from merged PR labels. Finds the last release
-      # commit, queries for PRs merged after it, and picks the highest bump
-      # (major > minor > patch). PR titles are saved for the commit message.
-      # If no qualifying PRs are found, bump is empty and later steps are skipped.
-      - name: Determine version bump from merged PRs
-        id: bump
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          # Find the last version bump commit to use as the "since" boundary.
-          # The grep pattern has no "$" anchor so it matches both old-style
-          # commits and newer ones that include "[skip ci]" in the message.
-          LAST_VERSION_SHA=$(git log --grep="^chore: version packages" -1 --format=%H)
-
-          if [ -n "$LAST_VERSION_SHA" ]; then
-            SINCE_DATE=$(git log -1 --format=%aI "$LAST_VERSION_SHA")
-            echo "Last version commit: $(git log -1 --oneline "$LAST_VERSION_SHA")"
-            echo "Looking for PRs merged after: $SINCE_DATE"
-          else
-            SINCE_DATE="2000-01-01T00:00:00Z"
-            echo "No version commits found — scanning all merged PRs"
-          fi
-
-          PRS=$(gh pr list --state merged --base master --limit 100 \
-            --json number,title,labels,mergedAt)
-
-          FILTERED=$(echo "$PRS" | jq -c --arg since "$SINCE_DATE" \
-            '[.[] | select(.mergedAt > $since)]')
-
-          COUNT=$(echo "$FILTERED" | jq 'length')
-          echo "Found $COUNT merged PR(s) since last version"
-
-          BUMP=""
-          rm -f /tmp/pr-entries.txt
-          NUMBERS=$(echo "$FILTERED" | jq -r '.[].number')
-
-          for NUMBER in $NUMBERS; do
-            PR=$(echo "$FILTERED" | jq -c ".[] | select(.number == $NUMBER)")
-            TITLE=$(echo "$PR" | jq -r '.title')
-            LABEL_NAMES=$(echo "$PR" | jq -r '[.labels[].name] | join(" ")')
-
-            # Skip automated version bump commits to avoid infinite loops.
-            if echo "$TITLE" | grep -q "^chore: version packages"; then
-              echo "  skip (version commit): #$NUMBER"
-              continue
-            fi
-
-            if echo "$LABEL_NAMES" | grep -q "no-release"; then
-              echo "  skip (no-release): #$NUMBER — $TITLE"
-              continue
-            fi
-
-            PR_BUMP=""
-            if echo "$LABEL_NAMES" | grep -q "major"; then PR_BUMP="major"
-            elif echo "$LABEL_NAMES" | grep -q "minor"; then PR_BUMP="minor"
-            elif echo "$LABEL_NAMES" | grep -q "patch"; then PR_BUMP="patch"
-            fi
-
-            if [ -z "$PR_BUMP" ]; then
-              echo "  skip (no release label): #$NUMBER — $TITLE"
-              continue
-            fi
-
-            # Track the highest bump type across all PRs.
-            if [ "$PR_BUMP" = "major" ]; then
-              BUMP="major"
-            elif [ "$PR_BUMP" = "minor" ] && [ "$BUMP" != "major" ]; then
-              BUMP="minor"
-            elif [ "$PR_BUMP" = "patch" ] && [ -z "$BUMP" ]; then
-              BUMP="patch"
-            fi
-
-            echo "- ${TITLE} (#${NUMBER})" >> /tmp/pr-entries.txt
-            echo "  included ($PR_BUMP): #$NUMBER — $TITLE"
-          done
-
-          echo ""
-          echo "Resolved bump type: ${BUMP:-none}"
-          echo "bump=$BUMP" >> "$GITHUB_OUTPUT"
-
-      # Bump all packages to the same new version (fixed mode).
-      # --force-publish ensures every package is bumped even without code changes.
-      # We handle git commit/tag ourselves so we can add [skip ci].
-      # After lerna updates packages/* and lerna.json, we sync the root
-      # package.json version (lerna skips it because it's private).
-      - name: Version packages
-        if: steps.bump.outputs.bump != ''
-        run: |
-          yarn lerna version ${{ steps.bump.outputs.bump }} \
-            --yes \
-            --force-publish \
-            --no-git-tag-version \
-            --no-push
-          node -e "
-            const fs = require('fs');
-            const ver = require('./lerna.json').version;
-            const pkg = require('./package.json');
-            pkg.version = ver;
-            fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
-          "
-
-      # Commit version bumps to master with [skip ci] to prevent infinite loops.
-      # PR titles are included as a lightweight release log. The push
-      # authenticates as the GitHub App (bypass branch protection).
-      - name: Commit and tag
-        if: steps.bump.outputs.bump != ''
+      - name: Tag release
         run: |
           VERSION=$(node -p "require('./lerna.json').version")
-
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -A
+          git tag "v${VERSION}"
+          git push --tags
 
-          BODY=""
-          if [ -f /tmp/pr-entries.txt ]; then
-            BODY=$(cat /tmp/pr-entries.txt)
-          fi
-
-          git commit -m "chore: version packages v${VERSION} [skip ci]" -m "$BODY"
-          git tag -f "v${VERSION}"
-          git push
-          git push --tags --force
-
-      # Publish each package to npm. The logic lives in a separate script
-      # for readability. It is idempotent — already-published versions are
-      # skipped, so re-running after a partial failure is safe.
+      # Publish each package to npm. The script is idempotent — versions
+      # already on the registry are skipped, so re-running after a partial
+      # failure is safe.
       - name: Publish to npm
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

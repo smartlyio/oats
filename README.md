@@ -1,10 +1,11 @@
 # Oats
 
 ## Summary on how to release new versions
-1. Open a PR and slap a label (`patch`/`minor`/`major`/`no-release`)
+1. Open a PR and add a label (`patch`/`minor`/`major`/`no-release`)
 2. Wait for CI checks to pass (build, tests, label validation, npm token check)
-3. Get your PR approved
-4. Merge — all packages are automatically versioned and published to npm
+3. Get your PR approved and merge it
+4. A **version bump PR** is automatically created with updated package versions
+5. Review and merge the version bump PR — all packages are published to npm
 
 > **Note:** The npm token expires every 90 days. If the token check fails, follow the [NPM token rotation](#npm-token-rotation) instructions to generate a new one.
 
@@ -265,7 +266,7 @@ yarn build
 
 This project uses [Lerna](https://lerna.js.org/) in fixed version mode with GitHub Actions for automated versioning and publishing. All packages are versioned together — a change in any package bumps all packages to the same version.
 
-The release process is driven entirely by PR labels. Contributors do not need to run any versioning or publishing commands.
+The release process is a **two-step PR flow** driven by labels. Contributors do not need to run any versioning or publishing commands.
 
 #### How to release
 
@@ -276,21 +277,28 @@ The release process is driven entirely by PR labels. Contributors do not need to
     - `major` — breaking changes
     - `no-release` — changes that should not trigger a release (docs, CI, refactors)
 3. **The label is required.** A CI check will block merging if no release label is set.
-4. **Merge the PR.** That's it — the rest is fully automated.
+4. **Merge the PR.**
 
-After merge, a GitHub Action automatically:
-- Determines the bump type from the PR label
+After merge, the **Version workflow** (`version.yml`) automatically:
+- Determines the bump type from merged PR labels (highest wins: major > minor > patch)
 - Bumps all package versions via `lerna version` (fixed mode)
-- Commits the version bump to `master` with the PR titles as a release log
-- Publishes each package to npm via `npm publish` (idempotent — safe to re-run)
+- Opens (or updates) a **version bump PR** titled `chore: version packages vX.Y.Z`
+- The version bump PR includes the titles of all included feature PRs
+
+5. **Review and merge the version bump PR.**
+
+After the version bump PR is merged, the **Publish workflow** (`publish.yml`) automatically:
 - Creates and pushes a `v{VERSION}` git tag
+- Publishes each package to npm via `npm publish`
 
-If multiple PRs are merged between releases, the highest bump type wins (major > minor > patch) and all PR titles are included in the version commit.
+If multiple feature PRs are merged before the version bump PR is reviewed, the Version workflow updates the existing PR with the latest cumulative bump.
 
-> Publishing uses `npm publish` directly for each package rather than `lerna publish`,
-> which avoids known issues with Lerna's Yarn registry proxy. Each package is published
-> individually, so partial failures show exactly which package failed and re-runs only
-> publish what's missing.
+#### What if publishing fails?
+
+Publishing is idempotent — each package version is checked against the npm registry before publishing. Already-published versions are skipped, so re-running after a partial failure only publishes what's missing. To retry, re-run the Publish workflow from the GitHub Actions tab.
+
+> Publishing uses `npm publish` directly for each package (see `.github/scripts/publish-packages.sh`)
+> rather than `lerna publish`, which avoids known issues with Lerna's Yarn registry proxy.
 
 #### CI checks on pull requests
 

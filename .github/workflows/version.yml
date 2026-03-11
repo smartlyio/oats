@@ -1,0 +1,90 @@
+# Version workflow — creates a version bump PR after feature PRs are merged.
+#
+# This is the first half of the two-step release process:
+#   1. A feature PR is merged to master with a release label (patch/minor/major).
+#   2. This workflow detects the merge, determines the bump type from PR labels,
+#      bumps all package versions with `lerna version`, and opens (or updates)
+#      a "version bump" PR with the changes.
+#   3. A team member reviews and merges the version bump PR.
+#   4. The Publish workflow (publish.yml) detects that merge and publishes
+#      all packages to npm.
+#
+# This approach avoids pushing directly to master, which is blocked by
+# organization-level branch protection / repository rulesets.
+#
+# If multiple feature PRs are merged before the version bump PR is reviewed,
+# this workflow updates the existing PR with the latest cumulative bump.
+#
+# Required secrets: none (uses the default GITHUB_TOKEN).
+
+name: Version
+
+on:
+  push:
+    branches: [master]
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+
+    # Skip version bump commits to avoid infinite loops. Using 'contains'
+    # so it works with all merge strategies (merge, squash, rebase).
+    if: ${{ !contains(github.event.head_commit.message, 'chore: version packages') }}
+
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: Install yarn
+        run: npm install -g yarn
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      # Determine bump type from merged PR labels. The logic lives in a
+      # separate script for readability. See .github/scripts/determine-bump.sh.
+      - name: Determine version bump from merged PRs
+        id: bump
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./.github/scripts/determine-bump.sh
+
+      # Bump all packages to the same new version (fixed mode).
+      # --force-publish ensures every package is bumped even without code changes.
+      # After lerna updates packages/* and lerna.json, sync the root
+      # package.json version (lerna skips it because it's private).
+      - name: Version packages
+        if: steps.bump.outputs.bump != ''
+        run: |
+          yarn lerna version ${{ steps.bump.outputs.bump }} \
+            --yes \
+            --force-publish \
+            --no-git-tag-version \
+            --no-push
+          node -e "
+            const fs = require('fs');
+            const ver = require('./lerna.json').version;
+            const pkg = require('./package.json');
+            pkg.version = ver;
+            fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
+          "
+
+      # Open (or update) a PR with the version bumps. The logic lives in a
+      # separate script for readability. See .github/scripts/create-version-pr.sh.
+      - name: Create or update version bump PR
+        if: steps.bump.outputs.bump != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./.github/scripts/create-version-pr.sh

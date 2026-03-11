@@ -6,10 +6,10 @@
 #   - major  → breaking changes
 #   - no-release → changes that should not trigger a release (docs, CI, etc.)
 #
-# This label drives the entire release automation. After merge, the Publish
-# workflow reads the label to determine the version bump type and generates
-# the CHANGELOG entry from the PR title. No other action is required from
-# contributors.
+# This label drives the release automation. After merge, the Version
+# workflow (version.yml) reads the label to determine the version bump
+# type and opens a version bump PR. No other action is required from
+# contributors beyond reviewing and merging that PR.
 #
 # The check re-runs on label changes (labeled/unlabeled) so contributors
 # get immediate feedback when they add or remove labels.
