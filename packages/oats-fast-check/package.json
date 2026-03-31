@@ -9,11 +9,11 @@
   "types": "dist/src/index.d.ts",
   "scripts": {
     "clean": "rm -rf ./dist && rm -f ./tmp/*.ts",
-    "build": "yarn tsc",
-    "prebuild": "yarn clean",
-    "prerender": "yarn ts-node examples/driver.ts",
-    "pretest": "yarn render",
-    "render": "yarn ts-node render.ts",
+    "build": "pnpm tsc",
+    "prebuild": "pnpm clean",
+    "prerender": "pnpm ts-node examples/driver.ts",
+    "pretest": "pnpm render",
+    "render": "pnpm ts-node render.ts",
     "lint": "eslint --max-warnings=0 --ext .ts src test"
   },
   "repository": {

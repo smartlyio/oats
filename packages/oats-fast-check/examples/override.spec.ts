@@ -1,4 +1,4 @@
-// yarn jest examples/override.spec.ts
+// pnpm jest examples/override.spec.ts
 import * as fc from 'fast-check';
 import { generator } from '../src/index';
 import * as types from '../tmp/openapi.types.generated';

@@ -9,7 +9,7 @@ multiple nock mocks can be used simultanenously so long as the basepaths differ.
 All of the mocked routes are persisted so any number of requests are served.
 
 ```ts
-// yarn ts-node examples/example.ts
+// pnpm ts-node examples/example.ts
 import * as nockAdapter from '../src/nock';
 import * as api from '../tmp/client.types.generated';
 import * as types from '../tmp/openapi.types.generated';
@@ -38,7 +38,7 @@ adding new mocked routes or overlaying new handlers on top of already mocked rou
 If the overlaying mock throws `Next` the previous mock for the route is called instead.
 
 ```ts
-// yarn ts-node examples/server.ts
+// pnpm ts-node examples/server.ts
 import * as nockAdapter from '../src/nock';
 import * as api from '../tmp/client.types.generated';
 import * as types from '../tmp/openapi.types.generated';

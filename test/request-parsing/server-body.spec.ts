@@ -1,4 +1,4 @@
-// yarn ts-node examples/server.ts
+// pnpm ts-node examples/server.ts
 import { describe, it, expect, beforeAll } from '@jest/globals';
 import * as server from './tmp/server/generated';
 import * as runtime from '@smartlyio/oats-runtime';

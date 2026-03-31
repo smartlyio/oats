@@ -17,7 +17,7 @@
     "web-vitals": "^3.0.0"
   },
   "scripts": {
-    "start": "yarn oas && react-scripts start",
+    "start": "pnpm oas && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",

@@ -94,21 +94,20 @@ client will enforce *strict* data validation for both input and output of the ca
 
 To initialize the project:
 ```bash
-yarn lerna bootstrap
+pnpm install
 ```
 
 To publish a canary (to test your changes in the depending service)
 
 ```bash
-yarn build
-yarn publish:canary
+pnpm build
 ```
 
 To publish a new release (you would need admin access to the repo)
 
 ```bash
-yarn build
-yarn publish:patch # or minor or major
+pnpm build
+pnpm version-packages patch # or minor or major
 ```
 
 

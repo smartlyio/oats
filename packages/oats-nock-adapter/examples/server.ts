@@ -1,4 +1,4 @@
-// yarn ts-node examples/server.ts
+// pnpm ts-node examples/server.ts
 import * as nockAdapter from '../src/nock';
 import * as api from '../tmp/client.types.generated';
 import * as types from '../tmp/openapi.types.generated';

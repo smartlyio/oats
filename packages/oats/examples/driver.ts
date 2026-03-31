@@ -1,4 +1,4 @@
-// yarn ts-node examples/driver.ts
+// pnpm ts-node examples/driver.ts
 import { driver, util } from '../index';
 import { UnsupportedFeatureBehaviour } from '../src/driver';
 
