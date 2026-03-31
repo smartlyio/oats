@@ -53,13 +53,22 @@ jobs:
 
       # Checkout using the app token so that subsequent git push commands
       # authenticate as the GitHub App (which has bypass permissions).
+      # persist-credentials: false prevents the default GITHUB_TOKEN from
+      # being cached by git credential helpers, ensuring the app token is used.
       - uses: actions/checkout@v4
         with:
           token: ${{ steps.app-token.outputs.token }}
+          persist-credentials: false
           # Full history is required to find the last "chore: version packages"
           # commit, which serves as the reference point for determining which
           # merged PRs still need to be included in a release.
           fetch-depth: 0
+
+      # Explicitly configure git to use the app token for push operations.
+      # Required because persist-credentials: false disables automatic credential caching.
+      - name: Configure git credentials
+        run: |
+          git remote set-url origin "https://x-access-token:${{ steps.app-token.outputs.token }}@github.com/${{ github.repository }}.git"
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
