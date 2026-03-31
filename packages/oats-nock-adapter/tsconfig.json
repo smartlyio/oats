@@ -10,6 +10,7 @@
     "removeComments": false,
     "alwaysStrict": true,
     "baseUrl": "./src/types",
+    "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "dist"
   },
