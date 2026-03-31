@@ -92,23 +92,67 @@ client will enforce *strict* data validation for both input and output of the ca
 
 ## Developing and releasing
 
-To initialize the project:
+### Setup
+
+Install dependencies:
 ```bash
 pnpm install
 ```
 
-To publish a canary (to test your changes in the depending service)
+Build all packages:
 
 ```bash
 pnpm build
 ```
 
-To publish a new release (you would need admin access to the repo)
+### Release workflow
 
-```bash
-pnpm build
-pnpm version-packages patch # or minor or major
-```
+This project uses a pnpm workspace with GitHub Actions for automated fixed-version releases. All packages are versioned together, so a change in any package bumps all packages to the same version.
+
+The release process is driven entirely by PR labels. Contributors do not need to run any versioning or publishing commands.
+
+#### How to release
+
+1. **Open a pull request** with your changes against `master`.
+2. **Add a release label** to the PR: `patch`, `minor`, `major`, or `no-release`.
+    - `patch` — bug fixes, small non-breaking changes
+    - `minor` — new features, non-breaking additions
+    - `major` — breaking changes
+    - `no-release` — changes that should not trigger a release (docs, CI, refactors)
+3. **The label is required.** A CI check will block merging if no release label is set.
+4. **Merge the PR.** That's it — the rest is fully automated.
+
+After merge, a GitHub Action automatically:
+- Determines the bump type from the PR label
+- Bumps all package versions in fixed mode
+- Refreshes `pnpm-lock.yaml` before committing the release bump
+- Commits the version bump to `master` with the PR titles as a release log
+- Publishes each package to npm via `npm publish` (idempotent — safe to re-run)
+- Creates and pushes a `v{VERSION}` git tag
+
+If multiple PRs are merged between releases, the highest bump type wins (major > minor > patch) and all PR titles are included in the version commit.
+
+> Publishing uses `npm publish` directly for each package.
+> Each package is published individually, so partial failures show exactly which package failed and re-runs only publish what's missing.
+
+#### CI checks on pull requests
+
+| Check | What it does |
+|---|---|
+| **Release Label Check** | Fails if no release label is set. Ensures exactly one of `patch`, `minor`, `major`, or `no-release` is present. |
+| **CI** | Builds, lints, and tests the project. |
+| **NPM Token Check** | Verifies the npm publish token is valid and not about to expire. Fails if expired or expiring within 14 days; warns at 30 days. |
+
+#### NPM token rotation
+
+The npm publish token (`NPM_TOKEN`) expires every 90 days. The NPM Token Check workflow catches this early, during PR review rather than at publish time.
+
+When rotating the token:
+
+1. Go to [npmjs.com token settings](https://www.npmjs.com/settings/smartlyio/tokens)
+2. Generate a new **Automation** token with publish access
+3. Update the `NPM_TOKEN` [repository secret](https://github.com/smartlyio/oats/settings/secrets/actions)
+4. Update the `NPM_TOKEN_EXPIRY` [repository variable](https://github.com/smartlyio/oats/settings/variables/actions) with the new expiration date (YYYY-MM-DD format)
 
 
 ## Testing
