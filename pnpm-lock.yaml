@@ -107,17 +107,17 @@ importers:
         version: 3.2.0
     devDependencies:
       '@smartlyio/oats-axios-adapter':
-        specifier: ^7.7.6
-        version: 7.7.6(@smartlyio/oats-runtime@7.7.6(typescript@5.9.2))(axios@1.8.2)(typescript@5.9.2)
+        specifier: workspace:^
+        version: link:../oats-axios-adapter
       '@smartlyio/oats-fetch-adapter':
-        specifier: ^7.7.6
-        version: 7.7.6(@smartlyio/oats-runtime@7.7.6(typescript@5.9.2))(typescript@5.9.2)
+        specifier: workspace:^
+        version: link:../oats-fetch-adapter
       '@smartlyio/oats-koa-adapter':
-        specifier: ^7.7.6
-        version: 7.7.6(@smartlyio/oats-runtime@7.7.6(typescript@5.9.2))(koa-body@6.0.1)(koa-router@12.0.0)(koa@2.16.2)(typescript@5.9.2)
+        specifier: workspace:^
+        version: link:../oats-koa-adapter
       '@smartlyio/oats-runtime':
-        specifier: ^7.7.6
-        version: 7.7.6(typescript@5.9.2)
+        specifier: workspace:^
+        version: link:../oats-runtime
       '@types/jest':
         specifier: 29.5.2
         version: 29.5.2
@@ -189,8 +189,8 @@ importers:
         specifier: 29.5.0
         version: 29.5.0
       '@smartlyio/oats-runtime':
-        specifier: ^7.7.6
-        version: 7.7.6(typescript@5.9.2)
+        specifier: workspace:^
+        version: link:../oats-runtime
       '@types/form-data':
         specifier: 2.5.0
         version: 2.5.0
@@ -220,11 +220,11 @@ importers:
         version: 0.5.3
     devDependencies:
       '@smartlyio/oats':
-        specifier: ^7.7.6
-        version: 7.7.6(@smartlyio/oats-runtime@7.7.6(typescript@5.9.2))(typescript@5.9.2)
+        specifier: workspace:^
+        version: link:../oats
       '@smartlyio/oats-runtime':
-        specifier: ^7.7.6
-        version: 7.7.6(typescript@5.9.2)
+        specifier: workspace:^
+        version: link:../oats-runtime
       '@types/jest':
         specifier: 29.5.2
         version: 29.5.2
@@ -257,8 +257,8 @@ importers:
         version: 4.0.5
     devDependencies:
       '@smartlyio/oats-runtime':
-        specifier: ^7.7.6
-        version: 7.7.6(typescript@5.9.2)
+        specifier: workspace:^
+        version: link:../oats-runtime
       '@types/node':
         specifier: 18.16.18
         version: 18.16.18
@@ -293,8 +293,8 @@ importers:
   packages/oats-koa-adapter:
     devDependencies:
       '@smartlyio/oats-runtime':
-        specifier: ^7.7.6
-        version: 7.7.6(typescript@5.9.2)
+        specifier: workspace:^
+        version: link:../oats-runtime
       '@types/koa':
         specifier: 2.13.6
         version: 2.13.6
@@ -326,8 +326,8 @@ importers:
   packages/oats-mirage-adapter:
     devDependencies:
       '@smartlyio/oats-runtime':
-        specifier: ^7.7.6
-        version: 7.7.6(typescript@5.9.2)
+        specifier: workspace:^
+        version: link:../oats-runtime
       '@types/lodash':
         specifier: 4.14.195
         version: 4.14.195
@@ -354,14 +354,14 @@ importers:
         version: 4.17.21
     devDependencies:
       '@smartlyio/oats':
-        specifier: ^7.7.6
-        version: 7.7.6(@smartlyio/oats-runtime@7.7.6(typescript@5.9.2))(typescript@5.9.2)
+        specifier: workspace:^
+        version: link:../oats
       '@smartlyio/oats-axios-adapter':
-        specifier: ^7.7.6
-        version: 7.7.6(@smartlyio/oats-runtime@7.7.6(typescript@5.9.2))(axios@1.8.2)(typescript@5.9.2)
+        specifier: workspace:^
+        version: link:../oats-axios-adapter
       '@smartlyio/oats-runtime':
-        specifier: ^7.7.6
-        version: 7.7.6(typescript@5.9.2)
+        specifier: workspace:^
+        version: link:../oats-runtime
       '@types/jest':
         specifier: 29.5.2
         version: 29.5.2
@@ -805,39 +805,6 @@ packages:
 
   '@sinonjs/fake-timers@10.3.0':
     resolution: {integrity: sha512-V4BG07kuYSUkTCSBHG8G8TNhM+F19jXFWnQtzj+we8DrkpSBCee9Z3Ms8yiGer/dlmhe35/Xdgyo3/0rQKg7YA==}
-
-  '@smartlyio/oats-axios-adapter@7.7.6':
-    resolution: {integrity: sha512-IORyg22lG1XANSAXvyMJl6dRv3GFcNcG+xn1PiGjbnfigzXcMuv0uwIfKWuyHo/CY7hfc3Q1McJOxqsxr4LZQQ==}
-    peerDependencies:
-      '@smartlyio/oats-runtime': ^6.0.0 || ^7.0.0
-      axios: ^1.7.4 ^1.7.4
-      typescript: ^4.8.0 || ^5.0.0
-
-  '@smartlyio/oats-fetch-adapter@7.7.6':
-    resolution: {integrity: sha512-AoKBUliLbVdtKTHqCfM/l6iZlRGOdKhXbJooti1N2lx7aw5Jij6xAs30UyXt+b0NNKtHL45KxMcnCccgAbOvXw==}
-    peerDependencies:
-      '@smartlyio/oats-runtime': ^6.3.0 || ^7.0.0
-      typescript: ^4.8.0 || ^5.0.0
-
-  '@smartlyio/oats-koa-adapter@7.7.6':
-    resolution: {integrity: sha512-ed45h6bK5npmiPybhuibNjCmzP/Ue7NTdQkTqpJ+LANWgsMdkGUT6ybKDM2XGzR6A2lXiF6gYAKz1H0hW9t/nw==}
-    peerDependencies:
-      '@smartlyio/oats-runtime': ^6.0.0 || ^7.0.0
-      koa: ^2.3.0
-      koa-body: ^6.0.0
-      koa-router: ^12.0.0
-      typescript: ^4.8.0 || ^5.0.0
-
-  '@smartlyio/oats-runtime@7.7.6':
-    resolution: {integrity: sha512-5HzXDaEpqdZSPdM03H2yjjSWbtL4BSe2cKqoVbhDJg2sz0kTj+iHwlUeYqHwiL098hVaTzh6CzhrgUKcQ1A2ew==}
-    peerDependencies:
-      typescript: ^4.8.0 || ^5.0.0
-
-  '@smartlyio/oats@7.7.6':
-    resolution: {integrity: sha512-OrQGsHKaPMd2EnAwSv+7W1MKI8tpSMN6Z29OSy1YmqOFUoeZc20NpcLajP51u+/7new22kq8AAMeJ9uC/OqyvA==}
-    peerDependencies:
-      '@smartlyio/oats-runtime': ^6.3.1 || ^7.0.0
-      typescript: ^4.8.0 || ^5.0.0
 
   '@smartlyio/safe-navigation@5.1.1':
     resolution: {integrity: sha512-PYY3jgQ7zcAjW+SpDuvHIilbxgwslyiskX0RfshMyJYlN+xspaD4dznYQg7qTA7Aeq6uzYe9zGdpfrtJgdVglg==}
@@ -3563,46 +3530,6 @@ snapshots:
   '@sinonjs/fake-timers@10.3.0':
     dependencies:
       '@sinonjs/commons': 3.0.1
-
-  '@smartlyio/oats-axios-adapter@7.7.6(@smartlyio/oats-runtime@7.7.6(typescript@5.9.2))(axios@1.8.2)(typescript@5.9.2)':
-    dependencies:
-      '@smartlyio/oats-runtime': 7.7.6(typescript@5.9.2)
-      axios: 1.8.2
-      form-data: 4.0.5
-      typescript: 5.9.2
-
-  '@smartlyio/oats-fetch-adapter@7.7.6(@smartlyio/oats-runtime@7.7.6(typescript@5.9.2))(typescript@5.9.2)':
-    dependencies:
-      '@smartlyio/oats-runtime': 7.7.6(typescript@5.9.2)
-      form-data: 4.0.5
-      typescript: 5.9.2
-
-  '@smartlyio/oats-koa-adapter@7.7.6(@smartlyio/oats-runtime@7.7.6(typescript@5.9.2))(koa-body@6.0.1)(koa-router@12.0.0)(koa@2.16.2)(typescript@5.9.2)':
-    dependencies:
-      '@smartlyio/oats-runtime': 7.7.6(typescript@5.9.2)
-      koa: 2.16.2
-      koa-body: 6.0.1
-      koa-router: 12.0.0
-      typescript: 5.9.2
-
-  '@smartlyio/oats-runtime@7.7.6(typescript@5.9.2)':
-    dependencies:
-      '@smartlyio/safe-navigation': 5.1.1
-      '@types/encodeurl': 1.0.0
-      '@types/escape-html': 1.0.2
-      buffer: 6.0.3
-      encodeurl: 1.0.2
-      escape-html: 1.0.3
-      lodash: 4.17.21
-      typescript: 5.9.2
-
-  '@smartlyio/oats@7.7.6(@smartlyio/oats-runtime@7.7.6(typescript@5.9.2))(typescript@5.9.2)':
-    dependencies:
-      '@smartlyio/oats-runtime': 7.7.6(typescript@5.9.2)
-      js-yaml: 4.1.1
-      lodash: 4.17.21
-      openapi3-ts: 3.2.0
-      typescript: 5.9.2
 
   '@smartlyio/safe-navigation@5.1.1':
     dependencies:

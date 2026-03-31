@@ -1,13 +1,17 @@
 #!/usr/bin/env bash
 #
-# Publish each package to npm directly (instead of lerna publish).
+# Publish each package to npm using pnpm publish.
 # Idempotent — versions already on the registry are skipped,
 # so re-running after a partial failure only publishes what's missing.
 #
-# Expects ~/.npmrc to be configured with registry auth before this
+# Uses pnpm publish instead of npm publish because pnpm automatically
+# resolves workspace: protocol references to actual version numbers
+# when publishing (e.g., "workspace:^" becomes "^7.7.7").
+#
+# Expects .npmrc to be configured with registry auth before this
 # script runs (handled by the "Log in to NPM registry" workflow step).
 # Requires NODE_AUTH_TOKEN to be set in the environment (referenced
-# by the ${NODE_AUTH_TOKEN} variable in ~/.npmrc).
+# by the ${NODE_AUTH_TOKEN} variable in .npmrc).
 
 set -euo pipefail
 
@@ -20,7 +24,7 @@ for dir in packages/*; do
     echo "Already published: ${NAME}@${VERSION}"
   else
     echo "Publishing ${NAME}@${VERSION}..."
-    if npm publish "./$dir" --access public --userconfig "$GITHUB_WORKSPACE/.npmrc"; then
+    if pnpm publish "./$dir" --access public --no-git-checks; then
       echo "Published ${NAME}@${VERSION}"
     else
       echo "::error::Failed to publish ${NAME}@${VERSION}"
