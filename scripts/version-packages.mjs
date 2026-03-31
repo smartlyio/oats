@@ -60,6 +60,9 @@ const updateDependencyGroup = (group) => {
     if (!workspaceNames.has(name) || typeof range !== 'string') {
       continue;
     }
+    if (range.startsWith('workspace:')) {
+      continue;
+    }
     group[name] = range.replaceAll(currentVersion, nextVersion);
   }
 };

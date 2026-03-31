@@ -38,8 +38,8 @@
     "client"
   ],
   "devDependencies": {
-    "@smartlyio/oats": "^7.7.6",
-    "@smartlyio/oats-runtime": "^7.7.6",
+    "@smartlyio/oats": "workspace:^",
+    "@smartlyio/oats-runtime": "workspace:^",
     "@types/jest": "29.5.2",
     "@types/lodash": "4.14.195",
     "@types/node": "18.16.18",
