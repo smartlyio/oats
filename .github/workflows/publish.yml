@@ -164,7 +164,7 @@ jobs:
         if: steps.bump.outputs.bump != ''
         run: |
           pnpm version-packages ${{ steps.bump.outputs.bump }}
-          pnpm install --lockfile-only
+          pnpm install --lockfile-only --config.link-workspace-packages=true
 
       # Commit version bumps to master with [skip ci] to prevent infinite loops.
       # PR titles are included as a lightweight release log. The push
