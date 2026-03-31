@@ -1,4 +1,4 @@
-// yarn ts-node examples/client.ts
+// pnpm ts-node examples/client.ts
 import * as api from '../tmp/client/generated';
 import * as axiosAdapter from '@smartlyio/oats-axios-adapter';
 import * as runtime from '@smartlyio/oats-runtime';

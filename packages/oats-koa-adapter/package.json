@@ -9,9 +9,9 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "clean": "rm -rf ./dist && rm -f ./tmp/*.ts",
-    "build": "yarn clean && tsc",
-    "prebuild": "yarn clean",
-    "pretest": "yarn render",
+    "build": "pnpm clean && tsc",
+    "prebuild": "pnpm clean",
+    "pretest": "pnpm render",
     "render": "ts-node render-docs.ts",
     "lint": "eslint --max-warnings=0 --ext .ts ."
   },

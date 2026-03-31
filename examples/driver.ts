@@ -1,4 +1,4 @@
-// yarn ts-node -r tsconfig-paths/register examples/driver.ts
+// pnpm ts-node -r tsconfig-paths/register examples/driver.ts
 import { driver } from '@smartlyio/oats';
 
 // generate server from the shared openapi spec

@@ -8,13 +8,13 @@
   "main": "dist/src/nock.js",
   "types": "dist/src/nock.d.ts",
   "scripts": {
-    "prebuild": "yarn clean && yarn ts-node examples/driver && yarn render",
+    "prebuild": "pnpm clean && pnpm ts-node examples/driver && pnpm render",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "clean": "rm -rf ./dist && rm -f ./tmp/*.ts",
-    "pretest": "yarn prebuild",
-    "build": "yarn tsc",
-    "render": "yarn ts-node render.ts"
+    "pretest": "pnpm prebuild",
+    "build": "pnpm tsc",
+    "render": "pnpm ts-node render.ts"
   },
   "repository": {
     "type": "git",

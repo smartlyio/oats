@@ -8,7 +8,7 @@
 Generate values of named types from the openapi specification. Here using a jest wrapper.
 
 ```ts
-// yarn jest examples/type.spec.ts
+// pnpm jest examples/type.spec.ts
 import * as fc from 'fast-check';
 import { generator } from '../src/index';
 import * as runtime from '@smartlyio/oats-runtime';
@@ -36,7 +36,7 @@ describe('value generation', () => {
 Override automatic generators globally with a custom Arbitrary
 
 ```
-// yarn jest examples/override.spec.ts
+// pnpm jest examples/override.spec.ts
 import * as fc from 'fast-check';
 import { generator } from '../src/index';
 import * as types from '../tmp/openapi.types.generated';

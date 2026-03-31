@@ -1,4 +1,4 @@
-// yarn ts-node examples/server.ts
+// pnpm ts-node examples/server.ts
 import { describe, it, expect, afterAll, beforeAll } from '@jest/globals';
 import * as server from './tmp/server/generated';
 import * as client from './tmp/client/generated';

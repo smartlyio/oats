@@ -17,7 +17,7 @@ As an example here we are generating a client and server definitions from an api
 in `example.yaml` that uses additional component schemas defined in `common.yaml`. 
 
 ```ts
-// yarn ts-node examples/driver.ts
+// pnpm ts-node examples/driver.ts
 import { driver, util } from '../index';
 import { UnsupportedFeatureBehaviour } from '../src/driver';
 
@@ -100,7 +100,7 @@ The generated server definition enforces *strict* data validation for both input
 defined paths. 
 
 ```ts
-// yarn ts-node examples/server.ts
+// pnpm ts-node examples/server.ts
 import * as api from '../tmp/server/generated';
 import * as common from '../tmp/server/common.types.generated';
 import * as runtime from '@smartlyio/oats-runtime';
@@ -198,7 +198,7 @@ generated  api client can be called with `api.path.subpath(pathParameter).get()`
 client will enforce *strict* data validation for both input and output of the calls.
 
 ```ts
-// yarn ts-node examples/client.ts
+// pnpm ts-node examples/client.ts
 import * as api from '../tmp/client/generated';
 import * as axiosAdapter from '@smartlyio/oats-axios-adapter';
 import * as runtime from '@smartlyio/oats-runtime';

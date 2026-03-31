@@ -8,11 +8,11 @@
   "main": "dist/runtime.js",
   "types": "dist/runtime.d.ts",
   "scripts": {
-    "clean": "yarn clean:dist && rm -f ./tmp/*.ts",
+    "clean": "pnpm clean:dist && rm -f ./tmp/*.ts",
     "clean:dist": "rm -rf ./dist",
-    "prebuild": "yarn clean && yarn tsc --project tsconfig.test.json --noEmit",
-    "build": "yarn tsc",
-    "postbuild": "yarn remove-references",
+    "prebuild": "pnpm clean && pnpm tsc --project tsconfig.test.json --noEmit",
+    "build": "pnpm tsc",
+    "postbuild": "pnpm remove-references",
     "remove-references": "cat dist/make.d.ts > dist/make.d.tsbak && sed 's/\\/\\/\\/.*//g' > dist/make.d.ts < dist/make.d.tsbak && rm dist/make.d.tsbak",
     "lint": "eslint --max-warnings=0 --ext .ts src test",
     "lint:fix": "eslint --max-warnings=0 --ext .ts src test --fix"

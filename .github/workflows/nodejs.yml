@@ -30,13 +30,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Install yarn
-        run: npm install -g yarn
+          cache: pnpm
+      - name: Enable Corepack
+        run: corepack enable
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
       - name: Build
-        run: yarn ci:build
+        run: pnpm ci:build
       - name: Lint
-        run: yarn ci:lint
+        run: pnpm ci:lint
       - name: Test
-        run: yarn ci:test
+        run: pnpm ci:test

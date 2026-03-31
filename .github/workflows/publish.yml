@@ -3,14 +3,13 @@
 # Contributors only need to add a label (patch/minor/major) to their PR.
 # After merge, this workflow:
 #   1. Determines the version bump type from merged PR labels
-#   2. Bumps all package versions with lerna version (fixed mode)
+#   2. Bumps all package versions in fixed mode
 #   3. Commits the version bump directly to master
 #   4. Publishes each package to npm (see .github/scripts/publish-packages.sh)
  #   5. Creates and pushes a git tag
  #
- # Publishing uses `npm publish` directly (via a separate script) rather
- # than `lerna publish`, which has known issues with Yarn's registry proxy
- # that cause E404 errors during publish.
+# Publishing uses `npm publish` directly (via a separate script) rather
+# than relying on a monorepo publisher.
 #
 # The default GITHUB_TOKEN cannot push to protected branches. This workflow
 # uses the "smartlyio" GitHub App to generate a short-lived token that has
@@ -66,15 +65,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
-
-      - name: Install yarn
-        run: npm install -g yarn
+          cache: pnpm
+      - name: Enable Corepack
+        run: corepack enable
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Build
-        run: yarn ci:build
+        run: pnpm ci:build
 
       # Determine bump type from merged PR labels. Finds the last release
       # commit, queries for PRs merged after it, and picks the highest bump
@@ -157,25 +156,11 @@ jobs:
           echo "bump=$BUMP" >> "$GITHUB_OUTPUT"
 
       # Bump all packages to the same new version (fixed mode).
-      # --force-publish ensures every package is bumped even without code changes.
       # We handle git commit/tag ourselves so we can add [skip ci].
-      # After lerna updates packages/* and lerna.json, we sync the root
-      # package.json version (lerna skips it because it's private).
       - name: Version packages
         if: steps.bump.outputs.bump != ''
         run: |
-          yarn lerna version ${{ steps.bump.outputs.bump }} \
-            --yes \
-            --force-publish \
-            --no-git-tag-version \
-            --no-push
-          node -e "
-            const fs = require('fs');
-            const ver = require('./lerna.json').version;
-            const pkg = require('./package.json');
-            pkg.version = ver;
-            fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
-          "
+          pnpm version-packages ${{ steps.bump.outputs.bump }}
 
       # Commit version bumps to master with [skip ci] to prevent infinite loops.
       # PR titles are included as a lightweight release log. The push
@@ -183,7 +168,7 @@ jobs:
       - name: Commit and tag
         if: steps.bump.outputs.bump != ''
         run: |
-          VERSION=$(node -p "require('./lerna.json').version")
+          VERSION=$(node -p "require('./package.json').version")
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"

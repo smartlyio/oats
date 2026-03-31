@@ -9,7 +9,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "clean": "rm -rf ./dist && rm -f ./tmp/*.ts",
-    "build": "yarn clean && yarn tsc",
+    "build": "pnpm clean && pnpm tsc",
     "lint": "eslint --max-warnings=0 --ext .ts .",
     "lint:fix": "eslint --max-warnings=0 --ext .ts . --fix"
   },
