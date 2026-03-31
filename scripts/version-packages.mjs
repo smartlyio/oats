@@ -49,6 +49,7 @@ const workspacePackages = packageJsonPaths.map((filePath) => ({
   pkg: readJson(filePath),
 }));
 const workspaceNames = new Set(workspacePackages.map(({ pkg }) => pkg.name));
+const currentVersion = rootPackage.version;
 const nextVersion = bumpVersion(rootPackage.version, bumpType);
 
 const updateDependencyGroup = (group) => {
@@ -59,7 +60,7 @@ const updateDependencyGroup = (group) => {
     if (!workspaceNames.has(name) || typeof range !== 'string') {
       continue;
     }
-    group[name] = range.replace(/\d+\.\d+\.\d+/, nextVersion);
+    group[name] = range.replaceAll(currentVersion, nextVersion);
   }
 };
 
