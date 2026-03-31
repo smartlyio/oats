@@ -15,9 +15,6 @@
 
 set -euo pipefail
 
-# Point pnpm to the .npmrc in the workspace root (equivalent to npm's --userconfig flag)
-export NPM_CONFIG_USERCONFIG="${GITHUB_WORKSPACE}/.npmrc"
-
 FAILED=0
 for dir in packages/*; do
   NAME=$(node -p "require('./$dir/package.json').name")
