@@ -9,6 +9,7 @@
     "sourceMap": true,
     "removeComments": false,
     "alwaysStrict": true,
+    "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "dist",
     "paths": {
