@@ -1,6 +1,6 @@
 {
   "name": "@smartlyio/oats-nock-adapter",
-  "version": "7.7.7",
+  "version": "7.7.8",
   "license": "MIT",
   "description": "nock server adapter for smartlyio/oats s",
   "private": false,
