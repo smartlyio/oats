@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       koa:
-        specifier: 2.16.2
-        version: 2.16.2
+        specifier: 2.16.4
+        version: 2.16.4
       koa-body:
         specifier: 6.0.1
         version: 6.0.1
@@ -155,8 +155,8 @@ importers:
         specifier: 0.8.4
         version: 0.8.4
       koa:
-        specifier: 2.16.2
-        version: 2.16.2
+        specifier: 2.16.4
+        version: 2.16.4
       koa-body:
         specifier: 6.0.1
         version: 6.0.1
@@ -308,8 +308,8 @@ importers:
         specifier: 18.16.18
         version: 18.16.18
       koa:
-        specifier: 2.16.2
-        version: 2.16.2
+        specifier: 2.16.4
+        version: 2.16.4
       koa-body:
         specifier: 6.0.1
         version: 6.0.1
@@ -2216,8 +2216,8 @@ packages:
     engines: {node: '>= 12'}
     deprecated: 'Please use @koa/router instead, starting from v9! '
 
-  koa@2.16.2:
-    resolution: {integrity: sha512-+CCssgnrWKx9aI3OeZwroa/ckG4JICxvIFnSiOUyl2Uv+UTI+xIw0FfFrWS7cQFpoePpr9o8csss7KzsTzNL8Q==}
+  koa@2.16.4:
+    resolution: {integrity: sha512-3An0GCLDSR34tsCO4H8Tef8Pp2ngtaZDAZnsWJYelqXUK5wyiHvGItgK/xcSkmHLSTn1Jcho1mRQs2ehRzvKKw==}
     engines: {node: ^4.8.4 || ^6.10.1 || ^7.10.1 || >= 8.1.4}
 
   lazy-seq@1.0.0:
@@ -5622,7 +5622,7 @@ snapshots:
       methods: 1.1.2
       path-to-regexp: 6.3.0
 
-  koa@2.16.2:
+  koa@2.16.4:
     dependencies:
       accepts: 1.3.8
       cache-content-type: 1.0.1

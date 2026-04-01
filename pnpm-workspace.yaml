@@ -2,3 +2,6 @@ packages:
   - packages/*
 
 minimumReleaseAge: 10080
+minimumReleaseAgeExclude:
+  # Renovate security update: koa@2.16.4
+  - koa@2.16.4
