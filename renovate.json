@@ -1,24 +1,37 @@
 {
   "extends": [
     "config:js-lib",
-    ":masterIssue"
+    ":masterIssue",
+    "config:best-practices"
   ],
   "timezone": "Europe/Helsinki",
-  "labels": ["renovate-deps", "no release"],
+  "labels": [
+    "renovate-deps",
+    "no release"
+  ],
   "rebaseLabel": "rebase",
   "separateMinorPatch": true,
-  "schedule": ["after 7am and before 9am every weekday"],
+  "schedule": [
+    "after 7am and before 9am every weekday"
+  ],
   "packageRules": [
     {
-      "depTypeList": ["dependencies"],
-      "schedule" : "before 8am on monday",
+      "depTypeList": [
+        "dependencies"
+      ],
+      "schedule": "before 8am on monday",
       "groupName": "Dependencies"
     },
     {
-      "depTypeList": ["devDependencies"],
-      "schedule" : "before 8am on monday",
+      "depTypeList": [
+        "devDependencies"
+      ],
+      "schedule": "before 8am on monday",
       "groupName": "devDependencies",
-      "labels": ["no-release"]
+      "labels": [
+        "no-release"
+      ]
     }
-  ]
+  ],
+  "minimumReleaseAge": "30 days"
 }
