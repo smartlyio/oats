@@ -1,8 +1,5 @@
 {
-  "extends": [
-    "config:js-lib",
-    ":masterIssue"
-  ],
+  "extends": ["config:js-lib", ":dependencyDashboard"],
   "timezone": "Europe/Helsinki",
   "labels": ["renovate-deps", "no release"],
   "rebaseLabel": "rebase",
@@ -10,13 +7,13 @@
   "schedule": ["after 7am and before 9am every weekday"],
   "packageRules": [
     {
-      "depTypeList": ["dependencies"],
-      "schedule" : "before 8am on monday",
+      "matchDepTypes": ["dependencies"],
+      "schedule": "before 8am on monday",
       "groupName": "Dependencies"
     },
     {
-      "depTypeList": ["devDependencies"],
-      "schedule" : "before 8am on monday",
+      "matchDepTypes": ["devDependencies"],
+      "schedule": "before 8am on monday",
       "groupName": "devDependencies",
       "labels": ["no-release"]
     }
