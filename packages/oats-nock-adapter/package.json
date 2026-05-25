@@ -42,7 +42,7 @@
     "@smartlyio/oats-runtime": "workspace:^",
     "@types/jest": "29.5.2",
     "@types/lodash": "4.14.195",
-    "@types/node": "18.16.18",
+    "@types/node": "24.12.4",
     "@typescript-eslint/eslint-plugin": "5.59.11",
     "@typescript-eslint/parser": "5.59.11",
     "axios": "1.8.2",
