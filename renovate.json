@@ -7,7 +7,7 @@
   "timezone": "Europe/Helsinki",
   "labels": [
     "renovate-deps",
-    "no release"
+    "no-release"
   ],
   "rebaseLabel": "rebase",
   "separateMinorPatch": true,
