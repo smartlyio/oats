@@ -1,0 +1,49 @@
+{
+  "name": "@smartlyio/oats-playwright-adapter",
+  "version": "7.7.8",
+  "license": "MIT",
+  "description": "Playwright adapter for Oats a Openapi3 based generator for typescript aware servers and clients",
+  "private": false,
+  "author": "Smartly.io",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "clean": "rm -rf ./dist && rm -f ./tmp/*.ts",
+    "build": "pnpm clean && pnpm tsc",
+    "lint": "eslint --max-warnings=0 --ext .ts .",
+    "lint:fix": "eslint --max-warnings=0 --ext .ts . --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/smartlyio/oats.git"
+  },
+  "peerDependencies": {
+    "@smartlyio/oats-runtime": "^6.3.0 || ^7.0.0",
+    "playwright": "^1.40.0",
+    "typescript": "^4.8.0 || ^5.0.0"
+  },
+  "keywords": [
+    "oats",
+    "openapi3",
+    "rest",
+    "generator",
+    "typescript",
+    "server",
+    "client",
+    "playwright"
+  ],
+  "devDependencies": {
+    "@smartlyio/oats-runtime": "workspace:^",
+    "@types/node": "24.12.4",
+    "@typescript-eslint/eslint-plugin": "5.62.0",
+    "@typescript-eslint/parser": "5.62.0",
+    "eslint": "8.57.1",
+    "eslint-config-prettier": "8.10.2",
+    "eslint-plugin-import": "2.27.5",
+    "eslint-plugin-jest": "27.9.0",
+    "eslint-plugin-prettier": "4.2.1",
+    "playwright": "1.58.0",
+    "prettier": "2.8.8",
+    "typescript": "5.9.2"
+  }
+}
