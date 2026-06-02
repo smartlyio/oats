@@ -104,7 +104,7 @@ importers:
         version: 4.1.1
       lodash:
         specifier: ^4.17.20
-        version: 4.17.21
+        version: 4.18.1
       openapi3-ts:
         specifier: ^3.0.0
         version: 3.2.0
@@ -217,7 +217,7 @@ importers:
         version: 2.25.0
       lodash:
         specifier: ^4.17.20
-        version: 4.17.21
+        version: 4.18.1
       randexp:
         specifier: ^0.5.3
         version: 0.5.3
@@ -354,7 +354,7 @@ importers:
     dependencies:
       lodash:
         specifier: ^4.17.20
-        version: 4.17.21
+        version: 4.18.1
     devDependencies:
       '@smartlyio/oats':
         specifier: workspace:^
@@ -481,7 +481,7 @@ importers:
         version: 1.0.3
       lodash:
         specifier: ^4.17.20
-        version: 4.17.21
+        version: 4.18.1
     devDependencies:
       '@jest/globals':
         specifier: 29.5.0
@@ -2433,8 +2433,8 @@ packages:
   lodash.values@4.3.0:
     resolution: {integrity: sha512-r0RwvdCv8id9TUblb/O7rYPwVy6lerCbcawrfdo9iC/1t1wsNMJknO79WNBgwkH0hIeJ08jmvvESbFpNb4jH0Q==}
 
-  lodash@4.17.21:
-    resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
+  lodash@4.18.1:
+    resolution: {integrity: sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q==}
 
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
@@ -3680,7 +3680,7 @@ snapshots:
 
   '@smartlyio/safe-navigation@5.1.1':
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.18.1
 
   '@tsconfig/node10@1.0.11': {}
 
@@ -5966,7 +5966,7 @@ snapshots:
 
   lodash.values@4.3.0: {}
 
-  lodash@4.17.21: {}
+  lodash@4.18.1: {}
 
   lru-cache@5.1.1:
     dependencies:
@@ -6056,7 +6056,7 @@ snapshots:
     dependencies:
       debug: 4.3.7
       json-stringify-safe: 5.0.1
-      lodash: 4.17.21
+      lodash: 4.18.1
       propagate: 2.0.1
     transitivePeerDependencies:
       - supports-color
