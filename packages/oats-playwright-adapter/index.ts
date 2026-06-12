@@ -159,19 +159,22 @@ export function create(
     }
     const server = arg.servers[0];
     const requestBody = toRequestBody(arg.body);
-    const url = new URL(server + arg.path);
     const requestContentType = arg.body?.contentType;
+    const searchParams = new URLSearchParams();
 
     Object.entries(arg.query ?? {})
       .filter(([, value]) => !!value)
       .forEach(([key, value]) =>
         Array.isArray(value)
-          ? value.forEach(v => url.searchParams.append(key, `${v}`))
-          : url.searchParams.append(key, `${value}`)
+          ? value.forEach(v => searchParams.append(key, `${v}`))
+          : searchParams.append(key, `${value}`)
       );
 
+    const query = searchParams.toString();
+    const url = `${server}${arg.path}${query ? `?${query}` : ''}`;
+
     const response = await abortable(
-      request.fetch(url.toString(), {
+      request.fetch(url, {
         method: arg.method.toUpperCase(),
         headers: {
           ...(requestContentType ? { 'content-type': requestContentType } : {}),

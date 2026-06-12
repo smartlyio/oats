@@ -33,6 +33,7 @@
     "playwright"
   ],
   "devDependencies": {
+    "@jest/globals": "29.5.0",
     "@smartlyio/oats-runtime": "workspace:^",
     "@types/node": "24.12.4",
     "@typescript-eslint/eslint-plugin": "5.62.0",
