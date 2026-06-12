@@ -422,6 +422,9 @@ importers:
 
   packages/oats-playwright-adapter:
     devDependencies:
+      '@jest/globals':
+        specifier: 29.5.0
+        version: 29.5.0
       '@smartlyio/oats-runtime':
         specifier: workspace:^
         version: link:../oats-runtime
