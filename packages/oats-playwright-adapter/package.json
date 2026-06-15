@@ -1,6 +1,6 @@
 {
   "name": "@smartlyio/oats-playwright-adapter",
-  "version": "7.8.0",
+  "version": "7.8.1",
   "license": "MIT",
   "description": "Playwright adapter for Oats a Openapi3 based generator for typescript aware servers and clients",
   "private": false,
