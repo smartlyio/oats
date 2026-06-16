@@ -1,13 +1,17 @@
 # Publish workflow — automated versioning and npm publishing.
 #
 # Contributors only need to add a label (patch/minor/major) to their PR.
-# After merge, this workflow:
+# After merge, the `publish` job:
 #   1. Determines the version bump type from merged PR labels
 #   2. Bumps all package versions in fixed mode
 #   3. Commits the version bump directly to master
 #   4. Publishes each package to npm (see .github/scripts/publish-packages.sh)
- #   5. Creates and pushes a git tag
- #
+#   5. Creates and pushes a git tag
+#
+# If publish fails after the version commit is already on master, use
+# "Run workflow" (workflow_dispatch) to re-run the same job with PUBLISH_ONLY
+# set — version bump, commit, and tag steps are skipped.
+#
 # Publishing uses `npm publish` directly (via a separate script) rather
 # than relying on a monorepo publisher.
 #
@@ -24,6 +28,7 @@ name: Publish
 on:
   push:
     branches: [master]
+  workflow_dispatch:
 
 # Prevent concurrent runs. If multiple PRs are merged in quick succession,
 # each triggered run will queue and execute in order, ensuring version bumps
@@ -33,6 +38,10 @@ concurrency: ${{ github.workflow }}-${{ github.ref }}
 jobs:
   publish:
     runs-on: ubuntu-latest
+
+    # When true (workflow_dispatch), skip version bump, commit, and tag.
+    env:
+      PUBLISH_ONLY: ${{ github.event_name == 'workflow_dispatch' }}
 
     # contents:write is needed for the default GITHUB_TOKEN (used by gh CLI).
     # The actual push to master uses the GitHub App token generated below.
@@ -45,6 +54,7 @@ jobs:
       # the default GITHUB_TOKEN which is intentionally blocked by GitHub.
       # The token expires after ~1 hour and is scoped to this repository only.
       - name: Generate GitHub App token
+        if: env.PUBLISH_ONLY != 'true'
         id: app-token
         uses: actions/create-github-app-token@v1
         with:
@@ -56,6 +66,7 @@ jobs:
       # persist-credentials: false prevents the default GITHUB_TOKEN from
       # being cached by git credential helpers, ensuring the app token is used.
       - uses: actions/checkout@v6
+        if: env.PUBLISH_ONLY != 'true'
         with:
           token: ${{ steps.app-token.outputs.token }}
           persist-credentials: false
@@ -64,9 +75,16 @@ jobs:
           # merged PRs still need to be included in a release.
           fetch-depth: 0
 
+      # Publish-only recovery: checkout current master without version bump.
+      - uses: actions/checkout@v6
+        if: env.PUBLISH_ONLY == 'true'
+        with:
+          ref: master
+
       # Explicitly configure git to use the app token for push operations.
       # Required because persist-credentials: false disables automatic credential caching.
       - name: Configure git credentials
+        if: env.PUBLISH_ONLY != 'true'
         run: |
           git remote set-url origin "https://x-access-token:${{ steps.app-token.outputs.token }}@github.com/${{ github.repository }}.git"
 
@@ -92,6 +110,7 @@ jobs:
       # (major > minor > patch). PR titles are saved for the commit message.
       # If no qualifying PRs are found, bump is empty and later steps are skipped.
       - name: Determine version bump from merged PRs
+        if: env.PUBLISH_ONLY != 'true'
         id: bump
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -170,7 +189,7 @@ jobs:
       # Bump all packages to the same new version (fixed mode).
       # We handle git commit/tag ourselves so we can add [skip ci].
       - name: Version packages
-        if: steps.bump.outputs.bump != ''
+        if: env.PUBLISH_ONLY != 'true' && steps.bump.outputs.bump != ''
         run: |
           pnpm version-packages ${{ steps.bump.outputs.bump }}
           pnpm install --lockfile-only
@@ -179,7 +198,7 @@ jobs:
       # PR titles are included as a lightweight release log. The push
       # authenticates as the GitHub App (bypass branch protection).
       - name: Commit and tag
-        if: steps.bump.outputs.bump != ''
+        if: env.PUBLISH_ONLY != 'true' && steps.bump.outputs.bump != ''
         run: |
           VERSION=$(node -p "require('./package.json').version")
 
@@ -196,7 +215,6 @@ jobs:
           git tag -f "v${VERSION}"
           git push
           git push --tags --force
-
 
       # Write ~/.npmrc with the npm auth token. The token value is resolved
       # at publish time from the NODE_AUTH_TOKEN env var set in the next step.

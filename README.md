@@ -278,7 +278,21 @@ After merge, a GitHub Action automatically:
 If multiple PRs are merged between releases, the highest bump type wins (major > minor > patch) and all PR titles are included in the version commit.
 
 > Publishing uses `npm publish` directly for each package.
-> Each package is published individually, so partial failures show exactly which package failed and re-runs only publish what's missing.
+> Each package is published individually, so partial failures show exactly which package failed.
+
+#### Recovery after a partial publish failure
+
+If the version commit and `v{VERSION}` tag are already on `master` but npm publish failed (for example, an expired or under-permissioned `NPM_TOKEN`), the release is only half-done: git is up to date, but some packages may be missing from the registry.
+
+**Do not use "Re-run failed jobs" on the original Publish workflow run.** GitHub Actions re-runs from the merge commit that originally triggered the workflow, not from current `master`. That causes the workflow to try creating the same version commit again and the push is rejected with a non-fast-forward error.
+
+Instead, use the manual **publish-only** recovery path (same `publish` job with version steps skipped):
+
+1. Fix the underlying issue (usually rotate or fix `NPM_TOKEN`; see [NPM token rotation](#npm-token-rotation) below).
+2. Go to [Actions → Publish](https://github.com/smartlyio/oats/actions/workflows/publish.yml) → **Run workflow**.
+3. Leave the branch as `master` and click **Run workflow**.
+
+This checks out current `master`, builds, and publishes any packages that are not yet on npm. The publish script is idempotent — versions already on the registry are skipped, so it is safe to run after a partial failure.
 
 #### CI checks on pull requests
 
