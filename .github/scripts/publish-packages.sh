@@ -8,10 +8,8 @@
 # resolves workspace: protocol references to actual version numbers
 # when publishing (e.g., "workspace:^" becomes "^7.7.7").
 #
-# Expects .npmrc to be configured with registry auth before this
-# script runs (handled by the "Log in to NPM registry" workflow step).
-# Requires NODE_AUTH_TOKEN to be set in the environment (referenced
-# by the ${NODE_AUTH_TOKEN} variable in .npmrc).
+# Expects actions/setup-node to have configured the npm registry (.npmrc).
+# Authentication uses OIDC trusted publishing — do not set NODE_AUTH_TOKEN.
 
 set -euo pipefail
 
