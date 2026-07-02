@@ -36,15 +36,15 @@
   "devDependencies": {
     "@smartlyio/oats-runtime": "workspace:^",
     "@types/node": "24.12.4",
-    "@typescript-eslint/eslint-plugin": "5.59.11",
-    "@typescript-eslint/parser": "5.59.11",
-    "eslint": "8.42.0",
-    "eslint-config-prettier": "8.8.0",
+    "@typescript-eslint/eslint-plugin": "8.62.0",
+    "@typescript-eslint/parser": "8.62.0",
+    "eslint": "10.6.0",
+    "eslint-config-prettier": "10.1.8",
     "eslint-plugin-import": "2.27.5",
-    "eslint-plugin-jest": "27.2.1",
-    "eslint-plugin-prettier": "4.2.1",
-    "prettier": "2.8.8",
-    "typescript": "5.9.2"
+    "eslint-plugin-jest": "29.15.3",
+    "eslint-plugin-prettier": "5.5.6",
+    "prettier": "3.9.3",
+    "typescript": "6.0.3"
   },
   "gitHead": "6afcbb2c8491c594374a82f06c1df5f858ed7681"
 }
