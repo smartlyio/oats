@@ -8,13 +8,13 @@
   "main": "dist/src/nock.js",
   "types": "dist/src/nock.d.ts",
   "scripts": {
-    "prebuild": "pnpm clean && pnpm ts-node examples/driver && pnpm render",
+    "prebuild": "pnpm clean && pnpm tsx examples/driver && pnpm render",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "clean": "rm -rf ./dist && rm -f ./tmp/*.ts",
     "pretest": "pnpm prebuild",
     "build": "pnpm tsc",
-    "render": "pnpm ts-node render.ts"
+    "render": "pnpm tsx render.ts"
   },
   "repository": {
     "type": "git",
@@ -22,7 +22,7 @@
   },
   "peerDependencies": {
     "@smartlyio/oats-runtime": "^6.0.0 || ^7.0.0",
-    "typescript": "^4.8.0 || ^5.0.0"
+    "typescript": "^4.8.0 || ^5.0.0 || ^7.0.0"
   },
   "dependencies": {
     "lodash": "^4.17.20"
@@ -67,7 +67,9 @@
       "ts",
       "tsx"
     ],
-    "preset": "ts-jest",
+    "transform": {
+      "^.+\\.(ts|js)x?$": "@swc/jest"
+    },
     "testMatch": null
   },
   "gitHead": "6afcbb2c8491c594374a82f06c1df5f858ed7681"

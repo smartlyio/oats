@@ -1,4 +1,4 @@
-// pnpm ts-node examples/driver.ts
+// pnpm tsx examples/driver.ts
 import { driver, util } from '../index';
 import { UnsupportedFeatureBehaviour } from '../src/driver';
 

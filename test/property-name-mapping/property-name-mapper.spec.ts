@@ -2,7 +2,7 @@ import * as types from './tmp/client/types.generated';
 import * as server from './tmp/server/generated';
 import * as runtime from '@smartlyio/oats-runtime';
 import * as koaAdapter from '@smartlyio/oats-koa-adapter';
-import * as Koa from 'koa';
+import Koa from 'koa';
 import { koaBody } from 'koa-body';
 import http from 'http';
 import { it, expect, afterAll, beforeAll, describe } from '@jest/globals';

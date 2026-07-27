@@ -11,9 +11,9 @@
     "clean": "rm -rf ./dist && rm -f ./tmp/*.ts",
     "build": "pnpm tsc",
     "prebuild": "pnpm clean",
-    "prerender": "pnpm ts-node examples/driver.ts",
+    "prerender": "pnpm tsx examples/driver.ts",
     "pretest": "pnpm render",
-    "render": "pnpm ts-node render.ts",
+    "render": "pnpm tsx render.ts",
     "lint": "eslint --max-warnings=0 --ext .ts src test"
   },
   "repository": {
@@ -22,7 +22,7 @@
   },
   "peerDependencies": {
     "fast-check": "2.25.0",
-    "typescript": "^4.8.0 || ^5.0.0"
+    "typescript": "^4.8.0 || ^5.0.0 || ^7.0.0"
   },
   "dependencies": {
     "lodash": "^4.17.20",

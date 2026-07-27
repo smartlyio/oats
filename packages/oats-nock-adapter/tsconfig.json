@@ -11,6 +11,7 @@
     "alwaysStrict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "types": ["jest", "node"],
     "forceConsistentCasingInFileNames": true,
     "outDir": "dist"
   },

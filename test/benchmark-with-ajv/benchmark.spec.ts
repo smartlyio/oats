@@ -2,7 +2,7 @@ import * as server from './tmp/server/types.generated';
 import * as yaml from 'js-yaml';
 import { Ajv } from 'ajv';
 import * as fs from 'fs';
-import * as assert from 'assert';
+import assert from 'assert';
 import { Bench } from 'tinybench';
 
 const ajv = new Ajv({ strict: false });

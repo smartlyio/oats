@@ -1,4 +1,4 @@
-// pnpm ts-node examples/example.ts
+// pnpm tsx examples/example.ts
 import * as nockAdapter from '../src/nock';
 import * as api from '../tmp/client.types.generated';
 import * as types from '../tmp/openapi.types.generated';

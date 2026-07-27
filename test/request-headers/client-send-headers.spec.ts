@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll } from '@jest/globals';
 import * as client from './tmp/client/generated';
-import * as Koa from 'koa';
+import Koa from 'koa';
 import * as axiosAdapter from '@smartlyio/oats-axios-adapter';
 import * as http from 'http';
 import { AddressInfo } from 'net';
