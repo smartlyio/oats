@@ -17,7 +17,7 @@ As an example here we are generating a client and server definitions from an api
 in `example.yaml` that uses additional component schemas defined in `common.yaml`. 
 
 ```ts
-// pnpm ts-node examples/driver.ts
+// pnpm tsx examples/driver.ts
 import { driver, util } from '../index';
 import { UnsupportedFeatureBehaviour } from '../src/driver';
 
@@ -100,12 +100,12 @@ The generated server definition enforces *strict* data validation for both input
 defined paths. 
 
 ```ts
-// pnpm ts-node examples/server.ts
+// pnpm tsx examples/server.ts
 import * as api from '../tmp/server/generated';
 import * as common from '../tmp/server/common.types.generated';
 import * as runtime from '@smartlyio/oats-runtime';
 import * as koaAdapter from '@smartlyio/oats-koa-adapter';
-import * as Koa from 'koa';
+import Koa from 'koa';
 import { koaBody } from 'koa-body';
 
 // setup a db :)
@@ -198,12 +198,12 @@ generated  api client can be called with `api.path.subpath(pathParameter).get()`
 client will enforce *strict* data validation for both input and output of the calls.
 
 ```ts
-// pnpm ts-node examples/client.ts
+// pnpm tsx examples/client.ts
 import * as api from '../tmp/client/generated';
 import * as axiosAdapter from '@smartlyio/oats-axios-adapter';
 import * as runtime from '@smartlyio/oats-runtime';
 import * as app from './server';
-import * as assert from 'assert';
+import assert from 'assert';
 
 // 'api.client' is the abstract implementation of the client which is then
 // mapped to axios requests using 'axiosAdapter'

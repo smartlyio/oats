@@ -1,4 +1,4 @@
-import * as nock from 'nock';
+import nock from 'nock';
 import * as runtime from '@smartlyio/oats-runtime';
 import assert from 'assert';
 
@@ -125,6 +125,7 @@ function normalizeHeaderValue(value: unknown): string {
     return `${value}`;
   }
   assert.fail(`Unknown header value ${value}`);
+  throw new Error('unreachable');
 }
 
 function normalizeHeaders(headers: Record<string, unknown> | undefined): Record<string, string> {

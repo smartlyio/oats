@@ -3,7 +3,7 @@
     "strict": true,
     "declaration": true,
     "target": "es2022",
-    "lib": ["es2022"],
+    "lib": ["es2022", "dom"],
     "module": "node16",
     "moduleResolution": "node16",
     "sourceMap": true,
@@ -11,6 +11,7 @@
     "alwaysStrict": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
+    "types": ["node"],
     "outDir": "dist"
   },
   "exclude": ["node_modules/*", "*/**/dist/*", "dist/*", "test/"],

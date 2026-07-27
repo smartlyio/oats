@@ -12,7 +12,7 @@
     "build": "pnpm tsc",
     "prebuild": "pnpm clean",
     "pretest": "pnpm render",
-    "render": "ts-node render-docs.ts",
+    "render": "tsx render-docs.ts",
     "lint": "eslint --max-warnings=0 --ext .ts ."
   },
   "repository": {

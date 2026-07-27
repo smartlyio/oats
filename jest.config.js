@@ -19,7 +19,7 @@ module.exports = {
   },
   modulePathIgnorePatterns: ['<rootDir>/packages/*/dist'],
   transform: {
-    '^.+\\.(ts|js)x?$': ['ts-jest', { isolatedModules: true, diagnostics: true }]
+    '^.+\\.(ts|js)x?$': '@swc/jest'
   },
   setupFilesAfterEnv: []
 };

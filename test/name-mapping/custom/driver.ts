@@ -1,6 +1,6 @@
 import { driver, util } from '@smartlyio/oats';
 import * as process from 'process';
-import * as assert from 'assert';
+import assert from 'assert';
 
 process.chdir(__dirname);
 const nameMapper = (name: string, kind: util.NameKind) => {

@@ -3,7 +3,7 @@ import { describe, it, expect, beforeAll } from '@jest/globals';
 import * as server from './tmp/server/generated';
 import * as runtime from '@smartlyio/oats-runtime';
 import * as koaAdapter from '@smartlyio/oats-koa-adapter';
-import * as Koa from 'koa';
+import Koa from 'koa';
 import { koaBody } from 'koa-body';
 import * as http from 'http';
 import { AddressInfo } from 'net';
