@@ -1,5 +1,5 @@
 import * as oas from 'openapi3-ts';
-import * as assert from 'assert';
+import assert from 'assert';
 import * as oautil from './util';
 import { server, client } from '@smartlyio/oats-runtime';
 import { NameMapper, UnsupportedFeatureBehaviour } from './util';

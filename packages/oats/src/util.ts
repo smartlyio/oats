@@ -1,5 +1,5 @@
 import * as oas from 'openapi3-ts';
-import * as assert from 'assert';
+import assert from 'assert';
 import * as _ from 'lodash';
 import { server } from '@smartlyio/oats-runtime';
 

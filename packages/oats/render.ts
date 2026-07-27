@@ -3,7 +3,7 @@
 
 import * as fs from 'fs';
 import * as child from 'child_process';
-import * as assert from 'assert';
+import assert from 'assert';
 import * as util from 'util';
 
 const md: string = fs.readFileSync('README.template.md', 'utf8');

@@ -1,7 +1,9 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "rootDir": ".",
+    "types": ["jest", "node"]
   },
   "exclude": []
 }

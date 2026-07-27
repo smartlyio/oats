@@ -3,7 +3,7 @@ import * as fc from 'fast-check';
 import { generator } from '../src/index';
 import * as types from '../tmp/openapi.types.generated';
 import * as runtime from '@smartlyio/oats-runtime';
-import * as assert from 'assert';
+import assert from 'assert';
 import * as _ from 'lodash';
 
 describe('spectrum of generated values', () => {

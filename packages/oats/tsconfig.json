@@ -4,17 +4,18 @@
     "declaration": true,
     "target": "es2022",
     "lib": ["es2022"],
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "module": "node16",
+    "moduleResolution": "node16",
     "sourceMap": true,
     "removeComments": false,
     "alwaysStrict": true,
-    "baseUrl": ".",
+    "esModuleInterop": true,
     "skipLibCheck": true,
+    "types": ["node"],
     "forceConsistentCasingInFileNames": true,
     "outDir": "dist",
     "paths": {
-      "@smartlyio/oats": ["index"]
+      "@smartlyio/oats": ["./index"]
     }
   },
   "exclude": ["examples/", "test/"]

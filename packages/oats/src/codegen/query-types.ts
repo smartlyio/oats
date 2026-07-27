@@ -3,7 +3,7 @@
  */
 
 import * as oas from 'openapi3-ts';
-import * as assert from 'assert';
+import assert from 'assert';
 import { deref, isReferenceObject, endpointTypeName, errorTag } from '../util';
 import { resolvedStatusCodes } from '../status-codes';
 import { GenerationContext } from './context';
