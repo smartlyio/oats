@@ -1,6 +1,6 @@
 import * as runtime from '@smartlyio/oats-runtime';
 import { fail } from './src/assert';
-import * as FormData from 'form-data';
+import FormData from 'form-data';
 
 function toRequestData(data: runtime.server.RequestBody<any> | undefined) {
   if (data == null) {

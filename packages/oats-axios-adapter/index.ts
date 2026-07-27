@@ -1,5 +1,5 @@
 import * as runtime from '@smartlyio/oats-runtime';
-import * as FormData from 'form-data';
+import FormData from 'form-data';
 import { fail } from './src/assert';
 import globalAxios, { AxiosInstance, AxiosResponse } from 'axios';
 import { urlSearchParamsSerializer } from './src/utils';

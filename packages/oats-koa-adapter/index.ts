@@ -1,7 +1,7 @@
-import * as Router from 'koa-router';
+import Router from 'koa-router';
 import { ParameterizedContext } from 'koa';
 import * as runtime from '@smartlyio/oats-runtime';
-import * as assert from 'assert';
+import assert from 'assert';
 import { IMiddleware } from 'koa-router';
 
 function adapter<StateT, CustomT, RequestContext>(

@@ -1,6 +1,6 @@
 import * as nock from 'nock';
 import * as runtime from '@smartlyio/oats-runtime';
-import * as assert from 'assert';
+import assert from 'assert';
 
 function parseContentDisposition(contentDispositionValue: string): Record<string, string> {
   return contentDispositionValue

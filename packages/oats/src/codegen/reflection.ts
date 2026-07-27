@@ -3,7 +3,7 @@
  */
 
 import * as oas from 'openapi3-ts';
-import * as assert from 'assert';
+import assert from 'assert';
 import { isReferenceObject } from '../util';
 import { GenerationContext } from './context';
 import { ts, str } from '../template';

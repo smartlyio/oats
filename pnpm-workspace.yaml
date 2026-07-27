@@ -17,3 +17,5 @@ allowBuilds: {}
 
 # Transitive deps must resolve from the registry, not git/tarball URLs.
 blockExoticSubdeps: true
+
+resolutionMode: highest

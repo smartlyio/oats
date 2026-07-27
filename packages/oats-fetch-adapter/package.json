@@ -44,7 +44,7 @@
     "eslint-plugin-jest": "27.2.1",
     "eslint-plugin-prettier": "4.2.1",
     "prettier": "2.8.8",
-    "typescript": "5.9.2"
+    "typescript": "7.0.2"
   },
   "gitHead": "6afcbb2c8491c594374a82f06c1df5f858ed7681"
 }

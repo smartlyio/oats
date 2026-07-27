@@ -1,4 +1,4 @@
-import * as assert from 'assert';
+import assert from 'assert';
 
 export function resolvedStatusCodes(codes: string[]): Map<string, number[]> {
   const seen = new Set();

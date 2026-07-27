@@ -3,7 +3,7 @@
  */
 
 import * as oas from 'openapi3-ts';
-import * as assert from 'assert';
+import assert from 'assert';
 import * as _ from 'lodash';
 import { isReferenceObject, SchemaObject, errorTag } from '../util';
 import { GenerationContext, AdditionalPropertiesIndexSignature } from './context';

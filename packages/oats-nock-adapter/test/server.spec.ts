@@ -8,7 +8,7 @@ import * as types from '../tmp/openapi.types.generated';
 import * as api2 from '../tmp/client2.types.generated';
 import * as types2 from '../tmp/openapi2.types.generated';
 import * as nock from 'nock';
-import * as assert from 'assert';
+import assert from 'assert';
 
 describe('server', () => {
   const client = api.client(axiosClient.bind);
