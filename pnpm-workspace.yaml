@@ -19,3 +19,17 @@ allowBuilds: {}
 blockExoticSubdeps: true
 
 resolutionMode: highest
+
+packageExtensions:
+  '@typescript-eslint/eslint-plugin':
+    dependencies:
+      typescript: 'npm:@typescript/typescript6@^6.0.2'
+  '@typescript-eslint/type-utils':
+    dependencies:
+      typescript: 'npm:@typescript/typescript6@^6.0.2'
+  '@typescript-eslint/typescript-estree':
+    dependencies:
+      typescript: 'npm:@typescript/typescript6@^6.0.2'
+  tsutils:
+    dependencies:
+      typescript: 'npm:@typescript/typescript6@^6.0.2'
