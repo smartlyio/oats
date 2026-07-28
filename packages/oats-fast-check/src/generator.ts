@@ -18,10 +18,10 @@ export class GenType extends fc.Arbitrary<any> {
     if (!this.generator) {
       this.generator = this.makeGenerator();
       if (this.bias !== undefined) {
-        this.generator = this.generator!.withBias(this.bias);
+        this.generator = this.generator.withBias(this.bias);
       }
     }
-    return this.generator!.generate(mrng);
+    return this.generator.generate(mrng);
   }
 
   private makeGenerator() {

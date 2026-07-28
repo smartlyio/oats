@@ -9,7 +9,6 @@
     "sourceMap": true,
     "removeComments": false,
     "alwaysStrict": true,
-    "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "dist"
