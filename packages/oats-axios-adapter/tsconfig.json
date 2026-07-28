@@ -10,7 +10,6 @@
     "removeComments": false,
     "alwaysStrict": true,
     "skipLibCheck": true,
-    "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "dist"
   },

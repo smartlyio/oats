@@ -125,7 +125,6 @@ function normalizeHeaderValue(value: unknown): string {
     return `${value}`;
   }
   assert.fail(`Unknown header value ${value}`);
-  throw new Error('unreachable');
 }
 
 function normalizeHeaders(headers: Record<string, unknown> | undefined): Record<string, string> {
