@@ -8,6 +8,9 @@ minimumReleaseAgeExclude:
 # Supply chain hardening (see https://pnpm.io/settings)
 engineStrict: true
 
+# Avoid non-TTY module purge prompts during pnpm runtime dependency checks.
+verifyDepsBeforeRun: false
+
 # Install/postinstall scripts run only for explicitly allowlisted packages.
 strictDepBuilds: true
 allowBuilds: {}
