@@ -13,7 +13,7 @@ verifyDepsBeforeRun: false
 
 # Install/postinstall scripts run only for explicitly allowlisted packages.
 strictDepBuilds: true
-allowBuilds: {}
+allowBuilds: { '@swc/core': true, esbuild: true }
 
 # Transitive deps must resolve from the registry, not git/tarball URLs.
 blockExoticSubdeps: true
