@@ -38,13 +38,13 @@
   ],
   "devDependencies": {
     "@smartlyio/oats-runtime": "workspace:^",
-    "@types/koa": "2.13.6",
-    "@types/koa-router": "7.4.4",
-    "@types/lodash": "4.14.195",
+    "@types/koa": "2.13.12",
+    "@types/koa-router": "7.4.9",
+    "@types/lodash": "4.14.202",
     "@types/node": "24.12.4",
     "koa": "2.16.2",
     "koa-body": "6.0.1",
-    "koa-router": "12.0.0",
+    "koa-router": "12.0.1",
     "typescript": "7.0.2"
   },
   "gitHead": "6afcbb2c8491c594374a82f06c1df5f858ed7681"
