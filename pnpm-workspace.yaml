@@ -4,6 +4,8 @@ packages:
 minimumReleaseAge: 10080
 minimumReleaseAgeExclude:
   - "@smartly/*"
+  # Renovate security update: form-data@4.0.6
+  - form-data@4.0.6
 
 # Supply chain hardening (see https://pnpm.io/settings)
 engineStrict: true
