@@ -43,14 +43,14 @@
     "client"
   ],
   "devDependencies": {
-    "@jest/globals": "29.5.0",
-    "@types/jest": "29.5.2",
+    "@jest/globals": "30.5.1",
+    "@types/jest": "30.0.0",
     "@types/lodash": "4.14.195",
     "@types/node": "24.12.4",
-    "fast-check": "2.25.0",
-    "jest": "29.5.0",
+    "fast-check": "4.9.0",
+    "jest": "30.5.1",
     "jsverify": "0.8.4",
-    "prettier": "2.8.8",
+    "prettier": "3.9.6",
     "tsconfig-paths": "4.2.0",
     "typescript": "7.0.2"
   },
