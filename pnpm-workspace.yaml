@@ -4,8 +4,6 @@ packages:
 minimumReleaseAge: 10080
 minimumReleaseAgeExclude:
   - "@smartly/*"
-  # Renovate security update: js-yaml@4.3.2
-  - js-yaml@4.3.2
 
 # Supply chain hardening (see https://pnpm.io/settings)
 engineStrict: true
