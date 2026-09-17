@@ -118,7 +118,7 @@ function createAxiosAdapter({
 
 function getContentType(response: AxiosResponse<any>) {
   const type = response.headers['content-type'];
-  if (!type) {
+  if (!type || typeof type !== 'string') {
     return runtime.noContentContentType;
   }
   if (response.status === 204) {
