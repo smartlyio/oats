@@ -1,6 +1,6 @@
 {
   "name": "@smartlyio/oats-mirage-adapter",
-  "version": "7.9.2",
+  "version": "7.9.3",
   "description": "Mirage.js adapter for Oats",
   "licence": "MIT",
   "private": false,
