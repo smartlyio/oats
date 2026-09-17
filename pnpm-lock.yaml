@@ -20,8 +20,8 @@ importers:
         specifier: 4.0.0
         version: 4.0.0(supports-color@8.1.1)
       koa-router:
-        specifier: 12.0.0
-        version: 12.0.0
+        specifier: 12.0.1
+        version: 12.0.1(supports-color@8.1.1)
       tsconfig-paths:
         specifier: 4.2.0
         version: 4.2.0
@@ -446,11 +446,11 @@ importers:
         specifier: ^5.1.0
         version: 5.1.1
       '@types/encodeurl':
-        specifier: 1.0.0
-        version: 1.0.0
+        specifier: 1.0.3
+        version: 1.0.3
       '@types/escape-html':
-        specifier: 1.0.2
-        version: 1.0.2
+        specifier: 1.0.4
+        version: 1.0.4
       buffer:
         specifier: 6.0.3
         version: 6.0.3
@@ -1151,11 +1151,11 @@ packages:
   '@types/cookies@0.9.0':
     resolution: {integrity: sha512-40Zk8qR147RABiQ7NQnBzWzDcjKzNrntB5BAmeGCb2p/MIyOE+4BVvc17wumsUqUw00bJYqoXFHYygQnEFh4/Q==}
 
-  '@types/encodeurl@1.0.0':
-    resolution: {integrity: sha512-iO2Q6xQOJ5DtOB6wJ2KIetFq9JRTbpzcKTe2aS6CCsa+W9KNWX2yXx9KeB5sY/nBfAWN43LkPg6SFB+ldsW9ZA==}
+  '@types/encodeurl@1.0.3':
+    resolution: {integrity: sha512-s10aRcePnVw+iUr5GtTQdzf1GC2jQqkLef2bBUFSX3E52RYnuQ4a7KFHifCFdi4QECiSbyFj7eO9CvZeCnvVkA==}
 
-  '@types/escape-html@1.0.2':
-    resolution: {integrity: sha512-gaBLT8pdcexFztLSPRtriHeXY/Kn4907uOCZ4Q3lncFBkheAWOuNt53ypsF8szgxbEJ513UeBzcf4utN0EzEwA==}
+  '@types/escape-html@1.0.4':
+    resolution: {integrity: sha512-qZ72SFTgUAZ5a7Tj6kf2SHLetiH5S6f8G5frB2SPQ3EyF02kxdyBFf4Tz4banE3xCgGnKgWLt//a6VuYHKYJTg==}
 
   '@types/express-serve-static-core@5.0.1':
     resolution: {integrity: sha512-CRICJIl0N5cXDONAdlTv5ShATZ4HEwk6kDDIW2/w9qOWKg+NU/5F8wYRWCrONad0/UKkloNSmmyN/wX4rtpbVA==}
@@ -2688,6 +2688,11 @@ packages:
 
   koa-router@12.0.0:
     resolution: {integrity: sha512-zGrdiXygGYW8WvrzeGsHZvKnHs4DzyGoqJ9a8iHlRkiwuEAOAPyI27//OlhoWdgFAEIM3qbUgr0KCuRaP/TCag==}
+    engines: {node: '>= 12'}
+    deprecated: 'Please use @koa/router instead, starting from v9! '
+
+  koa-router@12.0.1:
+    resolution: {integrity: sha512-gaDdj3GtzoLoeosacd50kBBTnnh3B9AYxDThQUo4sfUyXdOhY6ku1qyZKW88tQCRgc3Sw6ChXYXWZwwgjOxE0w==}
     engines: {node: '>= 12'}
     deprecated: 'Please use @koa/router instead, starting from v9! '
 
@@ -4224,9 +4229,9 @@ snapshots:
       '@types/keygrip': 1.0.6
       '@types/node': 24.12.4
 
-  '@types/encodeurl@1.0.0': {}
+  '@types/encodeurl@1.0.3': {}
 
-  '@types/escape-html@1.0.2': {}
+  '@types/escape-html@1.0.4': {}
 
   '@types/express-serve-static-core@5.0.1':
     dependencies:
@@ -6273,6 +6278,16 @@ snapshots:
       koa-compose: 4.1.0
       methods: 1.1.2
       path-to-regexp: 6.3.0
+
+  koa-router@12.0.1(supports-color@8.1.1):
+    dependencies:
+      debug: 4.3.7(supports-color@8.1.1)
+      http-errors: 2.0.0
+      koa-compose: 4.1.0
+      methods: 1.1.2
+      path-to-regexp: 6.3.0
+    transitivePeerDependencies:
+      - supports-color
 
   koa@2.16.2(supports-color@8.1.1):
     dependencies:
