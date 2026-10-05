@@ -63,8 +63,8 @@ importers:
         specifier: ^8.17.1
         version: 8.17.1
       axios:
-        specifier: 1.18.0
-        version: 1.18.0(debug@4.3.7(supports-color@8.1.1))(supports-color@8.1.1)
+        specifier: 1.20.0
+        version: 1.20.0(debug@4.3.7(supports-color@8.1.1))(supports-color@8.1.1)
       ejs:
         specifier: ^3.1.10
         version: 3.1.10
@@ -148,8 +148,8 @@ importers:
         specifier: 24.12.4
         version: 24.12.4
       axios:
-        specifier: 1.18.0
-        version: 1.18.0(debug@4.3.7(supports-color@8.1.1))(supports-color@8.1.1)
+        specifier: 1.20.0
+        version: 1.20.0(debug@4.3.7(supports-color@8.1.1))(supports-color@8.1.1)
       fast-check:
         specifier: 2.25.0
         version: 2.25.0
@@ -197,8 +197,8 @@ importers:
         specifier: 2.5.0
         version: 2.5.0
       axios:
-        specifier: 1.18.0
-        version: 1.18.0(debug@4.3.7(supports-color@8.1.1))(supports-color@8.1.1)
+        specifier: 1.20.0
+        version: 1.20.0(debug@4.3.7(supports-color@8.1.1))(supports-color@8.1.1)
       jest:
         specifier: 29.5.0
         version: 29.5.0(@types/node@24.12.4)(supports-color@8.1.1)(ts-node@10.9.1(@swc/core@1.15.46)(@types/node@24.12.4)(typescript@7.0.2))
@@ -365,8 +365,8 @@ importers:
         specifier: 5.59.11
         version: 5.59.11(eslint@8.42.0(supports-color@8.1.1))(supports-color@8.1.1)(typescript@7.0.2)
       axios:
-        specifier: 1.18.0
-        version: 1.18.0(debug@4.3.7(supports-color@8.1.1))(supports-color@8.1.1)
+        specifier: 1.20.0
+        version: 1.20.0(debug@4.3.7(supports-color@8.1.1))(supports-color@8.1.1)
       eslint:
         specifier: 8.42.0
         version: 8.42.0(supports-color@8.1.1)
@@ -1565,8 +1565,8 @@ packages:
     resolution: {integrity: sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==}
     engines: {node: '>= 0.4'}
 
-  axios@1.18.0:
-    resolution: {integrity: sha512-E32NzpYKp++W7XRe52rHiXV2ehxmh3wbdgO7MHeFM+vqxLBYHzt0ElkiImtOBxtOmyp0yoC8C6uESVV84Y2/hw==}
+  axios@1.20.0:
+    resolution: {integrity: sha512-r8aOh8j9cGKpgQAqpzrUHnSIc6a59Y3Xf/cv8sy1DrHCkZHzQGEuoq1tARk6qSyDdtQGSDgpb9kFlruzPvrgwg==}
 
   babel-jest@29.7.0:
     resolution: {integrity: sha512-BrvGY3xZSwEcCzKvKsCi2GgHqDqsYkOP4/by5xCgIwGXQxIEh+8ew3gmrE1y7XRR6LHZIj6yLYnUi/mm2KXKBg==}
@@ -4712,7 +4712,7 @@ snapshots:
     dependencies:
       possible-typed-array-names: 1.0.0
 
-  axios@1.18.0(debug@4.3.7(supports-color@8.1.1))(supports-color@8.1.1):
+  axios@1.20.0(debug@4.3.7(supports-color@8.1.1))(supports-color@8.1.1):
     dependencies:
       follow-redirects: 1.16.0(debug@4.3.7(supports-color@8.1.1))
       form-data: 4.0.6
