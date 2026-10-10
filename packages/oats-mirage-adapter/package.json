@@ -39,7 +39,7 @@
     "@types/lodash": "4.14.195",
     "@types/node": "24.12.4",
     "miragejs": "0.1.47",
-    "nodemon": "2.0.22",
+    "nodemon": "3.1.14",
     "typescript": "7.0.2"
   },
   "gitHead": "6afcbb2c8491c594374a82f06c1df5f858ed7681"
