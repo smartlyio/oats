@@ -17,8 +17,8 @@ importers:
         specifier: 6.0.1
         version: 6.0.1
       koa-mount:
-        specifier: 4.0.0
-        version: 4.0.0(supports-color@8.1.1)
+        specifier: 4.2.0
+        version: 4.2.0(supports-color@8.1.1)
       koa-router:
         specifier: 12.0.1
         version: 12.0.1(supports-color@8.1.1)
@@ -215,8 +215,8 @@ importers:
         specifier: ^4.17.20
         version: 4.18.1
       randexp:
-        specifier: ^0.5.3
-        version: 0.5.3
+        specifier: ^0.6.0
+        version: 0.6.0
     devDependencies:
       '@smartlyio/oats':
         specifier: workspace:^
@@ -1834,9 +1834,9 @@ packages:
     resolution: {integrity: sha512-yS+Q5i3hBf7GBkd4KG8a7eBNNWNGLTaEwwYWUijIYM7zrlYDM0BFXHjjPWlWZ1Rg7UaddZeIDmi9jF3HmqiQ2w==}
     engines: {node: '>=6.0.0'}
 
-  drange@1.1.1:
-    resolution: {integrity: sha512-pYxfDYpued//QpnLIm4Avk7rsNtAtQkUES2cwAYSvD/wd2pKD71gN2Ebj3e7klzXwjocvE8c5vx/1fxwpqmSxA==}
-    engines: {node: '>=4'}
+  drange@2.0.1:
+    resolution: {integrity: sha512-s/Gs2VG0zdUXxWz4cK3vcwniF914RKWLNYY6YAVTTLo2HjqsynfUzUcSvNFEdktQXKDbJMKF9wmg67Rv32VhEQ==}
+    engines: {node: '>=6'}
 
   dunder-proto@1.0.1:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
@@ -2690,6 +2690,10 @@ packages:
     resolution: {integrity: sha512-rm71jaA/P+6HeCpoRhmCv8KVBIi0tfGuO/dMKicbQnQW/YJntJ6MnnspkodoA4QstMVEZArsCphmd0bJEtoMjQ==}
     engines: {node: '>= 7.6.0'}
 
+  koa-mount@4.2.0:
+    resolution: {integrity: sha512-2iHQc7vbA9qLeVq5gKAYh3m5DOMMlMfIKjW/REPAS18Mf63daCJHHVXY9nbu7ivrnYn5PiPC4CE523Tf5qvjeQ==}
+    engines: {node: '>= 7.6.0'}
+
   koa-router@12.0.0:
     resolution: {integrity: sha512-zGrdiXygGYW8WvrzeGsHZvKnHs4DzyGoqJ9a8iHlRkiwuEAOAPyI27//OlhoWdgFAEIM3qbUgr0KCuRaP/TCag==}
     engines: {node: '>= 12'}
@@ -3090,9 +3094,9 @@ packages:
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
 
-  randexp@0.5.3:
-    resolution: {integrity: sha512-U+5l2KrcMNOUPYvazA3h5ekF80FHTUG+87SEAmHZmolh1M+i/WyTCxVzmi+tidIa1tM4BSe8g2Y/D3loWDjj+w==}
-    engines: {node: '>=4'}
+  randexp@0.6.0:
+    resolution: {integrity: sha512-RoIy+WJ6lTeUxp9C3F+CFdPahHRjI4JAQXheStD/3LBnqkDDQN22l/fnSMDkvjeyoeFhKFpg24ZYdi8BBYh6RA==}
+    engines: {node: '>=8'}
 
   raw-body@2.5.2:
     resolution: {integrity: sha512-8zGqypfENjCIqGhgXToC8aB2r7YrBX+AQAfIPs/Mlk+BtPTztOvTS01NRW/3Eh60J+a48lt8qsCzirQ6loCVfA==}
@@ -3141,9 +3145,9 @@ packages:
     resolution: {integrity: sha512-oKWePCxqpd6FlLvGV1VU0x7bkPmmCNolxzjMf4NczoDnQcIWrAF+cPtZn5i6n+RfD2d9i0tzpKnG6Yk168yIyw==}
     hasBin: true
 
-  ret@0.2.2:
-    resolution: {integrity: sha512-M0b3YWQs7R3Z917WRQy1HHA7Ba7D8hvZg6UE5mLykJxQVE2ju0IXbGlaHPPlkY+WN7wFP+wUMXmBFA0aV6vYGQ==}
-    engines: {node: '>=4'}
+  ret@0.3.2:
+    resolution: {integrity: sha512-eQB/QBd68xd935kJ6+BS+JP9jFmMKA0ZISSqHpxcmVnq+cwKCiGlH8zqvsHoVy1GMzsPL7zJ7yRnRPXaEho4ww==}
+    engines: {node: '>=10'}
 
   reusify@1.0.4:
     resolution: {integrity: sha512-U9nH88a3fc/ekCF1l0/UP1IosiuIjyTh7hBvXVMHYgVcfGvt897Xguj2UOLDeI5BG2m7/uwyaLVT6fbtCwTyzw==}
@@ -5022,7 +5026,7 @@ snapshots:
     dependencies:
       esutils: 2.0.3
 
-  drange@1.1.1: {}
+  drange@2.0.1: {}
 
   dunder-proto@1.0.1:
     dependencies:
@@ -6276,6 +6280,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  koa-mount@4.2.0(supports-color@8.1.1):
+    dependencies:
+      debug: 4.3.7(supports-color@8.1.1)
+      koa-compose: 4.1.0
+    transitivePeerDependencies:
+      - supports-color
+
   koa-router@12.0.0:
     dependencies:
       http-errors: 2.0.0
@@ -6666,10 +6677,10 @@ snapshots:
 
   queue-microtask@1.2.3: {}
 
-  randexp@0.5.3:
+  randexp@0.6.0:
     dependencies:
-      drange: 1.1.1
-      ret: 0.2.2
+      drange: 2.0.1
+      ret: 0.3.2
 
   raw-body@2.5.2:
     dependencies:
@@ -6713,7 +6724,7 @@ snapshots:
       path-parse: 1.0.7
       supports-preserve-symlinks-flag: 1.0.0
 
-  ret@0.2.2: {}
+  ret@0.3.2: {}
 
   reusify@1.0.4: {}
 
