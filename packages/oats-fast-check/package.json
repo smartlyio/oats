@@ -1,6 +1,6 @@
 {
   "name": "@smartlyio/oats-fast-check",
-  "version": "7.9.3",
+  "version": "7.9.4",
   "license": "MIT",
   "description": "fast-check value generator for smartlyio/oats types",
   "private": false,
