@@ -4,6 +4,8 @@ packages:
 minimumReleaseAge: 10080
 minimumReleaseAgeExclude:
   - "@smartly/*"
+  # Renovate security update: koa@2.16.4
+  - koa@2.16.4
 
 # Supply chain hardening (see https://pnpm.io/settings)
 engineStrict: true
